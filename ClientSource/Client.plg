@@ -1,0 +1,25 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Game - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\RevX\AppData\Local\Temp\RSPF0BA.tmp" with contents
+[
+/nologo /MD /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"Release/Client.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"X:\HelbreatH RevolutioN\ClientSource\Game.cpp"
+]
+Creating command line "cl.exe @C:\Users\RevX\AppData\Local\Temp\RSPF0BA.tmp" 
+<h3>Output Window</h3>
+Compiling...
+Game.cpp
+
+
+
+<h3>Results</h3>
+Game.obj - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
