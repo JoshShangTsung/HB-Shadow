@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="94">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="client" displayName="client" projectFiles="true">
+      <itemPath>../../../src/client/ActionID.h</itemPath>
+      <itemPath>../../../src/client/BuildItem.cpp</itemPath>
+      <itemPath>../../../src/client/BuildItem.h</itemPath>
+      <itemPath>../../../src/client/CharInfo.cpp</itemPath>
+      <itemPath>../../../src/client/CharInfo.h</itemPath>
+      <itemPath>../../../src/client/Cint.cpp</itemPath>
+      <itemPath>../../../src/client/Cint.h</itemPath>
+      <itemPath>../../../src/client/Curse.cpp</itemPath>
+      <itemPath>../../../src/client/Curse.h</itemPath>
+      <itemPath>../../../src/client/DXC_ddraw.cpp</itemPath>
+      <itemPath>../../../src/client/DXC_ddraw.h</itemPath>
+      <itemPath>../../../src/client/DXC_dinput.cpp</itemPath>
+      <itemPath>../../../src/client/DXC_dinput.h</itemPath>
+      <itemPath>../../../src/client/DXC_dsound.cpp</itemPath>
+      <itemPath>../../../src/client/DXC_dsound.h</itemPath>
+      <itemPath>../../../src/client/DynamicObjectID.h</itemPath>
+      <itemPath>../../../src/client/Effect.cpp</itemPath>
+      <itemPath>../../../src/client/Effect.h</itemPath>
+      <itemPath>../../../src/client/Game.cpp</itemPath>
+      <itemPath>../../../src/client/Game.h</itemPath>
+      <itemPath>../../../src/client/GameMonitor.cpp</itemPath>
+      <itemPath>../../../src/client/GameMonitor.h</itemPath>
+      <itemPath>../../../src/client/GlobalDef.h</itemPath>
+      <itemPath>../../../src/client/GlobalVal.h</itemPath>
+      <itemPath>../../../src/client/Item.cpp</itemPath>
+      <itemPath>../../../src/client/Item.h</itemPath>
+      <itemPath>../../../src/client/ItemName.cpp</itemPath>
+      <itemPath>../../../src/client/ItemName.h</itemPath>
+      <itemPath>../../../src/client/JPEGLIB.H</itemPath>
+      <itemPath>../../../src/client/LAN_ENG.H</itemPath>
+      <itemPath>../../../src/client/Magic.cpp</itemPath>
+      <itemPath>../../../src/client/Magic.h</itemPath>
+      <itemPath>../../../src/client/MapData.cpp</itemPath>
+      <itemPath>../../../src/client/MapData.h</itemPath>
+      <itemPath>../../../src/client/Misc.cpp</itemPath>
+      <itemPath>../../../src/client/Misc.h</itemPath>
+      <itemPath>../../../src/client/MouseInterface.cpp</itemPath>
+      <itemPath>../../../src/client/MouseInterface.h</itemPath>
+      <itemPath>../../../src/client/Msg.cpp</itemPath>
+      <itemPath>../../../src/client/Msg.h</itemPath>
+      <itemPath>../../../src/client/Mydib.cpp</itemPath>
+      <itemPath>../../../src/client/Mydib.h</itemPath>
+      <itemPath>../../../src/client/NetMessages.h</itemPath>
+      <itemPath>../../../src/client/RESOURCE.H</itemPath>
+      <itemPath>../../../src/client/Skill.cpp</itemPath>
+      <itemPath>../../../src/client/Skill.h</itemPath>
+      <itemPath>../../../src/client/SoundBuffer.cpp</itemPath>
+      <itemPath>../../../src/client/SoundBuffer.h</itemPath>
+      <itemPath>../../../src/client/SoundID.h</itemPath>
+      <itemPath>../../../src/client/Sprite.cpp</itemPath>
+      <itemPath>../../../src/client/Sprite.h</itemPath>
+      <itemPath>../../../src/client/SpriteID.h</itemPath>
+      <itemPath>../../../src/client/StrTok.cpp</itemPath>
+      <itemPath>../../../src/client/StrTok.h</itemPath>
+      <itemPath>../../../src/client/Tile.cpp</itemPath>
+      <itemPath>../../../src/client/Tile.h</itemPath>
+      <itemPath>../../../src/client/TileSpr.cpp</itemPath>
+      <itemPath>../../../src/client/TileSpr.h</itemPath>
+      <itemPath>../../../src/client/Winmain.h</itemPath>
+      <itemPath>../../../src/client/Wmain.cpp</itemPath>
+      <itemPath>../../../src/client/XSocket.cpp</itemPath>
+      <itemPath>../../../src/client/XSocket.h</itemPath>
+      <itemPath>../../../src/client/YWSound.cpp</itemPath>
+      <itemPath>../../../src/client/YWSound.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../src/client</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <commandLine>-Wall -Wextra</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>../../../bin/client</output>
+          <linkerLibItems>
+            <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>winmm</linkerLibLibItem>
+            <linkerLibLibItem>dxguid</linkerLibLibItem>
+            <linkerLibLibItem>gdi32</linkerLibLibItem>
+            <linkerLibLibItem>ddraw</linkerLibLibItem>
+            <linkerLibLibItem>dinput</linkerLibLibItem>
+            <linkerLibLibItem>Imm32</linkerLibLibItem>
+            <linkerLibLibItem>dsound</linkerLibLibItem>
+            <linkerLibFileItem>../../../src/client/resource.res</linkerLibFileItem>
+          </linkerLibItems>
+          <commandLine>-static -mwindows</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="../../../src/client/ActionID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/BuildItem.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/BuildItem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/CharInfo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/CharInfo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Cint.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Cint.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Curse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Curse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_ddraw.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_ddraw.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dinput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dinput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dsound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dsound.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DynamicObjectID.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/Effect.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Effect.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Game.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Game.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/GameMonitor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/GameMonitor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/GlobalDef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/GlobalVal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Item.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/ItemName.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/ItemName.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/JPEGLIB.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/LAN_ENG.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Magic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Magic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/MapData.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/MapData.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Misc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/MouseInterface.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/MouseInterface.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/Msg.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Msg.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Mydib.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Mydib.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/NetMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/RESOURCE.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Skill.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Skill.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/SoundBuffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/SoundBuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/SoundID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Sprite.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Sprite.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/SpriteID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/StrTok.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/StrTok.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Tile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Tile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/TileSpr.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/TileSpr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Winmain.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Wmain.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/XSocket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/XSocket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/YWSound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/YWSound.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <standard>8</standard>
+          <commandLine>-Wall -Wextra</commandLine>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>../../../bin/client</output>
+          <linkerLibItems>
+            <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>winmm</linkerLibLibItem>
+            <linkerLibLibItem>dxguid</linkerLibLibItem>
+            <linkerLibLibItem>gdi32</linkerLibLibItem>
+            <linkerLibLibItem>ddraw</linkerLibLibItem>
+            <linkerLibLibItem>dinput</linkerLibLibItem>
+            <linkerLibLibItem>Imm32</linkerLibLibItem>
+            <linkerLibLibItem>dsound</linkerLibLibItem>
+            <linkerLibFileItem>../../../src/client/resource.res</linkerLibFileItem>
+          </linkerLibItems>
+          <commandLine>-static -mwindows</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="../../../src/client/ActionID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/BuildItem.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/BuildItem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/CharInfo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/CharInfo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Cint.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Cint.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Curse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Curse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_ddraw.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_ddraw.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dinput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dinput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dsound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/DXC_dsound.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/DynamicObjectID.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/Effect.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Effect.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Game.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Game.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/GameMonitor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/GameMonitor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/GlobalDef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/GlobalVal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Item.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/ItemName.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/ItemName.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/JPEGLIB.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/LAN_ENG.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Magic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Magic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/MapData.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/MapData.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Misc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/MouseInterface.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/MouseInterface.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/Msg.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Msg.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Mydib.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Mydib.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/NetMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/RESOURCE.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Skill.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Skill.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/SoundBuffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/client/SoundBuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/SoundID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Sprite.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Sprite.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/SpriteID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/StrTok.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/StrTok.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Tile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/Tile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/TileSpr.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/TileSpr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Winmain.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/Wmain.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/XSocket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/XSocket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/client/YWSound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/client/YWSound.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

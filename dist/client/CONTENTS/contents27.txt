@@ -1,0 +1,8 @@
+""Hail! You look a little lost. Perhaps 
+I can help you. Go to these 
+co-ordinates. Be careful, the last
+person we sent out didnt come back.
+We'd like to know what's there!"
+Venture to the co-ordinates.
+Will it be a friendly building or an 
+enemy structure?"

@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="94">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="hgserver" displayName="hgserver" projectFiles="true">
+      <itemPath>../../../src/hgserver/ActionID.h</itemPath>
+      <itemPath>../../../src/hgserver/BuildItem.cpp</itemPath>
+      <itemPath>../../../src/hgserver/BuildItem.h</itemPath>
+      <itemPath>../../../src/hgserver/Client.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Client.h</itemPath>
+      <itemPath>../../../src/hgserver/DebugDialog.cpp</itemPath>
+      <itemPath>../../../src/hgserver/DebugDialog.h</itemPath>
+      <itemPath>../../../src/hgserver/DelayEvent.cpp</itemPath>
+      <itemPath>../../../src/hgserver/DelayEvent.h</itemPath>
+      <itemPath>../../../src/hgserver/DynamicObject.cpp</itemPath>
+      <itemPath>../../../src/hgserver/DynamicObject.h</itemPath>
+      <itemPath>../../../src/hgserver/DynamicObjectID.h</itemPath>
+      <itemPath>../../../src/hgserver/Fish.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Fish.h</itemPath>
+      <itemPath>../../../src/hgserver/Game.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Game.h</itemPath>
+      <itemPath>../../../src/hgserver/GlobalDef.h</itemPath>
+      <itemPath>../../../src/hgserver/GuildsMan.cpp</itemPath>
+      <itemPath>../../../src/hgserver/GuildsMan.h</itemPath>
+      <itemPath>../../../src/hgserver/Item.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Item.h</itemPath>
+      <itemPath>../../../src/hgserver/Magic.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Magic.h</itemPath>
+      <itemPath>../../../src/hgserver/Map.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Map.h</itemPath>
+      <itemPath>../../../src/hgserver/MessageIndex.h</itemPath>
+      <itemPath>../../../src/hgserver/Mineral.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Mineral.h</itemPath>
+      <itemPath>../../../src/hgserver/Misc.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Misc.h</itemPath>
+      <itemPath>../../../src/hgserver/Msg.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Msg.h</itemPath>
+      <itemPath>../../../src/hgserver/NetMessages.h</itemPath>
+      <itemPath>../../../src/hgserver/Npc.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Npc.h</itemPath>
+      <itemPath>../../../src/hgserver/NpcItem.cpp</itemPath>
+      <itemPath>../../../src/hgserver/OccupyFlag.cpp</itemPath>
+      <itemPath>../../../src/hgserver/OccupyFlag.h</itemPath>
+      <itemPath>../../../src/hgserver/Player.h</itemPath>
+      <itemPath>../../../src/hgserver/Portion.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Portion.h</itemPath>
+      <itemPath>../../../src/hgserver/Quest.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Quest.h</itemPath>
+      <itemPath>../../../src/hgserver/Skill.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Skill.h</itemPath>
+      <itemPath>../../../src/hgserver/SkillNum.h</itemPath>
+      <itemPath>../../../src/hgserver/StrTok.cpp</itemPath>
+      <itemPath>../../../src/hgserver/StrTok.h</itemPath>
+      <itemPath>../../../src/hgserver/StrategicPoint.cpp</itemPath>
+      <itemPath>../../../src/hgserver/StrategicPoint.h</itemPath>
+      <itemPath>../../../src/hgserver/Structure.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Structure.h</itemPath>
+      <itemPath>../../../src/hgserver/Teleport.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Teleport.h</itemPath>
+      <itemPath>../../../src/hgserver/TeleportLoc.cpp</itemPath>
+      <itemPath>../../../src/hgserver/TeleportLoc.h</itemPath>
+      <itemPath>../../../src/hgserver/TempNpcItem.cpp</itemPath>
+      <itemPath>../../../src/hgserver/TempNpcItem.h</itemPath>
+      <itemPath>../../../src/hgserver/Tile.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Tile.h</itemPath>
+      <itemPath>../../../src/hgserver/UserMessages.h</itemPath>
+      <itemPath>../../../src/hgserver/Version.h</itemPath>
+      <itemPath>../../../src/hgserver/WINMAIN.H</itemPath>
+      <itemPath>../../../src/hgserver/Wmain.cpp</itemPath>
+      <itemPath>../../../src/hgserver/XSocket.cpp</itemPath>
+      <itemPath>../../../src/hgserver/XSocket.h</itemPath>
+      <itemPath>../../../src/hgserver/resource.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../../src/hgserver</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <commandLine>-Wall -Wextra</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>../../../bin/hgserver</output>
+          <linkerLibItems>
+            <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>winmm</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-static -mwindows</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="../../../src/hgserver/ActionID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/BuildItem.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/BuildItem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Client.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Client.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DebugDialog.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DebugDialog.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DelayEvent.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DelayEvent.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DynamicObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DynamicObject.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DynamicObjectID.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Fish.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Fish.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Game.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Game.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/GlobalDef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/GuildsMan.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/GuildsMan.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Item.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Magic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Magic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Map.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Map.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/MessageIndex.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Mineral.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Mineral.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Misc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Msg.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Msg.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NetMessages.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Npc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Npc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NpcItem.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/OccupyFlag.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/OccupyFlag.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Player.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Portion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Portion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Quest.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Quest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Skill.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Skill.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/SkillNum.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrTok.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrTok.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrategicPoint.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrategicPoint.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Structure.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Structure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Teleport.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Teleport.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TeleportLoc.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TeleportLoc.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TempNpcItem.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TempNpcItem.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Tile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Tile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/UserMessages.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Version.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/WINMAIN.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Wmain.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/XSocket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/XSocket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/resource.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <standard>8</standard>
+          <commandLine>-Wall -Wextra</commandLine>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>../../../bin/hgserver</output>
+          <linkerLibItems>
+            <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>winmm</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-static -mwindows</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="../../../src/hgserver/ActionID.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/BuildItem.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/BuildItem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Client.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Client.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DebugDialog.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DebugDialog.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DelayEvent.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DelayEvent.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DynamicObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DynamicObject.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DynamicObjectID.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Fish.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Fish.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Game.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Game.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/GlobalDef.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/GuildsMan.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/GuildsMan.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Item.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Magic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Magic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Map.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Map.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/MessageIndex.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Mineral.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Mineral.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Misc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Msg.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Msg.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NetMessages.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Npc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Npc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NpcItem.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/OccupyFlag.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/OccupyFlag.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Player.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Portion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Portion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Quest.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Quest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Skill.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Skill.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/SkillNum.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrTok.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrTok.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrategicPoint.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/StrategicPoint.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Structure.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Structure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Teleport.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Teleport.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TeleportLoc.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TeleportLoc.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TempNpcItem.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/TempNpcItem.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Tile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Tile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/UserMessages.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Version.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/WINMAIN.H" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Wmain.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/XSocket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/XSocket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/resource.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

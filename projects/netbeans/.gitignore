@@ -1,0 +1,5 @@
+*/build
+*/nbproject/private
+.dep.inc
+*/nbproject/*.mk
+*/nbproject/*.bash
