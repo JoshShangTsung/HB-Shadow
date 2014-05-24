@@ -1,16 +1,11 @@
 #include "Teleport.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+CTeleport::CTeleport() {
 
-CTeleport::CTeleport()
-{
-
-	ZeroMemory(m_cTeleportNpcName, sizeof(m_cTeleportNpcName));
-	ZeroMemory(m_cSourceMap, sizeof(m_cSourceMap));
-	ZeroMemory(m_cTargetMap, sizeof(m_cTargetMap));
-	ZeroMemory(m_cTeleportSide, sizeof(m_cTeleportSide));
+	ZeroMemory(m_cTeleportNpcName, sizeof (m_cTeleportNpcName));
+	ZeroMemory(m_cSourceMap, sizeof (m_cSourceMap));
+	ZeroMemory(m_cTargetMap, sizeof (m_cTargetMap));
+	ZeroMemory(m_cTeleportSide, sizeof (m_cTeleportSide));
 
 	m_sDestinationX = -1;
 	m_sDestinationY = -1;
@@ -21,9 +16,3 @@ CTeleport::CTeleport()
 	m_bTeleportNtrl = FALSE;
 	m_bTeleportCrmnl = FALSE;
 }
-
-CTeleport::~CTeleport()
-{										    
-
-}
-

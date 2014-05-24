@@ -1,15 +1,5 @@
-// Item.h: interface for the CItem class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_ITEM_H__211A1360_91B9_11D2_B143_00001C7030A6__INCLUDED_)
-#define AFX_ITEM_H__211A1360_91B9_11D2_B143_00001C7030A6__INCLUDED_
-
-#include <windows.h>
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+#include <windows.h>
 
 #define DEF_MAXITEMEQUIPPOS		15
 #define DEF_EQUIPPOS_NONE		0
@@ -41,29 +31,25 @@
 #define DEF_ITEMTYPE_USE_DEPLETE_DEST			11
 #define DEF_ITEMTYPE_MATERIAL					12
 
-class CItem  
-{
+class CItem {
 public:
 	CItem();
-	virtual ~CItem();
-	char  m_cName[21];
-	char  m_cItemType;
-	char  m_cEquipPos;
-	char  m_cItemColor;
-	char  m_cSpeed;
-	char  m_cGenderLimit;
-//	short m_sItemEffectType;
+	char m_cName[21];
+	char m_cItemType;
+	char m_cEquipPos;
+	char m_cItemColor;
+	char m_cSpeed;
+	char m_cGenderLimit;
+	//	short m_sItemEffectType;
 	short m_sLevelLimit;
 	short m_sSprite;
 	short m_sSpriteFrame;
 	short m_sX, m_sY;
 	short m_sItemSpecEffectValue1, m_sItemSpecEffectValue2, m_sItemSpecEffectValue3;
-	short m_sItemEffectValue1, m_sItemEffectValue2, m_sItemEffectValue3, m_sItemEffectValue4, m_sItemEffectValue5, m_sItemEffectValue6; 
-	WORD  m_wCurLifeSpan;
-	WORD  m_wMaxLifeSpan;
-	WORD  m_wPrice, m_wWeight;
+	short m_sItemEffectValue1, m_sItemEffectValue2, m_sItemEffectValue3, m_sItemEffectValue4, m_sItemEffectValue5, m_sItemEffectValue6;
+	WORD m_wCurLifeSpan;
+	WORD m_wMaxLifeSpan;
+	WORD m_wPrice, m_wWeight;
 	DWORD m_dwCount;
 	DWORD m_dwAttribute;
 };
-
-#endif // !defined(AFX_ITEM_H__211A1360_91B9_11D2_B143_00001C7030A6__INCLUDED_)

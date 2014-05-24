@@ -1,21 +1,9 @@
-// TeleportLoc.h: interface for the CTeleportLoc class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_NPCITEM_H__D4288400_F8C0_11D2_9B6C_00001C7030A6__INCLUDED_)
-#define AFX_NPCITEM_H__D4288400_F8C0_11D2_9B6C_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
 #include <windows.h>
 
-class CNpcItem  
-{
+class CNpcItem {
 public:
-	CNpcItem(); 
-	virtual ~CNpcItem();
+	CNpcItem();
 
 	char m_cName[21];
 	short m_sItemID;
@@ -25,5 +13,3 @@ public:
 	char m_cSecondTargetValue;
 
 };
-
-#endif

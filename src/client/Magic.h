@@ -1,15 +1,5 @@
-// Magic.h: interface for the CMagic class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MAGIC_H__15121CC0_F3E3_11D2_9B6C_00001C7030A6__INCLUDED_)
-#define AFX_MAGIC_H__15121CC0_F3E3_11D2_9B6C_00001C7030A6__INCLUDED_
-
 #include <windows.h>
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #define DEF_MAGICTYPE_DAMAGE_SPOT		1
 #define DEF_MAGICTYPE_HPUP_SPOT			2
@@ -34,16 +24,11 @@
 #define DEF_MAGICTYPE_TREMOR				22 
 #define DEF_MAGICTYPE_ICE					23 
 
-class CMagic  
-{
+class CMagic {
 public:
 	CMagic();
-	virtual ~CMagic();
 	char m_cName[31];
-	int  m_sValue1, m_sValue2, m_sValue3;
-	// CLEROTH
+	int m_sValue1, m_sValue2, m_sValue3;
 	int m_sValue4;
 	bool m_bIsVisible;
 };
-
-#endif // !defined(AFX_MAGIC_H__15121CC0_F3E3_11D2_9B6C_00001C7030A6__INCLUDED_)

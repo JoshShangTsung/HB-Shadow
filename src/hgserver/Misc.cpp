@@ -1,37 +1,16 @@
-// Misc.cpp: implementation of the CMisc class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Misc.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-CMisc::CMisc()
-{
-
-}
-
-CMisc::~CMisc()
-{
-
-}											    
-
-void CMisc::GetMyCursorPos(short * pX, short * pY)
-{
- POINT point;
+void CMisc::GetMyCursorPos(short * pX, short * pY) {
+	POINT point;
 
 	GetCursorPos(&point);
-	*pX = (short)point.x;
-	*pY = (short)point.y;
+	*pX = (short) point.x;
+	*pY = (short) point.y;
 }
 
-
-char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY)
-{
- short absX, absY;
- char  cRet = 0;
+char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY) {
+	short absX, absY;
+	char cRet = 0;
 
 	absX = sX - dX;
 	absY = sY - dY;
@@ -46,19 +25,17 @@ char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY)
 		if (absX > 0) cRet = 7;
 		if (absX < 0) cRet = 3;
 	}
-	if ( (absX > 0)	&& (absY > 0) ) cRet = 8;
-	if ( (absX < 0)	&& (absY > 0) ) cRet = 2;
-	if ( (absX > 0)	&& (absY < 0) ) cRet = 6;
-	if ( (absX < 0)	&& (absY < 0) ) cRet = 4;	
+	if ((absX > 0) && (absY > 0)) cRet = 8;
+	if ((absX < 0) && (absY > 0)) cRet = 2;
+	if ((absX > 0) && (absY < 0)) cRet = 6;
+	if ((absX < 0) && (absY < 0)) cRet = 4;
 
 	return cRet;
 }
 
-
-void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * pError)
-{
- register int dx, dy, x_inc, y_inc, error, index;
- register int iResultX, iResultY, iDstCnt;
+void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * pError) {
+	register int dx, dy, x_inc, y_inc, error, index;
+	register int iResultX, iResultY, iDstCnt;
 
 	if ((x0 == x1) && (y0 == y1)) {
 		*pX = x0;
@@ -70,53 +47,40 @@ void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * p
 
 	iResultX = x0;
 	iResultY = y0;
-	iDstCnt  = 0;
+	iDstCnt = 0;
 
-	dx = x1-x0;
-	dy = y1-y0;
+	dx = x1 - x0;
+	dy = y1 - y0;
 
-	if(dx>=0)
-	{
+	if (dx >= 0) {
 		x_inc = 1;
-	}
-	else
-	{
+	} else {
 		x_inc = -1;
 		dx = -dx;
 	}
 
-	if(dy>=0)
-	{
+	if (dy >= 0) {
 		y_inc = 1;
-	}
-	else
-	{
+	} else {
 		y_inc = -1;
 		dy = -dy;
 	}
 
-	if(dx>dy)
-	{
-		for(index = 0; index<=dx; index++)
-		{
-			error+=dy;
-			if(error>dx)
-			{
-				error-=dx;
+	if (dx > dy) {
+		for (index = 0; index <= dx; index++) {
+			error += dy;
+			if (error > dx) {
+				error -= dx;
 				iResultY += y_inc;
 			}
 			iResultX += x_inc;
 			goto CALC_OK;
 		}
-	}
-	else
-	{
-		for(index=0; index<=dy; index++)
-		{
-			error+=dx;
-			if(error>0)
-			{
-				error-=dy;
+	} else {
+		for (index = 0; index <= dy; index++) {
+			error += dx;
+			if (error > 0) {
+				error -= dy;
 				iResultX += x_inc;
 			}
 			iResultY += y_inc;
@@ -124,18 +88,17 @@ void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * p
 		}
 	}
 
-CALC_OK:;
+CALC_OK:
+	;
 
 	*pX = iResultX;
 	*pY = iResultY;
 	*pError = error;
 }
 
-
-void CMisc::GetPoint2(int x0, int y0, int x1, int y1, int * pX, int * pY, int * pError, int iCount)
-{
- register int dx, dy, x_inc, y_inc, error, index;
- register int iResultX, iResultY, iCnt = 0;
+void CMisc::GetPoint2(int x0, int y0, int x1, int y1, int * pX, int * pY, int * pError, int iCount) {
+	register int dx, dy, x_inc, y_inc, error, index;
+	register int iResultX, iResultY, iCnt = 0;
 
 
 	if ((x0 == x1) && (y0 == y1)) {
@@ -149,36 +112,27 @@ void CMisc::GetPoint2(int x0, int y0, int x1, int y1, int * pX, int * pY, int * 
 	iResultX = x0;
 	iResultY = y0;
 
-	dx = x1-x0;
-	dy = y1-y0;
+	dx = x1 - x0;
+	dy = y1 - y0;
 
-	if(dx>=0)
-	{
+	if (dx >= 0) {
 		x_inc = 1;
-	}
-	else
-	{
+	} else {
 		x_inc = -1;
 		dx = -dx;
 	}
 
-	if(dy>=0)
-	{
+	if (dy >= 0) {
 		y_inc = 1;
-	}
-	else
-	{
+	} else {
 		y_inc = -1;
 		dy = -dy;
 	}
 
-	if(dx>dy)
-	{
-		for(index = 0; index <= dx; index++)
-		{
+	if (dx > dy) {
+		for (index = 0; index <= dx; index++) {
 			error += dy;
-			if(error > dx)
-			{
+			if (error > dx) {
 				error -= dx;
 				iResultY += y_inc;
 			}
@@ -187,14 +141,10 @@ void CMisc::GetPoint2(int x0, int y0, int x1, int y1, int * pX, int * pY, int * 
 			if (iCnt >= iCount)
 				goto CALC_OK;
 		}
-	}
-	else
-	{
-		for(index = 0; index <= dy; index++)
-		{
+	} else {
+		for (index = 0; index <= dy; index++) {
 			error += dx;
-			if(error > dy)
-			{
+			if (error > dy) {
 				error -= dy;
 				iResultX += x_inc;
 			}
@@ -205,101 +155,102 @@ void CMisc::GetPoint2(int x0, int y0, int x1, int y1, int * pX, int * pY, int * 
 		}
 	}
 
-CALC_OK:;
+CALC_OK:
+	;
 
 	*pX = iResultX;
 	*pY = iResultY;
 	*pError = error;
 }
 
-
-void CMisc::GetDirPoint(char cDir, int * pX, int * pY)
-{
-	switch(cDir) {
-	case 1:	*pY--; break;
-	case 2:	*pY--; *pX++;	break;
-	case 3:	*pX++; break;
-	case 4:	*pX++; *pY++;	break;
-	case 5:	*pY++; break;
-	case 6:	*pX--; *pY++;	break;
-	case 7:	*pX--; break;
-	case 8:	*pX--; *pY--;	break;
+void CMisc::GetDirPoint(char cDir, int * pX, int * pY) {
+	switch (cDir) {
+		case 1: *pY--;
+			break;
+		case 2: *pY--;
+			*pX++;
+			break;
+		case 3: *pX++;
+			break;
+		case 4: *pX++;
+			*pY++;
+			break;
+		case 5: *pY++;
+			break;
+		case 6: *pX--;
+			*pY++;
+			break;
+		case 7: *pX--;
+			break;
+		case 8: *pX--;
+			*pY--;
+			break;
 	}
 
 }
 
-
-BOOL CMisc::bEncode(char cKey, char *pStr)
-{
- int i, iLen;
+BOOL CMisc::bEncode(char cKey, char *pStr) {
+	int i, iLen;
 
 	// !!
 	return TRUE;
 
 	iLen = strlen(pStr);
-	for (i = 0; i <= iLen-1; i++) {
-		pStr[i]  = pStr[i] ^ (cKey);
+	for (i = 0; i <= iLen - 1; i++) {
+		pStr[i] = pStr[i] ^ (cKey);
 	}
 
 	return TRUE;
 }
 
-
-BOOL CMisc::bDecode(char cKey, char *pStr)
-{
- int i, iLen;
+BOOL CMisc::bDecode(char cKey, char *pStr) {
+	int i, iLen;
 
 	// !!
 	return TRUE;
 
 	iLen = strlen(pStr);
-	for (i = 0; i <= iLen-1; i++) {
-		pStr[i]  = pStr[i] ^ (cKey);
+	for (i = 0; i <= iLen - 1; i++) {
+		pStr[i] = pStr[i] ^ (cKey);
 	}
 
 	return TRUE;
 }
 
+BOOL CMisc::bCheckValidName(char *pStr) {
+	register int i, iLen;
 
-BOOL CMisc::bCheckValidName(char *pStr)
-{
- register int i, iLen;
- 
 	iLen = strlen(pStr);
 	for (i = 0; i < iLen; i++) {
-		// Æ¯¼ö ¹®ÀÚ°¡ µé¾î°¡ ÀÖ´Â °æ¿ì °ÅºÎ 
-		if ( (pStr[i] == ',')  || (pStr[i] == '=')  || (pStr[i] == ' ') ||
-			 (pStr[i] == '\n') || (pStr[i] == '\t') || /*(pStr[i] == '.') ||*/
-			 (pStr[i] == '\\') || (pStr[i] == '/')  || (pStr[i] == ':') || 
-			 (pStr[i] == '*')  || (pStr[i] == '?')  || (pStr[i] == '<') || 
-			 (pStr[i] == '>')  || (pStr[i] == '|')  || (pStr[i] == '"') ) return FALSE;
+		// Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½î°¡ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ ï¿½Åºï¿½ 
+		if ((pStr[i] == ',') || (pStr[i] == '=') || (pStr[i] == ' ') ||
+				  (pStr[i] == '\n') || (pStr[i] == '\t') || /*(pStr[i] == '.') ||*/
+				  (pStr[i] == '\\') || (pStr[i] == '/') || (pStr[i] == ':') ||
+				  (pStr[i] == '*') || (pStr[i] == '?') || (pStr[i] == '<') ||
+				  (pStr[i] == '>') || (pStr[i] == '|') || (pStr[i] == '"')) return FALSE;
 
-		if ((i <= iLen-2) && ((unsigned char)pStr[i] >= 128)) {
-			if (((unsigned char)pStr[i] == 164) && ((unsigned char)pStr[i+1] >= 161) && 
-				((unsigned char)pStr[i+1] <= 211)) {
-				// ÀûÇÕ	
-				
-			}
-			else
-			if (((unsigned char)pStr[i] >= 176) && ((unsigned char)pStr[i] <= 200) && 
-				((unsigned char)pStr[i+1] >= 161) && ((unsigned char)pStr[i+1] <= 254)) {
-				// ÀûÇÕ 
-				
-			}
-			else return FALSE;
-			i++; // !!! Áõ°¡½ÃÄÑ¾ß¸¸ ¸Â´Ù.
+		if ((i <= iLen - 2) && ((unsigned char) pStr[i] >= 128)) {
+			if (((unsigned char) pStr[i] == 164) && ((unsigned char) pStr[i + 1] >= 161) &&
+					  ((unsigned char) pStr[i + 1] <= 211)) {
+				// ï¿½ï¿½ï¿½ï¿½	
+
+			} else
+				if (((unsigned char) pStr[i] >= 176) && ((unsigned char) pStr[i] <= 200) &&
+					  ((unsigned char) pStr[i + 1] >= 161) && ((unsigned char) pStr[i + 1] <= 254)) {
+				// ï¿½ï¿½ï¿½ï¿½ 
+
+			} else return FALSE;
+			i++; // !!! ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ß¸ï¿½ ï¿½Â´ï¿½.
 		}
 	}
 
 	return TRUE;
 }
 
-
-void CMisc::Temp()
-{
- FILE * pSrcFile, * pDestFile, * pSrcFileA, * pSrcFileB;
- int i;
- char cTemp[100000];
+void CMisc::Temp() {
+	FILE * pSrcFile, * pDestFile, * pSrcFileA, * pSrcFileB;
+	int i;
+	char cTemp[100000];
 
 	pSrcFile = fopen("middleland.amd", "rb");
 	pDestFile = fopen("middleland.amd.result", "wb");
@@ -307,59 +258,59 @@ void CMisc::Temp()
 	pSrcFileA = fopen("middleland1.amd", "rb");
 	pSrcFileB = fopen("middleland2.amd", "rb");
 
-	// ±âÁ¸ È­ÀÏ À§Ä¡ ÀÌµ¿
+	// ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½Ìµï¿½
 	fread(cTemp, 1, 256, pSrcFile);
 	fread(cTemp, 1, 256, pSrcFileA);
 	fread(cTemp, 1, 256, pSrcFileB);
 	for (i = 1; i <= 444; i++)
 		fread(cTemp, 1, 5240, pSrcFileB);
 
-	ZeroMemory(cTemp, sizeof(cTemp));
+	ZeroMemory(cTemp, sizeof (cTemp));
 	strcpy(cTemp, "MAPSIZEX = 824 MAPSIZEY = 824 TILESIZE = 10");
-	
-	// »õ ÆÄÀÏ Çì´õ ¾´´Ù.
+
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	fwrite(cTemp, 1, 256, pDestFile);
-	
-	// »õ ÆÄÀÏ À­ºÎºÐ
-	for (i = 1; i <= 80; i++) { 
-		ZeroMemory(cTemp, sizeof(cTemp));
+
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îºï¿½
+	for (i = 1; i <= 80; i++) {
+		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileA);
-		fwrite(cTemp, 1, 824*10, pDestFile);
+		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	ZeroMemory(cTemp, sizeof(cTemp));
-	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824*10, pDestFile);
+	ZeroMemory(cTemp, sizeof (cTemp));
+	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	//148
 	/*
 	ZeroMemory(cTemp, sizeof(cTemp));
 	for (i = 1; i <= 150; i++) fwrite(cTemp, 1, 824*10, pDestFile);
-	*/
+	 */
 
-	// »õ ÆÄÀÏ Áß°£ºÎºÐ
-	for (i = 1; i <= 524; i++) { 
-		ZeroMemory(cTemp, sizeof(cTemp));
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Îºï¿½
+	for (i = 1; i <= 524; i++) {
+		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFile);
-		fwrite(cTemp, 1, 824*10, pDestFile);
+		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	// »õ ÆÄÀÏ µÞºÎºÐ
-	ZeroMemory(cTemp, sizeof(cTemp));
-	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824*10, pDestFile);
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ÞºÎºï¿½
+	ZeroMemory(cTemp, sizeof (cTemp));
+	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
-	for (i = 1; i <= 80; i++) { 
-		ZeroMemory(cTemp, sizeof(cTemp));
+	for (i = 1; i <= 80; i++) {
+		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileB);
-		fwrite(cTemp, 1, 824*10, pDestFile);
+		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	ZeroMemory(cTemp, sizeof(cTemp));
-	for (i = 1; i <= 2; i++) fwrite(cTemp, 1, 824*10, pDestFile);
+	ZeroMemory(cTemp, sizeof (cTemp));
+	for (i = 1; i <= 2; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	/*
 	ZeroMemory(cTemp, sizeof(cTemp));
 	for (i = 1; i <= 150; i++) fwrite(cTemp, 1, 824*10, pDestFile);
-	*/
+	 */
 
 	fclose(pSrcFile);
 	fclose(pDestFile);

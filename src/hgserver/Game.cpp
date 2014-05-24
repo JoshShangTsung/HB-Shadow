@@ -1,7 +1,3 @@
-// Game.cpp: implementation of the CGame class.
-////Server Files & Source by Gigia. Thanks to www.comunidadmh.com !!.
-//////////////////////////////////////////////////////////////////////
-
 #include "Game.h"
 
 class CDebugWindow *DbgWnd;
@@ -47735,7 +47731,7 @@ void CGame::CheckForceRecallTime(int iClientH) {
 		// has admin set a recall time ??
 		if (m_sForceRecallTime > 0) {
 			m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = m_sForceRecallTime * 60;
-		}			// use standard recall time calculations
+		}// use standard recall time calculations
 		else {
 			GetLocalTime(&SysTime);
 			switch (SysTime.wDayOfWeek) {

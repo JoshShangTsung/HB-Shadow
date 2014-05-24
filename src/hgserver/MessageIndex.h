@@ -1,4 +1,4 @@
-
+#pragma once
 #define DEF_INDEX4_MSGID			0
 #define DEF_INDEX2_MSGTYPE			4
 
@@ -68,4 +68,4 @@
 #define DEF_INDEX4_INIT_EXP				64
 #define DEF_INDEX4_INIT_CHARISMA		68
 #define DEF_INDEX4_INIT_GUILDRANK		72
-*/
+ */

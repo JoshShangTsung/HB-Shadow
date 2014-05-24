@@ -1,13 +1,4 @@
-// Sprite.h: interface for the CSprite class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SPRITE_H__0089D9E2_74E6_11D2_A8E6_00001C7030A6__INCLUDED_)
-#define AFX_SPRITE_H__0089D9E2_74E6_11D2_A8E6_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include <windows.h>
 #include <stdio.h>
@@ -19,8 +10,7 @@
 #include "DXC_ddraw.h"
 #include "Mydib.h"
 
-typedef struct stBrushtag
-{
+typedef struct stBrushtag {
 	short sx;
 	short sy;
 	short szx;
@@ -29,15 +19,15 @@ typedef struct stBrushtag
 	short pvy;
 } stBrush;
 
-class CSprite  
-{
+class CSprite {
 public:
-	void * operator new (size_t size) 
-	{	return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
+
+	void * operator new (size_t size) {
+		return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
 	};
-	
-	void operator delete(void * mem)
-	{	HeapFree(GetProcessHeap(), HEAP_NO_SERIALIZE, mem);
+
+	void operator delete(void * mem) {
+		HeapFree(GetProcessHeap(), HEAP_NO_SERIALIZE, mem);
 	};
 
 	CSprite(HANDLE hPakFile, class DXC_ddraw * pDDraw, char * cPakFileName, short sNthFile, bool bAlphaEffect = TRUE);
@@ -81,25 +71,23 @@ public:
 	void _iCloseSprite();
 	bool _iOpenSprite();
 	void iRestore();
-	IDirectDrawSurface7 *  _pMakeSpriteSurface();
-		
-	RECT	m_rcBound;
-	DWORD	m_dwRefTime;
-	bool	m_bIsSurfaceEmpty;
-	bool	m_bOnCriticalSection;
-	bool	m_bAlphaEffect;
-	short	m_sPivotX, m_sPivotY;
-	class	DXC_ddraw * m_pDDraw;
-	WORD*	m_pSurfaceAddr;
-	DWORD	m_dwBitmapFileStartLoc;
-	short	m_sPitch;
-	int		m_iTotalFrame;
-	char	m_cAlphaDegree;
-	WORD	m_wBitmapSizeX, m_wBitmapSizeY;
-	WORD	m_wColorKey;
-	char	m_cPakFileName[16];
+	IDirectDrawSurface7 * _pMakeSpriteSurface();
+
+	RECT m_rcBound;
+	DWORD m_dwRefTime;
+	bool m_bIsSurfaceEmpty;
+	bool m_bOnCriticalSection;
+	bool m_bAlphaEffect;
+	short m_sPivotX, m_sPivotY;
+	class DXC_ddraw * m_pDDraw;
+	WORD* m_pSurfaceAddr;
+	DWORD m_dwBitmapFileStartLoc;
+	short m_sPitch;
+	int m_iTotalFrame;
+	char m_cAlphaDegree;
+	WORD m_wBitmapSizeX, m_wBitmapSizeY;
+	WORD m_wColorKey;
+	char m_cPakFileName[16];
 	stBrush* m_stBrush;
 	LPDIRECTDRAWSURFACE7 m_lpSurface;
 };
-
-#endif // !defined(AFX_SPRITE_H__0089D9E2_74E6_11D2_A8E6_00001C7030A6__INCLUDED_)

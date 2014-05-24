@@ -1,16 +1,7 @@
-// Item.h: interface for the CItem class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_ITEM_H__211A1360_91B9_11D2_B143_00001C7030A6__INCLUDED_)
-#define AFX_ITEM_H__211A1360_91B9_11D2_B143_00001C7030A6__INCLUDED_
-
+#pragma once
 #include <windows.h>
 
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
-										   
+
 #define DEF_MAXITEMEQUIPPOS		15
 #define DEF_EQUIPPOS_NONE		0	
 #define DEF_EQUIPPOS_HEAD		1	//66Ah	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD]
@@ -26,8 +17,8 @@
 #define DEF_EQUIPPOS_LFINGER	11	//67Eh
 #define DEF_EQUIPPOS_BACK		12  //680h
 #define DEF_EQUIPPOS_RELEASEALL	13	//682h
- 
-#define DEF_ITEMTYPE_NOTUSED	-1	// v1.4 ±âÁ¸¿¡ »ç¿ëµÇ¾úÀ¸³ª ÇöÀç·Î¼­´Â »ç¿ëµÇÁö ¾Ê´Â ¾ÆÀÌÅÛ: Æ÷»ó±ÝÀ¸·Î ´ëÃ¼µÈ´Ù.
+
+#define DEF_ITEMTYPE_NOTUSED	-1	// v1.4 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½È´ï¿½.
 #define DEF_ITEMTYPE_NONE		 0
 #define DEF_ITEMTYPE_EQUIP		 1
 #define DEF_ITEMTYPE_APPLY		 2
@@ -44,187 +35,92 @@
 
 
 #define DEF_ITEMEFFECTTYPE_NONE				0
-#define DEF_ITEMEFFECTTYPE_ATTACK			1		// °ø°ÝÄ¡: value1 D value2 + value3
-#define DEF_ITEMEFFECTTYPE_DEFENSE			2		// ¹æ¾î´É·Â 
-#define DEF_ITEMEFFECTTYPE_ATTACK_ARROW		3		// È­»ìÀ» »ç¿ëÇÏ´Â °ø°Ý¹«±â. ¹«±â ÀÚÃ¼´Â °ø°Ý·ÂÀÌ ¾ø´Ù.		
-#define DEF_ITEMEFFECTTYPE_HP   		    4		// HP°ü·Ã È¿°ú 
-#define DEF_ITEMEFFECTTYPE_MP   		    5		// MP°ü·Ã È¿°ú 
-#define DEF_ITEMEFFECTTYPE_SP   		    6		// SP°ü·Ã È¿°ú 
-#define DEF_ITEMEFFECTTYPE_HPSTOCK 		    7		// HP°ü·Ã È¿°ú. Áï°¢ÀûÀ¸·Î ¹ÝÀÀÀÌ ³ªÅ¸³ªÁö´Â ¾Ê´Â´Ù. 
-#define DEF_ITEMEFFECTTYPE_GET			    8		// ¾ò´Â´Ù. ¹°°í±â³ª ±¤¹°µî 
-#define DEF_ITEMEFFECTTYPE_STUDYSKILL		9		// ±â¼úÀ» ¹è¿ì´Â ¾ÆÀÌÅÛÀÌ´Ù.
-#define DEF_ITEMEFFECTTYPE_SHOWLOCATION		10		// À§Ä¡¸¦ Ç¥½ÃÇÏ´Â ¾ÆÀÌÅÛ. 
-#define DEF_ITEMEFFECTTYPE_MAGIC			11		// »ç¿ëÇÏ¸é ¸¶¹ý È¿°ú¸¦ ¾ò´Â ¾ÆÀÌÅÛ 
-#define DEF_ITEMEFFECTTYPE_CHANGEATTR		12		// ÇÃ·¹ÀÌ¾îÀÇ ¼Ó¼ºÀ» º¯È¯½ÃÅ²´Ù. ¼ºº°, ¸Ó¸®¸ð¾ç, ÇÇºÎ»ö, Çì¾î½ºÅ¸ÀÏ 
-#define DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE	13		// °ø°ÝÈ¿°ú¿Í ´õºÒ¾î ¸¶³ªÀÇ Àý¾à È¿°ú°¡ ÀÖ´Ù.(¸¶¹ý»ç¿ë)
-#define DEF_ITEMEFFECTTYPE_ADDEFFECT	    14		// Ãß°¡ È¿°ú
-#define DEF_ITEMEFFECTTYPE_MAGICDAMAGESAVE	15		// ¸¶¹ýÀ¸·Î ÀÎÇÑ °ø°ÝÀÇ ´ë¹ÌÁö¸¦ Àý°¨ÇÑ´Ù. ¹ÝÁö³ª ¸ñ°ÉÀÌ·ù 
-#define DEF_ITEMEFFECTTYPE_OCCUPYFLAG		16		// Á¡·É ±ê¹ß 
-#define DEF_ITEMEFFECTTYPE_DYE				17		// ¿°»ö¾à. 
-#define DEF_ITEMEFFECTTYPE_STUDYMAGIC		18		// ¸¶¹ýÀ» ¹è¿ì´Â ¾ÆÀÌÅÛÀÌ´Ù.
-#define DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN	19		// °ø°Ý È¿°ú¿Í ÇÔ²² ÃÖ´ë  HP ¹× HP È¸º¹·®ÀÌ ¶³¾îÁö´Â ¾ÆÀÌÅÛ 
-#define DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE	20		// °ø°Ý È¿°ú¿Í ÇÔ²² °©¿Ê°ú °°ÀÌ ¹°¸® ¹æ¾î±¸ È¿°ú°¡ ÀÖ´Â ¾ÆÀÌÅÛ 
-#define DEF_ITEMEFFECTTYPE_MATERIAL_ATTR	21		// ¹«±â Á¦ÀÛ Àç·á ¼Ó¼º 
-#define DEF_ITEMEFFECTTYPE_FIRMSTAMINAR		22		// ½ºÅÂ¹Ì³Ê °íÁ¤ ¾ÆÀÌÅÛ 
-#define DEF_ITEMEFFECTTYPE_LOTTERY			23		// º¹±Ç ¾ÆÀÌÅÛ
-#define DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY		24	// °ø°Ý ¾ÆÀÌÅÛ Æ¯¼ö È¿°ú 
-#define DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY	25	// ¹æ¾î±¸ ¾ÆÀÌÅÛ Æ¯¼ö È¿°ú 
-#define DEF_ITEMEFFECTTYPE_ALTERITEMDROP		26	// ´Ù¸¥ ¾ÆÀÌÅÛ ¶³¾îÁú °Í ´ë½Å ÀÌ ¾ÆÀÌÅÛÀÌ ¶³¾îÁø´Ù.
-#define DEF_ITEMEFFECTTYPE_CONSTRUCTIONKIT		27	// °ÇÃà Å°Æ®
+#define DEF_ITEMEFFECTTYPE_ATTACK			1		// ï¿½ï¿½ï¿½Ä¡: value1 D value2 + value3
+#define DEF_ITEMEFFECTTYPE_DEFENSE			2		// ï¿½ï¿½ï¿½É·ï¿½ 
+#define DEF_ITEMEFFECTTYPE_ATTACK_ARROW		3		// È­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.		
+#define DEF_ITEMEFFECTTYPE_HP   		    4		// HPï¿½ï¿½ï¿½ È¿ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_MP   		    5		// MPï¿½ï¿½ï¿½ È¿ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_SP   		    6		// SPï¿½ï¿½ï¿½ È¿ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_HPSTOCK 		    7		// HPï¿½ï¿½ï¿½ È¿ï¿½ï¿½. ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. 
+#define DEF_ITEMEFFECTTYPE_GET			    8		// ï¿½ï¿½Â´ï¿½. ï¿½ï¿½ï¿½ï¿½â³ª ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_STUDYSKILL		9		// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
+#define DEF_ITEMEFFECTTYPE_SHOWLOCATION		10		// ï¿½ï¿½Ä¡ï¿½ï¿½ Ç¥ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. 
+#define DEF_ITEMEFFECTTYPE_MAGIC			11		// ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_CHANGEATTR		12		// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½Å²ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½, ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½, ï¿½ÇºÎ»ï¿½, ï¿½ï¿½î½ºÅ¸ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE	13		// ï¿½ï¿½ï¿½È¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½Ö´ï¿½.(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+#define DEF_ITEMEFFECTTYPE_ADDEFFECT	    14		// ï¿½ß°ï¿½ È¿ï¿½ï¿½
+#define DEF_ITEMEFFECTTYPE_MAGICDAMAGESAVE	15		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ì·ï¿½ 
+#define DEF_ITEMEFFECTTYPE_OCCUPYFLAG		16		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_DYE				17		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. 
+#define DEF_ITEMEFFECTTYPE_STUDYMAGIC		18		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
+#define DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN	19		// ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½Ö´ï¿½  HP ï¿½ï¿½ HP È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE	20		// ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î±¸ È¿ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_MATERIAL_ATTR	21		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ 
+#define DEF_ITEMEFFECTTYPE_FIRMSTAMINAR		22		// ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_LOTTERY			23		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY		24	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ È¿ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY	25	// ï¿½ï¿½î±¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ È¿ï¿½ï¿½ 
+#define DEF_ITEMEFFECTTYPE_ALTERITEMDROP		26	// ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+#define DEF_ITEMEFFECTTYPE_CONSTRUCTIONKIT		27	// ï¿½ï¿½ï¿½ï¿½ Å°Æ®
 #define DEF_ITEMEFFECTTYPE_WARM				28		// Unfreeze pot ?
 #define DEF_ITEMEFFECTTYPE_FARMING			30
 #define DEF_ITEMEFFECTTYPE_SLATES			31
 #define DEF_ITEMEFFECTTYPE_ARMORDYE			32
 #define DEF_ITEMEFFECTTYPE_ADDBALLPOINTS 33
 #define DEF_ITEMEFFECTTYPE_REPPLUS 34
-#define DEF_ITET_UNIQUE_OWNER				1		// ItemTouchEffect: ÁÖÀÎÀ» °®´Â ¾ÆÀÌÅÛ 
-#define DEF_ITET_ID							2		// ±×³É ¾ÆÀÌÅÛ ¾ÆÀÌµð
-#define DEF_ITET_DATE						3		// »ç¿ë°¡´ÉÇÑ ³¯Â¥°¡ ÁöÁ¤µÈ ¾ÆÀÌÅÛ 
+#define DEF_ITET_UNIQUE_OWNER				1		// ItemTouchEffect: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+#define DEF_ITET_ID							2		// ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
+#define DEF_ITET_DATE						3		// ï¿½ï¿½ë°¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
-
-class CItem  
-{
+class CItem {
 public:
 	CItem();
-	virtual ~CItem();
 
-	char  m_cName[21];
-	
-	short m_sIDnum;					// ¾ÆÀÌÅÛÀÇ °íÀ¯ ¹øÈ£
-	char  m_cItemType;
-	char  m_cEquipPos;
-	short m_sItemEffectType;     
-	short m_sItemEffectValue1, m_sItemEffectValue2, m_sItemEffectValue3; 
-	short m_sItemEffectValue4, m_sItemEffectValue5, m_sItemEffectValue6; 
-	WORD  m_wMaxLifeSpan;
+	char m_cName[21];
+
+	short m_sIDnum; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£
+	char m_cItemType;
+	char m_cEquipPos;
+	short m_sItemEffectType;
+	short m_sItemEffectValue1, m_sItemEffectValue2, m_sItemEffectValue3;
+	short m_sItemEffectValue4, m_sItemEffectValue5, m_sItemEffectValue6;
+	WORD m_wMaxLifeSpan;
 	short m_sSpecialEffect;
-	
-	//short m_sSM_HitRatio, m_sL_HitRatio;
-	//v1.432 ¸íÁß·ü °¡°¨ »ç¿ë ¾ÈÇÑ´Ù. ´ë½Å Æ¯¼ö ´É·Â ¼öÄ¡°¡ µé¾î°£´Ù.
-	short m_sSpecialEffectValue1, m_sSpecialEffectValue2; 
+
+	short m_sSpecialEffectValue1, m_sSpecialEffectValue2;
 
 	short m_sSprite;
 	short m_sSpriteFrame;
 
-	char  m_cApprValue;
-	char  m_cSpeed;
+	char m_cApprValue;
+	char m_cSpeed;
 
-	DWORD m_wPrice; 
-	WORD  m_wWeight;
-	short m_sLevelLimit;	
-	char  m_cGenderLimit;
+	DWORD m_wPrice;
+	WORD m_wWeight;
+	short m_sLevelLimit;
+	char m_cGenderLimit;
 
 	short m_sRelatedSkill;
-	
-	char  m_cCategory;
-	BOOL  m_bIsForSale;
+
+	char m_cCategory;
+	BOOL m_bIsForSale;
 
 	DWORD m_dwCount;
 	short m_sTouchEffectType;
 	short m_sTouchEffectValue1, m_sTouchEffectValue2, m_sTouchEffectValue3;
-	char  m_cItemColor; // v1.4 ¿¡¼­ ¾ÆÀÌÅÛ »öÀ¸·Î º¯°æµÇ¾ú´Ù. 
+	char m_cItemColor;
 	short m_sItemSpecEffectValue1, m_sItemSpecEffectValue2, m_sItemSpecEffectValue3;
-	WORD  m_wCurLifeSpan;
-	DWORD m_dwAttribute;				// aaaa bbbb cccc dddd eeee ffff xxxx xxx1 
-										// 1: Custom-Made Item flag 
-										// a: Item ¼Ó¼º Á¾·ù 
-										// b: Item ¼Ó¼º Á¤µµ
-										// c: Æ¯¼ö ¾ÆÀÌÅÛ ¼ºÁú Flag 
-										// d: Æ¯¼ö ¾ÆÀÌÅÛ ¼ºÁú Á¤µµ 
-										// e: Æ¯¼ö ¾ÆÀÌÅÛ Ãß°¡ ¼ºÁú Flag
-										// f: Æ¯¼ö ¾ÆÀÌÅÛ Ãß°¡ ¼ºÁú Á¤µµ 
-										 
-void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize);
+	WORD m_wCurLifeSpan;
+	DWORD m_dwAttribute;
+	void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize);
 	BOOL bReadBallSystemConfigFile(char * cFn);
 };
 
-/*
-¾ÆÀÌÅÛ Á¤ÀÇÆÄÀÏ¿¡ ÇÊ¿äÇÑ ³»¿ë - °ÔÀÓ ¼­¹ö¿ë
-
-char cItemType
- - ¾ÆÀÌÅÛÀÇ Á¾·ù. ÀåÂøµÇ´Â °ÍÀÎÁö ¼Ò¸ðµÇ´Â °ÍÀÎÁö¿¡ ´ëÇÑ Á¤ÀÇ
-
-char cEquipPos
- - ÀåÂøµÇ´Â ¾ÆÀÌÅÛÀÌ¶ó¸é ±× À§Ä¡ 
-
-short sItemEffectType     
-  - ¾ÆÀÌÅÛÀÇ È¿°ú Á¾·ù.  
-
-short sItemEffectValue1, 2, 3 ... 
- - ¾ÆÀÌÅÛ È¿°úÀÇ ¼öÄ¡ 1, 2, 3...
-
-WORD wMaxLifeSpan
- - ¾ÆÀÌÅÛÀÇ ÃÖ´ë ¼ö¸í 
-
-short sMaxFixCount
- - ÃÖ´ë °íÄ¥¼ö ÀÖ´Â È½¼ö
-
-short sSprite
-short sSpriteFrame
- - ¾ÆÀÌÅÛ ½ºÇÁ¶óÀÌÆ® ¹øÈ£ 
-
-WORD  wPrice 
- - ¾ÆÀÌÅÛ °¡°Ý 
-WORD  wWeight
- - ¾ÆÀÌÅÛ ¹«°Ô 
-short sLevelLimit
- - ¾ÆÀÌÅÛ ·¹º§ Á¦ÇÑ 
-char  cGenderLimit
- - ¾ÆÀÌÅÛ ¼ºº° Á¦ÇÑ 
-
-short m_SM_HitRatio, m_sL_HitRatio
- - ¸ñÇ¥º° ¸íÁß·ü °¡°¨Ä¡ (¹«±âÀÏ °æ¿ì)
-
-short sRelatedSkill
- - ¿¬°áµÈ Skill
-
-ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ ÆÄÀÏ¿¡ ÀúÀåµÇ¾î¾ß ÇÒ Á¤º¸ - ·Î±× ¼­¹ö¿ë 
-
-DWORD dwCount
- - ¾ÆÀÌÅÛÀÇ °¹¼ö. (°°Àº Á¾·ùÀÇ È­»ìÀÌ³ª Æ÷¼Ç, Goldµî¸¸ÀÌ ÀÇ¹Ì¸¦ °®´Â´Ù)
-
-WORD wCurLifeSpan
- - ÇöÀç ³²Àº ¼ö¸í 
-
-short sCurFixCount
- - ÇöÀç±îÁö ¼ö¸®ÇÑ È½¼ö 
-
-short sTouchEffectType
- - ¾ÆÀÌÅÛÀ» Ã³À½ °Çµå·ÈÀ»¶§ ÀÛµ¿µÇ´Â È¿°ú Á¾·ù 
-
-short sTouchEffectValue1, 2, 3...
- - ¾ÆÀÌÅÛ Á¢ÃË È¿°úÀÇ ¼öÄ¡ 
-
-short sItemSpecEffectType
- - ¾ÆÀÌÅÛÀÇ Æ¯¼öÈ¿°ú Á¾·ù (ex:¸¶¹ýÀÌ °É¸° ¹«±â¶ó¸é °ø°Ý·ÂÀÌ³ª ¹æ¾î·Â¿¡ ¿µÇâÀÌ ÀÖÀ»¼öµµ)
-
-short sItemSpecEffectValue1, 2, 3...
- - ¾ÆÀÌÅÛ Æ¯¼öÈ¿°úÀÇ ¼öÄ¡ 1, 2, 3...
-
-
-¿Ê ¾ÆÀÌÅÛÀÎ °æ¿ì(Equip PositionÀÌ Body, Leggings, ArmsÀÎ °æ¿ì)
-sItemEffectValue4: ¿ÊÀÇ Æ¯Á¤ Æ¯¼ºÄ¡ Á¦ÇÑ Á¾·ù¸¦ ³ªÅ¸³½´Ù. 
-
-  10: Str
-  11: Dex
-  12: Vit
-  13: Int
-  14: Mag
-  15: Chr
-
-sItemEffectValue5: ¿ÊÀÇ Æ¯Á¤ Æ¯¼ºÄ¡ Á¦ÇÑ ¼öÁØ
-
-
-
-*/
-//ball trade
-	class CBallSystem  
-{
+class CBallSystem {
 public:
-	
-		short m_sBS_ID;
-		char m_cName[20];
-		int m_iReqPoints;
+
+	short m_sBS_ID;
+	char m_cName[20];
+	int m_iReqPoints;
 
 };
-#endif // !defined(AFX_ITEM_H__211A1360_91B9_11D2_B143_00001C7030A6__INCLUDED_)

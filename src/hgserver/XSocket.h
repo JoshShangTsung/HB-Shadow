@@ -1,16 +1,4 @@
-// XSocket.h: interface for the XSocket class.
-//
-//////////////////////////////////////////////////////////////////////
-
-// Çì´õÀÇ È®ÀÎÄÚµå´Â 1¹ÙÀÌÆ®, Å©±â´Â WORD·Î º¯°æµÇ¾úÀ½. Áï Çì´õ´Â ÃÑ 3¹ÙÀÌÆ® 
-
-
-#if !defined(AFX_XSOCKET_H__F9D1BA42_7338_11D2_A8E6_00001C7030A6__INCLUDED_)
-#define AFX_XSOCKET_H__F9D1BA42_7338_11D2_A8E6_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #define _WINSOCK2API_
 //#define  FD_SETSIZE 2000
@@ -34,76 +22,73 @@
 #define DEF_XSOCKSTATUS_READINGHEADER	11
 #define DEF_XSOCKSTATUS_READINGBODY		12
 
-#define DEF_XSOCKEVENT_SOCKETMISMATCH			-121	// ¼ÒÄÏ ÀÌº¥Æ®¿Í ¼ÒÄÏÀÌ ¼­·Î ´Ù¸£´Ù. (ÀÌ·± °æ¿ì°¡?)
-#define DEF_XSOCKEVENT_CONNECTIONESTABLISH		-122	// Á¢¼ÓÀÌ ÀÌ·ç¾î Á³´Ù.
-#define DEF_XSOCKEVENT_RETRYINGCONNECTION		-123	// Á¢¼ÓÀ» ´Ù½Ã ½ÃµµÇÏ´Â ÁßÀÌ´Ù.
-#define DEF_XSOCKEVENT_ONREAD					-124	// ¸Þ½ÃÁö¸¦ ÀÐ´Â ÁßÀÌ´Ù. 
-#define DEF_XSOCKEVENT_READCOMPLETE				-125	// ÇÏ³ªÀÇ ¸Þ½ÃÁö¸¦ ¿ÏÀüÈ÷ ¼ö½ÅÇß´Ù.
-#define DEF_XSOCKEVENT_UNKNOWN					-126	// ¾Ë¼ö¾ø´Â ÀÌº¥Æ®ÀÌ´Ù.
-#define DEF_XSOCKEVENT_SOCKETCLOSED				-127	// ¼ÒÄÏÀÌ ´ÝÇû´Ù. 
-#define DEF_XSOCKEVENT_BLOCK					-128	// ¸Þ½ÃÁö¸¦ º¸³»´Ù°¡ ¼ÒÄÏÀÌ ºí·°µÈ »óÅÂÀÌ´Ù.
-#define DEF_XSOCKEVENT_SOCKETERROR				-129	// ¼ÒÄÏ¿¡ ¿¡·¯°¡ ¹ß»ýÇß´Ù. ÀÌ°æ¿ì Å¬·¡½º¸¦ »èÁ¦ÇÏ¿©¾ß ÇÑ´Ù.
-#define DEF_XSOCKEVENT_CRITICALERROR			-130    // Ä¡¸íÀûÀÎ ¿¡·¯·Î ÇÁ·Î±×·¥ ÀüÃ¼°¡ ¸ØÃç¾ß ÇÑ´Ù.
-#define DEF_XSOCKEVENT_NOTINITIALIZED			-131	// Å¬·¡½º°¡ ÃÊ±âÈ­ µÇÁö ¾ÊÀº »óÅÂ·Î »ç¿ëµÆ´Ù.
-#define DEF_XSOCKEVENT_MSGSIZETOOLARGE			-132	// º¸³»°íÀÚ ÇÏ´Â ¸Þ½ÃÁöÀÇ »çÀÌÁî°¡ ³Ê¹« Å©´Ù.
-#define DEF_XSOCKEVENT_CONFIRMCODENOTMATCH		-133	// È®ÀÎÄÚµå°¡ ÀÏÄ¡ÇÏÁö ¾Ê´Â´Ù. »èÁ¦µÇ¾î¾ß ÇÑ´Ù.
-#define DEF_XSOCKEVENT_QUENEFULL                -134    // ºí·Ï Å¥ÀÇ °ø°£ÀÌ ¾ø´Ù.
-#define DEF_XSOCKEVENT_UNSENTDATASENDBLOCK		-135    // Å¥¿¡ ÀÖ´Â µ¥ÀÌÅÍ¸¦ º¸³»´Ù°¡ ¶Ç ºí·ÏÀÌ °É·È´Ù. 
-#define DEF_XSOCKEVENT_UNSENTDATASENDCOMPLETE	-136	// Å¥¿¡ ÀÖ´Â ¸ðµç µ¥ÀÌÅÍ¸¦ º¸³Â´Ù.
+#define DEF_XSOCKEVENT_SOCKETMISMATCH			-121	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½ï¿½. (ï¿½Ì·ï¿½ ï¿½ï¿½ì°¡?)
+#define DEF_XSOCKEVENT_CONNECTIONESTABLISH		-122	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+#define DEF_XSOCKEVENT_RETRYINGCONNECTION		-123	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Ãµï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½.
+#define DEF_XSOCKEVENT_ONREAD					-124	// ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð´ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½. 
+#define DEF_XSOCKEVENT_READCOMPLETE				-125	// ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½.
+#define DEF_XSOCKEVENT_UNKNOWN					-126	// ï¿½Ë¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½Ì´ï¿½.
+#define DEF_XSOCKEVENT_SOCKETCLOSED				-127	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½. 
+#define DEF_XSOCKEVENT_BLOCK					-128	// ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½?ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
+#define DEF_XSOCKEVENT_SOCKETERROR				-129	// ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ß´ï¿½. ï¿½Ì°ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
+#define DEF_XSOCKEVENT_CRITICALERROR			-130    // Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
+#define DEF_XSOCKEVENT_NOTINITIALIZED			-131	// Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½Æ´ï¿½.
+#define DEF_XSOCKEVENT_MSGSIZETOOLARGE			-132	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½î°¡ ï¿½Ê¹ï¿½ Å©ï¿½ï¿½.
+#define DEF_XSOCKEVENT_CONFIRMCODENOTMATCH		-133	// È®ï¿½ï¿½ï¿½Úµå°¡ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
+#define DEF_XSOCKEVENT_QUENEFULL                -134    // ï¿½ï¿½ï¿½ Å¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
+#define DEF_XSOCKEVENT_UNSENTDATASENDBLOCK		-135    // Å¥ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½É·È´ï¿½. 
+#define DEF_XSOCKEVENT_UNSENTDATASENDCOMPLETE	-136	// Å¥ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½Â´ï¿½.
 
-#define DEF_XSOCKBLOCKLIMIT						300		// ÀÌ Å¬·¡½º ¼ÒÄÏÀº ?¹øÀÌ»ó ºí·ÏµÇ¸é ´õÀÌ»ó µ¥ÀÌÅÍ¸¦ ÀúÀåÇÒ ¼ö ¾ø´Ù. 	
+#define DEF_XSOCKBLOCKLIMIT						300		// ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ?ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½ÏµÇ¸ï¿½ ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½. 	
 
-class XSocket  
-{
+class XSocket {
 public:
-			 	int iGetPeerAddress(char * pAddrString);
+	int iGetPeerAddress(char * pAddrString);
 	char * pGetRcvDataPointer(DWORD * pMsgSize, char * pKey = NULL);
 	SOCKET iGetSocket();
 	BOOL bAccept(class XSocket * pXSock, unsigned int uiMsg);
 	BOOL bListen(char * pAddr, int iPort, unsigned int uiMsg);
 	int iSendMsg(char * cData, DWORD dwSize, char cKey = NULL);
 	BOOL bConnect(char * pAddr, int iPort, unsigned int uiMsg);
-	int  iOnSocketEvent(WPARAM wParam, LPARAM lParam);
+	int iOnSocketEvent(WPARAM wParam, LPARAM lParam);
 	BOOL bInitBufferSize(DWORD dwBufferSize);
 	XSocket(HWND hWnd, int iBlockLimit);
 	virtual ~XSocket();
 
-	int  m_WSAErr;
+	int m_WSAErr;
 	BOOL m_bIsAvailable;
 
 private:
 	void _CloseConn();
-	
+
 	int _iSendUnsentData();
 	int _iRegisterUnsentData(char * cData, int iSize);
 	int _iSend(char * cData, int iSize, BOOL bSaveFlag);
 	int _iSend_ForInternalUse(char * cData, int iSize);
 	int _iOnRead();
-	
-	char   m_cType;
+
+	char m_cType;
 	char * m_pRcvBuffer;
 	char * m_pSndBuffer;
-	DWORD  m_dwBufferSize;
-	
+	DWORD m_dwBufferSize;
+
 	SOCKET m_Sock;
-	char   m_cStatus;
-	DWORD  m_dwReadSize;
-	DWORD  m_dwTotalReadSize;
-	char   m_pAddr[30];
-	int    m_iPortNum;
+	char m_cStatus;
+	DWORD m_dwReadSize;
+	DWORD m_dwTotalReadSize;
+	char m_pAddr[30];
+	int m_iPortNum;
 
 	char * m_pUnsentDataList[DEF_XSOCKBLOCKLIMIT];
-	int    m_iUnsentDataSize[DEF_XSOCKBLOCKLIMIT];
-	short  m_sHead, m_sTail;
+	int m_iUnsentDataSize[DEF_XSOCKBLOCKLIMIT];
+	short m_sHead, m_sTail;
 
 	unsigned int m_uiMsg;
-	HWND         m_hWnd;
+	HWND m_hWnd;
 
-	int			 m_iBlockLimit;
+	int m_iBlockLimit;
 };
 
 
 BOOL _InitWinsock();
 void _TermWinsock();
-
-#endif // !defined(AFX_XSOCKET_H__F9D1BA42_7338_11D2_A8E6_00001C7030A6__INCLUDED_)

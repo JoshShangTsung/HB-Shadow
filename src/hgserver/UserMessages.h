@@ -1,4 +1,4 @@
-
+#pragma once
 #define WM_USER_STARTGAMESIGNAL	WM_USER + 10
 
 #define WM_USER_ACCEPT			WM_USER + 100
@@ -9,4 +9,3 @@
 // Ŭ���̾�Ʈ�� 1100�� ���ϸ� �����ϹǷ� �� ���ķ� �޽����� ���ǵǾ�� �ȵȴ�. 
 #define WM_ONCLIENTSOCKETEVENT	WM_USER + 1100
 
-												 

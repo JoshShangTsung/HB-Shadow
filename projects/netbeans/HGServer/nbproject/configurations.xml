@@ -9,7 +9,6 @@
       <itemPath>../../../src/hgserver/Client.h</itemPath>
       <itemPath>../../../src/hgserver/DebugDialog.cpp</itemPath>
       <itemPath>../../../src/hgserver/DebugDialog.h</itemPath>
-      <itemPath>../../../src/hgserver/DelayEvent.cpp</itemPath>
       <itemPath>../../../src/hgserver/DelayEvent.h</itemPath>
       <itemPath>../../../src/hgserver/DynamicObject.cpp</itemPath>
       <itemPath>../../../src/hgserver/DynamicObject.h</itemPath>
@@ -37,23 +36,18 @@
       <itemPath>../../../src/hgserver/NetMessages.h</itemPath>
       <itemPath>../../../src/hgserver/Npc.cpp</itemPath>
       <itemPath>../../../src/hgserver/Npc.h</itemPath>
-      <itemPath>../../../src/hgserver/NpcItem.cpp</itemPath>
       <itemPath>../../../src/hgserver/OccupyFlag.cpp</itemPath>
       <itemPath>../../../src/hgserver/OccupyFlag.h</itemPath>
       <itemPath>../../../src/hgserver/Player.h</itemPath>
       <itemPath>../../../src/hgserver/Portion.cpp</itemPath>
       <itemPath>../../../src/hgserver/Portion.h</itemPath>
-      <itemPath>../../../src/hgserver/Quest.cpp</itemPath>
       <itemPath>../../../src/hgserver/Quest.h</itemPath>
       <itemPath>../../../src/hgserver/Skill.cpp</itemPath>
       <itemPath>../../../src/hgserver/Skill.h</itemPath>
-      <itemPath>../../../src/hgserver/SkillNum.h</itemPath>
       <itemPath>../../../src/hgserver/StrTok.cpp</itemPath>
       <itemPath>../../../src/hgserver/StrTok.h</itemPath>
       <itemPath>../../../src/hgserver/StrategicPoint.cpp</itemPath>
       <itemPath>../../../src/hgserver/StrategicPoint.h</itemPath>
-      <itemPath>../../../src/hgserver/Structure.cpp</itemPath>
-      <itemPath>../../../src/hgserver/Structure.h</itemPath>
       <itemPath>../../../src/hgserver/Teleport.cpp</itemPath>
       <itemPath>../../../src/hgserver/Teleport.h</itemPath>
       <itemPath>../../../src/hgserver/TeleportLoc.cpp</itemPath>
@@ -130,11 +124,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../../src/hgserver/DelayEvent.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
       <item path="../../../src/hgserver/DelayEvent.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/DynamicObject.cpp"
@@ -207,8 +196,6 @@
       </item>
       <item path="../../../src/hgserver/Npc.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../../src/hgserver/NpcItem.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="../../../src/hgserver/OccupyFlag.cpp"
             ex="false"
             tool="1"
@@ -222,15 +209,11 @@
       </item>
       <item path="../../../src/hgserver/Portion.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../../src/hgserver/Quest.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="../../../src/hgserver/Quest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Skill.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Skill.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../../../src/hgserver/SkillNum.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/StrTok.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -245,13 +228,6 @@
             ex="false"
             tool="3"
             flavor2="0">
-      </item>
-      <item path="../../../src/hgserver/Structure.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../../src/hgserver/Structure.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Teleport.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -312,7 +288,7 @@
         <ccTool>
           <developmentMode>5</developmentMode>
           <standard>8</standard>
-          <commandLine>-Wall -Wextra</commandLine>
+          <commandLine>-Wall -Wextra -Os -fomit-frame-pointer</commandLine>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -350,11 +326,6 @@
       <item path="../../../src/hgserver/DebugDialog.h"
             ex="false"
             tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../../src/hgserver/DelayEvent.cpp"
-            ex="false"
-            tool="1"
             flavor2="0">
       </item>
       <item path="../../../src/hgserver/DelayEvent.h" ex="false" tool="3" flavor2="0">
@@ -429,8 +400,6 @@
       </item>
       <item path="../../../src/hgserver/Npc.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../../src/hgserver/NpcItem.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="../../../src/hgserver/OccupyFlag.cpp"
             ex="false"
             tool="1"
@@ -444,15 +413,11 @@
       </item>
       <item path="../../../src/hgserver/Portion.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../../src/hgserver/Quest.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="../../../src/hgserver/Quest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Skill.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Skill.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../../../src/hgserver/SkillNum.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/StrTok.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -467,13 +432,6 @@
             ex="false"
             tool="3"
             flavor2="0">
-      </item>
-      <item path="../../../src/hgserver/Structure.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../../src/hgserver/Structure.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Teleport.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -1,13 +1,4 @@
-// Game.h: interface for the CGame class.
-////Server Files & Source by Gigia. Thanks to www.comunidadmh.com !!.
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_GAME_H__0089D9E3_74E6_11D2_A8E6_00001C7030A6__INCLUDED_)
-#define AFX_GAME_H__0089D9E3_74E6_11D2_A8E6_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include <windows.h>
 #include <windowsx.h>
@@ -48,14 +39,9 @@
 #include "Curse.h"
 #include "Cint.h"
 #ifdef DEF_USING_WIN_IME
-	#include <RICHEDIT.H>
+#include <RICHEDIT.H>
 #endif
 
-//Snoopy: Implementation JPG sreenshots
-//#include "cximage/ximage.h" // Snoopy
-//#include "cximage/ximajpg.h" // Snoopy
-
-//v2.18
 #define DEF_BTNSZX				74
 #define DEF_BTNSZY				20
 #define DEF_LBTNPOSX			30
@@ -135,19 +121,15 @@
 #define DEF_MAXPARTYMEMBERS			8
 #define DEF_MAXCRUSADESTRUCTURES	300
 
-
-class CGame
-{
+class CGame {
 public:
-	// CLEROTH - AURAS
+	CGame();
 	void CheckActiveAura(short sX, short sY, DWORD dwTime, short sOwnerType);
 	void CheckActiveAura2(short sX, short sY, DWORD dwTime, short sOwnerType);
 
-	// MJ Stats Change Related functions - Alastor
-	void DrawDialogBox_ChangeStatsMajestic(short msX, short msY);		// Change stats using majestic - Alastor
-	void DlgBoxClick_ChangeStatsMajestic(short msX, short msY);			// Change stats using majestic - Alastor
+	void DrawDialogBox_ChangeStatsMajestic(short msX, short msY);
+	void DlgBoxClick_ChangeStatsMajestic(short msX, short msY);
 
-	// MJ Stats Change Related vars - Alastor
 	char cStateChange1;
 	char cStateChange2;
 	char cStateChange3;
@@ -155,13 +137,12 @@ public:
 	int m_iTeleportMapCount;
 	void ResponseTeleportList(char * pData);
 	void ResponseChargedTeleport(char * pData);
-	void * operator new (size_t size)
-	{
+
+	void * operator new (size_t size) {
 		return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
 	};
 
-	void operator delete(void * mem)
-	{
+	void operator delete(void * mem) {
 		HeapFree(GetProcessHeap(), HEAP_NO_SERIALIZE, mem);
 	};
 
@@ -171,9 +152,9 @@ public:
 	void ReadSettings();
 	void WriteSettings();
 
-	int  iGetManaCost(int iMagicNo);
+	int iGetManaCost(int iMagicNo);
 	void UseMagic(int iMagicNo);
-	BOOL _bCheckMoveable( short sx, short sy );
+	BOOL _bCheckMoveable(short sx, short sy);
 	BOOL FindGuildName(char* pName, int* ipIndex);
 	void bItemDrop_SkillDialog();
 	void bItemDrop_IconPannel(short msX, short msY);
@@ -191,67 +172,66 @@ public:
 	void DrawTopMsg();
 	void SetTopMsg(char * pString, unsigned char iLastSec);
 	void DrawObjectFOE(int ix, int iy, int iFrame);
-	void GrandMagicResult(char * pMapName, int iV1, int iV2, int iV3, int iV4, int iHP1, int iHP2, int iHP3, int iHP4) ;
+	void GrandMagicResult(char * pMapName, int iV1, int iV2, int iV3, int iV4, int iHP1, int iHP2, int iHP3, int iHP4);
 	void MeteorStrikeComing(int iCode);
 	void _Draw_OnLogin(char * pAccount, char * pPassword, int msX, int msY, int iFrame = 60000);
 	void DrawNewDialogBox(char cType, int sX, int sY, int iFrame, BOOL bIsNoColorKey = FALSE, BOOL bIsTrans = FALSE);
 	void AddMapStatusInfo(char * pData, BOOL bIsLastData);
 	void _RequestMapStatus(char * pMapName, int iMode);
-	int  GetCharKind(char *str, int index);
+	int GetCharKind(char *str, int index);
 	void ReceiveString(char * pString);
 	void EndInputString();
 	void ClearInputString();
 	void ShowReceivedString(BOOL bIsHide = FALSE);
-	bool GetText(HWND hWnd,UINT msg,WPARAM wparam, LPARAM lparam);
+	bool GetText(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	BOOL bReadItemNameConfigFile();
 	void DrawDialogBoxs(short msX, short msY, short msZ, char cLB);
-	void DrawDialogBox_Character(short msX, short msY);//1
-	void DrawDialogBox_Inventory(int msX, int msY);//2
-	void DrawDialogBox_Magic(short msX, short msY, short msZ);//3
-	void DrawDialogBox_GuildMenu(short msX, short msY);//7
-	void DrawDialogBox_GuildOperation(short msX, short msY);//8
-	void DrawDialogBox_GuideMap(short msX, short msY, char cLB);//9
-	void DrawDialogBox_Chat(short msX, short msY, short msZ, char cLB);//10
-	void DrawDialogBox_Shop(short msX, short msY, short msZ, char cLB);//11
-	void DrawDialogBox_LevelUpSetting(short msX, short msY);//12
-	void DrawDialogBox_CityHallMenu(short msX, short msY);//13
-	void DrawDialogBox_Bank(short msX, short msY, short msZ, char cLB);//14
-	void DrawDialogBox_Skill(short msX, short msY, short msZ, char cLB);//15
-	void DrawDialogBox_MagicShop(short msX, short msY, short msZ);//16
-	void DrawDialogBox_QueryDropItemAmount();//17
-	void DrawDialogBox_Text(short msX, short msY, short msZ, char cLB);//18
-	void DrawDialogBox_SysMenu(short msX, short msY, char cLB);//19
-	void DrawDialogBox_NpcActionQuery(short msX, short msY);//20
-	void DrawDialogBox_NpcTalk(short msX, short msY, char cLB);//21
-	void DrawDialogBox_Map();//22
-	void DrawDialogBox_SellorRepairItem(short msX, short msY);//23
-	void DrawDialogBox_Fishing(short msX, short msY);//24
-	void DrawDialogBox_ShutDownMsg(short msX, short msY);//25
-	void DrawDialogBox_SkillDlg(short msX, short msY, short msZ, char cLB);//26
-	void DrawDialogBox_Exchange(short msX, short msY);//27
-	void DrawDialogBox_Quest(int msX, int msY);//28
-	void DrawDialogBox_GaugePannel();//29
-	void DrawDialogBox_IconPannel(short msX, short msY);//30
-	void DrawDialogBox_SellList(short msX, short msY);//31
-	void DrawDialogBox_Party(short msX, short msY);//32
-	void DrawDialogBox_CrusadeJob(short msX, short msY);//33
-	void DrawDialogBox_ItemUpgrade(int msX, int msY);//34
-	void DrawDialogBox_Help(int msX, int msY);//35
-	void DrawDialogBox_Commander(int msX, int msY);//36
-	void DrawDialogBox_Constructor(int msX, int msY);//37
-	void DrawDialogBox_Soldier(int msX, int msY);//38
-    void DrawDialogBox_ItemDrop(short msX, short msY);//4
-	void DrawDialogBox_WarningMsg(short msX, short msY);//6
-	void DrawDialogBox_15AgeMsg(short msX, short msY);//5
-	void DrawDialogBox_FeedBackCard(short msX, short msY);//40
-	void DisplayCommaNumber_G_cTxt(int iGold);// Name changed by Snoopy (easyer to understand...)
+	void DrawDialogBox_Character(short msX, short msY); //1
+	void DrawDialogBox_Inventory(int msX, int msY); //2
+	void DrawDialogBox_Magic(short msX, short msY, short msZ); //3
+	void DrawDialogBox_GuildMenu(short msX, short msY); //7
+	void DrawDialogBox_GuildOperation(short msX, short msY); //8
+	void DrawDialogBox_GuideMap(short msX, short msY, char cLB); //9
+	void DrawDialogBox_Chat(short msX, short msY, short msZ, char cLB); //10
+	void DrawDialogBox_Shop(short msX, short msY, short msZ, char cLB); //11
+	void DrawDialogBox_LevelUpSetting(short msX, short msY); //12
+	void DrawDialogBox_CityHallMenu(short msX, short msY); //13
+	void DrawDialogBox_Bank(short msX, short msY, short msZ, char cLB); //14
+	void DrawDialogBox_Skill(short msX, short msY, short msZ, char cLB); //15
+	void DrawDialogBox_MagicShop(short msX, short msY, short msZ); //16
+	void DrawDialogBox_QueryDropItemAmount(); //17
+	void DrawDialogBox_Text(short msX, short msY, short msZ, char cLB); //18
+	void DrawDialogBox_SysMenu(short msX, short msY, char cLB); //19
+	void DrawDialogBox_NpcActionQuery(short msX, short msY); //20
+	void DrawDialogBox_NpcTalk(short msX, short msY, char cLB); //21
+	void DrawDialogBox_Map(); //22
+	void DrawDialogBox_SellorRepairItem(short msX, short msY); //23
+	void DrawDialogBox_Fishing(short msX, short msY); //24
+	void DrawDialogBox_ShutDownMsg(short msX, short msY); //25
+	void DrawDialogBox_SkillDlg(short msX, short msY, short msZ, char cLB); //26
+	void DrawDialogBox_Exchange(short msX, short msY); //27
+	void DrawDialogBox_Quest(int msX, int msY); //28
+	void DrawDialogBox_GaugePannel(); //29
+	void DrawDialogBox_IconPannel(short msX, short msY); //30
+	void DrawDialogBox_SellList(short msX, short msY); //31
+	void DrawDialogBox_Party(short msX, short msY); //32
+	void DrawDialogBox_CrusadeJob(short msX, short msY); //33
+	void DrawDialogBox_ItemUpgrade(int msX, int msY); //34
+	void DrawDialogBox_Help(int msX, int msY); //35
+	void DrawDialogBox_Commander(int msX, int msY); //36
+	void DrawDialogBox_Constructor(int msX, int msY); //37
+	void DrawDialogBox_Soldier(int msX, int msY); //38
+	void DrawDialogBox_ItemDrop(short msX, short msY); //4
+	void DrawDialogBox_WarningMsg(short msX, short msY); //6
+	void DrawDialogBox_15AgeMsg(short msX, short msY); //5
+	void DrawDialogBox_FeedBackCard(short msX, short msY); //40
+	void DrawDialogBox_Slates(short msX, short msY, short msZ, char cLB); //40
+	void DisplayCommaNumber_G_cTxt(int iGold); // Name changed by Snoopy (easyer to understand...)
 
 	void DrawDialogBox_ConfirmExchange(short msX, short msY); //41
 
-	// Slates - Alastor
 	void bItemDrop_Slates();
 	void DlgBoxClick_Slates(short msX, short msY);
-	void DrawDialogBox_Slates(short msX, short msY, short msZ, char cLB);//40
 
 	BOOL _bCheckDlgBoxClick(short msX, short msY);
 	void DlgBoxClick_WarningMsg(short msX, short msY);
@@ -387,15 +367,15 @@ public:
 #endif
 
 
-	void UseShortCut( int num );
+	void UseShortCut(int num);
 	void UpdateScreen();
 	void UpdateScreen_OnMainMenu();
 	void UpdateScreen_OnGame();
 	void UpdateScreen_OnConnecting();
 	void UpdateScreen_OnWaitInitData();
-	void MakeSprite( char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
-	void MakeTileSpr( char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
-	void MakeEffectSpr( char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
+	void MakeSprite(char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
+	void MakeTileSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
+	void MakeEffectSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
 	void UpdateScreen_OnLoading(bool bActive);
 	void UpdateScreen_OnConnectionLost();
 	void UpdateScreen_OnLogin();
@@ -412,7 +392,7 @@ public:
 	void UpdateScreen_OnLoading_Progress();
 	void UpdateScreen_OnVersionNotMatch();
 	void NpcTalkHandler(char * pData);
-	int  _iGetWeaponSkillType();
+	int _iGetWeaponSkillType();
 	void SetCameraShakingEffect(short sDist, int iMul = 0);
 	BOOL bDlgBoxPress_SkillDlg(short msX, short msY);
 	BOOL bDlgBoxPress_Inventory(short msX, short msY);
@@ -435,12 +415,12 @@ public:
 	void DynamicObjectHandler(char * pData);
 	BOOL _bCheckItemByType(char cType);
 	void _DrawBlackRect(int iSize);
-	void DrawNpcName(   short sX, short sY, short sOwnerType, int iStatus);
+	void DrawNpcName(short sX, short sY, short sOwnerType, int iStatus);
 	void DrawObjectName(short sX, short sY, char * pName, int iStatus);
 	void PlaySound(char cType, int iNum, int iDist, long lPan = 0);
 	void _RemoveChatMsgListByObjectID(int iObjectID);
 	void _LoadTextDlgContents(int cType);
-	int  _iLoadTextDlgContents2(int iType);
+	int _iLoadTextDlgContents2(int iType);
 	void DrawChatMsgs(short sX, short sY, short dX, short dY);
 	void RequestFullObjectData(WORD wObjectID);
 	BOOL bInitSkillCfgList();
@@ -475,7 +455,7 @@ public:
 	void DisbandGuildResponseHandler(char * pData);
 	void InitPlayerCharacteristics(char * pData);
 	void CreateNewGuildResponseHandler(char * pData);
-	void _GetHairColorRGB(int iColorType , int * pR, int * pG, int * pB);
+	void _GetHairColorRGB(int iColorType, int * pR, int * pG, int * pB);
 	void InitGameSettings();
 	void CommonEventHandler(char * pData);
 	BOOL _bCheckDraggingItemRelease(short msX, short msY);
@@ -532,7 +512,7 @@ public:
 	void GameRecvMsgHandler(DWORD dwMsgSize, char * pData);
 	void DrawObjects(short sPivotX, short sPivotY, short sDivX, short sDivY, short sModX, short sModY, short msX, short msY);
 	BOOL bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, char * pString, int iV4 = NULL); // v1.4
-    char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck = FALSE, BOOL bMIM = FALSE);
+	char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck = FALSE, BOOL bMIM = FALSE);
 	void RestoreSprites();
 	void CommandProcessor(short msX, short msY, short indexX, short indexY, char cLB, char cRB);
 	void OnGameSocketEvent(WPARAM wParam, LPARAM lParam);
@@ -552,7 +532,7 @@ public:
 	//Snoopy: added function:
 	void DebugLog(char * cStr);
 	BOOL bReadLoginConfigFile(char * cFn);
-	int bHasHeroSet( short Appr3, short Appr4, char OwnerType);
+	int bHasHeroSet(short Appr3, short Appr4, char OwnerType);
 	void ShowHeldenianVictory(short sSide);
 	void DrawDialogBox_Resurect(short msX, short msY);
 	void DlgBoxClick_Resurect(short msX, short msY);
@@ -564,27 +544,25 @@ public:
 	void DlgBoxClick_ConfirmExchange(short msX, short msY);
 	void Abaddon_corpse(int sX, int sY);
 	void DrawAngel(int iSprite, short sX, short sY, char cFrame, DWORD dwTime);
-	void LoadFriendList();//drajwer -friendlist
-void DrawDialogBox_FriendList(short msX, short msY);//43
-void DlgBoxClick_FriendList(short msX, short msY); // 43 - drajwer
+	void LoadFriendList(); //drajwer -friendlist
+	void DrawDialogBox_FriendList(short msX, short msY); //43
+	void DlgBoxClick_FriendList(short msX, short msY); // 43 - drajwer
 
 
-char m_cFriends[13][10];
-int m_iTotalFriends;
-int m_iFriendIndex;
-int m_iFriendIndex2; //dunno about that but its work :)
+	char m_cFriends[13][10];
+	int m_iTotalFriends;
+	int m_iFriendIndex;
+	int m_iFriendIndex2; //dunno about that but its work :)
 
 
 	BOOL _ItemDropHistory(char * ItemName);
-	CGame();
-	virtual ~CGame();
 
 	struct {
 		short sX;
 		short sY;
 		short sCursorFrame;
-		char  cPrevStatus;
-		char  cSelectedObjectType;
+		char cPrevStatus;
+		char cSelectedObjectType;
 		short sSelectedObjectID;
 		short sPrevX, sPrevY, sDistX, sDistY;
 		DWORD dwSelectClickTime;
@@ -592,25 +570,25 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	} m_stMCursor;
 
 	struct {
-		int   sV1, sV2, sV3, sV4, sV5, sV6, sV7, sV8, sV9, sV10, sV11, sV12, sV13, sV14; // v1.4 short
+		int sV1, sV2, sV3, sV4, sV5, sV6, sV7, sV8, sV9, sV10, sV11, sV12, sV13, sV14;
 		DWORD dwV1, dwV2, dwT1;
-		BOOL  bFlag;
+		BOOL bFlag;
 		short sX, sY;
 		short sSizeX, sSizeY;
 		short sView;
-		char  cStr[32], cStr2[32], cStr3[32], cStr4[32];
-		char  cMode;
-		BOOL  bIsScrollSelected;
-	} m_stDialogBoxInfo[61];	 // Snoopy pass� � 61 (origine 41, Alastor 60), j'ai mis +20 car plus pratique.
+		char cStr[32], cStr2[32], cStr3[32], cStr4[32];
+		char cMode;
+		BOOL bIsScrollSelected;
+	} m_stDialogBoxInfo[61];
 	char m_cDialogBoxOrder[61];
-	CInt m_bIsDialogEnabled[61];//was BOOL
-//Snoopy=>>>>>>>>>>>>>>>>>>>>>
+	CInt m_bIsDialogEnabled[61];
+
 	struct {
-		int   sV1, sV2, sV3, sV4, sV5, sV6, sV7, sItemID;
+		int sV1, sV2, sV3, sV4, sV5, sV6, sV7, sItemID;
 		DWORD dwV1;
-		char  cStr1[32], cStr2[32];
+		char cStr1[32], cStr2[32];
 	} m_stDialogBoxExchangeInfo[8];
-//Snoopy end<<<<<<<<<<<<<<<<<<
+
 	struct {
 		int iIndex;
 		int iAmount;
@@ -623,14 +601,14 @@ int m_iFriendIndex2; //dunno about that but its work :)
 
 	struct {
 		DWORD dwTime;
-		char  cColor;
-		char  cTxt[96];
+		char cColor;
+		char cTxt[96];
 	} m_stEventHistory[6];
 
 	struct {
 		DWORD dwTime;
-		char  cColor;
-		char  cTxt[96];
+		char cColor;
+		char cTxt[96];
 	} m_stEventHistory2[6];
 
 	struct {
@@ -641,7 +619,7 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	struct {
 		BOOL bIsQuestCompleted;
 		short sWho, sQuestType, sContribution, sTargetType, sTargetCount, sX, sY, sRange;
-		short sCurrentCount; // by Snoopy
+		short sCurrentCount; 
 		char cTargetName[22];
 	} m_stQuest;
 
@@ -657,6 +635,7 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 
 	// v2.171 2002-6-14
+
 	struct {
 		DWORD dwRefTime;
 		int iGuildRank;
@@ -672,35 +651,35 @@ int m_iFriendIndex2; //dunno about that but its work :)
 		int iCost;
 	} m_stTeleportList[20];
 
-    struct {
-        char cName[12];
-        int iHP;
-        int iMaxHP;
-        int iMP;
-        int iMaxMP;
-        BOOL bIsPoisoned;
-    } m_stPartyMemberNameList[DEF_MAXPARTYMEMBERS+1];
+	struct {
+		char cName[12];
+		int iHP;
+		int iMaxHP;
+		int iMP;
+		int iMaxMP;
+		BOOL bIsPoisoned;
+	} m_stPartyMemberNameList[DEF_MAXPARTYMEMBERS + 1];
 
 	class YWSound m_DSound;
-	class CSoundBuffer *	m_pCSound[DEF_MAXSOUNDEFFECTS];
-	class CSoundBuffer *	m_pMSound[DEF_MAXSOUNDEFFECTS];
-	class CSoundBuffer *	m_pESound[DEF_MAXSOUNDEFFECTS];
-	class CSoundBuffer *    m_pBGM;
-	class DXC_ddraw  m_DDraw;
+	class CSoundBuffer * m_pCSound[DEF_MAXSOUNDEFFECTS];
+	class CSoundBuffer * m_pMSound[DEF_MAXSOUNDEFFECTS];
+	class CSoundBuffer * m_pESound[DEF_MAXSOUNDEFFECTS];
+	class CSoundBuffer * m_pBGM;
+	class DXC_ddraw m_DDraw;
 	class DXC_dinput m_DInput;
-	class CMisc      m_Misc;
-	class CSprite  * m_pSprite[DEF_MAXSPRITES];
-	class CSprite  * m_pTileSpr[DEF_MAXTILES];
-	class CSprite  * m_pEffectSpr[DEF_MAXEFFECTSPR];
+	class CMisc m_Misc;
+	class CSprite * m_pSprite[DEF_MAXSPRITES];
+	class CSprite * m_pTileSpr[DEF_MAXTILES];
+	class CSprite * m_pEffectSpr[DEF_MAXEFFECTSPR];
 	class CMapData * m_pMapData;
 	class XSocket * m_pGSock;
 	class XSocket * m_pLSock;
-	class CMsg    * m_pChatMsgList[DEF_MAXCHATMSGS];
-	class CMsg    * m_pChatScrollList[DEF_MAXCHATSCROLLMSGS];
-	class CMsg    * m_pWhisperMsg[DEF_MAXWHISPERMSG];
+	class CMsg * m_pChatMsgList[DEF_MAXCHATMSGS];
+	class CMsg * m_pChatScrollList[DEF_MAXCHATSCROLLMSGS];
+	class CMsg * m_pWhisperMsg[DEF_MAXWHISPERMSG];
 	class CEffect * m_pEffectList[DEF_MAXEFFECTS];
-	class CItem   * m_pItemList[DEF_MAXITEMS];
-	class CItem   * m_pBankList[DEF_MAXBANKITEMS];
+	class CItem * m_pItemList[DEF_MAXITEMS];
+	class CItem * m_pBankList[DEF_MAXBANKITEMS];
 	class CMagic * m_pMagicCfgList[DEF_MAXMAGICTYPE];
 	class CSkill * m_pSkillCfgList[DEF_MAXSKILLTYPE];
 	class CMsg * m_pMsgTextList[DEF_TEXTDLGMAXLINES];
@@ -727,7 +706,7 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	DWORD m_dwCurTime;
 	DWORD m_dwCheckConnTime, m_dwCheckSprTime, m_dwCheckChatTime;
 	DWORD m_dwDialogCloseTime;
-	CInt  m_dwLogOutCountTime;//was DWORD
+	CInt m_dwLogOutCountTime; //was DWORD
 	DWORD m_dwRestartCountTime;
 	DWORD m_dwWOFtime; //v1.4
 	DWORD m_dwObserverCamTime;
@@ -751,58 +730,57 @@ int m_iFriendIndex2; //dunno about that but its work :)
 
 	BOOL m_bZoomMap;
 	BOOL m_bIsProgramActive;
-	CInt m_bCommandAvailable;//was BOOL
+	CInt m_bCommandAvailable; //was BOOL
 	BOOL m_bSoundFlag;
 	BOOL m_bSoundStat, m_bMusicStat; // On/Off
-	CInt m_bIsItemEquipped[DEF_MAXITEMS];//was BOOL
-	CInt m_bIsItemDisabled[DEF_MAXITEMS];//was BOOL
-	CInt m_bIsGetPointingMode;//was BOOL
+	CInt m_bIsItemEquipped[DEF_MAXITEMS]; //was BOOL
+	CInt m_bIsItemDisabled[DEF_MAXITEMS]; //was BOOL
+	CInt m_bIsGetPointingMode; //was BOOL
 	BOOL m_bEnterPressed, m_bEscPressed, m_bCtrlPressed, m_bRunningMode, m_bShiftPressed;
 
 	BOOL m_bDialogTrans;
 	BOOL m_bIsCombatMode;
 	BOOL m_bIsSafeAttackMode;
-	CInt m_bSkillUsingStatus;//was BOOL
-	CInt m_bItemUsingStatus;//was BOOL
+	CInt m_bSkillUsingStatus; //was BOOL
+	CInt m_bItemUsingStatus; //was BOOL
 	BOOL m_bIsWhetherEffect;
-	BOOL m_bSuperAttackMode;	//
+	BOOL m_bSuperAttackMode; //
 	BOOL m_bIsObserverMode, m_bIsObserverCommanded;
-	CInt m_bIsPoisoned;//was BOOL
+	CInt m_bIsPoisoned; //was BOOL
 	BOOL m_bIsFirstConn;
 	BOOL m_bIsConfusion;
 	BOOL m_bIsRedrawPDBGS;
 	BOOL m_bDrawFlagDir;
 	BOOL m_bIsCrusadeMode;
-	CInt m_bIsSpecialAbilityEnabled;//was BOOL
+	CInt m_bIsSpecialAbilityEnabled; //was BOOL
 	BOOL m_bInputStatus;
 	BOOL m_bToggleScreen;
 	BOOL m_bIsSpecial;
 
 	BOOL m_bIsF1HelpWindowEnabled;
-	CInt m_bIsTeleportRequested;//was BOOL
+	CInt m_bIsTeleportRequested; //was BOOL
 	BOOL m_bIsPrevMoveBlocked;
 	BOOL m_bIsHideLocalCursor;
 
-	CInt m_bForceDisconn;//was BOOL
+	CInt m_bForceDisconn; //was BOOL
 	BOOL m_bForceAttack;
 	BOOL m_bParalyze;
 
 	short m_sFrameCount;
 	short m_sFPS;
 	DWORD m_dwFPStime;
-	BOOL  m_bShowFPS;
+	BOOL m_bShowFPS;
 
 	int m_iFightzoneNumber;
 	int m_iFightzoneNumberTemp;
 	int m_iPlayerApprColor; // v1.4
-	CInt m_iHP;//was int			// Hit Point
-	CInt m_iMP;//was int			// Mana Point
-	CInt m_iSP;//was int			// Staminar Point
-	int m_iAC;						// Armour Class
-	int m_iTHAC0;					// To Hit Armour Class 0
+	CInt m_iHP;
+	CInt m_iMP;
+	CInt m_iSP;
+	int m_iAC; // Armour Class
+	int m_iTHAC0; // To Hit Armour Class 0
 
 	int m_iLevel, m_iStr, m_iInt, m_iVit, m_iDex, m_iMag, m_iCharisma, m_iExp, m_iContribution;
-	// Snoopy: Added Angels
 	int m_iAngelicStr, m_iAngelicInt, m_iAngelicDex, m_iAngelicMag;
 
 	int m_iEnemyKillCount;
@@ -811,7 +789,7 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	int m_iGuildRank, m_iTotalGuildsMan;
 	int m_iPointCommandType;
 	int m_iTotalChar;
-//	int m_iAccountStatus;
+	//	int m_iAccountStatus;
 	short m_sMagicShortCut;
 	int m_iLU_Point;
 	int m_iCameraShakingDegree;
@@ -823,10 +801,10 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	int m_iIlusionOwnerH;
 	int m_iApprColor_IE;
 	int m_iInputX, m_iInputY;
-	int m_iPDBGSdivX, m_iPDBGSdivY;			   // Pre-Draw Background Surface
+	int m_iPDBGSdivX, m_iPDBGSdivY; // Pre-Draw Background Surface
 	short m_sRecentShortCut;
 	short m_sShortCut[6]; // Snoopy: 6 shortcuts
-	int	m_iSpecialAbilityTimeLeftSec;
+	int m_iSpecialAbilityTimeLeftSec;
 	int m_iDrawFlag;
 	int m_iSpecialAbilityType;
 	int m_iTimeLeftSecAccount, m_iTimeLeftSecIP;
@@ -845,7 +823,6 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	int m_iTotalPartyMember;
 	int m_iPartyStatus;
 	int m_iGizonItemUpgradeLeft;
-	//int m_iFeedBackCardIndex; // removed by Snoopy
 
 	short m_sItemEquipmentStatus[DEF_MAXITEMEQUIPPOS];
 	short m_sPlayerX, m_sPlayerY;
@@ -855,7 +832,7 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	int m_iPlayerStatus;
 	short m_sMCX, m_sMCY;
 	short m_sCommX, m_sCommY;
-	int   m_iCastingMagicType;
+	int m_iCastingMagicType;
 	short m_sDamageMove, m_sDamageMoveAmount;
 	short m_sAppr1_IE, m_sAppr2_IE, m_sAppr3_IE, m_sAppr4_IE;
 	int m_iStatus_IE;
@@ -888,14 +865,14 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	char m_cAccountCountry[18];
 	char m_cAccountSSN[32];
 	char m_cEmailAddr[52];
-	char m_cAccountQuiz[46];// Quiz
+	char m_cAccountQuiz[46];
 	char m_cAccountAnswer[22];
 	char m_cPlayerName[12];
 	char m_cPlayerDir;
 	char m_cMsg[200];
 	char m_cLocation[12];
 	char m_cCurLocation[12];
-   	char m_cGuildName[22];
+	char m_cGuildName[22];
 	char m_cMCName[12];
 	char m_cMapName[12];
 	char m_cMapMessage[32];
@@ -910,8 +887,7 @@ int m_iFriendIndex2; //dunno about that but its work :)
 	char m_cBackupChatMsg[64];
 	char m_cGender, m_cSkinCol, m_cHairStyle, m_cHairCol, m_cUnderCol;
 	char m_ccStr, m_ccVit, m_ccDex, m_ccInt, m_ccMag, m_ccChr;
-//50Cent - LU Fix
-int m_iLU_Str, m_iLU_Vit, m_iLU_Dex, m_iLU_Int, m_iLU_Mag, m_iLU_Char;
+	int m_iLU_Str, m_iLU_Vit, m_iLU_Dex, m_iLU_Int, m_iLU_Mag, m_iLU_Char;
 
 	char m_cMagicMastery[DEF_MAXMAGICTYPE];
 	unsigned char m_cSkillMastery[DEF_MAXSKILLTYPE]; // v1.4
@@ -944,14 +920,13 @@ int m_iLU_Str, m_iLU_Vit, m_iLU_Dex, m_iLU_Int, m_iLU_Mag, m_iLU_Char;
 
 	BOOL m_bWhisper;
 	BOOL m_bShout;
-	
+
 
 	BOOL m_bItemDrop;
-    int  m_iItemDropCnt;
+	int m_iItemDropCnt;
 
-	// Snoopy: Apocalypse Gate
 	char m_cGateMapName[12];
-	int  m_iGatePositX, m_iGatePositY;
+	int m_iGatePositX, m_iGatePositY;
 	int m_iHeldenianAresdenLeftTower;
 	int m_iHeldenianElvineLeftTower;
 	int m_iHeldenianAresdenFlags;
@@ -961,45 +936,31 @@ int m_iLU_Str, m_iLU_Vit, m_iLU_Dex, m_iLU_Int, m_iLU_Mag, m_iLU_Char;
 	BOOL m_bIsXmas;
 	BOOL m_bUsingSlate;
 
-
-	//Snoopy: Avatar
 	BOOL m_bIsAvatarMode;
 	BOOL m_bIsAvatarMessenger;
 
-	//Snoopy: Crafting	
-	//BOOL _bDecodeCraftItemContents();
-	//BOOL __bDecodeCraftItemContents(char *pBuffer);	
-	//BOOL _bCheckCraftItemStatus();
-	//BOOL _bCheckCurrentCraftItemStatus();
-
 	class CBuildItem * m_pCraftItemList[DEF_MAXBUILDITEMS];
 	class CBuildItem * m_pDispCraftItemList[DEF_MAXBUILDITEMS];
-	int   m_iContributionPrice;
+	int m_iContributionPrice;
 	char m_cTakeItemName[100];
 	char m_cTakeHeroItemName[100]; //Drajwer - hero item str
 	void TestList(char * pTxt, char cColor = 0, BOOL bDupAllow = TRUE);
 	DWORD dwTime;
 
-bool bCheckItemEquiped(char itemName[]); // Beholder neck
-//50Cent - Apocalypse Portal Animation Fix
-    BOOL bIsApocAnimationOn;
+	bool bCheckItemEquiped(char itemName[]); // Beholder neck
+	BOOL bIsApocAnimationOn;
 
 	BOOL m_bHappyHour;
 
-	//50Cent - Capture The Flag
-    void DrawFlagCarrier(short sX, short sY, char cFrame, DWORD dwTime);
+	void DrawFlagCarrier(short sX, short sY, char cFrame, DWORD dwTime);
 
-//50Cent - Capture The Flag
-    BOOL m_bIsCTFMode;
-    short m_sElvineFlagCount;
-    short m_sAresdenFlagCount;
-    BOOL m_bIsElvineFlagStatus;
-    BOOL m_bIsAresdenFlagStatus;
+	BOOL m_bIsCTFMode;
+	short m_sElvineFlagCount;
+	short m_sAresdenFlagCount;
+	BOOL m_bIsElvineFlagStatus;
+	BOOL m_bIsAresdenFlagStatus;
 
-    BOOL m_bShowParty;
-    void DrawPartyStatus(DWORD dwTime);
-	
+	BOOL m_bShowParty;
+	void DrawPartyStatus(DWORD dwTime);
+
 };
-
-#endif // !defined(AFX_GAME_H__0089D9E3_74E6_11D2_A8E6_00001C7030A6__INCLUDED_)
-//Server Files & Source by Gigia. Thanks to www.comunidadmh.com !!.

@@ -15,8 +15,6 @@
       <itemPath>../../../src/client/DXC_ddraw.h</itemPath>
       <itemPath>../../../src/client/DXC_dinput.cpp</itemPath>
       <itemPath>../../../src/client/DXC_dinput.h</itemPath>
-      <itemPath>../../../src/client/DXC_dsound.cpp</itemPath>
-      <itemPath>../../../src/client/DXC_dsound.h</itemPath>
       <itemPath>../../../src/client/DynamicObjectID.h</itemPath>
       <itemPath>../../../src/client/Effect.cpp</itemPath>
       <itemPath>../../../src/client/Effect.h</itemPath>
@@ -30,7 +28,6 @@
       <itemPath>../../../src/client/Item.h</itemPath>
       <itemPath>../../../src/client/ItemName.cpp</itemPath>
       <itemPath>../../../src/client/ItemName.h</itemPath>
-      <itemPath>../../../src/client/JPEGLIB.H</itemPath>
       <itemPath>../../../src/client/LAN_ENG.H</itemPath>
       <itemPath>../../../src/client/Magic.cpp</itemPath>
       <itemPath>../../../src/client/Magic.h</itemPath>
@@ -137,10 +134,6 @@
       </item>
       <item path="../../../src/client/DXC_dinput.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../../src/client/DXC_dsound.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="../../../src/client/DXC_dsound.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="../../../src/client/DynamicObjectID.h"
             ex="false"
             tool="3"
@@ -172,8 +165,6 @@
       <item path="../../../src/client/ItemName.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/client/ItemName.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../../../src/client/JPEGLIB.H" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/client/LAN_ENG.H" ex="false" tool="3" flavor2="0">
       </item>
@@ -268,7 +259,7 @@
         <ccTool>
           <developmentMode>5</developmentMode>
           <standard>8</standard>
-          <commandLine>-Wall -Wextra</commandLine>
+          <commandLine>-Wall -Wextra -Os -fomit-frame-pointer</commandLine>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -318,10 +309,6 @@
       </item>
       <item path="../../../src/client/DXC_dinput.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../../src/client/DXC_dsound.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="../../../src/client/DXC_dsound.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="../../../src/client/DynamicObjectID.h"
             ex="false"
             tool="3"
@@ -353,8 +340,6 @@
       <item path="../../../src/client/ItemName.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/client/ItemName.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../../../src/client/JPEGLIB.H" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/client/LAN_ENG.H" ex="false" tool="3" flavor2="0">
       </item>

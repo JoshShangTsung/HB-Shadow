@@ -1,26 +1,18 @@
-// Misc.h: interface for the CMisc class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MISC_H__C3D29FC0_755B_11D2_A8E6_00001C7030A6__INCLUDED_)
-#define AFX_MISC_H__C3D29FC0_755B_11D2_A8E6_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-enum {CODE_ENG,CODE_HAN1,CODE_HAN2}; 
+enum {
+	CODE_ENG, CODE_HAN1, CODE_HAN2
+};
 
-class CMisc  
-{
+class CMisc {
 public:
-	
+
 	int iGetTextLengthLoc(HDC hDC, char * pStr, int iLength);
-	int  _iGetFileCheckSum(char * pFn);
+	int _iGetFileCheckSum(char * pFn);
 	BOOL _iConvertFileXor(char *pFn, char *pDestFn, char cKey);
 	BOOL bCheckValidName(char *pStr);
 	BOOL bCheckIMEString(char *str);
@@ -35,8 +27,4 @@ public:
 	char cGetNextMoveDir(short sX, short sY, short dX, short dY);
 	BOOL bIsValidSSN(char * pStr);
 	BOOL bIsValidEmail(char * pStr);
-	CMisc();
-	virtual ~CMisc();
 };
-
-#endif // !defined(AFX_MISC_H__C3D29FC0_755B_11D2_A8E6_00001C7030A6__INCLUDED_)

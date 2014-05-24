@@ -1,11 +1,10 @@
+#pragma once
 #include <windows.h>
 
 #define MSG_RECV 1
 #define MSG_SEND 2
 
-class CDebugWindow
-{
-
+class CDebugWindow {
 public:
 	CDebugWindow();
 	// Startups The Debug Dialog

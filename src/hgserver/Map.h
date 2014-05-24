@@ -1,13 +1,4 @@
-// Map.h: interface for the CMap class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MAP_H__12609160_8060_11D2_A8E6_00001C7030A6__INCLUDED_)
-#define AFX_MAP_H__12609160_8060_11D2_A8E6_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include <windows.h>
 #include "OccupyFlag.h"
@@ -52,14 +43,10 @@
 #define DEF_MAXSECTORS					60
 #define DEF_MAXSTRIKEPOINTS				20
 
-
-
-
-class CMap  
-{
+class CMap {
 public:
 
-	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);	
+	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);
 	BOOL bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner);
 	BOOL bGetIsFarm(short tX, short tY);
 	void RestoreStrikePoints();
@@ -70,7 +57,7 @@ public:
 	void ClearTempSectorInfo();
 	void ClearSectorInfo();
 	int iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI);
-	int  iCheckItem(short sX, short sY);
+	int iCheckItem(short sX, short sY);
 	void SetTempMoveAllowedFlag(int dX, int dY, BOOL bFlag);
 	int iAnalyze(char cType, int *pX, int *pY, int * pV1, int *pV2, int * pV3);
 	BOOL bGetIsWater(short dX, short dY);
@@ -101,75 +88,75 @@ public:
 
 	class CTile * m_pTile;
 	class CGame * m_pGame;
-	char  m_cName[11];
-	char  m_cLocationName[11];
+	char m_cName[11];
+	char m_cLocationName[11];
 	short m_sSizeX, m_sSizeY, m_sTileDataSize;
 	class CTeleportLoc * m_pTeleportLoc[DEF_MAXTELEPORTLOC];
-	
+
 	//short m_sInitialPointX, m_sInitialPointY;
 	POINT m_pInitialPoint[DEF_MAXINITIALPOINT];
 
-	BOOL  m_bNamingValueUsingStatus[1000]; // 0~999
-	BOOL  m_bRandomMobGenerator;
-	char  m_cRandomMobGeneratorLevel;
-	int   m_iTotalActiveObject;
-	int   m_iTotalAliveObject;
-	int   m_iMaximumObject;
+	BOOL m_bNamingValueUsingStatus[1000]; // 0~999
+	BOOL m_bRandomMobGenerator;
+	char m_cRandomMobGeneratorLevel;
+	int m_iTotalActiveObject;
+	int m_iTotalAliveObject;
+	int m_iMaximumObject;
 
-	char  m_cType;				// ¸ÊÀÇ Çü½Ä. 0ÀÌ¸é º¸Åë. 1ÀÌ¸é °ø°ÝÇàÀ§°¡ ¹üÁË°¡ ¾Æ´Ï´Ù.
+	char m_cType; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. 0ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½. 1ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ë°ï¿½ ï¿½Æ´Ï´ï¿½.
 
-	BOOL  m_bIsFixedDayMode;	// Ç×»ó ÁÖ°£¸ðµåÀÎÁö: °Ç¹° ³»ºÎ µî 
+	BOOL m_bIsFixedDayMode; // ï¿½×»ï¿½ ï¿½Ö°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ï¿½Ç¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ 
 
-	struct {		    
+	struct {
 		BOOL bDefined;
-		char cType;				// 1:RANDOMAREA   2:RANDOMWAYPOINT
-		
-		char cWaypoint[10];     // RANDOMWAYPOINT µî
-		RECT rcRect;			// RANDOMAREA¹ß»ýÀÇ °æ¿ì 
-		
-		int  iTotalActiveMob;
-		int  iMobType;
-		int  iMaxMobs;
-		int  iCurMobs;
-		
+		char cType; // 1:RANDOMAREA   2:RANDOMWAYPOINT
+
+		char cWaypoint[10]; // RANDOMWAYPOINT ï¿½ï¿½
+		RECT rcRect; // RANDOMAREAï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 
+
+		int iTotalActiveMob;
+		int iMobType;
+		int iMaxMobs;
+		int iCurMobs;
+
 	} m_stSpotMobGenerator[DEF_MAXSPOTMOBGENERATOR];
 
 	POINT m_WaypointList[DEF_MAXWAYPOINTCFG];
-	RECT  m_rcMobGenAvoidRect[DEF_MAXMGAR];
-	RECT  m_rcNoAttackRect[DEF_MAXNMR];
+	RECT m_rcMobGenAvoidRect[DEF_MAXMGAR];
+	RECT m_rcNoAttackRect[DEF_MAXNMR];
 
 	POINT m_FishPointList[DEF_MAXFISHPOINT];
-	int   m_iTotalFishPoint, m_iMaxFish, m_iCurFish;
-	
-	int	  m_iApocalypseMobGenType, m_iApocalypseBossMobNpcID;
+	int m_iTotalFishPoint, m_iMaxFish, m_iCurFish;
+
+	int m_iApocalypseMobGenType, m_iApocalypseBossMobNpcID;
 	short m_sApocalypseBossMobRectX1, m_sApocalypseBossMobRectY1, m_sApocalypseBossMobRectX2, m_sApocalypseBossMobRectY2;
-	char  m_cDynamicGateType;
+	char m_cDynamicGateType;
 	short m_sDynamicGateCoordRectX1, m_sDynamicGateCoordRectY1, m_sDynamicGateCoordRectX2, m_sDynamicGateCoordRectY2;
-	char  m_cDynamicGateCoordDestMap[11];
+	char m_cDynamicGateCoordDestMap[11];
 	short m_sDynamicGateCoordTgtX, m_sDynamicGateCoordTgtY;
-	BOOL  m_bIsCitizenLimit;
+	BOOL m_bIsCitizenLimit;
 	short m_sHeldenianTowerType, m_sHeldenianTowerXPos, m_sHeldenianTowerYPos;
-	char  m_cHeldenianTowerSide;
-	char  m_cHeldenianModeMap;
+	char m_cHeldenianTowerSide;
+	char m_cHeldenianModeMap;
 
-	BOOL  m_bMineralGenerator;
-	char  m_cMineralGeneratorLevel;
+	BOOL m_bMineralGenerator;
+	char m_cMineralGeneratorLevel;
 	POINT m_MineralPointList[DEF_MAXMINERALPOINT];
-	int   m_iTotalMineralPoint, m_iMaxMineral, m_iCurMineral;
+	int m_iTotalMineralPoint, m_iMaxMineral, m_iCurMineral;
 
-	char  m_cWhetherStatus;		// ±â»ó »óÅÂ. 0ÀÌ¸é ¾øÀ½. 1~3 ºñ 4~6 ´« 7~9 ÆøÇ³ 
-	DWORD m_dwWhetherLastTime, m_dwWhetherStartTime;  // ³¯¾¾ Áö¼Ó, ½ÃÀÛ ½Ã°£ 
+	char m_cWhetherStatus; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. 0ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½. 1~3 ï¿½ï¿½ 4~6 ï¿½ï¿½ 7~9 ï¿½ï¿½Ç³ 
+	DWORD m_dwWhetherLastTime, m_dwWhetherStartTime; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ 
 
-	int   m_iLevelLimit;
-	int   m_iUpperLevelLimit;	// »óÀ§ ·¾ Á¦ÇÑ 
+	int m_iLevelLimit;
+	int m_iUpperLevelLimit; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 
 	class COccupyFlag * m_pOccupyFlag[DEF_MAXOCCUPYFLAG];
-	int   m_iTotalOccupyFlags;
-	
-	class CStrategicPoint * m_pStrategicPointList[DEF_MAXSTRATEGICPOINTS];
-	BOOL  m_bIsAttackEnabled;
+	int m_iTotalOccupyFlags;
 
-	BOOL  m_bIsFightZone;
+	class CStrategicPoint * m_pStrategicPointList[DEF_MAXSTRATEGICPOINTS];
+	BOOL m_bIsAttackEnabled;
+
+	BOOL m_bIsFightZone;
 
 	struct {
 		char cType;
@@ -178,7 +165,7 @@ public:
 	} m_stEnergySphereCreationList[DEF_MAXENERGYSPHERES];
 
 	int m_iTotalEnergySphereCreationPoint;
-	
+
 	struct {
 		char cResult;
 		int aresdenX, aresdenY, elvineX, elvineY;
@@ -187,7 +174,7 @@ public:
 	int m_iTotalEnergySphereGoalPoint;
 
 	BOOL m_bIsEnergySphereGoalEnabled;
-	int m_iCurEnergySphereGoalPointIndex; 
+	int m_iCurEnergySphereGoalPointIndex;
 
 	struct {
 		BOOL m_bIsGateMap;
@@ -196,7 +183,8 @@ public:
 		int m_iDynamicGateY;
 	} m_stDynamicGateCoords[DEF_MAXDYNAMICGATES];
 
-	// ÇöÀç ¸Ê¿¡¼­ÀÇ ÇÃ·¹ÀÌ¾îµéÀÇ È°µ¿ ¼ºÇâÀ» ÆÄ¾ÇÇÏ´Â Å×ÀÌºí.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Ìºï¿½.
+
 	struct {
 		int iPlayerActivity;
 		int iNeutralActivity;
@@ -207,6 +195,7 @@ public:
 	} m_stSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS], m_stTempSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS];
 	short sMobEventAmount;
 	int m_iTotalItemEvents;
+
 	struct {
 		char cItemName[21];
 		int iAmount;
@@ -217,7 +206,7 @@ public:
 	} m_stItemEventList[DEF_MAXITEMEVENTS];
 
 	struct {
-		char  cDir;
+		char cDir;
 		short dX;
 		short dY;
 	} m_stHeldenianGateDoor[DEF_MAXHELDENIANDOOR];
@@ -226,11 +215,11 @@ public:
 		short sTypeID;
 		short dX;
 		short dY;
-		char  cSide;
+		char cSide;
 	} m_stHeldenianTower[DEF_MAXHELDENIANTOWER];
 
 	int m_iMaxNx, m_iMaxNy, m_iMaxAx, m_iMaxAy, m_iMaxEx, m_iMaxEy, m_iMaxMx, m_iMaxMy, m_iMaxPx, m_iMaxPy;
-	
+
 	struct {
 		char cRelatedMapName[11];
 		int iMapIndex;
@@ -239,17 +228,17 @@ public:
 
 		int iEffectX[5];
 		int iEffectY[5];
-	
+
 	} m_stStrikePoint[DEF_MAXSTRIKEPOINTS];
 	int m_iTotalStrikePoints;
 
-	BOOL m_bIsDisabled;		// Æø°ÝÀ¸·Î ±â´ÉÀÌ ¸¶ºñµÈ °æ¿ì 
+	BOOL m_bIsDisabled; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 
 	int m_iTotalAgriculture;
 
 	struct {
-		char cType;			// ÀÌ°Ô NULLÀÌ¸é Á¤ÀÇµÇÁö ¾ÊÀº°ÍÀ» ÀÇ¹Ì.
-		char cSide;			// »çÀÌµå
-		short sX, sY;		// ¼³Ä¡µÈ À§Ä¡ 
+		char cType; // ï¿½Ì°ï¿½ NULLï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¹ï¿½.
+		char cSide; // ï¿½ï¿½ï¿½Ìµï¿½
+		short sX, sY; // ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ä¡ 
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 	int m_iTotalCrusadeStructures;
 	BOOL m_bIsEnergySphereAutoCreation;
@@ -262,5 +251,3 @@ public:
 	BOOL m_bIsApocalypseMap;
 	BOOL m_bIsHeldenianMap;
 };
-
-#endif // !defined(AFX_MAP_H__12609160_8060_11D2_A8E6_00001C7030A6__INCLUDED_)

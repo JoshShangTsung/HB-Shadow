@@ -1535,15 +1535,15 @@
 
 
 
- #define	NOTIFYMSG_MAGICEFFECT_ON1	"You are completely protected from arrows!"
- #define	NOTIFYMSG_MAGICEFFECT_ON2	"You are protected from magic!"
- #define	NOTIFYMSG_MAGICEFFECT_ON3	"Defense ratio increased by a magic shield!"
- #define	NOTIFYMSG_MAGICEFFECT_ON4	"You were bounded by a Hold Person spell! Unable to move!"
- #define	NOTIFYMSG_MAGICEFFECT_ON5	"You were bounded by a Paralysis spell! Unable to move!"
- #define	NOTIFYMSG_MAGICEFFECT_ON6	"You are now invisible, no one can see you!"
- #define	NOTIFYMSG_MAGICEFFECT_ON7	"No one understands you because of language confusion magic!"
- #define	NOTIFYMSG_MAGICEFFECT_ON8	"Confusion magic casted, impossible to determine player allegience."
- #define	NOTIFYMSG_MAGICEFFECT_ON9	"Illusion magic casted, impossible to tell who is who!"
+#define	NOTIFYMSG_MAGICEFFECT_ON1	"You are completely protected from arrows!"
+#define	NOTIFYMSG_MAGICEFFECT_ON2	"You are protected from magic!"
+#define	NOTIFYMSG_MAGICEFFECT_ON3	"Defense ratio increased by a magic shield!"
+#define	NOTIFYMSG_MAGICEFFECT_ON4	"You were bounded by a Hold Person spell! Unable to move!"
+#define	NOTIFYMSG_MAGICEFFECT_ON5	"You were bounded by a Paralysis spell! Unable to move!"
+#define	NOTIFYMSG_MAGICEFFECT_ON6	"You are now invisible, no one can see you!"
+#define	NOTIFYMSG_MAGICEFFECT_ON7	"No one understands you because of language confusion magic!"
+#define	NOTIFYMSG_MAGICEFFECT_ON8	"Confusion magic casted, impossible to determine player allegience."
+#define	NOTIFYMSG_MAGICEFFECT_ON9	"Illusion magic casted, impossible to tell who is who!"
 
 #define	NOTIFYMSG_MAGICEFFECT_ON10	"You were poisoned!"
 //#define	NOTIFYMSG_MAGICEFFECT_ON11	"Berserk magic casted! You deal double physical damage for 40 seconds"
@@ -1552,7 +1552,7 @@
 #define	NOTIFYMSG_MAGICEFFECT_ON13	"You have been frozen! Your movement decreases to 50%."
 #define	NOTIFYMSG_MAGICEFFECT_ON14  "You are completely protected from magic!"
 // Snoopy
- #define	NOTIFYMSG_MAGICEFFECT_ON15	"You are thrown into confusion, and you are flustered yourself."
+#define	NOTIFYMSG_MAGICEFFECT_ON15	"You are thrown into confusion, and you are flustered yourself."
 
 
 

@@ -1,15 +1,5 @@
-// Msg.cpp: implementation of the CMsg class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Msg.h"
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-CMsg::CMsg(char cType, char * pMsg, DWORD dwTime)
-{
+CMsg::CMsg(char cType, char * pMsg, DWORD dwTime) {
 	m_cType = cType;
 
 	m_pMsg = NULL;
@@ -20,7 +10,6 @@ CMsg::CMsg(char cType, char * pMsg, DWORD dwTime)
 	m_iObjectID = -1;
 }
 
-CMsg::~CMsg()
-{
+CMsg::~CMsg() {
 	if (m_pMsg != NULL) delete m_pMsg;
 }

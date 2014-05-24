@@ -1,3 +1,4 @@
+#pragma once
 #define DEF_SPRID_MOUSECURSOR				0
 
 #define DEF_SPRID_INTERFACE_SPRFONTS		22

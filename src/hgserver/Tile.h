@@ -1,48 +1,36 @@
-// Tile.h: interface for the CTile class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_TILE_H__12609161_8060_11D2_A8E6_00001C7030A6__INCLUDED_)
-#define AFX_TILE_H__12609161_8060_11D2_A8E6_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include <windows.h>
 #include "Item.h"
 
 #define DEF_TILE_PER_ITEMS	12
 
-class CTile  
-{												  
+class CTile {
 public:
 	CTile();
 	virtual ~CTile();
 
-	char  m_cOwnerClass;		// DEF_OT_PLAYER / DEF_OT_NPC
+	char m_cOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC
 	short m_sOwner;
 
-	char  m_cDeadOwnerClass;	// DEF_OT_PLAYER / DEF_OT_NPC Á×¾îÀÖ´Â ÇÃ·¹ÀÌ¾î´Â ÀÌ°÷¿¡ 
+	char m_cDeadOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC ï¿½×¾ï¿½ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½Ì°ï¿½ï¿½ï¿½ 
 	short m_sDeadOwner;
 
 	class CItem * m_pItem[DEF_TILE_PER_ITEMS];
-	char  m_cTotalItem;
+	char m_cTotalItem;
 
-	WORD  m_wDynamicObjectID;
+	WORD m_wDynamicObjectID;
 	short m_sDynamicObjectType;
 	DWORD m_dwDynamicObjectRegisterTime;
 
-	BOOL  m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
+	BOOL m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
 
-	// Á¡·ÉÁö Ç¥½Ã¿ë 
-	int   m_iOccupyStatus;    // AresdenÀÌ¸é -°ªÀ¸·Î, ElvineÀÌ¸é +·Î ´õÇØÁø´Ù. ÃÑ ÇÕÀÌ ÀÌ Áö¿ªÀÇ °æÇâ¼º 
-	int   m_iOccupyFlagIndex; // ÀÌ Å¸ÀÏ À§¿¡ ¼­ ÀÖ´Â Á¡·É±ê¹ßÀÇ ÀÎµ¦½º 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½Ã¿ï¿½ 
+	int m_iOccupyStatus; // Aresdenï¿½Ì¸ï¿½ -ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Elvineï¿½Ì¸ï¿½ +ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼º 
+	int m_iOccupyFlagIndex; // ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½É±ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ 
 
 	// Crusade
-	int	  m_iAttribute;		  // Å¸ÀÏÀÇ »óÅÂ ºñÆ®: Ã¹¹øÂ° ºñÆ®(¸¶¹ý º¸È£) µÎ¹øÂ° ºñÆ®(¹°¸® °ø°Ý º¸È£) ¼¼¹øÂ° ºñÆ®(¾ÈÀüÁö´ë)
-	
-	
-};
+	int m_iAttribute; // Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®: Ã¹ï¿½ï¿½Â° ï¿½ï¿½Æ®(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£) ï¿½Î¹ï¿½Â° ï¿½ï¿½Æ®(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È£) ï¿½ï¿½ï¿½ï¿½Â° ï¿½ï¿½Æ®(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 
-#endif // !defined(AFX_TILE_H__12609161_8060_11D2_A8E6_00001C7030A6__INCLUDED_)
+
+};

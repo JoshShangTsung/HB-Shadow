@@ -1,8 +1,9 @@
-// winmain.h
+#pragma once
+#include <windows.h>
 
-BOOL InitApplication( HINSTANCE hInstance);
-BOOL InitInstance( HINSTANCE hInstance, int nCmdShow );
-LRESULT CALLBACK WndProc( HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam );
+BOOL InitApplication(HINSTANCE hInstance);
+BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void EventLoop();
 void OnDestroy();
 void Initialize(char * pCmdLine);
@@ -10,6 +11,6 @@ void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw
 MMRESULT _StartTimer(DWORD dwTime);
 
 void _StopTimer(MMRESULT timerid);
-void CPSocketConnet() ;
+void CPSocketConnet();
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
 void GoHomepage();

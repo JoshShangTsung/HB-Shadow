@@ -1,13 +1,4 @@
-// MapData.h: interface for the CMapData class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MAPDATA_H__DA7A0760_758B_11D2_A8E6_00001C7030A6__INCLUDED_)
-#define AFX_MAPDATA_H__DA7A0760_758B_11D2_A8E6_00001C7030A6__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include <windows.h>
 #include <winbase.h>
@@ -26,21 +17,18 @@
 #define MAPDATASIZEX	40
 #define MAPDATASIZEY	35
 
-class CMapData  
-{
+class CMapData {
 public:
-	void * operator new (size_t size)
-	{
+
+	void * operator new (size_t size) {
 		return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
 	};
-	
-	void operator delete(void * mem)
-	{
+
+	void operator delete(void * mem) {
 		HeapFree(GetProcessHeap(), HEAP_NO_SERIALIZE, mem);
 	};
 
 	CMapData(class CGame * pGame);
-	virtual ~CMapData();
 	void Init();
 	void OpenMapDataFile(char * cFn);
 	void GetOwnerStatusByObjectID(WORD wObjectID, char * pOwnerType, char * pDir, short * pAppr1, short * pAppr2, short * pAppr3, short * pAppr4, int * pStatus, int * pColor, char * pName);
@@ -58,7 +46,7 @@ public:
 	BOOL bIsTeleportLoc(short sX, short sY);
 	BOOL bGetIsLocateable(short sX, short sY);
 	BOOL bSetItem(short sX, short sY, short sItemSpr, short sItemSprFrame, char cItemColor, BOOL bDropEffect = TRUE);
-	int  iObjectFrameCounter(char * cPlayerName, short sViewPointX, short sViewPointY);
+	int iObjectFrameCounter(char * cPlayerName, short sViewPointX, short sViewPointY);
 
 	class CTile m_pData[MAPDATASIZEX][MAPDATASIZEY];
 	class CTile m_pTmpData[MAPDATASIZEX][MAPDATASIZEY];
@@ -79,5 +67,3 @@ public:
 	short m_sRectX, m_sRectY;
 	short m_sPivotX, m_sPivotY;
 };
-
-#endif // !defined(AFX_MAPDATA_H__DA7A0760_758B_11D2_A8E6_00001C7030A6__INCLUDED_)
