@@ -1,10 +1,9 @@
 #pragma once
-
+#include <map>
 class CCurse {
 public:
 	void LoadCurse(const char *filename);
-	bool IsCurse(const char *str);
-	char *ConvertString(char *str, int max_len);
-	void filterChar(const char *src, char *dst, const char *chars);
-	char* getField(const char *buf, int delim, char *field);
+	void ConvertString(char *str, int max_len);
+private:
+	std::map<std::string, std::string> curses_;
 };

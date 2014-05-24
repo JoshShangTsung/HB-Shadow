@@ -19,7 +19,7 @@
 
 //#define  _DEBUG				// Multi-Client, Instant-logout, Version check, Badwords,
 // Mics debug msgs, CtrlQ for admins, Show status, Cursor position
-//#define DEF_WINDOWED_MODE		// Shows HB in a windowed mode (for debug purpose only, sprite will bug....)
+#define DEF_WINDOWED_MODE		// Shows HB in a windowed mode (for debug purpose only, sprite will bug....)
 
 #ifndef _DEBUG
 #undef DEF_WINDOWED_MODE

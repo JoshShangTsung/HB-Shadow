@@ -683,7 +683,8 @@ BOOL CGame::bInit(HWND hWnd, HINSTANCE hInst, char * pCmdLine) {
 	m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(0x30, 0x30, 0x30), &m_wR[15], &m_wG[15], &m_wB[15]); // Black
 
 
-#ifndef _DEBUG
+//#ifndef _DEBUG
+#if 1
 	m_pCGameMonitor = new class CGameMonitor;
 	//===============================================
 	// badword.txt
@@ -30983,7 +30984,7 @@ void CGame::UpdateScreen_OnGame() {
 				if ((m_dwCurTime - dwPrevChatTime) < 700) {
 				} else {
 					dwPrevChatTime = m_dwCurTime;
-					m_curse.ConvertString(G_cTxt, strlen(G_cTxt));
+					m_curse.ConvertString(G_cTxt, sizeof(G_cTxt));
 					if (strlen(G_cTxt) > 0) {
 						if ((G_cTxt[0] == '!') || (G_cTxt[0] == '~')) {
 							if (m_Misc.bCheckIMEString(G_cTxt) == FALSE) return;

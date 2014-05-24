@@ -91,6 +91,9 @@
         <ccTool>
           <standard>8</standard>
           <commandLine>-Wall -Wextra</commandLine>
+          <preprocessorList>
+            <Elem>_DEBUG</Elem>
+          </preprocessorList>
         </ccTool>
         <linkerTool>
           <output>../../../bin/client</output>
