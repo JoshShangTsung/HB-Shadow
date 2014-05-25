@@ -57040,10 +57040,10 @@ RCPH_LOOPBREAK:
 void CGame::GetDkSet(int iClientH) {
 
 	class CItem * pItem;
-	int dkM[] = {706, 707, 708, 709, 710, 714, 915};
-	int dkW[] = {724, 725, 726, 728, 714, 709, 915};
-	int dmM[] = {711, 712, 713, 853, 717, 913, 915};
-	int dmW[] = {729, 730, 731, 853, 717, 914, 915};
+	int dkM[] = {706, 707, 708, 709, 710, 714, 915, -1};
+	int dkW[] = {724, 725, 726, 728, 714, 709, 915, -1};
+	int dmM[] = {711, 712, 713, 853, 717, 913, 915, -1};
+	int dmW[] = {729, 730, 731, 853, 717, 914, 915, -1};
 	int weapon, iItemID, i, iEraseReq;
 	if (m_pClientList[iClientH] == NULL) return;
 	if (m_pClientList[iClientH]->m_iLevel < 200) return;

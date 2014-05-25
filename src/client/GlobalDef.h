@@ -3,7 +3,8 @@
 #define MSG_HOMEPAGE			"http://www.hbrevolution.tk"
 #define DEF_UPPERVERSION		3
 #define DEF_LOWERVERSION		82
-#define DEF_SERVER_IP			"217.160.6.42"
+//#define DEF_SERVER_IP			"217.160.6.42"
+#define DEF_SERVER_IP			"127.0.0.1"
 #define DEF_SERVER_PORT			2848
 #define DEF_MAXSTATS			200
 #define DEF_UPPERVERSION_FANTASMA				 3
