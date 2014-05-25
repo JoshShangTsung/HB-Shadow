@@ -52952,13 +52952,13 @@ void CGame::_CheckFarmingAction(short sAttackerH, short sTargetH, BOOL bType) {
 
 }
 
-void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char cTargetType, int iArmorType) {
+void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char cTargetType, char cAttackerType, int iArmorType) {
 	short sItemIndex;
 	int iDownValue = 1, iHammerChance = 100;
 
 	if (m_pClientList[sTargetH] == NULL) return;
 
-	if ((cTargetType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != NULL)) {
+	if ((cTargetType == DEF_OWNERTYPE_PLAYER) && (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != NULL)) {
 		if ((cTargetType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sTargetH]->m_cSide != m_pClientList[sAttackerH]->m_cSide)) {
 			switch (m_pClientList[sAttackerH]->m_sUsingWeaponSkill) {
 				case 14:
@@ -53006,9 +53006,7 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 		ReleaseItemHandler(sTargetH, iArmorType, TRUE);
 		return;
 	}
-
-	try {
-		if (m_pClientList[sAttackerH] != NULL) {
+		if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != NULL) {
 			if (cTargetType == DEF_OWNERTYPE_PLAYER) {
 				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != NULL)) {
@@ -53020,7 +53018,7 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 			}
 		}
 
-		if (m_pClientList[sAttackerH] != NULL) {
+		if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != NULL) {
 			if (cTargetType == DEF_OWNERTYPE_PLAYER) {
 				if ((m_pClientList[sAttackerH]->m_sUsingWeaponSkill == 14) && (iHammerChance == 100)) {
 					if (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan < 2000) {
@@ -53056,9 +53054,6 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 				}
 			}
 		}
-	} catch (...) {
-
-	}
 }
 
 int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, BOOL bNearAttack, BOOL bIsDash, BOOL bArrowUse) {
@@ -53929,18 +53924,18 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 						case 1:
 							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != NULL)) {
-								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, iTemp);
+								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							}
 							break;
 
 						case 2:
 							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != NULL)) {
-								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, iTemp);
+								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							} else {
 								iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];
 								if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != NULL)) {
-									CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, iTemp);
+									CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 								}
 							}
 							break;
@@ -53948,14 +53943,14 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 						case 3:
 							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != NULL)) {
-								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, iTemp);
+								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							}
 							break;
 
 						case 4:
 							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != NULL)) {
-								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, iTemp);
+								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							}
 							break;
 					}

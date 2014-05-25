@@ -231,7 +231,7 @@ public:
 	void RemoveOccupyFlags(int iMapIndex);
 	void SetHeroFlag(short sOwnerH, char cOwnerType, BOOL bStatus);
 	void SetInhibitionCastingFlag(short sOwnerH, char cOwnerType, BOOL bStatus);
-	void CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char cTargetType, int iArmorType);
+	void CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char cTargetType, char cAttackerType, int iArmorType);
 	char _cCheckHeroItemEquipped(int iClientH);
 	BOOL bPlantSeedBag(int iMapIndex, int dX, int dY, int iItemEffectValue1, int iItemEffectValue2, int iClientH);
 	void _CheckFarmingAction(short sAttackerH, short sTargetH, BOOL bType);
