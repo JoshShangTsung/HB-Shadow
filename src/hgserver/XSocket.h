@@ -12,7 +12,7 @@
 #include <malloc.h>
 #include "DebugDialog.h"
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <string>
 
 #define DEF_XSOCK_LISTENSOCK			1
@@ -48,7 +48,7 @@ public:
 	SOCKET iGetSocket();
 	BOOL bAccept(class XSocket * pXSock, unsigned int uiMsg);
 	BOOL bListen(char * pAddr, int iPort, unsigned int uiMsg);
-	int iSendMsg(char * cData, DWORD dwSize, char cKey = NULL);
+	int iSendMsg(char * cData, DWORD dwSize, char cKey = 0);
 	BOOL bConnect(char * pAddr, int iPort, unsigned int uiMsg);
 	int iOnSocketEvent(WPARAM wParam, LPARAM lParam);
 	BOOL bInitBufferSize(DWORD dwBufferSize);

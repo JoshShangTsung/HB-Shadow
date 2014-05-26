@@ -2,7 +2,7 @@
 
 CNpc::CNpc(char * pName5) {
 	int i;
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 	memcpy(m_cName, pName5, 5);
 
 	for (i = 0; i < DEF_MAXWAYPOINTS; i++)

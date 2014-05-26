@@ -1,5 +1,5 @@
 #include "Skill.h"
 
 CSkill::CSkill() {
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 }

@@ -1,6 +1,6 @@
 #include "Magic.h"
 CMagic::CMagic() {
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 	m_iAttribute = 0;
 }
 

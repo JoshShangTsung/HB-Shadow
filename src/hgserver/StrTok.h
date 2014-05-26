@@ -4,9 +4,11 @@
 class CStrTok {
 public:
 	char * pGet();
-	CStrTok(char * pData, char * pSeps);
+	CStrTok(char * pData, const char * pSeps);
 
-	char * m_pData, * m_pSeps, m_cToken[1024];
+	char * m_pData;
+	const char * m_pSeps;
+	char m_cToken[1024];
 	int m_iDataLength, m_iCurLoc;
 
 private:

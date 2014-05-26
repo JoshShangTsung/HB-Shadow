@@ -17,6 +17,7 @@
       <itemPath>../../../src/hgserver/Fish.h</itemPath>
       <itemPath>../../../src/hgserver/Game.cpp</itemPath>
       <itemPath>../../../src/hgserver/Game.h</itemPath>
+      <itemPath>../../../src/hgserver/Game2.cpp</itemPath>
       <itemPath>../../../src/hgserver/GlobalDef.h</itemPath>
       <itemPath>../../../src/hgserver/GuildsMan.cpp</itemPath>
       <itemPath>../../../src/hgserver/GuildsMan.h</itemPath>
@@ -90,7 +91,7 @@
       <compileType>
         <ccTool>
           <standard>8</standard>
-          <commandLine>-Wall -Wextra</commandLine>
+          <commandLine>-Wall -Wextra -Wno-char-subscripts</commandLine>
         </ccTool>
         <linkerTool>
           <output>../../../bin/hgserver</output>
@@ -148,6 +149,8 @@
       <item path="../../../src/hgserver/Game.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Game.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Game2.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/GlobalDef.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -288,7 +291,7 @@
         <ccTool>
           <developmentMode>5</developmentMode>
           <standard>8</standard>
-          <commandLine>-Wall -Wextra -Os -fomit-frame-pointer</commandLine>
+          <commandLine>-Wall -Wextra -Wno-char-subscripts -Os -fomit-frame-pointer</commandLine>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -352,6 +355,8 @@
       <item path="../../../src/hgserver/Game.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Game.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Game2.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/GlobalDef.h" ex="false" tool="3" flavor2="0">
       </item>

@@ -135,7 +135,7 @@ CMap::CMap(class CGame * pGame)
 		m_stStrikePoint[i].dY = 0;
 		m_stStrikePoint[i].iHP = 0;
 		m_stStrikePoint[i].iMapIndex = -1;
-		ZeroMemory(m_stStrikePoint[i].cRelatedMapName, sizeof (m_stStrikePoint[i].cRelatedMapName));
+		std::memset(m_stStrikePoint[i].cRelatedMapName, 0, sizeof(m_stStrikePoint[i].cRelatedMapName));
 	}
 	m_iTotalStrikePoints = 0;
 	m_bIsDisabled = FALSE;
@@ -436,10 +436,10 @@ BOOL CMap::bIsValidLoc(short sX, short sY) {
 BOOL CMap::bInit(char * pName) {
 	int i;
 	// �������� �ε��Ѵ�.
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 	strcpy(m_cName, pName);
 
-	ZeroMemory(m_cLocationName, sizeof (m_cLocationName));
+	std::memset(m_cLocationName, 0, sizeof(m_cLocationName));
 
 	if (_bDecodeMapDataFileContents() == FALSE)
 		return FALSE;
@@ -461,7 +461,7 @@ BOOL CMap::_bDecodeMapDataFileContents() {
 	class CTile * pTile;
 	short * sp;
 
-	ZeroMemory(cMapFileName, sizeof (cMapFileName));
+	std::memset(cMapFileName, 0, sizeof(cMapFileName));
 	strcat(cMapFileName, "mapdata\\");
 	strcat(cMapFileName, m_cName);
 	strcat(cMapFileName, ".amd");
@@ -470,7 +470,7 @@ BOOL CMap::_bDecodeMapDataFileContents() {
 	if (hFile == INVALID_HANDLE_VALUE) return FALSE;
 	dwFileSize = GetFileSize(hFile, NULL);
 
-	ZeroMemory(cHeader, sizeof (cHeader));
+	std::memset(cHeader, 0, sizeof(cHeader));
 	ReadFile(hFile, (char *) cHeader, 256, &nRead, NULL);
 
 	// ��������� �м��Ѵ�.

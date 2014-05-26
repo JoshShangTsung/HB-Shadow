@@ -33,16 +33,16 @@ public:
 	char m_cHeroArmourBonus;
 	int iDmgShowon;
 
-	BOOL bCreateNewParty();
-	DWORD m_dwAFKCheckTime;
+	bool bCreateNewParty();
+	uint32_t m_dwAFKCheckTime;
 
 	// Hack Checkers
-	DWORD m_dwMagicFreqTime, m_dwMoveFreqTime, m_dwAttackFreqTime;
-	BOOL m_bIsMoveBlocked, m_bMagicItem;
-	DWORD dwClientTime;
-	BOOL m_bMagicConfirm;
+	uint32_t m_dwMagicFreqTime, m_dwMoveFreqTime, m_dwAttackFreqTime;
+	bool m_bIsMoveBlocked, m_bMagicItem;
+	uint32_t dwClientTime;
+	bool m_bMagicConfirm;
 	int m_iSpellCount;
-	BOOL m_bMagicPauseTime;
+	bool m_bMagicPauseTime;
 	//int m_iUninteruptibleCheck;
 	//char m_cConnectionCheck;
 
@@ -53,8 +53,8 @@ public:
 	char m_cAccountName[11];
 	char m_cAccountPassword[11];
 
-	BOOL m_bIsInitComplete;
-	BOOL m_bIsMsgSendAvailable;
+	bool m_bIsInitComplete;
+	bool m_bIsMsgSendAvailable;
 
 	char m_cMapName[11];
 	char m_cMapIndex;
@@ -75,7 +75,7 @@ public:
 	int m_iApprColor;
 	int m_iStatus;
 
-	DWORD m_dwTime, m_dwHPTime, m_dwMPTime, m_dwSPTime, m_dwAutoSaveTime, m_dwHungerTime, m_dwWarmEffectTime;
+	uint32_t m_dwTime, m_dwHPTime, m_dwMPTime, m_dwSPTime, m_dwAutoSaveTime, m_dwHungerTime, m_dwWarmEffectTime;
 
 	char m_cSex, m_cSkin, m_cHairStyle, m_cHairColor, m_cUnderwear;
 
@@ -90,7 +90,7 @@ public:
 	int m_iSP;
 	int m_iExp;
 	int m_iNextLevelExp;
-	BOOL m_bIsKilled;
+	bool m_bIsKilled;
 
 	int m_iDefenseRatio; // Defense Ratio
 	int m_iHitRatio; // Hit Ratio
@@ -116,7 +116,7 @@ public:
 
 	char m_cSide;
 
-	BOOL m_bInhibition;
+	bool m_bInhibition;
 
 	char m_cAttackDiceThrow_SM;
 	char m_cAttackDiceRange_SM;
@@ -129,7 +129,7 @@ public:
 	POINT m_ItemPosList[DEF_MAXITEMS];
 	class CItem * m_pItemInBankList[DEF_MAXBANKITEMS];
 
-	BOOL m_bIsItemEquipped[DEF_MAXITEMS];
+	bool m_bIsItemEquipped[DEF_MAXITEMS];
 	short m_sItemEquipmentStatus[DEF_MAXITEMEQUIPPOS];
 	char m_cArrowIndex;
 
@@ -137,7 +137,7 @@ public:
 	unsigned char m_cSkillMastery[DEF_MAXSKILLTYPE];
 
 	int m_iSkillSSN[DEF_MAXSKILLTYPE];
-	BOOL m_bSkillUsingStatus[DEF_MAXSKILLTYPE];
+	bool m_bSkillUsingStatus[DEF_MAXSKILLTYPE];
 	int m_iSkillUsingTimeID[DEF_MAXSKILLTYPE];
 
 	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS];
@@ -147,12 +147,12 @@ public:
 
 	int m_iHungerStatus;
 
-	DWORD m_dwWarBeginTime;
-	BOOL m_bIsWarLocation;
+	uint32_t m_dwWarBeginTime;
+	bool m_bIsWarLocation;
 
-	BOOL m_bIsPoisoned;
+	bool m_bIsPoisoned;
 	int m_iPoisonLevel;
-	DWORD m_dwPoisonTime;
+	uint32_t m_dwPoisonTime;
 
 	int m_iPenaltyBlockYear, m_iPenaltyBlockMonth, m_iPenaltyBlockDay;
 
@@ -168,23 +168,23 @@ public:
 	int m_iTimeLeft_ForceRecall;
 	int m_iTimeLeft_FirmStaminar;
 
-	BOOL m_bIsOnServerChange;
+	bool m_bIsOnServerChange;
 
 	int m_iExpStock;
-	DWORD m_dwExpStockTime;
+	uint32_t m_dwExpStockTime;
 
 	int m_iAutoExpAmount;
-	DWORD m_dwAutoExpTime;
+	uint32_t m_dwAutoExpTime;
 
-	DWORD m_dwRecentAttackTime;
+	uint32_t m_dwRecentAttackTime;
 
 	int m_iAllocatedFish;
 	int m_iFishChance;
 
 	char m_cIPaddress[21];
-	BOOL m_bIsSafeAttackMode;
+	bool m_bIsSafeAttackMode;
 
-	BOOL m_bIsOnWaitingProcess;
+	bool m_bIsOnWaitingProcess;
 
 	int m_iSuperAttackLeft;
 	int m_iSuperAttackCount;
@@ -193,7 +193,7 @@ public:
 
 	int m_iManaSaveRatio;
 
-	BOOL m_bIsLuckyEffect;
+	bool m_bIsLuckyEffect;
 	int m_iSideEffect_MaxHPdown;
 
 	int m_iComboAttackCount;
@@ -205,17 +205,17 @@ public:
 
 	int m_iAbuseCount;
 
-	BOOL m_bIsBWMonitor;
+	bool m_bIsBWMonitor;
 
-	//BOOL  m_bIsExchangeMode;		// ���� ������ ��ȯ ����ΰ�? 
+	//bool  m_bIsExchangeMode;		// ���� ������ ��ȯ ����ΰ�? 
 	//int   m_iExchangeH;				// ��ȯ�� ����� �ε��� 
 	//char  m_cExchangeName[11];		// ��ȯ�� ����� �̸� 
 	//char  m_cExchangeItemName[21];	// ��ȯ�ϰ��� �ϴ� ������ �̸� 
 	//char  m_cExchangeItemIndex;  // ��ȯ�� ������ �ε��� 
 	//int   m_iExchangeItemAmount; // ��ȯ�� ������ ���� 
-	//BOOL  m_bIsExchangeConfirm;  // ��ȯ Ȯ�� 
+	//bool  m_bIsExchangeConfirm;  // ��ȯ Ȯ�� 
 
-	BOOL m_bIsExchangeMode; // Is In Exchange Mode? 
+	bool m_bIsExchangeMode; // Is In Exchange Mode? 
 	int m_iExchangeH; // Client ID to Exchanging with 
 	char m_cExchangeName[11]; // Name of Client to Exchanging with 
 	char m_cExchangeItemName[4][21]; // Name of Item to exchange 
@@ -223,7 +223,7 @@ public:
 	char m_cExchangeItemIndex[4]; // ItemID to Exchange
 	int m_iExchangeItemAmount[4]; // Ammount to exchange with
 
-	BOOL m_bIsExchangeConfirm; // Has the user hit confirm? 
+	bool m_bIsExchangeConfirm; // Has the user hit confirm? 
 	int iExchangeCount; //Keeps track of items which are on list
 
 	int m_iQuest; 
@@ -236,8 +236,8 @@ public:
 
 	int m_iContribution; 
 
-	BOOL m_bQuestMatchFlag_Loc; 
-	BOOL m_bIsQuestCompleted; 
+	bool m_bQuestMatchFlag_Loc; 
+	bool m_bIsQuestCompleted; 
 
 	int m_iCustomItemValue_Attack;
 	int m_iCustomItemValue_Defense;
@@ -248,8 +248,8 @@ public:
 	int m_iMaxAP_SM; 
 	int m_iMaxAP_L;
 
-	BOOL m_bIsNeutral; 
-	BOOL m_bIsObserverMode; 
+	bool m_bIsNeutral; 
+	bool m_bIsObserverMode; 
 
 	int m_iSpecialEventID; 
 
@@ -277,11 +277,11 @@ public:
 	int m_iLastDamage;
 
 	int m_iMoveMsgRecvCount, m_iAttackMsgRecvCount, m_iRunMsgRecvCount, m_iSkillMsgRecvCount;
-	DWORD m_dwMoveLAT, m_dwRunLAT, m_dwAttackLAT;
+	uint32_t m_dwMoveLAT, m_dwRunLAT, m_dwAttackLAT;
 
 	int m_iSpecialAbilityTime; 
-	BOOL m_bIsSpecialAbilityEnabled; 
-	DWORD m_dwSpecialAbilityStartTime; 
+	bool m_bIsSpecialAbilityEnabled; 
+	uint32_t m_dwSpecialAbilityStartTime; 
 	int m_iSpecialAbilityLastSec; 
 
 	int m_iSpecialAbilityType; 
@@ -290,25 +290,25 @@ public:
 	
 	
 	int m_iSpecialAbilityEquipPos; 
-	BOOL m_bIsAdminCommandEnabled;
+	bool m_bIsAdminCommandEnabled;
 	int m_iAlterItemDropIndex; 
 
 	int m_iWarContribution; 
 
-	DWORD m_dwSpeedHackCheckTime; 
+	uint32_t m_dwSpeedHackCheckTime; 
 	int m_iSpeedHackCheckExp;
-	DWORD m_dwLogoutHackCheck;
+	uint32_t m_dwLogoutHackCheck;
 
-	DWORD m_dwInitCCTimeRcv;
-	DWORD m_dwInitCCTime;
+	uint32_t m_dwInitCCTimeRcv;
+	uint32_t m_dwInitCCTime;
 
 	char m_cLockedMapName[11]; 
 	int m_iLockedMapTime; 
 
 	int m_iCrusadeDuty; 
-	DWORD m_dwCrusadeGUID; 
-	DWORD m_dwHeldenianGUID;
-	BOOL m_bInRecallImpossibleMap;
+	uint32_t m_dwCrusadeGUID; 
+	uint32_t m_dwHeldenianGUID;
+	bool m_bInRecallImpossibleMap;
 
 	
 
@@ -320,7 +320,7 @@ public:
 	int m_iCSIsendPoint;
 
 	char m_cSendingMapName[11];
-	BOOL m_bIsSendingMapStatus;
+	bool m_bIsSendingMapStatus;
 
 	
 	int m_iConstructionPoint;
@@ -329,8 +329,8 @@ public:
 	int m_iConstructLocX, m_iConstructLocY;
 
 	
-	BOOL m_bIsPlayerCivil;
-	BOOL m_bIsAttackModeChange;
+	bool m_bIsPlayerCivil;
+	bool m_bIsAttackModeChange;
 
 	
 	
@@ -349,29 +349,29 @@ public:
 	} m_stPartyMemberName[DEF_MAXPARTYMEMBERS];
 
 	
-	DWORD m_dwLastActionTime, m_dwLastDamageTime;
+	uint32_t m_dwLastActionTime, m_dwLastDamageTime;
 	int m_iDeadPenaltyTime;
 
 	
 	char m_cWhisperPlayerName[11];
-	BOOL m_bIsAdminOrderGoto;
-	BOOL m_bIsInsideWarehouse;
-	BOOL m_bIsInsideWizardTower;
-	BOOL m_bIsInsideOwnTown;
-	BOOL m_bIsOwnLocation;
-	BOOL m_pIsProcessingAllowed;
-	BOOL m_bIsClientConnected;
+	bool m_bIsAdminOrderGoto;
+	bool m_bIsInsideWarehouse;
+	bool m_bIsInsideWizardTower;
+	bool m_bIsInsideOwnTown;
+	bool m_bIsOwnLocation;
+	bool m_pIsProcessingAllowed;
+	bool m_bIsClientConnected;
 
 	
 	char m_cHeroArmorBonus;
 
 	
-	BOOL m_bIsBeingResurrected;
+	bool m_bIsBeingResurrected;
 
-	DWORD m_dwFightzoneDeadTime;
+	uint32_t m_dwFightzoneDeadTime;
 	char m_cSaveCount;
 	int m_iBallPoints;
 
-	DWORD m_dwDSLAT, m_dwDSLATOld, m_dwDSLATS;
+	uint32_t m_dwDSLAT, m_dwDSLATOld, m_dwDSLATS;
 	int m_iDSCount;
 };
