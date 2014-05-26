@@ -44,7 +44,7 @@
 class XSocket {
 public:
 	int iGetPeerAddress(char * pAddrString);
-	char * pGetRcvDataPointer(uint32_t * pMsgSize, char * pKey = NULL);
+	char * pGetRcvDataPointer(uint32_t * pMsgSize, char * pKey = nullptr);
 	SOCKET iGetSocket();
 	bool bAccept(class XSocket * pXSock, unsigned int uiMsg);
 	bool bListen(char * pAddr, int iPort, unsigned int uiMsg);

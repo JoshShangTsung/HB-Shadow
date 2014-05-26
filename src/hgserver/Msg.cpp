@@ -2,17 +2,17 @@
 #include <cstring>
 
 CMsg::CMsg() {
-	m_pData = NULL;
+	m_pData = nullptr;
 	m_dwSize = 0;
 }
 
 CMsg::~CMsg() {
-	if (m_pData != NULL) delete m_pData;
+	if (m_pData != nullptr) delete m_pData;
 }
 
 bool CMsg::bPut(char cFrom, char * pData, uint32_t dwSize, int iIndex, char cKey) {
 	m_pData = new char [dwSize + 1];
-	if (m_pData == NULL) return false;
+	if (m_pData == nullptr) return false;
 	memcpy(m_pData, pData, dwSize);
 	m_pData[dwSize] = 0;
 

@@ -15,7 +15,7 @@ CTile::CTile() {
 	m_cDeadOwnerClass = 0;
 
 	for (i = 0; i < DEF_TILE_PER_ITEMS; i++)
-		m_pItem[i] = NULL;
+		m_pItem[i] = nullptr;
 	m_cTotalItem = 0;
 
 	m_wDynamicObjectID = 0;
@@ -32,5 +32,5 @@ CTile::CTile() {
 CTile::~CTile() {
 	int i;
 	for (i = 0; i < DEF_TILE_PER_ITEMS; i++)
-		if (m_pItem[i] != NULL) delete m_pItem[i];
+		if (m_pItem[i] != nullptr) delete m_pItem[i];
 }

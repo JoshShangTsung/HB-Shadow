@@ -429,7 +429,7 @@ public:
 	void OnSubLogRead(int iIndex);
 	void OnSubLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	void _CheckStrategicPointOccupyStatus(char cMapIndex);
-	void GetMapInitialPoint(int iMapIndex, short * pX, short * pY, char * pPlayerLocation = NULL);
+	void GetMapInitialPoint(int iMapIndex, short * pX, short * pY, char * pPlayerLocation = nullptr);
 	int iGetMaxHP(int iClientH);
 	int iGetMaxMP(int iClientH);
 	int iGetMaxSP(int iClientH);
@@ -463,7 +463,7 @@ public:
 	bool _bDecodeOccupyFlagSaveFileContents(char * pData, uint32_t dwMsgSize);
 	void GetOccupyFlagHandler(int iClientH);
 	int _iComposeFlagStatusContents(char * pData);
-	void SetSummonMobAction(int iClientH, int iMode, uint32_t dwMsgSize, char * pData = NULL);
+	void SetSummonMobAction(int iClientH, int iMode, uint32_t dwMsgSize, char * pData = nullptr);
 	bool __bSetOccupyFlag(char cMapIndex, int dX, int dY, int iSide, int iEKNum, int iClientH, bool bAdminFlag);
 	bool _bDepleteDestTypeItemUseEffect(int iClientH, int dX, int dY, short sItemIndex, short sDestItemID);
 	void SetDownSkillIndexHandler(int iClientH, int iSkillIndex);
@@ -598,7 +598,7 @@ public:
 	bool _bDecodeMagicConfigFileContents(char * pData, uint32_t dwMsgSize);
 	void ReleaseFollowMode(short sOwnerH, char cOwnerType);
 	bool bSetNpcFollowMode(char * pName, char * pFollowName, char cFollowOwnerType);
-	void RequestTeleportHandler(int iClientH, const char * pData, const char * cMapName = NULL, int dX = -1, int dY = -1);
+	void RequestTeleportHandler(int iClientH, const char * pData, const char * cMapName = nullptr, int dX = -1, int dY = -1);
 	void PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool bItemEffect = false, int iV1 = 0);
 	int iClientMotion_Magic_Handler(int iClientH, short sX, short sY, char cDir);
 	void ToggleCombatModeHandler(int iClientH);
@@ -620,7 +620,7 @@ public:
 	void DismissGuildApproveHandler(int iClientH, char * pName);
 	void JoinGuildRejectHandler(int iClientH, char * pName);
 	void JoinGuildApproveHandler(int iClientH, char * pName);
-	void SendNotifyMsg(int iFromH, int iToH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4 = 0, uint32_t sV5 = 0, uint32_t sV6 = 0, uint32_t sV7 = 0, uint32_t sV8 = 0, uint32_t sV9 = 0, char * pString2 = NULL);
+	void SendNotifyMsg(int iFromH, int iToH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4 = 0, uint32_t sV5 = 0, uint32_t sV6 = 0, uint32_t sV7 = 0, uint32_t sV8 = 0, uint32_t sV9 = 0, char * pString2 = nullptr);
 	void GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, uint16_t wObjectID, char * pItemName);
 	void RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum);
 	void ResponseDisbandGuildHandler(char * pData, uint32_t dwMsgSize);
@@ -662,7 +662,7 @@ public:
 	void GameProcess();
 	void InitPlayerData(int iClientH, char * pData, uint32_t dwSize);
 	void ResponsePlayerDataHandler(char * pData, uint32_t dwSize);
-	bool bSendMsgToLS(uint32_t dwMsg, int iClientH, bool bFlag = true, char *pData = NULL);
+	bool bSendMsgToLS(uint32_t dwMsg, int iClientH, bool bFlag = true, char *pData = nullptr);
 	void OnMainLogRead();
 	void OnMainLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	void CheckClientResponseTime();
@@ -896,7 +896,7 @@ public:
 	// �̵鷣���� ������ �����ϴ� ����ü. �̵鷣�带 ������� �ʴ� ���������� �� ������ �޾� �����Ѵ�.
 
 	struct {
-		char cType; // �̰� NULL�̸� ���ǵ��� �������� �ǹ�.
+		char cType; // �̰� nullptr�̸� ���ǵ��� �������� �ǹ�.
 		char cSide; // ���̵�
 		short sX, sY; // ��ġ�� ��ġ 
 	} m_stMiddleCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];

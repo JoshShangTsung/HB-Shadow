@@ -18,7 +18,7 @@ void PutPvPLogFileList(const char * cStr);
 #define WM_USER_TIMERSIGNAL		WM_USER + 500
 
 char szAppClass[32];
-HWND G_hWnd = NULL;
+HWND G_hWnd = nullptr;
 char G_cMsgList[120 * 50];
 bool G_cMsgUpdated = false;
 char G_cTxt[512];
@@ -26,9 +26,9 @@ char G_cData50000[50000];
 MMRESULT G_mmTimer = 0;
 
 
-class XSocket * G_pListenSock = NULL;
-class XSocket * G_pLogSock = NULL;
-class CGame * G_pGame = NULL;
+class XSocket * G_pListenSock = nullptr;
+class XSocket * G_pLogSock = nullptr;
+class CGame * G_pGame = nullptr;
 
 int G_iQuitProgramCount = 0;
 bool G_bIsThread = true;
@@ -37,7 +37,7 @@ FILE * pLogFile;
 
 void ThreadProc(void */*ch*/) {
 	while (G_bIsThread == true) {
-		if (G_pGame != NULL) G_pGame->OnTimer(0);
+		if (G_pGame != nullptr) G_pGame->OnTimer(0);
 		Sleep(100);
 	}
 
@@ -127,10 +127,10 @@ bool InitApplication(HINSTANCE hInstance) {
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = sizeof (int);
 	wc.hInstance = hInstance;
-	wc.hIcon = NULL;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hIcon = nullptr;
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = szAppClass;
 
 	return (RegisterClass(&wc));
@@ -157,10 +157,10 @@ bool InitInstance(HINSTANCE hInstance, int nCmdShow) {
 			  CW_USEDEFAULT,
 			  800, //GetSystemMetrics(SM_CXSCREEN),
 			  600, //GetSystemMetrics(SM_CYSCREEN),
-			  NULL,
-			  NULL,
+			  nullptr,
+			  nullptr,
 			  hInstance,
-			  NULL);
+			  nullptr);
 
 	if (!G_hWnd) return (false);
 
@@ -173,8 +173,8 @@ bool InitInstance(HINSTANCE hInstance, int nCmdShow) {
 int EventLoop() {
 	MSG msg;
 	while (1) {
-		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-			if (!GetMessage(&msg, NULL, 0, 0)) {
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE)) {
+			if (!GetMessage(&msg, nullptr, 0, 0)) {
 				return msg.wParam;
 			}
 			TranslateMessage(&msg);
@@ -208,15 +208,15 @@ void Initialize() {
 	if (G_pGame->m_iGameServerMode == 2) {
 		G_pListenSock->bListen(G_pGame->m_cGameServerAddr, G_pGame->m_iGameServerPort, WM_USER_ACCEPT);
 	}
-	pLogFile = NULL;
+	pLogFile = nullptr;
 	//pLogFile = fopen("test.log","wt+");
 }
 
 void OnDestroy() {
-	if (G_pListenSock != NULL) delete G_pListenSock;
-	if (G_pLogSock != NULL) delete G_pLogSock;
+	if (G_pListenSock != nullptr) delete G_pListenSock;
+	if (G_pLogSock != nullptr) delete G_pLogSock;
 
-	if (G_pGame != NULL) {
+	if (G_pGame != nullptr) {
 		G_pGame->Quit();
 		delete G_pGame;
 	}
@@ -224,7 +224,7 @@ void OnDestroy() {
 	if (G_mmTimer != 0) _StopTimer(G_mmTimer);
 	_TermWinsock();
 
-	if (pLogFile != NULL) fclose(pLogFile);
+	if (pLogFile != nullptr) fclose(pLogFile);
 
 	PostQuitMessage(0);
 }
@@ -247,7 +247,7 @@ void PutXSocketLogList(const char * cMsg) {
 
 void UpdateScreen() {
 	if (G_cMsgUpdated == true) {
-		InvalidateRect(G_hWnd, NULL, true);
+		InvalidateRect(G_hWnd, nullptr, true);
 		G_cMsgUpdated = false;
 	}
 }
@@ -267,7 +267,7 @@ void OnPaint() {
 		TextOut(hdc, 5, 5 + 350 - i * 16, cMsg, strlen(cMsg));
 	}
 
-	if (G_pGame != NULL)
+	if (G_pGame != nullptr)
 		G_pGame->DisplayInfo(hdc);
 
 	EndPaint(G_hWnd, &ps);
@@ -314,7 +314,7 @@ void PutLogFileList(const char * cStr) {
 	// Original:
 	// pFile = fopen("Events.log", "at");
 	pFile = fopen("GameLogs\\Events.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == nullptr) return;
 	std::memset(cBuffer, 0, sizeof(cBuffer));
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
@@ -330,7 +330,7 @@ void PutAdminLogFileList(const char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\AdminEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == nullptr) return;
 
 	std::memset(cBuffer, 0, sizeof(cBuffer));
 
@@ -349,7 +349,7 @@ void PutHackLogFileList(const char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\HackEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == nullptr) return;
 
 	std::memset(cBuffer, 0, sizeof(cBuffer));
 
@@ -368,7 +368,7 @@ void PutPvPLogFileList(const char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\PvPEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == nullptr) return;
 
 	std::memset(cBuffer, 0, sizeof(cBuffer));
 
@@ -387,7 +387,7 @@ void PutXSocketLogFileList(const char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\XSocket.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == nullptr) return;
 
 	std::memset(cBuffer, 0, sizeof(cBuffer));
 
@@ -406,7 +406,7 @@ void PutItemLogFileList(const char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\ItemEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == nullptr) return;
 
 	std::memset(cBuffer, 0, sizeof(cBuffer));
 
@@ -425,7 +425,7 @@ void PutLogEventFileList(const char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\LogEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == nullptr) return;
 
 	std::memset(cBuffer, 0, sizeof(cBuffer));
 
