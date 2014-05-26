@@ -1,5 +1,5 @@
 #include "Portion.h"
-
+#include <cstring>
 CPortion::CPortion() {
 	int i;
 

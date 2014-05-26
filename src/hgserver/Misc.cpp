@@ -1,4 +1,5 @@
 #include "Misc.h"
+#include <cstring>
 
 void CMisc::GetMyCursorPos(short * pX, short * pY) {
 	POINT point;
@@ -35,7 +36,7 @@ char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY) {
 
 void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * pError) {
 	register int dx, dy, x_inc, y_inc, error, index;
-	register int iResultX, iResultY, iDstCnt;
+	register int iResultX, iResultY;
 
 	if ((x0 == x1) && (y0 == y1)) {
 		*pX = x0;
@@ -47,7 +48,6 @@ void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * p
 
 	iResultX = x0;
 	iResultY = y0;
-	iDstCnt = 0;
 
 	dx = x1 - x0;
 	dy = y1 - y0;
@@ -165,25 +165,25 @@ CALC_OK:
 
 void CMisc::GetDirPoint(char cDir, int * pX, int * pY) {
 	switch (cDir) {
-		case 1: *pY--;
+		case 1: --*pY;
 			break;
-		case 2: *pY--;
-			*pX++;
+		case 2: --*pY;
+			++*pX;
 			break;
-		case 3: *pX++;
+		case 3: ++*pX;
 			break;
-		case 4: *pX++;
-			*pY++;
+		case 4: ++*pX;
+			++*pY;
 			break;
-		case 5: *pY++;
+		case 5: ++*pY;
 			break;
-		case 6: *pX--;
-			*pY++;
+		case 6: --*pX;
+			++*pY;
 			break;
-		case 7: *pX--;
+		case 7: --*pX;
 			break;
-		case 8: *pX--;
-			*pY--;
+		case 8: --*pX;
+			--*pY;
 			break;
 	}
 

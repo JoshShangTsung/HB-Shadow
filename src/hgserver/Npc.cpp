@@ -1,6 +1,6 @@
 #include "Npc.h"
-
-CNpc::CNpc(char * pName5) {
+#include <cstring>
+CNpc::CNpc(const char * pName5) {
 	int i;
 	std::memset(m_cName, 0, sizeof(m_cName));
 	memcpy(m_cName, pName5, 5);

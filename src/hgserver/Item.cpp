@@ -1,4 +1,5 @@
 #include "Item.h"
+#include <cstring>
 
 CItem::CItem() {
 	std::memset(m_cName, 0, sizeof(m_cName));

@@ -1,5 +1,5 @@
 #include "Teleport.h"
-
+#include <cstring>
 CTeleport::CTeleport() {
 
 	std::memset(m_cTeleportNpcName, 0, sizeof(m_cTeleportNpcName));

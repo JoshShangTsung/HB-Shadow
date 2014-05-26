@@ -1,4 +1,15 @@
 #include "Game.h"
+#include <cstring>
+
+extern void PutLogList(const char * cMsg);
+extern void PutLogFileList(const char * cStr);
+extern void PutAdminLogFileList(const char * cStr);
+extern void PutItemLogFileList(const char * cStr);
+extern void PutLogEventFileList(const char * cStr);
+extern void PutHackLogFileList(const char * cStr);
+extern void PutPvPLogFileList(const char * cStr);
+extern char G_cTxt[512];
+extern HWND G_hWnd;
 
 void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, BOOL bExp, int iAttr) {
 	int iPartyID, iDamage, iSideCondition, iIndex, iRemainLife, iTemp, iExp, iMaxSuperAttack, iRepDamage;
@@ -21103,7 +21114,7 @@ void CGame::AdminOrder_CleanMap(int iClientH, char * pData, DWORD dwMsgSize) {
 	return;
 }
 
-void CGame::ShowClientMsg(int iClientH, char* pMsg) {
+void CGame::ShowClientMsg(int iClientH, const char* pMsg) {
 	char * cp, cTemp[256];
 	DWORD * dwp, dwMsgSize;
 	WORD * wp;

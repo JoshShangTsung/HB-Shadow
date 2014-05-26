@@ -5,7 +5,7 @@
 XSocket::XSocket(HWND hWnd, int iBlockLimit) {
 	register int i;
 
-	m_cType = NULL;
+	m_cType = 0;
 	m_pRcvBuffer = NULL;
 	m_pSndBuffer = NULL;
 	m_Sock = INVALID_SOCKET;
@@ -23,7 +23,7 @@ XSocket::XSocket(HWND hWnd, int iBlockLimit) {
 	m_sHead = 0;
 	m_sTail = 0;
 
-	m_WSAErr = NULL;
+	m_WSAErr = 0;
 
 	m_hWnd = hWnd;
 	m_bIsAvailable = FALSE;
@@ -65,7 +65,7 @@ int XSocket::iOnSocketEvent(WPARAM wParam, LPARAM lParam) {
 	// ������ ������ �̺�Ʈ�� ó���� �� ���.
 	if (m_cType != DEF_XSOCK_NORMALSOCK) return DEF_XSOCKEVENT_SOCKETMISMATCH;
 	// �ʱ�ȭ ���� �ʾƼ� ó���� �� ���.
-	if (m_cType == NULL) return DEF_XSOCKEVENT_NOTINITIALIZED;
+	if (m_cType == 0) return DEF_XSOCKEVENT_NOTINITIALIZED;
 
 	if ((SOCKET) wParam != m_Sock) return DEF_XSOCKEVENT_SOCKETMISMATCH;
 	WSAEvent = WSAGETSELECTEVENT(lParam);
@@ -377,7 +377,7 @@ int XSocket::_iSendUnsentData() {
 
 int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 	WORD * wp;
-	int i, iRet;
+	int iRet;
 
 	//m_pSndBuffer = cData;
 	// �޽��� ũ�Ⱑ ���ۺ��� ũ�� ���� �� ���.
@@ -386,7 +386,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 	// ������ ���� Ȥ�� ���� �������� �޽����� ���� ���� ���.
 	if (m_cType != DEF_XSOCK_NORMALSOCK) return DEF_XSOCKEVENT_SOCKETMISMATCH;
 	// �ʱ�ȭ ���� �ʾƼ� �޽����� ���� �� ���.
-	if (m_cType == NULL) return DEF_XSOCKEVENT_NOTINITIALIZED;
+	if (m_cType == 0) return DEF_XSOCKEVENT_NOTINITIALIZED;
 
 	// Ű �Է� 
 	m_pSndBuffer[0] = cKey;
@@ -396,8 +396,8 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 
 	memcpy((char *) (m_pSndBuffer + 3), cData, dwSize);
 	// v.14 : m_pSndBuffer +3 ���� dwSize���� cKey�� 0�� �ƴ϶�� ��ȣȭ�Ѵ�.
-	if (cKey != NULL) {//Encryption
-		for (i = 0; i < dwSize; i++) {
+	if (cKey != 0) {//Encryption
+		for (std::size_t i = 0; i < dwSize; i++) {
 			m_pSndBuffer[3 + i] += (i ^ cKey);
 			m_pSndBuffer[3 + i] = m_pSndBuffer[3 + i] ^ (cKey ^ (dwSize - i));
 		}
@@ -412,7 +412,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 BOOL XSocket::bListen(char * pAddr, int iPort, unsigned int uiMsg) {
 	SOCKADDR_IN saTemp;
 
-	if (m_cType != NULL) return FALSE;
+	if (m_cType != 0) return FALSE;
 	if (m_Sock != INVALID_SOCKET) closesocket(m_Sock);
 
 	// ������ ���Ѵ�. 
@@ -446,7 +446,7 @@ BOOL XSocket::bListen(char * pAddr, int iPort, unsigned int uiMsg) {
 BOOL XSocket::bAccept(class XSocket * pXSock, unsigned int uiMsg) {
 	SOCKET AcceptedSock;
 	sockaddr Addr;
-	register int iLength;
+	int iLength;
 	DWORD dwOpt;
 
 	if (m_cType != DEF_XSOCK_LISTENSOCK) return FALSE;
@@ -499,7 +499,6 @@ SOCKET XSocket::iGetSocket() {
 char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey) {
 	WORD * wp;
 	DWORD dwSize;
-	register int i;
 	char cKey;
 
 	cKey = m_pRcvBuffer[0];
@@ -512,8 +511,8 @@ char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey) {
 	if (dwSize > DEF_MSGBUFFERSIZE) dwSize = DEF_MSGBUFFERSIZE;
 
 	// v.14 : m_pSndBuffer +3 ���� dwSize���� cKey�� 0�� �ƴ϶�� ��ȣȭ�� Ǭ��.
-	if (cKey != NULL) {//Encryption
-		for (i = 0; i < dwSize; i++) {
+	if (cKey != 0) {//Encryption
+		for (std::size_t i = 0; i < dwSize; i++) {
 			m_pRcvBuffer[3 + i] = m_pRcvBuffer[3 + i] ^ (cKey ^ (dwSize - i));
 			m_pRcvBuffer[3 + i] -= (i ^ cKey);
 		}

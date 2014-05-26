@@ -1,5 +1,5 @@
 #include "TeleportLoc.h"
-
+#include <cstring>
 CTeleportLoc::CTeleportLoc() {
 
 	std::memset(m_cDestMapName, 0, sizeof(m_cDestMapName));

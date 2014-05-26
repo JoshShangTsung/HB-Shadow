@@ -1,7 +1,7 @@
 #pragma once
 
-void PutXSocketLogList(char * cMsg);
-void PutXSocketLogFileList(char * cMsg);
+void PutXSocketLogList(const char * cMsg);
+void PutXSocketLogFileList(const char * cMsg);
 BOOL InitApplication(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

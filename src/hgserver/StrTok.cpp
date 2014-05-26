@@ -1,4 +1,5 @@
 #include "StrTok.h"
+#include <cstring>
 extern void PutLogFileList(char * cStr);
 
 CStrTok::CStrTok(char * pData, const char * pSeps) {

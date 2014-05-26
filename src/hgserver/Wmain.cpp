@@ -9,10 +9,11 @@
 #include "Game.h"
 #include "UserMessages.h"
 #include "resource.h"
+#include <cstring>
 
-void PutAdminLogFileList(char * cStr);
-void PutHackLogFileList(char * cStr);
-void PutPvPLogFileList(char * cStr);
+void PutAdminLogFileList(const char * cStr);
+void PutHackLogFileList(const char * cStr);
+void PutPvPLogFileList(const char * cStr);
 
 #define WM_USER_TIMERSIGNAL		WM_USER + 500
 
@@ -22,7 +23,7 @@ char G_cMsgList[120 * 50];
 BOOL G_cMsgUpdated = FALSE;
 char G_cTxt[512];
 char G_cData50000[50000];
-MMRESULT G_mmTimer = NULL;
+MMRESULT G_mmTimer = 0;
 
 
 class XSocket * G_pListenSock = NULL;
@@ -34,9 +35,9 @@ BOOL G_bIsThread = TRUE;
 
 FILE * pLogFile;
 
-void ThreadProc(void *ch) {
+void ThreadProc(void */*ch*/) {
 	while (G_bIsThread == TRUE) {
-		if (G_pGame = NULL) G_pGame->OnTimer(NULL);
+		if (G_pGame != NULL) G_pGame->OnTimer(0);
 		Sleep(100);
 	}
 
@@ -63,7 +64,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			break;
 
 		case WM_USER_TIMERSIGNAL:
-			G_pGame->OnTimer(NULL);
+			G_pGame->OnTimer(0);
 			break;
 
 		case WM_USER_ACCEPT:
@@ -104,12 +105,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			return (DefWindowProc(hWnd, message, wParam, lParam));
 	}
 
-	return NULL;
+	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		  LPSTR lpCmdLine, int nCmdShow) {
-	sprintf(szAppClass, "GameServer%d", hInstance);
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
+		  LPSTR /*lpCmdLine*/, int nCmdShow) {
+	sprintf(szAppClass, "GameServer%d", (int) hInstance);
 	if (!InitApplication(hInstance)) return (FALSE);
 	if (!InitInstance(hInstance, nCmdShow)) return (FALSE);
 
@@ -170,9 +171,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 }
 
 int EventLoop() {
-	static unsigned short _usCnt = 0;
-	register MSG msg;
-
+	MSG msg;
 	while (1) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
 			if (!GetMessage(&msg, NULL, 0, 0)) {
@@ -222,7 +221,7 @@ void OnDestroy() {
 		delete G_pGame;
 	}
 
-	if (G_mmTimer != NULL) _StopTimer(G_mmTimer);
+	if (G_mmTimer != 0) _StopTimer(G_mmTimer);
 	_TermWinsock();
 
 	if (pLogFile != NULL) fclose(pLogFile);
@@ -241,7 +240,7 @@ void PutLogList(const char * cMsg) {
 	PutAdminLogFileList(cMsg);
 }
 
-void PutXSocketLogList(char * cMsg) {
+void PutXSocketLogList(const char * cMsg) {
 	PutXSocketLogFileList(cMsg);
 
 }
@@ -274,15 +273,15 @@ void OnPaint() {
 	EndPaint(G_hWnd, &ps);
 }
 
-void OnKeyUp(WPARAM wParam, LPARAM lParam) {
+void OnKeyUp(WPARAM /*wParam*/, LPARAM /*lParam*/) {
 }
 
 void OnAccept() {
 	G_pGame->bAccept(G_pListenSock);
 }
 
-void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2) {
-	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, NULL);
+void CALLBACK _TimerFunc(UINT wID, UINT /*wUser*/, DWORD /*dwUSer*/, DWORD /*dw1*/, DWORD /*dw2*/) {
+	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, 0);
 }
 
 MMRESULT _StartTimer(DWORD dwTime) {
@@ -307,7 +306,7 @@ void _StopTimer(MMRESULT timerid) {
 	}
 }
 
-void PutLogFileList(char * cStr) {
+void PutLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -325,7 +324,7 @@ void PutLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutAdminLogFileList(char * cStr) {
+void PutAdminLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[1024 * 5];
 	SYSTEMTIME SysTime;
@@ -344,7 +343,7 @@ void PutAdminLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutHackLogFileList(char * cStr) {
+void PutHackLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -363,7 +362,7 @@ void PutHackLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutPvPLogFileList(char * cStr) {
+void PutPvPLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -382,7 +381,7 @@ void PutPvPLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutXSocketLogFileList(char * cStr) {
+void PutXSocketLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -401,7 +400,7 @@ void PutXSocketLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutItemLogFileList(char * cStr) {
+void PutItemLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -420,7 +419,7 @@ void PutItemLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutLogEventFileList(char * cStr) {
+void PutLogEventFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;

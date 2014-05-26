@@ -1,4 +1,5 @@
 #include "TempNpcItem.h"
+#include <cstring>
 extern void PutLogFileList(char * cStr);
 
 CNpcItem::CNpcItem() {

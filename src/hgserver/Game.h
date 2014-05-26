@@ -187,6 +187,9 @@
 
 #define NO_MSGSPEEDCHECK
 
+constexpr char _tmp_cTmpDirX[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
+constexpr char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
+
 class CGame {
 public:
 
@@ -612,9 +615,9 @@ public:
 	BOOL _bDecodeNpcConfigFileContents(char * pData, DWORD dwMsgSize);
 	void ReleaseItemHandler(int iClientH, short sItemIndex, BOOL bNotice);
 	void ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType, short sDamage);
-	int SetItemCount(int iClientH, char * pItemName, DWORD dwCount);
+	int SetItemCount(int iClientH, const char * pItemName, DWORD dwCount);
 	int SetItemCount(int iClientH, int iItemIndex, DWORD dwCount);
-	DWORD dwGetItemCount(int iClientH, char * pName);
+	DWORD dwGetItemCount(int iClientH, const char * pName);
 	void DismissGuildRejectHandler(int iClientH, char * pName);
 	void DismissGuildApproveHandler(int iClientH, char * pName);
 	void JoinGuildRejectHandler(int iClientH, char * pName);
@@ -1072,7 +1075,7 @@ public:
 	void SetPlayingStatus(int iClientH);
 	void ForceChangePlayMode(int iClientH, bool bNotify);
 	void ShowVersion(int iClientH);
-	void ShowClientMsg(int iClientH, char* pMsg);
+	void ShowClientMsg(int iClientH, const char* pMsg);
 	void RequestResurrectPlayer(int iClientH, bool bResurrect);
 	void GetDkSet(int iClientH);
 	void AdminOrder_BanIP(int iClientH, char *pData, DWORD dwMsgSize);

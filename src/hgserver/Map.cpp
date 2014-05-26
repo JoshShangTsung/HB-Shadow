@@ -1,4 +1,5 @@
 #include "Map.h"
+#include <cstring>
 
 extern void PutLogFileList(char * cStr);
 
@@ -54,8 +55,8 @@ CMap::CMap(class CGame * pGame)
 		m_pStrategicPointList[i] = NULL;
 
 	for (i = 0; i < DEF_MAXENERGYSPHERES; i++) {
-		m_stEnergySphereCreationList[i].cType = NULL;
-		m_stEnergySphereGoalList[i].cResult = NULL;
+		m_stEnergySphereCreationList[i].cType = 0;
+		m_stEnergySphereGoalList[i].cResult = 0;
 	}
 
 	m_bIsHeldenianMap = FALSE;
@@ -78,7 +79,7 @@ CMap::CMap(class CGame * pGame)
 
 	m_pTile = NULL;
 
-	m_cWhetherStatus = NULL;
+	m_cWhetherStatus = 0;
 	m_cType = DEF_MAPTYPE_NORMAL;
 
 	m_pGame = pGame;
@@ -141,10 +142,10 @@ CMap::CMap(class CGame * pGame)
 	m_bIsDisabled = FALSE;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-		m_stCrusadeStructureInfo[i].cType = NULL;
-		m_stCrusadeStructureInfo[i].cSide = NULL;
-		m_stCrusadeStructureInfo[i].sX = NULL;
-		m_stCrusadeStructureInfo[i].sY = NULL;
+		m_stCrusadeStructureInfo[i].cType = 0;
+		m_stCrusadeStructureInfo[i].cSide = 0;
+		m_stCrusadeStructureInfo[i].sX = 0;
+		m_stCrusadeStructureInfo[i].sY = 0;
 	}
 	m_iTotalCrusadeStructures = 0;
 	m_iTotalAgriculture = 0;
@@ -189,7 +190,7 @@ BOOL CMap::bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner) {
 	dY = _tmp_cMoveDirY[cDir] + sY;
 	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return 0;
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
-	if (pTile->m_sOwner != NULL) return 0;
+	if (pTile->m_sOwner != 0) return 0;
 	pTile->m_sOwner = sOwner;
 	return 1;
 }
@@ -215,8 +216,8 @@ void CMap::GetOwner(short * pOwner, char * pOwnerClass, short sX, short sY) {
 	class CTile * pTile;
 
 	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) {
-		*pOwner = NULL;
-		*pOwnerClass = NULL;
+		*pOwner = 0;
+		*pOwnerClass = 0;
 		return;
 	}
 
@@ -225,8 +226,8 @@ void CMap::GetOwner(short * pOwner, char * pOwnerClass, short sX, short sY) {
 	*pOwnerClass = pTile->m_cOwnerClass;
 
 	if ((*pOwnerClass == 1) && (*pOwner > DEF_MAXCLIENTS)) {
-		*pOwner = NULL;
-		*pOwnerClass = NULL;
+		*pOwner = 0;
+		*pOwnerClass = 0;
 		return;
 	}
 
@@ -243,8 +244,8 @@ void CMap::GetDeadOwner(short * pOwner, char * pOwnerClass, short sX, short sY) 
 	class CTile * pTile;
 
 	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) {
-		*pOwner = NULL;
-		*pOwnerClass = NULL;
+		*pOwner = 0;
+		*pOwnerClass = 0;
 		return;
 	}
 
@@ -262,7 +263,7 @@ BOOL CMap::bGetMoveable(short dX, short dY, short * pDOtype, short * pTopItem) {
 	if (pDOtype != NULL) *pDOtype = pTile->m_sDynamicObjectType;
 	if (pTopItem != NULL) *pTopItem = pTile->m_cTotalItem;
 
-	if (pTile->m_sOwner != NULL) return FALSE;
+	if (pTile->m_sOwner != 0) return FALSE;
 	if (pTile->m_bIsMoveAllowed == FALSE) return FALSE;
 	if (pTile->m_bIsTempMoveAllowed == FALSE) return FALSE;
 
@@ -306,7 +307,7 @@ BOOL CMap::bGetIsTeleport(short dX, short dY) {
 	return TRUE;
 }
 
-void CMap::ClearOwner(int iDebugCode, short sOwnerH, char cOwnerType, short sX, short sY) {
+void CMap::ClearOwner(int /*iDebugCode*/, short sOwnerH, char cOwnerType, short sX, short sY) {
 	class CTile * pTile;
 
 	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return;
@@ -315,14 +316,14 @@ void CMap::ClearOwner(int iDebugCode, short sOwnerH, char cOwnerType, short sX, 
 
 	// �� ��ġ�� �ڵ��� ��ġ�ϸ� ��� Ŭ�����Ѵ�. 
 	if ((pTile->m_sOwner == sOwnerH) && (pTile->m_cOwnerClass == cOwnerType)) {
-		pTile->m_sOwner = NULL;
-		pTile->m_cOwnerClass = NULL;
+		pTile->m_sOwner = 0;
+		pTile->m_cOwnerClass = 0;
 	}
 
 	// 
 	if ((pTile->m_sDeadOwner == sOwnerH) && (pTile->m_cDeadOwnerClass == cOwnerType)) {
-		pTile->m_sDeadOwner = NULL;
-		pTile->m_cDeadOwnerClass = NULL;
+		pTile->m_sDeadOwner = 0;
+		pTile->m_cDeadOwnerClass = 0;
 	}
 }
 
@@ -340,16 +341,16 @@ void CMap::ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, cha
 	if ((pX < 0) || (pX >= m_sSizeX) || (pY < 0) || (pY >= m_sSizeY)) return;
 	pTile = (class CTile *)(m_pTile + pX + pY * m_sSizeY);
 	if ((pTile->m_sDeadOwner == sOwnerH) && (pTile->m_cDeadOwnerClass == cOwnerType)) {
-		pTile->m_sDeadOwner = NULL;
-		pTile->m_cDeadOwnerClass = NULL;
+		pTile->m_sDeadOwner = 0;
+		pTile->m_cDeadOwnerClass = 0;
 	}
 	for (i = 0; i < sAreaSquared; i++) {
 		sX = pX + _tmp_cEmptyAreaX[i];
 		sY = pY + _tmp_cEmptyAreaY[i];
 		pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
 		if ((pTile->m_sOwner == sOwnerH) && (pTile->m_cOwnerClass == cOwnerType)) {
-			pTile->m_sOwner = NULL;
-			pTile->m_cOwnerClass = NULL;
+			pTile->m_sOwner = 0;
+			pTile->m_cOwnerClass = 0;
 		}
 	}
 }
@@ -360,15 +361,15 @@ void CMap::ClearDeadOwner(short sX, short sY) {
 	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return;
 
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
-	pTile->m_sDeadOwner = NULL;
-	pTile->m_cDeadOwnerClass = NULL;
+	pTile->m_sDeadOwner = 0;
+	pTile->m_cDeadOwnerClass = 0;
 }
 
 BOOL CMap::bSetItem(short sX, short sY, class CItem * pItem) {
 	class CTile * pTile;
 	register int i;
 
-	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return NULL;
+	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return 0;
 
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
 
@@ -419,11 +420,11 @@ int CMap::iCheckItem(short sX, short sY) {
 	class CTile * pTile;
 	class CItem * pItem;
 
-	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return NULL;
+	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return 0;
 
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
 	pItem = pTile->m_pItem[0];
-	if (pTile->m_cTotalItem == 0) return NULL;
+	if (pTile->m_cTotalItem == 0) return 0;
 
 	return pItem->m_sIDnum;
 }
@@ -453,7 +454,7 @@ BOOL CMap::bInit(char * pName) {
 BOOL CMap::_bDecodeMapDataFileContents() {
 	HANDLE hFile;
 	char cMapFileName[256], cHeader[260], cTemp[100];
-	DWORD dwFileSize, nRead;
+	DWORD nRead;
 	register int i, ix, iy;
 	char * token, cReadMode;
 	char seps[] = "= \t\n";
@@ -466,9 +467,8 @@ BOOL CMap::_bDecodeMapDataFileContents() {
 	strcat(cMapFileName, m_cName);
 	strcat(cMapFileName, ".amd");
 
-	hFile = CreateFile(cMapFileName, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
+	hFile = CreateFile(cMapFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
 	if (hFile == INVALID_HANDLE_VALUE) return FALSE;
-	dwFileSize = GetFileSize(hFile, NULL);
 
 	std::memset(cHeader, 0, sizeof(cHeader));
 	ReadFile(hFile, (char *) cHeader, 256, &nRead, NULL);
@@ -477,7 +477,7 @@ BOOL CMap::_bDecodeMapDataFileContents() {
 
 	// ���� �ι��ڸ� ��ش�.
 	for (i = 0; i < 256; i++)
-		if (cHeader[i] == NULL) cHeader[i] = ' ';
+		if (cHeader[i] == 0) cHeader[i] = ' ';
 
 	cReadMode = 0;
 
@@ -657,22 +657,6 @@ BOOL CMap::bGetIsFarm(short tX, short tY) {
 	return TRUE;
 }
 
-int CMap::iAnalyze(char cType, int * pX, int * pY, int * pV1, int * pV2, int * pV3) {
-
-
-	// ���� ���� ��Ȳ�� �м��Ͽ� ������ �´� ��ġ�� ��ȯ�Ѵ�. 
-	switch (cType) {
-		case 1:
-			// ���� ������ ������� �ִ� ���� ��ġ�� ã�´�. 
-
-			break;
-
-
-	}
-
-	return 0;
-}
-
 void CMap::SetTempMoveAllowedFlag(int dX, int dY, BOOL bFlag) {
 	class CTile * pTile;
 
@@ -766,7 +750,7 @@ BOOL CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) 
 	register int i;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++)
-		if (m_stCrusadeStructureInfo[i].cType == NULL) {
+		if (m_stCrusadeStructureInfo[i].cType == 0) {
 			m_stCrusadeStructureInfo[i].cType = cType;
 			m_stCrusadeStructureInfo[i].cSide = cSide;
 			m_stCrusadeStructureInfo[i].sX = sX;
@@ -810,10 +794,10 @@ BOOL CMap::bRemoveCrusadeStructureInfo(short sX, short sY) {
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++)
 		if ((m_stCrusadeStructureInfo[i].sX == sX) && (m_stCrusadeStructureInfo[i].sY == sY)) {
-			m_stCrusadeStructureInfo[i].cType = NULL;
-			m_stCrusadeStructureInfo[i].cSide = NULL;
-			m_stCrusadeStructureInfo[i].sX = NULL;
-			m_stCrusadeStructureInfo[i].sY = NULL;
+			m_stCrusadeStructureInfo[i].cType = 0;
+			m_stCrusadeStructureInfo[i].cSide = 0;
+			m_stCrusadeStructureInfo[i].sX = 0;
+			m_stCrusadeStructureInfo[i].sY = 0;
 			goto RCSI_REARRANGE;
 		}
 
@@ -823,16 +807,16 @@ RCSI_REARRANGE:
 	;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES - 1; i++)
-		if ((m_stCrusadeStructureInfo[i].cType == NULL) && (m_stCrusadeStructureInfo[i + 1].cType != NULL)) {
+		if ((m_stCrusadeStructureInfo[i].cType == 0) && (m_stCrusadeStructureInfo[i + 1].cType != 0)) {
 			m_stCrusadeStructureInfo[i].cType = m_stCrusadeStructureInfo[i + 1].cType;
 			m_stCrusadeStructureInfo[i].cSide = m_stCrusadeStructureInfo[i + 1].cSide;
 			m_stCrusadeStructureInfo[i].sX = m_stCrusadeStructureInfo[i + 1].sX;
 			m_stCrusadeStructureInfo[i].sY = m_stCrusadeStructureInfo[i + 1].sY;
 
-			m_stCrusadeStructureInfo[i + 1].cType = NULL;
-			m_stCrusadeStructureInfo[i + 1].cSide = NULL;
-			m_stCrusadeStructureInfo[i + 1].sX = NULL;
-			m_stCrusadeStructureInfo[i + 1].sY = NULL;
+			m_stCrusadeStructureInfo[i + 1].cType = 0;
+			m_stCrusadeStructureInfo[i + 1].cSide = 0;
+			m_stCrusadeStructureInfo[i + 1].sX = 0;
+			m_stCrusadeStructureInfo[i + 1].sY = 0;
 		}
 
 	m_iTotalCrusadeStructures--;

@@ -59,7 +59,6 @@ public:
 	int iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI);
 	int iCheckItem(short sX, short sY);
 	void SetTempMoveAllowedFlag(int dX, int dY, BOOL bFlag);
-	int iAnalyze(char cType, int *pX, int *pY, int * pV1, int *pV2, int * pV3);
 	BOOL bGetIsWater(short dX, short dY);
 	void GetDeadOwner(short * pOwner, char * pOwnerClass, short sX, short sY);
 	BOOL bGetIsMoveAllowedTile(short dX, short dY);
