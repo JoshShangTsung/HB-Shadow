@@ -1,5 +1,5 @@
 #pragma once
-#include <windows.h>
+#include <stdint.h>
 
 class CTeleportLoc {
 public:
@@ -13,6 +13,6 @@ public:
 	short m_sDestX2, m_sDestY2;
 
 	int m_iV1, m_iV2;
-	DWORD m_dwTime, m_dwTime2;
+	uint32_t m_dwTime, m_dwTime2;
 
 };

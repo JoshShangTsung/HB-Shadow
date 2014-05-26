@@ -19,11 +19,11 @@ public:
 	class CItem * m_pItem[DEF_TILE_PER_ITEMS];
 	char m_cTotalItem;
 
-	WORD m_wDynamicObjectID;
+	uint16_t m_wDynamicObjectID;
 	short m_sDynamicObjectType;
-	DWORD m_dwDynamicObjectRegisterTime;
+	uint32_t m_dwDynamicObjectRegisterTime;
 
-	BOOL m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
+	bool m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
 
 	// ������ ǥ�ÿ� 
 	int m_iOccupyStatus; // Aresden�̸� -������, Elvine�̸� +�� �������. �� ���� �� ������ ���⼺ 

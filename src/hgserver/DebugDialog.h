@@ -1,5 +1,5 @@
 #pragma once
-#include <windows.h>
+#include <stdint.h>
 
 #define MSG_RECV 1
 #define MSG_SEND 2
@@ -11,7 +11,7 @@ public:
 	void Startup(void);
 	void Shutdown(void);
 	void AddEventMsg(char* cMsg);
-	void AddEventMsg(int cMsgType, char* cData, DWORD dwSize, char cKey);
+	void AddEventMsg(int cMsgType, char* cData, uint32_t dwSize, char cKey);
 	void ShowWindow(bool isVisible);
 private:
 	bool m_isVisible;

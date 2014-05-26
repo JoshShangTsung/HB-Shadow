@@ -46,10 +46,10 @@ public:
 	short m_sAppr2;
 	int m_iStatus;
 
-	DWORD m_dwTime;
-	DWORD m_dwActionTime;
-	DWORD m_dwHPupTime, m_dwMPupTime;
-	DWORD m_dwDeadTime, m_dwRegenTime;
+	uint32_t m_dwTime;
+	uint32_t m_dwActionTime;
+	uint32_t m_dwHPupTime, m_dwMPupTime;
+	uint32_t m_dwDeadTime, m_dwRegenTime;
 
 	int m_iHP; // Hit Point 
 	int m_iExp; // �׿��� ��� ��� ����ġ. ExpDice�� ���� �����ȴ�.
@@ -87,8 +87,8 @@ public:
 
 	int m_iFollowOwnerIndex; // NPC�� ��󰡰� �ִ� ��ü �ε��� 
 	char m_cFollowOwnerType; // ��󰡴� ��ü�� ���� (NPC or Player)
-	BOOL m_bIsSummoned; // ��ȯ�� NPC��� HP�� ������ �ʴ´�. 
-	DWORD m_dwSummonedTime; // ��ȯ���� ��ð� 
+	bool m_bIsSummoned; // ��ȯ�� NPC��� HP�� ������ �ʴ´�. 
+	uint32_t m_dwSummonedTime; // ��ȯ���� ��ð� 
 
 	int m_iTargetIndex; // NPC�� ��ݸ�ǥ �ε���
 	char m_cTargetType; // ��ݸ�ǥ�� ���� (NPC or Player)
@@ -99,7 +99,7 @@ public:
 	int m_iWayPointIndex[DEF_MAXWAYPOINTS + 1];
 	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS];
 
-	BOOL m_bIsPermAttackMode; // �� �÷��װ� Ȱ��ȭ �Ǿ� ������ ��ݵ��� ��ǥ�� �ٲ��� �ʴ´�.
+	bool m_bIsPermAttackMode; // �� �÷��װ� Ȱ��ȭ �Ǿ� ������ ��ݵ��� ��ǥ�� �ٲ��� �ʴ´�.
 	int m_iNoDieRemainExp; // ���� �ʰ� ���߽ÿ� ���� �� �ִ� ����ġ 
 	int m_iAttackStrategy; // ���� ���� �ΰ����� Ÿ��  
 	int m_iAILevel; // ���� ���� 
@@ -112,8 +112,8 @@ public:
 			3: ���� ��ȣ���� ��ǥ�� ���� ��ݴ�󿡼� ���� 
 	 */
 	int m_iAttackCount; // ���� ��� ���� Ƚ�� ī��Ʈ 
-	BOOL m_bIsKilled;
-	BOOL m_bIsUnsummoned;
+	bool m_bIsKilled;
+	bool m_bIsUnsummoned;
 
 	int m_iLastDamage; // ������ �ױ� �� ���� �����. ������� �ʹ� ũ�� ���ݼ� ��ᰡ �������� �ʴ´�.
 	int m_iSummonControlMode; // ��ȯ�� ���� ���: 0�̸� Free, 1 Hold 2 Tgt 
@@ -142,7 +142,7 @@ public:
 	int m_iBuildCount; // ���� Ÿ���� �������� ��� �ϼ��� ������ ���� ����� Ƚ���� �ǹ�. �ʱⰪ�� m_iMinBravery�̴�.
 	// �� ���� 0�̾�߸� ������ �Ѵ�.
 	int m_iManaStock; // �׷��� ���� ���׷������� ��� �������� 
-	BOOL m_bIsMaster; // ������ �������� ���� 
+	bool m_bIsMaster; // ������ �������� ���� 
 	int m_iGuildGUID; // ����� ����Ʈ�� ��� ��ȯ���� ��� ���̵� �Էµȴ�.
 
 	char m_cCropType;

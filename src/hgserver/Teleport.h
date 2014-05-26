@@ -16,5 +16,5 @@ public:
 	// both
 	// elvine
 	// aresden
-	BOOL m_bTeleportHunt, m_bTeleportNtrl, m_bTeleportCrmnl; // Check if player is a Civilian, Neutral, or Criminal.
+	bool m_bTeleportHunt, m_bTeleportNtrl, m_bTeleportCrmnl; // Check if player is a Civilian, Neutral, or Criminal.
 };

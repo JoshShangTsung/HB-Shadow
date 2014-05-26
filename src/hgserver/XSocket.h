@@ -44,38 +44,38 @@
 class XSocket {
 public:
 	int iGetPeerAddress(char * pAddrString);
-	char * pGetRcvDataPointer(DWORD * pMsgSize, char * pKey = NULL);
+	char * pGetRcvDataPointer(uint32_t * pMsgSize, char * pKey = NULL);
 	SOCKET iGetSocket();
-	BOOL bAccept(class XSocket * pXSock, unsigned int uiMsg);
-	BOOL bListen(char * pAddr, int iPort, unsigned int uiMsg);
-	int iSendMsg(char * cData, DWORD dwSize, char cKey = 0);
-	BOOL bConnect(char * pAddr, int iPort, unsigned int uiMsg);
+	bool bAccept(class XSocket * pXSock, unsigned int uiMsg);
+	bool bListen(char * pAddr, int iPort, unsigned int uiMsg);
+	int iSendMsg(char * cData, uint32_t dwSize, char cKey = 0);
+	bool bConnect(char * pAddr, int iPort, unsigned int uiMsg);
 	int iOnSocketEvent(WPARAM wParam, LPARAM lParam);
-	BOOL bInitBufferSize(DWORD dwBufferSize);
+	bool bInitBufferSize(uint32_t dwBufferSize);
 	XSocket(HWND hWnd, int iBlockLimit);
 	virtual ~XSocket();
 
 	int m_WSAErr;
-	BOOL m_bIsAvailable;
+	bool m_bIsAvailable;
 
 private:
 	void _CloseConn();
 
 	int _iSendUnsentData();
 	int _iRegisterUnsentData(char * cData, int iSize);
-	int _iSend(char * cData, int iSize, BOOL bSaveFlag);
+	int _iSend(char * cData, int iSize, bool bSaveFlag);
 	int _iSend_ForInternalUse(char * cData, int iSize);
 	int _iOnRead();
 
 	char m_cType;
 	char * m_pRcvBuffer;
 	char * m_pSndBuffer;
-	DWORD m_dwBufferSize;
+	uint32_t m_dwBufferSize;
 
 	SOCKET m_Sock;
 	char m_cStatus;
-	DWORD m_dwReadSize;
-	DWORD m_dwTotalReadSize;
+	uint32_t m_dwReadSize;
+	uint32_t m_dwTotalReadSize;
 	char m_pAddr[30];
 	int m_iPortNum;
 
@@ -90,5 +90,5 @@ private:
 };
 
 
-BOOL _InitWinsock();
+bool _InitWinsock();
 void _TermWinsock();

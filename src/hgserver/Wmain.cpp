@@ -20,7 +20,7 @@ void PutPvPLogFileList(const char * cStr);
 char szAppClass[32];
 HWND G_hWnd = NULL;
 char G_cMsgList[120 * 50];
-BOOL G_cMsgUpdated = FALSE;
+bool G_cMsgUpdated = false;
 char G_cTxt[512];
 char G_cData50000[50000];
 MMRESULT G_mmTimer = 0;
@@ -31,12 +31,12 @@ class XSocket * G_pLogSock = NULL;
 class CGame * G_pGame = NULL;
 
 int G_iQuitProgramCount = 0;
-BOOL G_bIsThread = TRUE;
+bool G_bIsThread = true;
 
 FILE * pLogFile;
 
 void ThreadProc(void */*ch*/) {
-	while (G_bIsThread == TRUE) {
+	while (G_bIsThread == true) {
 		if (G_pGame != NULL) G_pGame->OnTimer(0);
 		Sleep(100);
 	}
@@ -84,7 +84,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			break;
 
 		case WM_CLOSE:
-			if (G_pGame->bOnClose() == TRUE) return (DefWindowProc(hWnd, message, wParam, lParam));
+			if (G_pGame->bOnClose() == true) return (DefWindowProc(hWnd, message, wParam, lParam));
 			//G_iQuitProgramCount++;
 			//if (G_iQuitProgramCount >= 2) {
 			//	return (DefWindowProc(hWnd, message, wParam, lParam));
@@ -111,15 +111,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 		  LPSTR /*lpCmdLine*/, int nCmdShow) {
 	sprintf(szAppClass, "GameServer%d", (int) hInstance);
-	if (!InitApplication(hInstance)) return (FALSE);
-	if (!InitInstance(hInstance, nCmdShow)) return (FALSE);
+	if (!InitApplication(hInstance)) return (false);
+	if (!InitInstance(hInstance, nCmdShow)) return (false);
 
 	Initialize();
 	EventLoop();
 	return 0;
 }
 
-BOOL InitApplication(HINSTANCE hInstance) {
+bool InitApplication(HINSTANCE hInstance) {
 	WNDCLASS wc;
 
 	wc.style = (CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS);
@@ -136,7 +136,7 @@ BOOL InitApplication(HINSTANCE hInstance) {
 	return (RegisterClass(&wc));
 }
 
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
+bool InitInstance(HINSTANCE hInstance, int nCmdShow) {
 	char cTitle[100];
 	// HANDLE hFile;
 	SYSTEMTIME SysTime;
@@ -162,12 +162,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 			  hInstance,
 			  NULL);
 
-	if (!G_hWnd) return (FALSE);
+	if (!G_hWnd) return (false);
 
 	ShowWindow(G_hWnd, nCmdShow);
 	UpdateWindow(G_hWnd);
 
-	return (TRUE);
+	return (true);
 }
 
 int EventLoop() {
@@ -186,14 +186,14 @@ int EventLoop() {
 
 void Initialize() {
 
-	if (_InitWinsock() == FALSE) {
+	if (_InitWinsock() == false) {
 		MessageBox(G_hWnd, "Socket 1.1 not found! Cannot execute program.", "ERROR", MB_ICONEXCLAMATION | MB_OK);
 		PostQuitMessage(0);
 		return;
 	}
 
 	G_pGame = new class CGame(G_hWnd);
-	if (G_pGame->bInit() == FALSE) {
+	if (G_pGame->bInit() == false) {
 		PutLogList("(!!!) STOPPED!");
 		return;
 	}
@@ -232,7 +232,7 @@ void OnDestroy() {
 void PutLogList(const char * cMsg) {
 	char cTemp[120 * 50];
 
-	G_cMsgUpdated = TRUE;
+	G_cMsgUpdated = true;
 	std::memset(cTemp, 0, sizeof(cTemp));
 	memcpy((cTemp + 120), G_cMsgList, 120 * 49);
 	memcpy(cTemp, cMsg, strlen(cMsg));
@@ -246,9 +246,9 @@ void PutXSocketLogList(const char * cMsg) {
 }
 
 void UpdateScreen() {
-	if (G_cMsgUpdated == TRUE) {
-		InvalidateRect(G_hWnd, NULL, TRUE);
-		G_cMsgUpdated = FALSE;
+	if (G_cMsgUpdated == true) {
+		InvalidateRect(G_hWnd, NULL, true);
+		G_cMsgUpdated = false;
 	}
 }
 

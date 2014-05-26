@@ -11,9 +11,9 @@ CTeleportLoc::CTeleportLoc() {
 	m_sDestX2 = -1;
 	m_sDestY2 = -1;
 
-	m_iV1 = NULL;
-	m_iV2 = NULL;
-	m_dwTime = NULL;
-	m_dwTime2 = NULL;
+	m_iV1 = 0;
+	m_iV2 = 0;
+	m_dwTime = 0;
+	m_dwTime2 = 0;
 
 }

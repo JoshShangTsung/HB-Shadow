@@ -1,6 +1,5 @@
 #pragma once
-#include <windows.h>
-
+#include <stdint.h>
 
 #define DEF_MAXITEMEQUIPPOS		15
 #define DEF_EQUIPPOS_NONE		0	
@@ -84,7 +83,7 @@ public:
 	short m_sItemEffectType;
 	short m_sItemEffectValue1, m_sItemEffectValue2, m_sItemEffectValue3;
 	short m_sItemEffectValue4, m_sItemEffectValue5, m_sItemEffectValue6;
-	WORD m_wMaxLifeSpan;
+	uint16_t m_wMaxLifeSpan;
 	short m_sSpecialEffect;
 
 	short m_sSpecialEffectValue1, m_sSpecialEffectValue2;
@@ -95,25 +94,25 @@ public:
 	char m_cApprValue;
 	char m_cSpeed;
 
-	DWORD m_wPrice;
-	WORD m_wWeight;
+	uint32_t m_wPrice;
+	uint16_t m_wWeight;
 	short m_sLevelLimit;
 	char m_cGenderLimit;
 
 	short m_sRelatedSkill;
 
 	char m_cCategory;
-	BOOL m_bIsForSale;
+	bool m_bIsForSale;
 
-	DWORD m_dwCount;
+	uint32_t m_dwCount;
 	short m_sTouchEffectType;
 	short m_sTouchEffectValue1, m_sTouchEffectValue2, m_sTouchEffectValue3;
 	char m_cItemColor;
 	short m_sItemSpecEffectValue1, m_sItemSpecEffectValue2, m_sItemSpecEffectValue3;
-	WORD m_wCurLifeSpan;
-	DWORD m_dwAttribute;
-	void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize);
-	BOOL bReadBallSystemConfigFile(char * cFn);
+	uint16_t m_wCurLifeSpan;
+	uint32_t m_dwAttribute;
+	void RequestBallItem(int iClientH, char *pData, uint32_t dwMsgSize);
+	bool bReadBallSystemConfigFile(char * cFn);
 };
 
 class CBallSystem {

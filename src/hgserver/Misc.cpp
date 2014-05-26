@@ -189,35 +189,35 @@ void CMisc::GetDirPoint(char cDir, int * pX, int * pY) {
 
 }
 
-BOOL CMisc::bEncode(char cKey, char *pStr) {
+bool CMisc::bEncode(char cKey, char *pStr) {
 	int i, iLen;
 
 	// !!
-	return TRUE;
+	return true;
 
 	iLen = strlen(pStr);
 	for (i = 0; i <= iLen - 1; i++) {
 		pStr[i] = pStr[i] ^ (cKey);
 	}
 
-	return TRUE;
+	return true;
 }
 
-BOOL CMisc::bDecode(char cKey, char *pStr) {
+bool CMisc::bDecode(char cKey, char *pStr) {
 	int i, iLen;
 
 	// !!
-	return TRUE;
+	return true;
 
 	iLen = strlen(pStr);
 	for (i = 0; i <= iLen - 1; i++) {
 		pStr[i] = pStr[i] ^ (cKey);
 	}
 
-	return TRUE;
+	return true;
 }
 
-BOOL CMisc::bCheckValidName(char *pStr) {
+bool CMisc::bCheckValidName(char *pStr) {
 	register int i, iLen;
 
 	iLen = strlen(pStr);
@@ -227,7 +227,7 @@ BOOL CMisc::bCheckValidName(char *pStr) {
 				  (pStr[i] == '\n') || (pStr[i] == '\t') || /*(pStr[i] == '.') ||*/
 				  (pStr[i] == '\\') || (pStr[i] == '/') || (pStr[i] == ':') ||
 				  (pStr[i] == '*') || (pStr[i] == '?') || (pStr[i] == '<') ||
-				  (pStr[i] == '>') || (pStr[i] == '|') || (pStr[i] == '"')) return FALSE;
+				  (pStr[i] == '>') || (pStr[i] == '|') || (pStr[i] == '"')) return false;
 
 		if ((i <= iLen - 2) && ((unsigned char) pStr[i] >= 128)) {
 			if (((unsigned char) pStr[i] == 164) && ((unsigned char) pStr[i + 1] >= 161) &&
@@ -239,12 +239,12 @@ BOOL CMisc::bCheckValidName(char *pStr) {
 					  ((unsigned char) pStr[i + 1] >= 161) && ((unsigned char) pStr[i + 1] <= 254)) {
 				// ���� 
 
-			} else return FALSE;
+			} else return false;
 			i++; // !!! �������Ѿ߸� �´�.
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 void CMisc::Temp() {
