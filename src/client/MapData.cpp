@@ -2442,6 +2442,7 @@ int CMapData::iObjectFrameCounter(char * cPlayerName, short sViewPointX, short s
 											  && ((m_pData[dX][dY].m_iStatus & 0x10) == 0)) {
 										m_pGame->bAddNewEffect(54, (m_sPivotX + dX)*32 + (rand() % 15 + 10), (m_sPivotY + dY)*32 - (rand() % 30) - 50, NULL, NULL, -(rand() % 8), 0);
 									}
+									m_pGame->PlaySound('C', 10, sDist, lPan);
 								}
 								break;
 						}
