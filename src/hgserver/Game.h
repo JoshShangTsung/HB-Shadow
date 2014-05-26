@@ -224,7 +224,7 @@ public:
 	void RequestHeldenianTeleport(int iClientH, char * pData, DWORD dwMsgSize);
 	void RequestNpcSpeakTeleport(int iClientH, char * pData, DWORD dwMsgSize);
 	BOOL bCheckHeldenianMap(int sAttackerH, int iMapIndex, char cType);
-	BOOL bReadHeldenianGUIDFile(char * cFn);
+	BOOL bReadHeldenianGUIDFile(const char * cFn);
 	void RemoveEventNpc(int iNpcH);
 
 	BOOL _bCheckCharacterData(int iClientH);
@@ -240,7 +240,7 @@ public:
 	void _CheckFarmingAction(short sAttackerH, short sTargetH, BOOL bType);
 
 	void GreenBall_Weather(int iClientH, char * pData, DWORD dwMsgSize);
-	BOOL bReadScheduleConfigFile(char *pFn);
+	BOOL bReadScheduleConfigFile(const char *pFn);
 
 	// KLKS clean tiles
 	void AdminOrder_CleanMap(int iClientH, char * pData, DWORD dwMsgSize);
@@ -257,7 +257,7 @@ public:
 	// Crusade
 	void ManualEndCrusadeMode(int iWinnerSide); // 2.17 (x) 2.14 ( )
 	void CrusadeWarStarter();
-	BOOL bReadCrusadeGUIDFile(char * cFn);
+	BOOL bReadCrusadeGUIDFile(const char * cFn);
 	void _CreateCrusadeGUID(DWORD dwCrusadeGUID, int iWinnerSide);
 	void GlobalStartCrusadeMode();
 
@@ -267,7 +267,7 @@ public:
 	void LocalStartApocalypseMode(DWORD dwApocalypseGUID);
 	void LocalEndApocalypseMode();
 	void _CreateApocalypseGUID(DWORD dwApocalypseGUID);
-	BOOL bReadApocalypseGUIDFile(char * cFn);
+	BOOL bReadApocalypseGUIDFile(const char * cFn);
 	void SendThunder(int iClient, short sX, short sY, short sV3, short sV4);
 	void DoAbaddonThunderDamageHandler(char cMapIndex);
 
@@ -287,7 +287,6 @@ public:
 	void CollectedManaHandler(WORD wAresdenMana, WORD wElvineMana);
 	void SendCollectedMana();
 	void CreateCrusadeStructures();
-	void _GrandMagicLaunchMsgSend(int iType, char cAttackerSide);
 	void GrandMagicResultHandler(char *cMapName, int iCrashedStructureNum, int iStructureDamageAmount, int iCasualities, int iActiveStructure, int iTotalStrikePoints, char * cData);
 	void CalcMeteorStrikeEffectHandler(int iMapIndex);
 	void DoMeteorStrikeDamageHandler(int iMapIndex);
@@ -295,7 +294,7 @@ public:
 	void GSM_SetGuildConstructLoc(int iGuildGUID, int dX, int dY, char * pMapName);
 	void GSM_ConstructionPoint(int iGuildGUID, int iPoint);
 	void CheckCommanderConstructionPoint(int iClientH);
-	BOOL bReadCrusadeStructureConfigFile(char * cFn);
+	BOOL bReadCrusadeStructureConfigFile(const char * cFn);
 	void SaveOccupyFlagData();
 	void LocalEndCrusadeMode(int iWinnerSide);
 	void LocalStartCrusadeMode(DWORD dwGuildGUID);
@@ -521,7 +520,6 @@ public:
 	void bSetNpcAttackMode(char * cName, int iTargetH, char cTargetType, BOOL bIsPermAttack);
 	BOOL _bGetIsPlayerHostile(int iClientH, int sOwnerH);
 	BOOL bAnalyzeCriminalAction(int iClientH, short dX, short dY, BOOL bIsCheck = FALSE);
-	void RequestAdminUserMode(int iClientH, char * pData);
 	int _iGetPlayerNumberOnSpot(short dX, short dY, char cMapIndex, char cRange);
 	void CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify = TRUE);
 	void ___RestorePlayerCharacteristics(int iClientH);
@@ -611,7 +609,7 @@ public:
 	void CalculateGuildEffect(int iVictimH, char cVictimType, short sAttackerH);
 	void OnStartGameSignal();
 	int iDice(int iThrow, int iRange);
-	BOOL _bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char cSA);
+	BOOL _bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, char cSA);
 	BOOL _bDecodeNpcConfigFileContents(char * pData, DWORD dwMsgSize);
 	void ReleaseItemHandler(int iClientH, short sItemIndex, BOOL bNotice);
 	void ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType, short sDamage);
@@ -622,7 +620,7 @@ public:
 	void DismissGuildApproveHandler(int iClientH, char * pName);
 	void JoinGuildRejectHandler(int iClientH, char * pName);
 	void JoinGuildApproveHandler(int iClientH, char * pName);
-	void SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, char * pString, DWORD sV4 = 0, DWORD sV5 = 0, DWORD sV6 = 0, DWORD sV7 = 0, DWORD sV8 = 0, DWORD sV9 = 0, char * pString2 = NULL);
+	void SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, const char * pString, DWORD sV4 = 0, DWORD sV5 = 0, DWORD sV6 = 0, DWORD sV7 = 0, DWORD sV8 = 0, DWORD sV9 = 0, char * pString2 = NULL);
 	void GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char * pItemName);
 	void RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum);
 	void ResponseDisbandGuildHandler(char * pData, DWORD dwMsgSize);
@@ -654,12 +652,12 @@ public:
 	int iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short dX, short dY, short wType, char cDir, WORD wTargetObjectID, BOOL bResponse = TRUE, BOOL bIsDash = FALSE);
 	void ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize);
 	void NpcProcess();
-	int bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, BOOL bHideGenMode, BOOL bIsSummoned = FALSE, BOOL bFirmBerserk = FALSE, BOOL bIsMaster = FALSE, int iGuildGUID = 0);
+	int bCreateNewNpc(const char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, BOOL bHideGenMode, BOOL bIsSummoned = FALSE, BOOL bFirmBerserk = FALSE, BOOL bIsMaster = FALSE, int iGuildGUID = 0);
 	//BOOL bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sX, short sY);
 	BOOL _bReadMapInfoFiles(int iMapIndex);
 
 	BOOL _bGetIsStringIsNumber(char * pStr);
-	BOOL _bInitItemAttr(class CItem * pItem, char * pItemName);
+	BOOL _bInitItemAttr(class CItem * pItem, const char * pItemName);
 	BOOL bReadProgramConfigFile(const char * cFn);
 	void GameProcess();
 	void InitPlayerData(int iClientH, char * pData, DWORD dwSize);
@@ -1066,7 +1064,7 @@ public:
 	void AdminOrder_UnsummonBoss(int iClientH);
 	void RemoveCrusadeNpcs(void);
 	void RemoveCrusadeRecallTime(void);
-	BOOL _bCrusadeLog(int iAction, int iClientH, int iData, char * cName);
+	BOOL _bCrusadeLog(int iAction, int iClientH, int iData, const char * cName);
 	int iGetPlayerABSStatus(int iClientH);
 	BOOL _bInitItemAttr(class CItem * pItem, int iItemID);
 	void ReqCreateSlateHandler(int iClientH, char* pData);

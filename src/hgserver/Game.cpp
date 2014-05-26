@@ -5094,7 +5094,7 @@ BOOL CGame::bReadSettingsConfigFile(const char * cFn) {
 	return TRUE;
 }
 
-BOOL CGame::bReadCrusadeStructureConfigFile(char * cFn) {
+BOOL CGame::bReadCrusadeStructureConfigFile(const char * cFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
@@ -8180,7 +8180,7 @@ DICFC_STOPDECODING:
 	return TRUE;
 }
 
-BOOL CGame::_bInitItemAttr(class CItem * pItem, char * pItemName) {
+BOOL CGame::_bInitItemAttr(class CItem * pItem, const char * pItemName) {
 	register int i;
 	char cTmpName[21];
 
@@ -8307,7 +8307,7 @@ NEXT_STEP_SNFM2:
 	return TRUE;
 }
 
-int CGame::bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, BOOL bHideGenMode, BOOL bIsSummoned, BOOL bFirmBerserk, BOOL bIsMaster, int iGuildGUID) {
+int CGame::bCreateNewNpc(const char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, BOOL bHideGenMode, BOOL bIsSummoned, BOOL bFirmBerserk, BOOL bIsMaster, int iGuildGUID) {
 	register int i, t, j, k, iMapIndex;
 	char cTmpName[11], cTxt[120];
 	short sX, sY, sRange;
@@ -11361,10 +11361,6 @@ void CGame::MsgProcess() {
 						_SetItemPos(iClientH, pData);
 						break;
 
-					case MSGID_ADMINUSER:
-						RequestAdminUserMode(iClientH, pData);
-						break;
-
 					case MSGID_REQUEST_FULLOBJECTDATA:
 						RequestFullObjectData(iClientH, pData);
 						break;
@@ -14021,7 +14017,7 @@ REMOVE_ITEM_PROCEDURE:
 	iCalcTotalWeight(iClientH);
 }
 
-void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, char * pString, DWORD sV4, DWORD sV5, DWORD sV6, DWORD sV7, DWORD sV8, DWORD sV9, char * pString2) {
+void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, const char * pString, DWORD sV4, DWORD sV5, DWORD sV6, DWORD sV7, DWORD sV8, DWORD sV9, char * pString2) {
 	char cData[1000];
 	DWORD * dwp;
 	WORD * wp;
@@ -16629,7 +16625,7 @@ BOOL CGame::_bDecodeNpcConfigFileContents(char * pData, DWORD dwMsgSize) {
 	return TRUE;
 }
 
-BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char cSA) {
+BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, char cSA) {
 	register int i, iTemp;
 	char cTmpName[21];
 	int sTemp;
