@@ -1,14 +1,12 @@
 #include "BuildItem.h"
 
 CBuildItem::CBuildItem() {
-	int i;
-
 	ZeroMemory(m_cName, sizeof (m_cName));
 	m_sItemID = -1;
 
 	m_iSkillLimit = 0;
 
-	for (i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		m_iMaterialItemID[i] = NULL;
 		m_iMaterialItemCount[i] = NULL;
 		m_iMaterialItemValue[i] = NULL;

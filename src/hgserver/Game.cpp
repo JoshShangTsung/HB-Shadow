@@ -3,7 +3,7 @@
 class CDebugWindow *DbgWnd;
 extern void PutLogList(char * cMsg);
 extern char G_cTxt[512];
-extern char G_cData50000[50000]; // ´ë¿ë·®ÀÇ µ¥ÀÌÅÍ¸¦ Á¢±ÙÇÏ±â À§ÇÔ.
+extern char G_cData50000[50000]; 
 extern void PutLogFileList(char * cStr);
 extern void PutAdminLogFileList(char * cStr);
 extern void PutItemLogFileList(char * cStr);
@@ -16,7 +16,7 @@ extern void PutPvPLogFileList(char * cStr);
 extern FILE * pLogFile;
 extern HWND G_hWnd;
 
-// ¸Þ½ÃÁö ÀÛ¼º¿ë ÂüÁ¶È­ÀÏ.
+
 int _tmp_iMoveLocX[9][37] = {
 	// 0
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -116,9 +116,9 @@ int _tmp_iMoveLocY[9][37] = {
 char _tmp_cTmpDirX[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
 char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
+
+
 
 extern BOOL G_bIsThread;
 extern void ThreadProc(void *ch);
@@ -202,7 +202,7 @@ CGame::CGame(HWND hWnd) {
 	for (i = 0; i < DEF_MAXDUPITEMID; i++)
 		m_pDupItemIDList[i] = NULL;
 
-	// New 06/05/2004
+	
 	for (i = 0; i < DEF_MAXCLIENTS; i++) {
 		m_stPartyInfo[i].iTotalMembers = 0;
 		for (x = 0; x < DEF_MAXPARTYMEMBERS; x++)
@@ -261,7 +261,7 @@ CGame::CGame(HWND hWnd) {
 	//DbgWnd = new CDebugWindow();
 	//DbgWnd->Startup();
 	//DbgWnd->AddEventMsg("CGame Startup");
-	// 2002-09-09 #1
+	
 	m_bReceivedItemList = FALSE;
 
 }
@@ -283,14 +283,14 @@ BOOL CGame::bAccept(class XSocket * pXSock) {
 			  (m_bIsGameStarted == FALSE))
 		goto CLOSE_ANYWAY;
 
-	// ºñ¾îÀÖ´Â ¹è¿­À» Ã£´Â´Ù.
+	
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if (m_pClientList[i] == NULL) {
 
 			m_pClientList[i] = new class CClient(m_hWnd);
-			// Å¬¶óÀÌ¾ðÆ® ÀÎµ¦½º ¸®½ºÆ®¿¡ ±â·Ï
+			
 			bAddClientShortCut(i);
-			// Á¢¼Ó½Ã°£ ±â·Ï - Àå½Ã°£ ÀÀ´ä¾ø´Â Å¬¶óÀÌ¾ðÆ®¸¦ Á¦°ÅÇÏ±â À§ÇÔÀÌ´Ù.
+			
 			m_pClientList[i]->m_dwSPTime = m_pClientList[i]->m_dwMPTime =
 					  m_pClientList[i]->m_dwHPTime = m_pClientList[i]->m_dwAutoSaveTime =
 					  m_pClientList[i]->m_dwTime = m_pClientList[i]->m_dwHungerTime = m_pClientList[i]->m_dwExpStockTime =
@@ -298,7 +298,7 @@ BOOL CGame::bAccept(class XSocket * pXSock) {
 
 			pXSock->bAccept(m_pClientList[i]->m_pXSock, WM_ONCLIENTSOCKETEVENT + i);
 
-			// Å¬¶óÀÌ¾ðÆ® Á¢¼ÓÁöÀÇ ÁÖ¼Ò¸¦ ¾ò¾î¿Â´Ù.
+			
 			ZeroMemory(m_pClientList[i]->m_cIPaddress, sizeof (m_pClientList[i]->m_cIPaddress));
 			m_pClientList[i]->m_pXSock->iGetPeerAddress(m_pClientList[i]->m_cIPaddress);
 
@@ -311,22 +311,22 @@ BOOL CGame::bAccept(class XSocket * pXSock) {
 			m_iTotalClients++;
 
 			if (m_iTotalClients > m_iMaxClients) {
-				// ÃÖ´ë »ç¿ëÀÚ ¼ö°¡ °»½ÅµÇ¾ú´Ù.
+				
 				m_iMaxClients = m_iTotalClients;
 				//GetLocalTime(&m_MaxUserSysTime);
 				//wsprintf(cTxt, "Maximum Players: %d", m_iMaxClients);
 				//PutLogFileList(cTxt);
 			}
 
-			// Á¢¼ÓÀº ¹Þ¾ÒÁö¸¸ ¾ÆÁ÷ °ÔÀÓµ¥ÀÌÅÍ´Â Àü¼ÛÀÌ ºÒ°¡´ÉÇÑ »óÅÂÀÌ´Ù. µ¥ÀÌÅÍ°¡ ÃÊ±âÈ­ µÈ ÈÄ¿¡ °¡´ÉÇØÁø´Ù.
-			//m_pClientList[iClientH]->m_bIsInitComplete °ªÀ» ÂüÁ¶ÇØ¾ß ÇÑ´Ù.
+			
+			
 			return TRUE;
 		}
 
 CLOSE_ANYWAY:
 	;
 
-	// ºñ¾îÀÖ´Â ¹è¿­ÀÌ ¾ø¾î Á¢¼ÓÀ» ¹ÞÀ» ¼ö ¾ø´Ù. AcceptÇÏÀÚ ¸¶ÀÚ ²÷´Â´Ù.
+	
 	pTmpSock = new class XSocket(m_hWnd, DEF_SERVERSOCKETBLOCKLIMIT);
 	pXSock->bAccept(pTmpSock, NULL);
 	delete pTmpSock;
@@ -463,7 +463,7 @@ BOOL CGame::bInit() {
 		m_stHeldenianSchedule[i].EndiMinute = -1;
 	}
 
-	// ÀÏ´Ü ¿©±â¼­ ¼³Á¤
+	
 	m_iNpcConstructionPoint[1] = 100; // MS
 	m_iNpcConstructionPoint[2] = 100; // MS
 	m_iNpcConstructionPoint[3] = 100; // MS

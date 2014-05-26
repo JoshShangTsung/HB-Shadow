@@ -14,6 +14,6 @@ public:
 	DWORD m_dwRegisterTime;
 	DWORD m_dwLastTime;
 
-	int m_iCount; // Ư�� ������Ʈ�� ��� ����ϴ� ī���� ���� 
-	int m_iV1; // �߰� ������ ������ ����Ѵ�.
+	int m_iCount; 
+	int m_iV1; 
 };

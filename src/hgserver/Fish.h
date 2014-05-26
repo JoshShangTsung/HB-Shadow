@@ -8,13 +8,13 @@ public:
 	virtual ~CFish();
 
 	char m_cMapIndex;
-	short m_sX, m_sY; // �ʻ��� ��ġ 
+	short m_sX, m_sY; 
 
-	short m_sType; // ����� ����  
-	class CItem * m_pItem; // �������� �Ҵ�Ǵ� ������(����� ���� ����)
+	short m_sType; 
+	class CItem * m_pItem; 
 
 	short m_sDynamicObjectHandle;
 
-	short m_sEngagingCount; // ���� �� ����⸦ �븮�� �ִ� �÷��̾� �� 
-	int m_iDifficulty; // ���̵�. �ּ� 1�� �Ǿ�� �Ѵ�.
+	short m_sEngagingCount; 
+	int m_iDifficulty; 
 };
