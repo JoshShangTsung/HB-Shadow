@@ -24711,9 +24711,10 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 						}
 					}
 					if (m_pClientList[sTargetH]->m_iHP <= 0) {
-						if (cAttackerType == DEF_OWNERTYPE_PLAYER)
+						if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 							//		bAnalyzeCriminalAction(sAttackerH, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
-							ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iAP_SM);
+						}
+						ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iAP_SM);
 						bKilled = TRUE;
 						iKilledDice = m_pClientList[sTargetH]->m_iLevel;
 					} else {
