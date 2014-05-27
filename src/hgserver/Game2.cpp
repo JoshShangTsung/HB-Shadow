@@ -12886,20 +12886,19 @@ void CGame::GetMagicAbilityHandler(int iClientH) {
 	bCheckTotalSkillMasteryPoints(iClientH, 4);
 }
 
-int CGame::iRequestPanningMapDataRequest(int iClientH, char * pData) {
+int CGame::iRequestPanningMapDataRequest(CClient &client, char * pData) {
 	char * cp, cDir, cData[3000];
 	uint32_t * dwp;
 	uint16_t * wp;
 	short * sp, dX, dY;
 	int iRet, iSize;
 
-	if (m_pClientList[iClientH] == nullptr) return 0;
-	if (m_pClientList[iClientH]->m_bIsObserverMode == false) return 0;
-	if (m_pClientList[iClientH]->m_bIsKilled == true) return 0;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return 0;
+	if (client.m_bIsObserverMode == false) return 0;
+	if (client.m_bIsKilled == true) return 0;
+	if (client.m_bIsInitComplete == false) return 0;
 
-	dX = m_pClientList[iClientH]->m_sX;
-	dY = m_pClientList[iClientH]->m_sY;
+	dX = client.m_sX;
+	dY = client.m_sY;
 
 	cDir = *(pData + DEF_INDEX2_MSGTYPE + 2);
 	if ((cDir <= 0) || (cDir > 8)) return 0;
@@ -12937,9 +12936,9 @@ int CGame::iRequestPanningMapDataRequest(int iClientH, char * pData) {
 			 */
 	}
 
-	m_pClientList[iClientH]->m_sX = dX;
-	m_pClientList[iClientH]->m_sY = dY;
-	m_pClientList[iClientH]->m_cDir = cDir;
+	client.m_sX = dX;
+	client.m_sY = dY;
+	client.m_cDir = cDir;
 
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = MSGID_RESPONSE_PANNING;
@@ -12959,15 +12958,15 @@ int CGame::iRequestPanningMapDataRequest(int iClientH, char * pData) {
 	*cp = cDir;
 	cp++;
 
-	iSize = iComposeMoveMapData((short) (dX - 10), (short) (dY - 7), iClientH, cDir, cp);
-	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, iSize + 12 + 1 + 4);
+	iSize = iComposeMoveMapData((short) (dX - 10), (short) (dY - 7), client.id_, cDir, cp);
+	iRet = client.m_pXSock->iSendMsg(cData, iSize + 12 + 1 + 4);
 	switch (iRet) {
 		case DEF_XSOCKEVENT_QUENEFULL:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
 			// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
-			DeleteClient(iClientH, true, true);
+			DeleteClient(client.id_, true, true);
 			return 0;
 	}
 
@@ -12994,75 +12993,64 @@ void CGame::AdminOrder_SetObserverMode(int iClientH) {
 	}
 }
 
-void CGame::RequestRestartHandler(int iClientH) {
+void CGame::RequestRestartHandler(CClient &client) {
 	char cTmpMap[32];
+	if (client.m_bIsKilled == true) {
 
-	if (m_pClientList[iClientH] == nullptr) return;
+		strcpy(cTmpMap, client.m_cMapName);
+		std::memset(client.m_cMapName, 0, sizeof (client.m_cMapName));
 
-	if (m_pClientList[iClientH]->m_bIsKilled == true) {
-
-		strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);
-		std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
-
-		if (strcmp(m_pClientList[iClientH]->m_cLocation, "NONE") == 0) {
-			// �����ڶ��  default������ ����.
-			strcpy(m_pClientList[iClientH]->m_cMapName, "default");
+		if (strcmp(client.m_cLocation, "NONE") == 0) {
+			strcpy(client.m_cMapName, "default");
 		} else {
-			// �Ҽ��� �ִٸ� �Ҽ� ������ ��Ȱ������ ����.
-			if (strcmp(m_pClientList[iClientH]->m_cLocation, "aresden") == 0) {
+			if (strcmp(client.m_cLocation, "aresden") == 0) {
 				if (m_bIsCrusadeMode == true) {
-					// ũ�缼�̵� ��忡�� ����� ���: ���� �ʿ��� �����ð� ���� �� ���.
-					if (m_pClientList[iClientH]->m_iDeadPenaltyTime > 0) {
-						std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
-						strcpy(m_pClientList[iClientH]->m_cLockedMapName, "aresden");
-						m_pClientList[iClientH]->m_iLockedMapTime = 60 * 5;
-						m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10; // v2.04
+					if (client.m_iDeadPenaltyTime > 0) {
+						std::memset(client.m_cLockedMapName, 0, sizeof (client.m_cLockedMapName));
+						strcpy(client.m_cLockedMapName, "aresden");
+						client.m_iLockedMapTime = 60 * 5;
+						client.m_iDeadPenaltyTime = 60 * 10;
 					} else {
-						memcpy(m_pClientList[iClientH]->m_cMapName, "resurr1", 7);
-						m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10; // v2.04 10�� �ȿ� �� ������ ������ �����.
+						memcpy(client.m_cMapName, "resurr1", 7);
+						client.m_iDeadPenaltyTime = 60 * 10;
 					}
 				}
-				// v2.16 2002-5-31
 				if (strcmp(cTmpMap, "elvine") == 0) {
-					memcpy(m_pClientList[iClientH]->m_cMapName, "elvjail", 7);
-					strcpy(m_pClientList[iClientH]->m_cLockedMapName, "elvjail");
-					m_pClientList[iClientH]->m_iLockedMapTime = 10 * 2; // 3��
-				} else if (m_pClientList[iClientH]->m_iLevel > 80)
-					memcpy(m_pClientList[iClientH]->m_cMapName, "resurr1", 7);
-				else memcpy(m_pClientList[iClientH]->m_cMapName, "aresden", 7);
+					memcpy(client.m_cMapName, "elvjail", 7);
+					strcpy(client.m_cLockedMapName, "elvjail");
+					client.m_iLockedMapTime = 10 * 2;
+				} else if (client.m_iLevel > 80)
+					memcpy(client.m_cMapName, "resurr1", 7);
+				else memcpy(client.m_cMapName, "aresden", 7);
 			} else {
 				if (m_bIsCrusadeMode == true) {
-					// ũ�缼�̵� ��忡�� ����� ���: ���� �ʿ��� �����ð� ���� �� ���.
-					if (m_pClientList[iClientH]->m_iDeadPenaltyTime > 0) {
-						std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
-						strcpy(m_pClientList[iClientH]->m_cLockedMapName, "elvine");
-						m_pClientList[iClientH]->m_iLockedMapTime = 60 * 5;
-						m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10; // v2.04
+					if (client.m_iDeadPenaltyTime > 0) {
+						std::memset(client.m_cLockedMapName, 0, sizeof (client.m_cLockedMapName));
+						strcpy(client.m_cLockedMapName, "elvine");
+						client.m_iLockedMapTime = 60 * 5;
+						client.m_iDeadPenaltyTime = 60 * 10;
 					} else {
-						memcpy(m_pClientList[iClientH]->m_cMapName, "resurr2", 7);
-						m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10; // v2.04 10�� �ȿ� �� ������ ������ �����.
+						memcpy(client.m_cMapName, "resurr2", 7);
+						client.m_iDeadPenaltyTime = 60 * 10;
 					}
 				}
 				if (strcmp(cTmpMap, "aresden") == 0) {
-					memcpy(m_pClientList[iClientH]->m_cMapName, "arejail", 7);
-					strcpy(m_pClientList[iClientH]->m_cLockedMapName, "arejail");
-					m_pClientList[iClientH]->m_iLockedMapTime = 10 * 2; // 3��
+					memcpy(client.m_cMapName, "arejail", 7);
+					strcpy(client.m_cLockedMapName, "arejail");
+					client.m_iLockedMapTime = 10 * 2;
 
-				} else if (m_pClientList[iClientH]->m_iLevel > 80)
-					memcpy(m_pClientList[iClientH]->m_cMapName, "resurr2", 7);
-				else memcpy(m_pClientList[iClientH]->m_cMapName, "elvine", 7);
+				} else if (client.m_iLevel > 80)
+					memcpy(client.m_cMapName, "resurr2", 7);
+				else memcpy(client.m_cMapName, "elvine", 7);
 			}
 		}
-
-		// v2.04 �ٽ� �츮�� ó���� �Ѵ�. HP, ����� ���� ����
-		m_pClientList[iClientH]->m_bIsKilled = false;
-		m_pClientList[iClientH]->m_iHP = (3 * m_pClientList[iClientH]->m_iVit) + (2 * m_pClientList[iClientH]->m_iLevel) + (m_pClientList[iClientH]->m_iStr / 2);
-		m_pClientList[iClientH]->m_iHungerStatus = 100;
+		client.m_bIsKilled = false;
+		client.m_iHP = (3 * client.m_iVit) + (2 * client.m_iLevel) + (client.m_iStr / 2);
+		client.m_iHungerStatus = 100;
 
 		std::memset(cTmpMap, 0, sizeof (cTmpMap));
-		strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);
-		// !!! RequestTeleportHandler������ m_cMapName�� ���� ������ �״�� �Ķ���ͷ� �Ѱ��ָ� ������
-		RequestTeleportHandler(iClientH, "2   ", cTmpMap, -1, -1);
+		strcpy(cTmpMap, client.m_cMapName);
+		RequestTeleportHandler(client.id_, "2   ", cTmpMap, -1, -1);
 	}
 }
 
@@ -13338,7 +13326,7 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize)
 	}
 }
 
-void CGame::RequestSellItemListHandler(int iClientH, char * pData) {
+void CGame::RequestSellItemListHandler(CClient &client, char * pData) {
 	int i, * ip, iAmount;
 	char * cp, cIndex;
 
@@ -13346,8 +13334,6 @@ void CGame::RequestSellItemListHandler(int iClientH, char * pData) {
 		char cIndex;
 		int iAmount;
 	} stTemp[12];
-
-	if (m_pClientList[iClientH] == nullptr) return;
 
 	cp = (char *) (pData + 6);
 	for (i = 0; i < 12; i++) {
@@ -13358,19 +13344,19 @@ void CGame::RequestSellItemListHandler(int iClientH, char * pData) {
 		stTemp[i].iAmount = *ip;
 		cp += 4;
 	}
-
+	int id = client.id_;
 	// ³»¿ëÀ» ´Ù ÀÐ¾ú´Ù. ¼ø¼­´ë·Î ÆÈ¾ÆÄ¡¿î´Ù.
 	for (i = 0; i < 12; i++) {
 		cIndex = stTemp[i].cIndex;
 		iAmount = stTemp[i].iAmount;
 
 		if ((cIndex == -1) || (cIndex < 0) || (cIndex >= DEF_MAXITEMS)) return;
-		if (m_pClientList[iClientH]->m_pItemList[cIndex] == nullptr) return;
+		if (client.m_pItemList[cIndex] == nullptr) return;
 
 		// cIndex¿¡ ÇØ´çÇÏ´Â ¾ÆÀÌÅÛÀ» ÆÇ´Ù.
-		ReqSellItemConfirmHandler(iClientH, cIndex, iAmount, nullptr);
+		ReqSellItemConfirmHandler(id, cIndex, iAmount, nullptr);
 		// ÀÌ ·çÆ¾À» ¼öÇàÇÑ ´ÙÀ½ Å¬¶óÀÌ¾ðÆ®°¡ »èÁ¦µÇ¾úÀ» ¼ö ÀÖÀ¸´Ï ÁÖÀÇ!
-		if (m_pClientList[iClientH] == nullptr) return;
+		if (m_pClientList[id] == nullptr) return;
 	}
 }
 
@@ -27013,20 +26999,19 @@ void CGame::SetAngelFlag(short sOwnerH, char cOwnerType, int iStatus, int iTemp)
  **  bool CGame::GetAngelHandler(int iClientH, char * pData, uint32_t dwMsgSize)										**
  ** description	  :: Reversed and coded by Snoopy																	**
  *********************************************************************************************************************/
-void CGame::GetAngelHandler(int iClientH, char * pData, uint32_t /*dwMsgSize*/) {
+void CGame::GetAngelHandler(CClient &client, char * pData, uint32_t /*dwMsgSize*/) {
 	char *cp, cData[256], cTmpName[21];
 	int iAngel;
-	class CItem * pItem;
+	
 	int iRet, iEraseReq, iRequiredMagesty;
 	char cItemName[21];
 	short * sp;
 	uint16_t * wp;
 	int * ip;
 	uint32_t * dwp;
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-	if (_iGetItemSpaceLeft(iClientH) == 0) {
-		SendItemNotifyMsg(iClientH, DEF_NOTIFY_CANNOTCARRYMOREITEM, nullptr, 0);
+	if (client.m_bIsInitComplete == false) return;
+	if (_iGetItemSpaceLeft(client.id_) == 0) {
+		SendItemNotifyMsg(client.id_, DEF_NOTIFY_CANNOTCARRYMOREITEM, nullptr, 0);
 		return;
 	}
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
@@ -27036,7 +27021,7 @@ void CGame::GetAngelHandler(int iClientH, char * pData, uint32_t /*dwMsgSize*/) 
 	ip = (int *) cp;
 	iAngel = (int) *ip;
 	cp += 2;
-	wsprintf(G_cTxt, "PC(%s) obtained an Angel (%d).   %s(%d %d)", m_pClientList[iClientH]->m_cCharName, iAngel, m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY);
+	wsprintf(G_cTxt, "PC(%s) obtained an Angel (%d).   %s(%d %d)", client.m_cCharName, iAngel, client.m_cMapName, client.m_sX, client.m_sY);
 	PutLogList(G_cTxt);
 	switch (iAngel) {
 		case 1:
@@ -27059,15 +27044,16 @@ void CGame::GetAngelHandler(int iClientH, char * pData, uint32_t /*dwMsgSize*/) 
 			PutLogList("Gail asked to create a wrong item!");
 			break;
 	}
-	pItem = nullptr;
-	pItem = new class CItem;
+	CItem *pItem = new class CItem;
 	if (pItem == nullptr) return;
-	if ((_bInitItemAttr(*pItem, cItemName) == true)) {
+	if (_bInitItemAttr(*pItem, cItemName) == true) {
 		pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
-		pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
-		pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
-		pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
-		if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
+		pItem->m_sTouchEffectValue1 = client.m_sCharIDnum1;
+		pItem->m_sTouchEffectValue2 = client.m_sCharIDnum2;
+		pItem->m_sTouchEffectValue3 = client.m_sCharIDnum3;
+		if (_bAddClientItemList(client.id_, pItem, &iEraseReq)) {
+			client.m_iGizonItemUpgradeLeft -= iRequiredMagesty;
+			SendNotifyMsg(0, client.id_, DEF_NOTIFY_GIZONITEMUPGRADELEFT, client.m_iGizonItemUpgradeLeft, 0, 0, nullptr);
 			std::memset(cData, 0, sizeof (cData));
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
@@ -27112,31 +27098,30 @@ void CGame::GetAngelHandler(int iClientH, char * pData, uint32_t /*dwMsgSize*/) 
 			*dwp = pItem->m_dwAttribute;
 			cp += 4;
 			if (iEraseReq == 1) delete pItem;
-			iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53);
+			iRet = client.m_pXSock->iSendMsg(cData, 53);
 			switch (iRet) {
 				case DEF_XSOCKEVENT_QUENEFULL:
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					DeleteClient(iClientH, true, true);
+					DeleteClient(client.id_, true, true);
+					return;
 					break;
 			}
-			m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= iRequiredMagesty;
-			SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
 		} else {
-			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem);
-			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
+			m_pMapList[ client.m_cMapIndex ]->bSetItem(client.m_sX, client.m_sY, pItem);
+			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, client.m_cMapIndex, client.m_sX, client.m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
 			*wp = DEF_NOTIFY_CANNOTCARRYMOREITEM;
-			iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);
+			iRet = client.m_pXSock->iSendMsg(cData, 6);
 			switch (iRet) {
 				case DEF_XSOCKEVENT_QUENEFULL:
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					DeleteClient(iClientH, true, true);
+					DeleteClient(client.id_, true, true);
 					break;
 			}
 		}

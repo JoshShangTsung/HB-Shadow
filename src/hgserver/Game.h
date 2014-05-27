@@ -197,7 +197,7 @@ public:
 	int HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide);
 	void AdminOrder_GetFightzoneTicket(int iClientH);
 
-	void GetAngelHandler(int iClientH, char * pData, uint32_t dwMsgSize);
+	void GetAngelHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void SetAngelFlag(short sOwnerH, char cOwnerType, int iStatus, int iTemp);
 
 	void ReadMajesticSettings();
@@ -405,9 +405,9 @@ public:
 	void JoinPartyHandler(int iClientH, int iV1, char *pMemberName);
 	void CreateNewPartyHandler(int iClientH);
 	void _DeleteRandomOccupyFlag(int iMapIndex);
-	void RequestSellItemListHandler(int iClientH, char * pData);
-	void RequestRestartHandler(int iClientH);
-	int iRequestPanningMapDataRequest(int iClientH, char * pData);
+	void RequestSellItemListHandler(CClient &client, char * pData);
+	void RequestRestartHandler(CClient &client);
+	int iRequestPanningMapDataRequest(CClient &client, char * pData);
 	void GetMagicAbilityHandler(int iClientH);
 	void Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
 	void _TamingHandler(int iClientH, int iSkillNum, char cMapIndex, int dX, int dY);

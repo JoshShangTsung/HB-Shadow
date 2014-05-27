@@ -11250,25 +11250,24 @@ void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint3
 
 			//Shorcut para Criticals by 
 		case DEF_REQUEST_SHOWBALLPOINTS:
-			SendNotifyMsg(0, iClientH, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, nullptr);
-			;
+			SendNotifyMsg(0, client.id_, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, nullptr);
 			break;
 
 		case DEF_REQUEST_ANGEL: // Angels by Snoopy...
-			GetAngelHandler(iClientH, pData, dwMsgSize);
+			GetAngelHandler(client, pData, dwMsgSize);
 			break;
 
 		case MSGID_REQUEST_SELLITEMLIST:
-			RequestSellItemListHandler(iClientH, pData);
+			RequestSellItemListHandler(client, pData);
 			break;
 
 		case MSGID_REQUEST_RESTART:
-			RequestRestartHandler(iClientH);
-			SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+			RequestRestartHandler(client);
+			SendNotifyMsg(0, client.id_, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
 			break;
 
 		case MSGID_REQUEST_PANNING:
-			iRequestPanningMapDataRequest(iClientH, pData);
+			iRequestPanningMapDataRequest(client, pData);
 			break;
 
 		case MSGID_REQUEST_NOTICEMENT:
