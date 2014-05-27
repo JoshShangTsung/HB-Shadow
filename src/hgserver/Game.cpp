@@ -11271,7 +11271,7 @@ void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint3
 			break;
 
 		case MSGID_REQUEST_NOTICEMENT:
-			RequestNoticementHandler(iClientH, pData);
+			RequestNoticementHandler(client, pData);
 			break;
 
 		case MSGID_BWM_COMMAND_SHUTUP:
@@ -11279,19 +11279,19 @@ void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint3
 			break;
 
 		case MSGID_BWM_INIT:
-			_BWM_Init(iClientH, pData);
+			_BWM_Init(client, pData);
 			break;
 
 		case MSGID_REQUEST_SETITEMPOS:
-			_SetItemPos(iClientH, pData);
+			_SetItemPos(client, pData);
 			break;
 
 		case MSGID_REQUEST_FULLOBJECTDATA:
-			RequestFullObjectData(iClientH, pData);
+			RequestFullObjectData(client, pData);
 			break;
 
 		case MSGID_REQUEST_RETRIEVEITEM:
-			RequestRetrieveItemHandler(iClientH, pData);
+			RequestRetrieveItemHandler(client, pData);
 			break;
 
 		case MSGID_REQUEST_CIVILRIGHT:
@@ -24294,21 +24294,19 @@ void CGame::RequestCivilRightHandler(int iClientH, char */*pData*/) {
 	RequestChangePlayMode(iClientH);
 }
 
-void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
+void CGame::RequestRetrieveItemHandler(CClient &client, char *pData) {
 	char * cp, cBankItemIndex, cMsg[100];
 	register int i, j, iRet, iItemWeight;
 	uint32_t * dwp;
 	uint16_t * wp;
 
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
+	if (client.m_bIsInitComplete == false) return;
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	cBankItemIndex = *cp;
 
 	if ((cBankItemIndex < 0) || (cBankItemIndex >= DEF_MAXBANKITEMS)) return;
-	if (m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex] == nullptr) {
-		// ¿À·ù´Ù.
+	if (client.m_pItemInBankList[cBankItemIndex] == nullptr) {
 		std::memset(cMsg, 0, sizeof (cMsg));
 
 		dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
@@ -24316,68 +24314,53 @@ void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 		wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
 		*wp = DEF_MSGTYPE_REJECT;
 
-		iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cMsg, 8);
+		iRet = client.m_pXSock->iSendMsg(cMsg, 8);
 	} else {
-		// Áß·®°è»ê
 		/*
-		if ( (m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-			 (m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW) ) {
-			//iItemWeight = m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_wWeight * m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount;
-			iItemWeight = iGetItemWeight(m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex], m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount);
+		if ( (client.m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
+			 (client.m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW) ) {
+			//iItemWeight = client.m_pItemInBankList[cBankItemIndex]->m_wWeight * client.m_pItemInBankList[cBankItemIndex]->m_dwCount;
+			iItemWeight = iGetItemWeight(client.m_pItemInBankList[cBankItemIndex], client.m_pItemInBankList[cBankItemIndex]->m_dwCount);
 		}
-		else iItemWeight = iGetItemWeight(m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex], 1); //m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_wWeight;
+		else iItemWeight = iGetItemWeight(client.m_pItemInBankList[cBankItemIndex], 1); //client.m_pItemInBankList[cBankItemIndex]->m_wWeight;
 		 */
-		// v1.432
-		iItemWeight = iGetItemWeight(*m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex], m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount);
+		iItemWeight = iGetItemWeight(*client.m_pItemInBankList[cBankItemIndex], client.m_pItemInBankList[cBankItemIndex]->m_dwCount);
 
-		if ((iItemWeight + m_pClientList[iClientH]->m_iCurWeightLoad) > _iCalcMaxLoad(iClientH)) {
-			// ÇÑ°èÁß·® ÃÊ°ú, ¾ÆÀÌÅÛÀ» Ã£À» ¼ö ¾ø´Ù.
-			// ½ÇÆÐ ¸Þ½ÃÁö¸¦ º¸³½´Ù.
+		if ((iItemWeight + client.m_iCurWeightLoad) > _iCalcMaxLoad(client.id_)) {
 			std::memset(cMsg, 0, sizeof (cMsg));
 
-			// ´õÀÌ»ó °¡Áú¼ö ¾ø´Ù´Â ¸Þ½ÃÁö¸¦ º¸³½´Ù.
 			dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
 			*wp = DEF_NOTIFY_CANNOTCARRYMOREITEM;
 
-			iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cMsg, 6);
+			iRet = client.m_pXSock->iSendMsg(cMsg, 6);
 			switch (iRet) {
 				case DEF_XSOCKEVENT_QUENEFULL:
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
-					DeleteClient(iClientH, true, true);
+					DeleteClient(client.id_, true, true);
 					break;
 			}
 			return;
 		}
 
-		//!!!
-		if ((m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-				  (m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
-			// Áßº¹ÀÌ °¡´ÉÇÑ ¾ÆÀÌÅÛÀÌ¶ó¸é ¼ö·®¸¸ Áõ°¡½ÃÅ²´Ù.
+		if ((client.m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
+				  (client.m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 			for (i = 0; i < DEF_MAXITEMS; i++)
-				if ((m_pClientList[iClientH]->m_pItemList[i] != nullptr) &&
-						  (m_pClientList[iClientH]->m_pItemList[i]->m_cItemType == m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_cItemType) &&
-						  (memcmp(m_pClientList[iClientH]->m_pItemList[i]->m_cName, m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_cName, 20) == 0)) {
-					// °°Àº Çü½ÄÀÇ ¾ÆÀÌÅÛÀ» Ã£¾Ò´Ù. ¼ö·®À» Áõ°¡½ÃÅ²´Ù.
-					// v1.41 !!!
-					SetItemCount(iClientH, i, m_pClientList[iClientH]->m_pItemList[i]->m_dwCount + m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount);
-
-					// ¹ðÅ© ¾ÆÀÌÅÛ »èÁ¦
-					m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex].reset();
-					// ºó °ø°£À» ¾ø¾Ø´Ù.
+				if ((client.m_pItemList[i] != nullptr) &&
+						  (client.m_pItemList[i]->m_cItemType == client.m_pItemInBankList[cBankItemIndex]->m_cItemType) &&
+						  (memcmp(client.m_pItemList[i]->m_cName, client.m_pItemInBankList[cBankItemIndex]->m_cName, 20) == 0)) {
+					SetItemCount(client.id_, i, client.m_pItemList[i]->m_dwCount + client.m_pItemInBankList[cBankItemIndex]->m_dwCount);
+					client.m_pItemInBankList[cBankItemIndex].reset();
 					for (j = 0; j <= DEF_MAXBANKITEMS - 2; j++) {
-						if ((m_pClientList[iClientH]->m_pItemInBankList[j + 1] != nullptr) && (m_pClientList[iClientH]->m_pItemInBankList[j] == nullptr)) {
-							std::swap(m_pClientList[iClientH]->m_pItemInBankList[j], m_pClientList[iClientH]->m_pItemInBankList[j + 1]);
+						if ((client.m_pItemInBankList[j + 1] != nullptr) && (client.m_pItemInBankList[j] == nullptr)) {
+							std::swap(client.m_pItemInBankList[j], client.m_pItemInBankList[j + 1]);
 						}
 					}
 
-					// ¼º°ø ¸Þ½ÃÁö¸¦ º¸³½´Ù.
 					std::memset(cMsg, 0, sizeof (cMsg));
-
 					dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 					*dwp = MSGID_RESPONSE_RETRIEVEITEM;
 					wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
@@ -24389,50 +24372,36 @@ void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 					*cp = i;
 					cp++;
 
-					// ¼ÒÁöÇ° ÃÑ Áß·® Àç °è»ê
-					iCalcTotalWeight(iClientH);
-					// È­»ì ÇÒ´ç
-					m_pClientList[iClientH]->m_cArrowIndex = _iGetArrowItemIndex(iClientH);
-
-					// ¸Þ½ÃÁö Àü¼Û
-					iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cMsg, 8);
+					iCalcTotalWeight(client.id_);
+					client.m_cArrowIndex = _iGetArrowItemIndex(client.id_);
+					iRet = client.m_pXSock->iSendMsg(cMsg, 8);
 					switch (iRet) {
 						case DEF_XSOCKEVENT_QUENEFULL:
 						case DEF_XSOCKEVENT_SOCKETERROR:
 						case DEF_XSOCKEVENT_CRITICALERROR:
 						case DEF_XSOCKEVENT_SOCKETCLOSED:
-							// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
-							DeleteClient(iClientH, true, true);
+							DeleteClient(client.id_, true, true);
 							return;
 					}
 					return;
 				}
-
-			// °°Àº ÀÌ¸§À» °®°í ÀÖ´Â ¾ÆÀÌÅÛÀÌ ¾ø´Ù. »õ·Î Ãß°¡ÇØ¾ß ÇÑ´Ù.
 			goto RRIH_NOQUANTITY;
 		} else {
 RRIH_NOQUANTITY:
 			;
-			// ¼ö·®°³³äÀÌ ¾ø´Â ¾ÆÀÌÅÛ
-			for (i = 0; i < DEF_MAXITEMS; i++)
-				if (m_pClientList[iClientH]->m_pItemList[i] == nullptr) {
-					// ºó °ø°£À» Ã£¾Ò´Ù.
-					// ¸ÕÀú ÁÖ¼Ò¸¦ ¿Å±ä´Ù.
-					std::swap(m_pClientList[iClientH]->m_pItemList[i], m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]);
-					// v1.3 1-27 12:22
-					m_pClientList[iClientH]->m_ItemPosList[i].x = 40;
-					m_pClientList[iClientH]->m_ItemPosList[i].y = 30;
-					m_pClientList[iClientH]->m_bIsItemEquipped[i] = false;
-					// ºó °ø°£À» ¾ø¾Ø´Ù.
+			for (i = 0; i < DEF_MAXITEMS; i++) {
+				if (client.m_pItemList[i] == nullptr) {
+					std::swap(client.m_pItemList[i], client.m_pItemInBankList[cBankItemIndex]);
+					client.m_ItemPosList[i].x = 40;
+					client.m_ItemPosList[i].y = 30;
+					client.m_bIsItemEquipped[i] = false;
 					for (j = 0; j <= DEF_MAXBANKITEMS - 2; j++) {
-						if ((m_pClientList[iClientH]->m_pItemInBankList[j + 1] != nullptr) && (m_pClientList[iClientH]->m_pItemInBankList[j] == nullptr)) {
-							std::swap(m_pClientList[iClientH]->m_pItemInBankList[j], m_pClientList[iClientH]->m_pItemInBankList[j + 1]);
+						if ((client.m_pItemInBankList[j + 1] != nullptr) && (client.m_pItemInBankList[j] == nullptr)) {
+							std::swap(client.m_pItemInBankList[j], client.m_pItemInBankList[j + 1]);
 						}
 					}
-
-					// ¼º°ø ¸Þ½ÃÁö¸¦ º¸³½´Ù.
+					
 					std::memset(cMsg, 0, sizeof (cMsg));
-
 					dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 					*dwp = MSGID_RESPONSE_RETRIEVEITEM;
 					wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
@@ -24444,44 +24413,34 @@ RRIH_NOQUANTITY:
 					*cp = i;
 					cp++;
 
-					// ¼ÒÁöÇ° ÃÑ Áß·® Àç °è»ê
-					iCalcTotalWeight(iClientH);
-
-					// È­»ì ÇÒ´ç
-					m_pClientList[iClientH]->m_cArrowIndex = _iGetArrowItemIndex(iClientH);
-
-					// ¸Þ½ÃÁö Àü¼Û
-					iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cMsg, 8);
+					iCalcTotalWeight(client.id_);
+					client.m_cArrowIndex = _iGetArrowItemIndex(client.id_);
+					iRet = client.m_pXSock->iSendMsg(cMsg, 8);
 					switch (iRet) {
 						case DEF_XSOCKEVENT_QUENEFULL:
 						case DEF_XSOCKEVENT_SOCKETERROR:
 						case DEF_XSOCKEVENT_CRITICALERROR:
 						case DEF_XSOCKEVENT_SOCKETCLOSED:
-							// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
-							DeleteClient(iClientH, true, true);
+							DeleteClient(client.id_, true, true);
 							return;
 					}
 					return;
 				}
-			// ¾ÆÀÌÅÛÀ» µÇÃ£À» °ø°£ÀÌ ¾ø´Ù. ¿À·ù
+			}
 			std::memset(cMsg, 0, sizeof (cMsg));
-
 			dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 			*dwp = MSGID_RESPONSE_RETRIEVEITEM;
 			wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
 			*wp = DEF_MSGTYPE_REJECT;
-
-			iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cMsg, 8);
+			iRet = client.m_pXSock->iSendMsg(cMsg, 8);
 		}
 	}
-
 	switch (iRet) {
 		case DEF_XSOCKEVENT_QUENEFULL:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
-			DeleteClient(iClientH, true, true);
+			DeleteClient(client.id_, true, true);
 			return;
 	}
 }
@@ -27829,18 +27788,17 @@ void CGame::DeleteNpc(int iNpcH) {
 	m_pNpcList[iNpcH] = nullptr;
 }
 
-void CGame::RequestFullObjectData(int iClientH, char *pData) {
+void CGame::RequestFullObjectData(CClient &client, char *pData) {
 	uint32_t * dwp;
-	uint16_t * wp, wObjectID;
+	uint16_t wObjectID;
 	char * cp, cData[100];
 	short * sp, sX, sY;
-	int sTemp, sTemp2;
+	int iTemp, iTemp2;
 	int * ip, iRet;
 
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
+	if (client.m_bIsInitComplete == false) return;
 
-	wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
+	uint16_t *wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
 	wObjectID = *wp;
 	std::memset(cData, 0, sizeof (cData));
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
@@ -27851,113 +27809,93 @@ void CGame::RequestFullObjectData(int iClientH, char *pData) {
 	cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
 
 	if (wObjectID < 10000) {
-		// Ä³¸¯ÅÍÀÇ Á¤º¸¸¦ ¿øÇÑ´Ù.
-		// Àß¸øµÈ ÀÎµ¦½º°ªÀÌ°Å³ª Á¸ÀçÇÏÁö ¾Ê´Â ÇÃ·¹ÀÌ¾î¶ó¸é ¹«½Ã.
 		if ((wObjectID == 0) || (wObjectID >= DEF_MAXCLIENTS)) return;
-		if (m_pClientList[wObjectID] == nullptr) return;
-
-		wp = (uint16_t *) cp;
-		*wp = wObjectID; // ObjectID
-		cp += 2;
-		sp = (short *) cp;
-		sX = m_pClientList[wObjectID]->m_sX;
-		*sp = sX;
-		cp += 2;
-		sp = (short *) cp;
-		sY = m_pClientList[wObjectID]->m_sY;
-		*sp = sY;
-		cp += 2;
-		sp = (short *) cp;
-		*sp = m_pClientList[wObjectID]->m_sType;
-		cp += 2;
-		*cp = m_pClientList[wObjectID]->m_cDir;
-		cp++;
-		memcpy(cp, m_pClientList[wObjectID]->m_cCharName, 10);
-		cp += 10;
-		sp = (short *) cp;
-		*sp = m_pClientList[wObjectID]->m_sAppr1;
-		cp += 2;
-		sp = (short *) cp;
-		*sp = m_pClientList[wObjectID]->m_sAppr2;
-		cp += 2;
-		sp = (short *) cp;
-		*sp = m_pClientList[wObjectID]->m_sAppr3;
-		cp += 2;
-		sp = (short *) cp;
-		*sp = m_pClientList[wObjectID]->m_sAppr4;
-		cp += 2;
-		//v1.4 ApprColor
-		ip = (int *) cp;
-		*ip = m_pClientList[wObjectID]->m_iApprColor;
-		cp += 4;
-
-		ip = (int *) cp;
-
-		// m_pClientList[i]¿Í m_pClientList[sOwnerH]ÀÇ °ü°è¸¦ ÀÔ·ÂÇÑ´Ù.
-		// sStatusÀÇ »óÀ§ 4ºñÆ®°¡ FOE °ü°è¸¦ ³ªÅ¸³½´Ù.
-		sTemp = m_pClientList[wObjectID]->m_iStatus;
-		sTemp = 0x0FFFFFFF & sTemp; //Original : sTemp = 0x0FFF & sTemp; // »óÀ§ 4ºñÆ® Å¬¸®¾î
-		sTemp2 = iGetPlayerABSStatus(wObjectID, iClientH); //(short)iGetPlayerRelationship(iClientH, wObjectID);
-		sTemp = (sTemp | (sTemp2 << 28)); //Original : 12
-
-		*ip = sTemp;
-		//*sp = DEF_TEST;
-		cp += 4; //Original 2
-
-		if (m_pClientList[wObjectID]->m_bIsKilled == true) // v1.4
-			*cp = 1;
-		else *cp = 0;
-		cp++;
-
-		iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 41); // v1.4
-	} else {
-		// NPCÀÇ Á¤º¸¸¦ ¿øÇÑ´Ù.
-		// Àß¸øµÈ ÀÎµ¦½º °ªÀÌ°Å³ª »ý¼ºµÇÁö ¾ÊÀº NPC¶ó¸é ¹«½Ã
-		if (((wObjectID - 10000) == 0) || ((wObjectID - 10000) >= DEF_MAXNPCS)) return;
-		if (m_pNpcList[wObjectID - 10000] == nullptr) return;
-
+		CClient *targetClientPtr = m_pClientList[wObjectID];
+		if (!targetClientPtr) return;
+		CClient &targetClient = *targetClientPtr;
 		wp = (uint16_t *) cp;
 		*wp = wObjectID;
 		cp += 2;
-
-		wObjectID -= 10000;
-
 		sp = (short *) cp;
-		sX = m_pNpcList[wObjectID]->m_sX;
+		sX = targetClient.m_sX;
 		*sp = sX;
 		cp += 2;
 		sp = (short *) cp;
-		sY = m_pNpcList[wObjectID]->m_sY;
+		sY = targetClient.m_sY;
 		*sp = sY;
 		cp += 2;
 		sp = (short *) cp;
-		*sp = m_pNpcList[wObjectID]->m_sType;
+		*sp = targetClient.m_sType;
 		cp += 2;
-		*cp = m_pNpcList[wObjectID]->m_cDir;
+		*cp = targetClient.m_cDir;
 		cp++;
-		memcpy(cp, m_pNpcList[wObjectID]->m_cName, 5);
+		memcpy(cp, targetClient.m_cCharName, 10);
+		cp += 10;
+		sp = (short *) cp;
+		*sp = targetClient.m_sAppr1;
+		cp += 2;
+		sp = (short *) cp;
+		*sp = targetClient.m_sAppr2;
+		cp += 2;
+		sp = (short *) cp;
+		*sp = targetClient.m_sAppr3;
+		cp += 2;
+		sp = (short *) cp;
+		*sp = targetClient.m_sAppr4;
+		cp += 2;
+		ip = (int *) cp;
+		*ip = targetClient.m_iApprColor;
+		cp += 4;
+		ip = (int *) cp;
+		iTemp = targetClient.m_iStatus;
+		iTemp = 0x0FFFFFFF & iTemp;
+		iTemp2 = iGetPlayerABSStatus(wObjectID, client.id_);
+		iTemp = (iTemp | (iTemp2 << 28));
+		*ip = iTemp;
+		cp += 4;
+		*cp = targetClient.m_bIsKilled;
+		cp++;
+		iRet = client.m_pXSock->iSendMsg(cData, 41);
+	} else {
+		wObjectID -= 10000;
+		if (((wObjectID) == 0) || ((wObjectID) >= DEF_MAXNPCS)) return;
+		CNpc *targetNpcPtr = m_pNpcList[wObjectID];
+		if (!targetNpcPtr) return;
+		CNpc &targetNpc = *targetNpcPtr;
+		wp = (uint16_t *) cp;
+		*wp = wObjectID;
+		cp += 2;
+		sp = (short *) cp;
+		sX = targetNpc.m_sX;
+		*sp = sX;
+		cp += 2;
+		sp = (short *) cp;
+		sY = targetNpc.m_sY;
+		*sp = sY;
+		cp += 2;
+		sp = (short *) cp;
+		*sp = targetNpc.m_sType;
+		cp += 2;
+		*cp = targetNpc.m_cDir;
+		cp++;
+		memcpy(cp, targetNpc.m_cName, 5);
 		cp += 5;
 		sp = (short *) cp;
-		*sp = m_pNpcList[wObjectID]->m_sAppr2;
+		*sp = targetNpc.m_sAppr2;
 		cp += 2;
 
 		ip = (int *) cp;
+		iTemp = targetNpc.m_iStatus;
+		iTemp = 0x0FFFFFFF & iTemp; //Original : sTemp = 0x0FFF & sTemp; // »óÀ§ 4ºñÆ® Å¬¸®¾î
 
-		sTemp = m_pNpcList[wObjectID]->m_iStatus;
-		sTemp = 0x0FFFFFFF & sTemp; //Original : sTemp = 0x0FFF & sTemp; // »óÀ§ 4ºñÆ® Å¬¸®¾î
-
-		sTemp2 = iGetNpcRelationship(wObjectID, iClientH);
-		sTemp = (sTemp | (sTemp2 << 28)); //Original : 12
-		*ip = sTemp;
+		iTemp2 = iGetNpcRelationship(wObjectID, client.id_);
+		iTemp = (iTemp | (iTemp2 << 28)); //Original : 12
+		*ip = iTemp;
 		//*sp = DEF_TEST;
 		cp += 4; //Original 2
-
-		if (m_pNpcList[wObjectID]->m_bIsKilled == true) // v1.4
-			*cp = 1;
-		else *cp = 0;
+		*cp = targetNpc.m_bIsKilled;
 		cp++;
-
-		iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 27); // v1.4 //Original : 25
+		iRet = client.m_pXSock->iSendMsg(cData, 27); // v1.4 //Original : 25
 	}
 
 	switch (iRet) {
@@ -27966,7 +27904,7 @@ void CGame::RequestFullObjectData(int iClientH, char *pData) {
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
 			// ¸Þ½ÃÁö¸¦ º¸³¾¶§ ¿¡·¯°¡ ¹ß»ýÇß´Ù¸é Á¦°ÅÇÑ´Ù.
-			DeleteClient(iClientH, true, true);
+			DeleteClient(client.id_, true, true);
 			return;
 	}
 }

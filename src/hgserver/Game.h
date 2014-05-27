@@ -415,7 +415,7 @@ public:
 	int _iTalkToNpcResult_Guard(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	void SetIceFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void _bDecodeNoticementFileContents(char * pData, uint32_t dwMsgSize);
-	void RequestNoticementHandler(int iClientH, char * pData);
+	void RequestNoticementHandler(CClient &client, char * pData);
 	void _AdjustRareItemValue(class CItem &pItem);
 	bool _bCheckDupItemID(class CItem * pItem);
 	bool _bDecodeDupItemIDFileContents(char * pData, uint32_t dwMsgSize);
@@ -455,9 +455,9 @@ public:
 	void ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, uint16_t wObjectID, char * pItemName);
 
 	void _BWM_Command_Shutup(char * pData);
-	void _BWM_Init(int iClientH, char * pData);
+	void _BWM_Init(CClient &client, char * pData);
 	void CheckUniqueItemEquipment(int iClientH);
-	void _SetItemPos(int iClientH, char * pData);
+	void _SetItemPos(CClient &client, char * pData);
 	//void GetHeroMantleHandler(int iClientH);
 
 	bool _bDecodeOccupyFlagSaveFileContents(char * pData, uint32_t dwMsgSize);
@@ -560,7 +560,7 @@ public:
 	void NpcBehavior_Stop(int iNpcH);
 	void ItemDepleteHandler(int iClientH, short sItemIndex, bool bIsUseItemResult, bool bIsItemUsed);
 	int _iGetArrowItemIndex(int iClientH);
-	void RequestFullObjectData(int iClientH, char * pData);
+	void RequestFullObjectData(CClient &client, char * pData);
 	void DeleteNpc(int iNpcH);
 	void CalcNextWayPointDestination(int iNpcH);
 	void MobGenerator();
@@ -576,7 +576,7 @@ public:
 	void PK_KillRewardHandler(short sAttackerH, short sVictumH);
 	void ApplyPKpenalty(short sAttackerH, short sVictumH);
 	bool bSetItemToBankItem(int iClientH, short sItemIndex);
-	void RequestRetrieveItemHandler(int iClientH, char *pData);
+	void RequestRetrieveItemHandler(CClient &client, char *pData);
 	void RequestCivilRightHandler(int iClientH, char * pData);
 	bool bCheckLimitedUser(int iClientH);
 	void LevelUpSettingsHandler(int iClientH, char * pData, uint32_t dwMsgSize);

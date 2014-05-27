@@ -9305,31 +9305,25 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char */*pString*/) {
 	}
 }
 
-void CGame::_SetItemPos(int iClientH, char *pData) {
-	char * cp, cItemIndex;
-	short * sp, sX, sY;
-
-	if (m_pClientList[iClientH] == nullptr) return;
-
-	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	cItemIndex = *cp;
+void CGame::_SetItemPos(CClient &client, char *pData) {
+	char *cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
+	char cItemIndex = *cp;
 	cp++;
 
-	sp = (short *) cp;
-	sX = *sp;
+	short *sp = (short *) cp;
+	short sX = *sp;
 	cp += 2;
 
 	sp = (short *) cp;
-	sY = *sp;
+	short sY = *sp;
 	cp += 2;
 
-	// Àß¸øµÈ ÁÂÇ¥°ª º¸Á¤
 	if (sY < -10) sY = -10;
-
+	
 	if ((cItemIndex < 0) || (cItemIndex >= DEF_MAXITEMS)) return;
-	if (m_pClientList[iClientH]->m_pItemList[cItemIndex] != nullptr) {
-		m_pClientList[iClientH]->m_ItemPosList[cItemIndex].x = sX;
-		m_pClientList[iClientH]->m_ItemPosList[cItemIndex].y = sY;
+	if (client.m_pItemList[cItemIndex] != nullptr) {
+		client.m_ItemPosList[cItemIndex].x = sX;
+		client.m_ItemPosList[cItemIndex].y = sY;
 	}
 }
 
@@ -9364,24 +9358,19 @@ void CGame::CheckUniqueItemEquipment(int iClientH) {
 		}
 }
 
-void CGame::_BWM_Init(int iClientH, char */*pData*/) {
-	if (m_pClientList[iClientH] == nullptr) return;
-
-	m_pClientList[iClientH]->m_bIsBWMonitor = true;
-	wsprintf(G_cTxt, "(*) BWMonitor(%d) registered.", iClientH);
+void CGame::_BWM_Init(CClient &client, char */*pData*/) {
+	client.m_bIsBWMonitor = true;
+	wsprintf(G_cTxt, "(*) BWMonitor(%d) registered.", client.id_);
 	PutLogList(G_cTxt);
 }
 
 void CGame::_BWM_Command_Shutup(char *pData) {
-	char * cp, cName[11];
-	register int i;
-
-	cp = (char *) (pData + 16);
-
+	char *cp = (char *) (pData + 16);
+	char cName[11];
 	std::memset(cName, 0, sizeof (cName));
 	memcpy(cName, cp, 10);
 
-	for (i = 1; i < DEF_MAXCLIENTS; i++)
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
 		if (m_pClientList[i] != nullptr) {
 			if (memcmp(m_pClientList[i]->m_cCharName, cName, 10) == 0) {
 				m_pClientList[i]->m_iTimeLeft_ShutUp = 20 * 3 * 10; // 1ÀÌ 3ÃÊ´Ù. 20ÀÌ¸é 1ºÐ ¿åÀ» ÇÏ¸é ¹«Á¶°Ç Æä³ÎÆ¼ 10ºÐ
@@ -9394,6 +9383,7 @@ void CGame::_BWM_Command_Shutup(char *pData) {
 				return;
 			}
 		}
+	}
 }
 
 void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, uint16_t wObjectID, char */*pItemName*/) {
@@ -12714,43 +12704,29 @@ void CGame::_AdjustRareItemValue(CItem &item) {
 	}
 }
 
-void CGame::RequestNoticementHandler(int iClientH, char * pData) {
-	char * cp, cData[120];
-	int * ip, iClientSize;
-	uint32_t * dwp;
-	uint16_t * wp;
-
-	if (m_pClientList[iClientH] == nullptr) return;
+void CGame::RequestNoticementHandler(CClient &client, char * pData) {
 	if (m_dwNoticementDataSize < 10) return;
-
-	ip = (int *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	iClientSize = *ip;
-
+	int * ip = (int *) (pData + DEF_INDEX2_MSGTYPE + 2);
+	int iClientSize = *ip;
 	if (iClientSize != m_dwNoticementDataSize) {
-		// Å¬¶óÀÌ¾ðÆ®°¡ °®°í ÀÖ´Â ÆÄÀÏ »çÀÌÁî¿Í ´Ù¸£¸é ³»¿ëÀ» ¸ðµÎ º¸³½´Ù.
-		cp = new char[m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2];
+		char *cp = new char[m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2];
 		ZeroMemory(cp, m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2);
 		memcpy((cp + DEF_INDEX2_MSGTYPE + 2), m_pNoticementData, m_dwNoticementDataSize);
-
-		dwp = (uint32_t *) (cp + DEF_INDEX4_MSGID);
+		uint32_t *dwp = (uint32_t *) (cp + DEF_INDEX4_MSGID);
 		*dwp = MSGID_RESPONSE_NOTICEMENT;
-		wp = (uint16_t *) (cp + DEF_INDEX2_MSGTYPE);
+		uint16_t *wp = (uint16_t *) (cp + DEF_INDEX2_MSGTYPE);
 		*wp = DEF_MSGTYPE_REJECT;
-
-		m_pClientList[iClientH]->m_pXSock->iSendMsg(cp, m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2);
-
+		client.m_pXSock->iSendMsg(cp, m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2);
 		delete cp;
 	} else {
+		char cData[120];
 		std::memset(cData, 0, sizeof (cData));
-
-		dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+		uint32_t *dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 		*dwp = MSGID_RESPONSE_NOTICEMENT;
-		wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+		uint16_t *wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
 		*wp = DEF_MSGTYPE_CONFIRM;
-
-		m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);
+		client.m_pXSock->iSendMsg(cData, 6);
 	}
-	// ¿¡·¯ ¹ß»ýÇØµµ ²÷Áö ¾Ê´Â´Ù.
 }
 
 void CGame::_bDecodeNoticementFileContents(char *pData, uint32_t /*dwMsgSize*/) {
