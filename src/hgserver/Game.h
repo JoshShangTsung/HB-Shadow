@@ -397,7 +397,7 @@ public:
 	void UpdateMapSectorInfo();
 	//bool bGetItemNameWhenDeleteNpc(char * pItemName, short sNpcType);
 	bool bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType);
-	int iGetItemWeight(class CItem * pItem, int iCount);
+	int iGetItemWeight(class CItem &pItem, int iCount);
 	void CancelQuestHandler(int iClientH);
 	void ActivateSpecialAbilityHandler(int iClientH);
 	void EnergySphereProcessor(bool bIsAdminCreate = false, int iClientH = 0);
@@ -416,7 +416,7 @@ public:
 	void SetIceFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void _bDecodeNoticementFileContents(char * pData, uint32_t dwMsgSize);
 	void RequestNoticementHandler(int iClientH, char * pData);
-	void _AdjustRareItemValue(class CItem * pItem);
+	void _AdjustRareItemValue(class CItem &pItem);
 	bool _bCheckDupItemID(class CItem * pItem);
 	bool _bDecodeDupItemIDFileContents(char * pData, uint32_t dwMsgSize);
 	void NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType);
@@ -635,6 +635,7 @@ public:
 	void DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * pItemName, bool bByPlayer = true);
 	void ClientCommonHandler(int iClientH, char * pData);
 	bool __fastcall bGetMsgQuene(char * pFrom, char * pData, uint32_t * pMsgSize, int * pIndex, char * pKey);
+	void processClientMsg(CClient &client, uint32_t msgId, char *pData, uint32_t dwMsgSize, char cKey);
 	void MsgProcess();
 	bool __fastcall bPutMsgQuene(char cFrom, char * pData, uint32_t dwMsgSize, int iIndex, char cKey);
 	void NpcBehavior_Flee(int iNpcH);
@@ -650,14 +651,14 @@ public:
 	bool bGetEmptyPosition(short * pX, short * pY, char cMapIndex);
 	char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, char cMapIndex, char cTurn, int * pError);
 	int iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short dX, short dY, short wType, char cDir, uint16_t wTargetObjectID, bool bResponse = true, bool bIsDash = false);
-	void ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize);
+	void ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void NpcProcess();
 	int bCreateNewNpc(const char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
 	//bool bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sX, short sY);
 	bool _bReadMapInfoFiles(int iMapIndex);
 
 	bool _bGetIsStringIsNumber(char * pStr);
-	bool _bInitItemAttr(class CItem * pItem, const char * pItemName);
+	bool _bInitItemAttr(class CItem &pItem, const char * pItemName);
 	bool bReadProgramConfigFile(const char * cFn);
 	void GameProcess();
 	void InitPlayerData(int iClientH, char * pData, uint32_t dwSize);
@@ -677,7 +678,7 @@ public:
 	int iClientMotion_Move_Handler(int iClientH, short sX, short sY, char cDir, char cMoveType);
 	void ClientMotionHandler(int iClientH, char * pData);
 	void DisplayInfo(HDC hdc);
-	void OnClientRead(int iClientH);
+	void OnClientRead(CClient &client);
 	bool bInit();
 	void OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	bool bAccept(class XSocket * pXSock);
@@ -1066,7 +1067,7 @@ public:
 	void RemoveCrusadeRecallTime(void);
 	bool _bCrusadeLog(int iAction, int iClientH, int iData, const char * cName);
 	int iGetPlayerABSStatus(int iClientH);
-	bool _bInitItemAttr(class CItem * pItem, int iItemID);
+	bool _bInitItemAttr(class CItem &pItem, int iItemID);
 	void ReqCreateSlateHandler(int iClientH, char* pData);
 	void SetSlateFlag(int iClientH, short sType, bool bFlag);
 	void CheckForceRecallTime(int iClientH);
@@ -1074,11 +1075,11 @@ public:
 	void ForceChangePlayMode(int iClientH, bool bNotify);
 	void ShowVersion(int iClientH);
 	void ShowClientMsg(int iClientH, const char* pMsg);
-	void RequestResurrectPlayer(int iClientH, bool bResurrect);
+	void RequestResurrectPlayer(CClient &client, bool bResurrect);
 	void GetDkSet(int iClientH);
 	void AdminOrder_BanIP(int iClientH, char *pData, uint32_t dwMsgSize);
 	void PlayerOrder_ShowDamage(int iClientH);
-	void PlayerOrder_GetCrits(int iClientH);
+	void PlayerOrder_GetCrits(CClient &client);
 	void RequestRango(int iClientH, int iObjectID); // Morla2.2 - Pide EK y PK
 	void GetTradeEKMantleHandler(int iClientH, int iItemID, char * pString); // By Luqah
 	void PlayerCommandAddMaster(int iClientH, char * pData, uint32_t dwMsgSize);

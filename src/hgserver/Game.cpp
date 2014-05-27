@@ -18,7 +18,7 @@ extern FILE * pLogFile;
 extern HWND G_hWnd;
 
 
-int _tmp_iMoveLocX[9][37] = {
+constexpr int _tmp_iMoveLocX[9][37] = {
 	// 0
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -66,7 +66,7 @@ int _tmp_iMoveLocX[9][37] = {
 		15, 16, 17, 18, 19, 20, -1}
 };
 
-int _tmp_iMoveLocY[9][37] = {
+constexpr int _tmp_iMoveLocY[9][37] = {
 	// 0
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -265,9 +265,6 @@ CGame::~CGame() {
 }
 
 bool CGame::bAccept(class XSocket * pXSock) {
-	register int i;
-	class XSocket * pTmpSock;
-
 	if ((m_bIsLogSockAvailable == false) ||
 			  (m_bIsItemAvailable == false) || (m_bIsNpcAvailable == false) ||
 			  (m_bIsMagicAvailable == false) || (m_bIsSkillAvailable == false) ||
@@ -277,30 +274,25 @@ bool CGame::bAccept(class XSocket * pXSock) {
 		goto CLOSE_ANYWAY;
 
 
-	for (i = 1; i < DEF_MAXCLIENTS; i++)
+	for (int i = 1; i < DEF_MAXCLIENTS; i++) {
 		if (m_pClientList[i] == nullptr) {
+			std::unique_ptr<XSocket> socket(new class XSocket(m_hWnd, DEF_CLIENTSOCKETBLOCKLIMIT));
+			socket->bInitBufferSize(DEF_MSGBUFFERSIZE);
+			pXSock->bAccept(socket.get(), WM_ONCLIENTSOCKETEVENT + i);
 
-			m_pClientList[i] = new class CClient(m_hWnd);
-
+			m_pClientList[i] = new class CClient(i, std::move(socket));
+			CClient &client = *m_pClientList[i];
 			bAddClientShortCut(i);
+			client.m_dwSPTime = client.m_dwMPTime =
+					  client.m_dwHPTime = client.m_dwAutoSaveTime =
+					  client.m_dwTime = client.m_dwHungerTime = client.m_dwExpStockTime =
+					  client.m_dwRecentAttackTime = client.m_dwAutoExpTime = client.m_dwSpeedHackCheckTime = timeGetTime();
 
-			m_pClientList[i]->m_dwSPTime = m_pClientList[i]->m_dwMPTime =
-					  m_pClientList[i]->m_dwHPTime = m_pClientList[i]->m_dwAutoSaveTime =
-					  m_pClientList[i]->m_dwTime = m_pClientList[i]->m_dwHungerTime = m_pClientList[i]->m_dwExpStockTime =
-					  m_pClientList[i]->m_dwRecentAttackTime = m_pClientList[i]->m_dwAutoExpTime = m_pClientList[i]->m_dwSpeedHackCheckTime = timeGetTime();
+			std::memset(client.m_cIPaddress, 0, sizeof (client.m_cIPaddress));
+			client.m_pXSock->iGetPeerAddress(client.m_cIPaddress);
 
-			pXSock->bAccept(m_pClientList[i]->m_pXSock, WM_ONCLIENTSOCKETEVENT + i);
-
-
-			std::memset(m_pClientList[i]->m_cIPaddress, 0, sizeof (m_pClientList[i]->m_cIPaddress));
-			m_pClientList[i]->m_pXSock->iGetPeerAddress(m_pClientList[i]->m_cIPaddress);
-
-			wsprintf(G_cTxt, "<%d> Client Connected: (%s)", i, m_pClientList[i]->m_cIPaddress);
+			wsprintf(G_cTxt, "<%d> Client Connected: (%s)", i, client.m_cIPaddress);
 			PutLogList(G_cTxt);
-
-
-
-
 			m_iTotalClients++;
 
 			if (m_iTotalClients > m_iMaxClients) {
@@ -312,15 +304,13 @@ bool CGame::bAccept(class XSocket * pXSock) {
 			}
 			return true;
 		}
-
+	}
 CLOSE_ANYWAY:
 	;
 
-
-	pTmpSock = new class XSocket(m_hWnd, DEF_SERVERSOCKETBLOCKLIMIT);
-	pXSock->bAccept(pTmpSock, 0);
-	delete pTmpSock;
-
+	//std::unique_ptr<XSocket> socket = std::make_unique<XSocket>(m_hWnd, DEF_SERVERSOCKETBLOCKLIMIT)
+	std::unique_ptr<XSocket> socket(new class XSocket(m_hWnd, DEF_SERVERSOCKETBLOCKLIMIT));
+	pXSock->bAccept(socket.get(), 0);
 	return false;
 }
 
@@ -331,15 +321,15 @@ void CGame::OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 
 	iTmp = WM_ONCLIENTSOCKETEVENT;
 	iClientH = message - iTmp;
-
-	if (m_pClientList[iClientH] == nullptr) return;
-
-	iRet = m_pClientList[iClientH]->m_pXSock->iOnSocketEvent(wParam, lParam);
+	CClient *clientPtr = m_pClientList[iClientH];
+	if (clientPtr == nullptr) return;
+	CClient &client = *clientPtr;
+	iRet = client.m_pXSock->iOnSocketEvent(wParam, lParam);
 
 	switch (iRet) {
 		case DEF_XSOCKEVENT_READCOMPLETE:
-			OnClientRead(iClientH);
-			m_pClientList[iClientH]->m_dwTime = timeGetTime();
+			OnClientRead(client);
+			client.m_dwTime = timeGetTime();
 			break;
 
 		case DEF_XSOCKEVENT_BLOCK:
@@ -355,10 +345,10 @@ void CGame::OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 		case DEF_XSOCKEVENT_MSGSIZETOOLARGE:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			wsprintf(G_cTxt, "<%d> Client Disconnected! (%s)", iClientH, m_pClientList[iClientH]->m_cIPaddress);
+			wsprintf(G_cTxt, "<%d> Client Disconnected! (%s)", iClientH, client.m_cIPaddress);
 			PutLogList(G_cTxt);
-			if ((dwTime - m_pClientList[iClientH]->m_dwLogoutHackCheck) < 1000) {
-				wsprintf(G_cTxt, "Logout Hack: (%s) Player: (%s) - disconnected within 10 seconds of most recent damage. Hack? Lag?", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
+			if ((dwTime - client.m_dwLogoutHackCheck) < 1000) {
+				wsprintf(G_cTxt, "Logout Hack: (%s) Player: (%s) - disconnected within 10 seconds of most recent damage. Hack? Lag?", client.m_cIPaddress, client.m_cCharName);
 				PutHackLogFileList(G_cTxt);
 			}
 
@@ -756,15 +746,12 @@ bool CGame::bInit() {
 	return true;
 }
 
-void CGame::OnClientRead(int iClientH) {
+void CGame::OnClientRead(CClient &client) {
 	char * pData, cKey;
 	uint32_t dwMsgSize;
+	pData = client.m_pXSock->pGetRcvDataPointer(&dwMsgSize, &cKey); // v1.4
 
-	if (m_pClientList[iClientH] == nullptr) return;
-
-	pData = m_pClientList[iClientH]->m_pXSock->pGetRcvDataPointer(&dwMsgSize, &cKey); // v1.4
-
-	if (bPutMsgQuene(DEF_MSGFROM_CLIENT, pData, dwMsgSize, iClientH, cKey) == false) {
+	if (bPutMsgQuene(DEF_MSGFROM_CLIENT, pData, dwMsgSize, client.id_, cKey) == false) {
 		// ¸Þ½ÃÁö Å¥¿¡ ÀÌ»óÀÌ »ý°å´Ù. Ä¡¸íÀûÀÎ ¿¡·¯.
 		PutLogList("@@@@@@ CRITICAL ERROR in MsgQuene!!! @@@@@@");
 	}
@@ -1585,8 +1572,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		bFlag = true;
 		for (i = 0; i < DEF_MAXITEMS - 1; i++)
 			if ((m_pClientList[iClientH]->m_pItemList[i] == nullptr) && (m_pClientList[iClientH]->m_pItemList[i + 1] != nullptr)) {
-				m_pClientList[iClientH]->m_pItemList[i] = m_pClientList[iClientH]->m_pItemList[i + 1];
-				m_pClientList[iClientH]->m_pItemList[i + 1] = nullptr;
+				std::swap(m_pClientList[iClientH]->m_pItemList[i], m_pClientList[iClientH]->m_pItemList[i + 1]);
 				m_pClientList[iClientH]->m_ItemPosList[i].x = m_pClientList[iClientH]->m_ItemPosList[i + 1].x;
 				m_pClientList[iClientH]->m_ItemPosList[i].y = m_pClientList[iClientH]->m_ItemPosList[i + 1].y;
 				bFlag = false;
@@ -5345,7 +5331,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 							}
 
 							// token°ªÀº ¾ÆÀÌÅÛÀÇ ÀÌ¸§. ÀÌ ÀÌ¸§À» °¡Áø ¾ÆÀÌÅÛÀÇ Æ¯¼ºÀ» m_pItemConfigList¿¡¼­ Ã£¾Æ ÇÒ´çÇÑ´Ù.
-							if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], token) == false) {
+							if (_bInitItemAttr(*m_pClientList[iClientH]->m_pItemList[iItemIndex], token) == false) {
 								// ÇÃ·¹ÀÌ¾î°¡ ¼ÒÁöÇÑ ¾ÆÀÌÅÛÀÌ ¸®½ºÆ®¿¡ ¾ø´Ù. ¿¡·¯
 								wsprintf(cTxt, "(!!!) Client(%s)-Item(%s) is not existing Item! Conection closed.", m_pClientList[iClientH]->m_cCharName, token);
 								PutLogList(cTxt);
@@ -5379,7 +5365,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 							iTemp = atoi(token);
 							if (iTemp < 0) iTemp = 1;
 							//¸¸¾à Áß·®ÀÌ ÃÊ°úµÇ¾ú´Ù¸é 1°³·Î ÁÙÀÎ´Ù.
-							if (iGetItemWeight(m_pClientList[iClientH]->m_pItemList[iItemIndex], iTemp) > _iCalcMaxLoad(iClientH)) {
+							if (iGetItemWeight(*m_pClientList[iClientH]->m_pItemList[iItemIndex], iTemp) > _iCalcMaxLoad(iClientH)) {
 								iTemp = 1;
 								wsprintf(G_cTxt, "(!) Player�(%s) Item (%s) too heavy for player to carry", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName);
 								PutLogFileList(G_cTxt);
@@ -5552,7 +5538,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 							}
 
 							// v1.42 Èñ±Í ¾ÆÀÌÅÛ ÇÃ·¡±×°¡ ¼³Á¤µÇ¾î ÀÖ´Ù¸é ÃÖ´ë ¼ö¸í, ½ºÇÇµå, ¹«°Ô µîÀ» Àç¼³Á¤ ÇØ¾ß ÇÑ´Ù.
-							_AdjustRareItemValue(m_pClientList[iClientH]->m_pItemList[iItemIndex]);
+							_AdjustRareItemValue(*m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 
 							// v1.41 ÇöÀç ¼ö¸í ÃÖ´ë ¼ö¸íÀ» ´É°¡ÇÏ¸é ¹ö±×ÀÌ¹Ç·Î µÇµ¹¸°´Ù.
 							if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan > m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wMaxLifeSpan)
@@ -5574,19 +5560,17 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 							// v1.4 ÀÌÁ¦ ÀÌ ¾ÆÀÌÅÛÀÌ ÇöÀç »ç¿ëÀÌ ÀÎÁ¤µÈ ¾ÆÀÌÅÛÀÎ°¡¸¦ Ã£´Â´Ù.
 							if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType == DEF_ITEMTYPE_NOTUSED) {
 								iNotUsedItemPrice += m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wPrice;
-								delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
-								m_pClientList[iClientH]->m_pItemList[iItemIndex] = nullptr;
+								m_pClientList[iClientH]->m_pItemList[iItemIndex].reset();
 
 								// v1.41
 								bIsNotUsedItemFound = true;
 							} else
-								if (_bCheckDupItemID(m_pClientList[iClientH]->m_pItemList[iItemIndex]) == true) {
+								if (_bCheckDupItemID(&*m_pClientList[iClientH]->m_pItemList[iItemIndex]) == true) {
 								// v1.42 º¹Á¦µÈ ¾ÆÀÌÅÛµéÀ» »èÁ¦ÇÑ´Ù.
-								_bItemLog(DEF_ITEMLOG_DUPITEMID, iClientH, 0, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
+								_bItemLog(DEF_ITEMLOG_DUPITEMID, iClientH, 0, &*m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 
 								iNotUsedItemPrice += m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wPrice;
-								delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
-								m_pClientList[iClientH]->m_pItemList[iItemIndex] = nullptr;
+								m_pClientList[iClientH]->m_pItemList[iItemIndex].reset();
 							} else iItemIndex++;
 							break;
 					}
@@ -5905,7 +5889,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 								return false;
 							}
 							// token°ªÀº ¾ÆÀÌÅÛÀÇ ÀÌ¸§. ÀÌ ÀÌ¸§À» °¡Áø ¾ÆÀÌÅÛÀÇ Æ¯¼ºÀ» m_pItemConfigList¿¡¼­ Ã£¾Æ ÇÒ´çÇÑ´Ù.
-							if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex], token) == false) {
+							if (_bInitItemAttr(*m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex], token) == false) {
 								// ÇÃ·¹ÀÌ¾î°¡ ÀúÀåÇÏ°í ÀÖ´Â ¾ÆÀÌÅÛÀÌ ¸®½ºÆ®¿¡ ¾ø´Ù. ¿¡·¯
 								wsprintf(cTxt, "(!!!) Client(%s)-Bank Item(%s) is not existing Item! Conection closed.", m_pClientList[iClientH]->m_cCharName, token);
 								PutLogList(cTxt);
@@ -5940,7 +5924,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 							if (iTemp < 0) iTemp = 1;
 
 							// ¸¸¾à °¡Áú ¼ö ÀÖ´Â Áß·®ÀÌ ÃÊ°úµÈ ¾ÆÀÌÅÛÀÌ ÀÖ´Ù¸é 1°³·Î ÁÙÀÎ´Ù.
-							if (iGetItemWeight(m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex], iTemp) > _iCalcMaxLoad(iClientH)) {
+							if (iGetItemWeight(*m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex], iTemp) > _iCalcMaxLoad(iClientH)) {
 								iTemp = 1;
 								wsprintf(G_cTxt, "(!) Ä³¸¯ÅÍ(%s) ¾ÆÀÌÅÛ(%s) °³¼ö ¿À¹öÇÃ·Î¿ì", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_cName);
 								PutLogFileList(G_cTxt);
@@ -6108,7 +6092,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 							}
 
 							// v1.42 Èñ±Í ¾ÆÀÌÅÛ ÇÃ·¡±×°¡ ¼³Á¤µÇ¾î ÀÖ´Ù¸é ÃÖ´ë ¼ö¸í, ½ºÇÇµå, ¹«°Ô µîÀ» Àç¼³Á¤ ÇØ¾ß ÇÑ´Ù.
-							_AdjustRareItemValue(m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]);
+							_AdjustRareItemValue(*m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]);
 
 							// v1.41 ¼ö¸íÀÌ ÃÖ´ë¼ö¸íÀ» ÃÊ°úÇÑ´Ù¸é ¹ö±×ÀÌ¹Ç·Î µÇµ¹¸°´Ù.
 							if (m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan > m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_wMaxLifeSpan)
@@ -6128,16 +6112,14 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 							// v1.4 ÀÌÁ¦ ÀÌ ¾ÆÀÌÅÛÀÌ ÇöÀç »ç¿ëÀÌ ÀÎÁ¤µÈ ¾ÆÀÌÅÛÀÎ°¡¸¦ Ã£´Â´Ù.
 							if (m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_cItemType == DEF_ITEMTYPE_NOTUSED) {
 								iNotUsedItemPrice += m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_wPrice;
-								delete m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex];
-								m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex] = nullptr;
+								m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex].reset();
 							} else
-								if (_bCheckDupItemID(m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]) == true) {
+								if (_bCheckDupItemID(&*m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]) == true) {
 								// v1.42 º¹Á¦µÈ ¾ÆÀÌÅÛµéÀ» »èÁ¦ÇÑ´Ù.
-								_bItemLog(DEF_ITEMLOG_DUPITEMID, iClientH, 0, m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]);
+								_bItemLog(DEF_ITEMLOG_DUPITEMID, iClientH, 0, &*m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]);
 
 								iNotUsedItemPrice += m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_wPrice;
-								delete m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex];
-								m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex] = nullptr;
+								m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex].reset();
 							} else iItemInBankIndex++;
 							break;
 					}
@@ -6927,13 +6909,13 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 			if (memcmp(token, "character-item", 14) == 0) {
 				cReadModeA = 5;
 				cReadModeB = 1;
-				m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
+				m_pClientList[iClientH]->m_pItemList[iItemIndex].reset(new CItem);
 			}
 
 			if (memcmp(token, "character-bank-item", 18) == 0) {
 				cReadModeA = 28;
 				cReadModeB = 1;
-				m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex] = new class CItem;
+				m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex].reset(new class CItem);
 			}
 
 			if (memcmp(token, "sex-status", 10) == 0) cReadModeA = 6;
@@ -8187,7 +8169,7 @@ DICFC_STOPDECODING:
 	return true;
 }
 
-bool CGame::_bInitItemAttr(class CItem * pItem, const char * pItemName) {
+bool CGame::_bInitItemAttr(class CItem &item, const char * pItemName) {
 	register int i;
 	char cTmpName[21];
 
@@ -8198,40 +8180,39 @@ bool CGame::_bInitItemAttr(class CItem * pItem, const char * pItemName) {
 		if (m_pItemConfigList[i] != nullptr) {
 			if (memcmp(cTmpName, m_pItemConfigList[i]->m_cName, 20) == 0) {
 				// °°Àº ÀÌ¸§À» °¡Áø ¾ÆÀÌÅÛ ¼³Á¤À» Ã£¾Ò´Ù. ¼³Á¤°ªÀ» º¹»çÇÑ´Ù.
-				std::memset(pItem->m_cName, 0, sizeof (pItem->m_cName));
-				strcpy(pItem->m_cName, m_pItemConfigList[i]->m_cName);
-				pItem->m_cItemType = m_pItemConfigList[i]->m_cItemType;
-				pItem->m_cEquipPos = m_pItemConfigList[i]->m_cEquipPos;
-				pItem->m_sItemEffectType = m_pItemConfigList[i]->m_sItemEffectType;
-				pItem->m_sItemEffectValue1 = m_pItemConfigList[i]->m_sItemEffectValue1;
-				pItem->m_sItemEffectValue2 = m_pItemConfigList[i]->m_sItemEffectValue2;
-				pItem->m_sItemEffectValue3 = m_pItemConfigList[i]->m_sItemEffectValue3;
-				pItem->m_sItemEffectValue4 = m_pItemConfigList[i]->m_sItemEffectValue4;
-				pItem->m_sItemEffectValue5 = m_pItemConfigList[i]->m_sItemEffectValue5;
-				pItem->m_sItemEffectValue6 = m_pItemConfigList[i]->m_sItemEffectValue6;
-				pItem->m_wMaxLifeSpan = m_pItemConfigList[i]->m_wMaxLifeSpan;
-				pItem->m_wCurLifeSpan = pItem->m_wMaxLifeSpan; // ÃÖÃÊ·Î »ý¼ºµÈ ¾ÆÀÌÅÛÀÇ ¼ö¸íÀº ÃÖ´ëÄ¡ÀÌ´Ù.
-				pItem->m_sSpecialEffect = m_pItemConfigList[i]->m_sSpecialEffect;
+				std::memset(item.m_cName, 0, sizeof (item.m_cName));
+				strcpy(item.m_cName, m_pItemConfigList[i]->m_cName);
+				item.m_cItemType = m_pItemConfigList[i]->m_cItemType;
+				item.m_cEquipPos = m_pItemConfigList[i]->m_cEquipPos;
+				item.m_sItemEffectType = m_pItemConfigList[i]->m_sItemEffectType;
+				item.m_sItemEffectValue1 = m_pItemConfigList[i]->m_sItemEffectValue1;
+				item.m_sItemEffectValue2 = m_pItemConfigList[i]->m_sItemEffectValue2;
+				item.m_sItemEffectValue3 = m_pItemConfigList[i]->m_sItemEffectValue3;
+				item.m_sItemEffectValue4 = m_pItemConfigList[i]->m_sItemEffectValue4;
+				item.m_sItemEffectValue5 = m_pItemConfigList[i]->m_sItemEffectValue5;
+				item.m_sItemEffectValue6 = m_pItemConfigList[i]->m_sItemEffectValue6;
+				item.m_wMaxLifeSpan = m_pItemConfigList[i]->m_wMaxLifeSpan;
+				item.m_wCurLifeSpan = item.m_wMaxLifeSpan; // ÃÖÃÊ·Î »ý¼ºµÈ ¾ÆÀÌÅÛÀÇ ¼ö¸íÀº ÃÖ´ëÄ¡ÀÌ´Ù.
+				item.m_sSpecialEffect = m_pItemConfigList[i]->m_sSpecialEffect;
 
-				pItem->m_sSprite = m_pItemConfigList[i]->m_sSprite;
-				pItem->m_sSpriteFrame = m_pItemConfigList[i]->m_sSpriteFrame;
-				pItem->m_wPrice = m_pItemConfigList[i]->m_wPrice;
-				pItem->m_wWeight = m_pItemConfigList[i]->m_wWeight;
-				pItem->m_cApprValue = m_pItemConfigList[i]->m_cApprValue;
-				pItem->m_cSpeed = m_pItemConfigList[i]->m_cSpeed;
-				pItem->m_sLevelLimit = m_pItemConfigList[i]->m_sLevelLimit;
-				pItem->m_cGenderLimit = m_pItemConfigList[i]->m_cGenderLimit;
+				item.m_sSprite = m_pItemConfigList[i]->m_sSprite;
+				item.m_sSpriteFrame = m_pItemConfigList[i]->m_sSpriteFrame;
+				item.m_wPrice = m_pItemConfigList[i]->m_wPrice;
+				item.m_wWeight = m_pItemConfigList[i]->m_wWeight;
+				item.m_cApprValue = m_pItemConfigList[i]->m_cApprValue;
+				item.m_cSpeed = m_pItemConfigList[i]->m_cSpeed;
+				item.m_sLevelLimit = m_pItemConfigList[i]->m_sLevelLimit;
+				item.m_cGenderLimit = m_pItemConfigList[i]->m_cGenderLimit;
 
-				pItem->m_sSpecialEffectValue1 = m_pItemConfigList[i]->m_sSpecialEffectValue1;
-				pItem->m_sSpecialEffectValue2 = m_pItemConfigList[i]->m_sSpecialEffectValue2;
+				item.m_sSpecialEffectValue1 = m_pItemConfigList[i]->m_sSpecialEffectValue1;
+				item.m_sSpecialEffectValue2 = m_pItemConfigList[i]->m_sSpecialEffectValue2;
 
-				pItem->m_sRelatedSkill = m_pItemConfigList[i]->m_sRelatedSkill;
-				pItem->m_cCategory = m_pItemConfigList[i]->m_cCategory;
-				pItem->m_sIDnum = m_pItemConfigList[i]->m_sIDnum;
+				item.m_sRelatedSkill = m_pItemConfigList[i]->m_sRelatedSkill;
+				item.m_cCategory = m_pItemConfigList[i]->m_cCategory;
+				item.m_sIDnum = m_pItemConfigList[i]->m_sIDnum;
 
-				pItem->m_bIsForSale = m_pItemConfigList[i]->m_bIsForSale;
-				pItem->m_cItemColor = m_pItemConfigList[i]->m_cItemColor;
-
+				item.m_bIsForSale = m_pItemConfigList[i]->m_bIsForSale;
+				item.m_cItemColor = m_pItemConfigList[i]->m_cItemColor;
 				return true;
 			}
 		}
@@ -8747,40 +8728,39 @@ void CGame::NpcProcess() {
 
 // 05/29/2004 - Hypnotoad - GM chat tweak
 
-void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
+void CGame::ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize) {
 	register int i, iRet;
 	uint16_t * wp;
 	char * cp;
 	char cBuffer[256], cTemp[256], cSendMode = 0;
-
-	m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
+	int iClientH = client.id_;
+	client.m_dwAFKCheckTime = timeGetTime();
+	if (client.m_bIsInitComplete == false) return;
 	if (dwMsgSize > 83 + 30) return;
 	{
 	}
 	// v1.41 ShutUp TimeÀÌ °É·Á ÀÖÀ¸¸é ¿ÏÀüÈ÷ ¸»À» ÇÒ ¼ö ¾ø´Ù. °­·Â Á¦Àç
-	if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) return;
+	if (client.m_iTimeLeft_ShutUp > 0) return;
 
 	// º»ÀÎÀÇ ÀÌ¸§ÀÌ ±âÀÔµÇ¾î ÀÖÁö ¾Ê´Ù¸é ¸®ÅÏ
-	if (memcmp((pData + 10), m_pClientList[iClientH]->m_cCharName, strlen(m_pClientList[iClientH]->m_cCharName)) != 0) return;
+	if (memcmp((pData + 10), client.m_cCharName, strlen(client.m_cCharName)) != 0) return;
 
 	// °ü¶÷ÀÚ¶ó¸é Ã¤ÆÃÀ» ÇÒ ¼ö ¾ø´Ù.
-	if ((m_pClientList[iClientH]->m_bIsObserverMode == true) && (m_pClientList[iClientH]->m_iAdminUserLevel == 0)) return;
+	if ((client.m_bIsObserverMode == true) && (client.m_iAdminUserLevel == 0)) return;
 
 	// v1.432-2 ¸Ê ¼½ÅÍ Á¤º¸¸¦ °»½ÅÇÑ´Ù.
 	int iStX, iStY;
-	if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex] != nullptr) {
-		iStX = m_pClientList[iClientH]->m_sX / 20;
-		iStY = m_pClientList[iClientH]->m_sY / 20;
-		m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iPlayerActivity++;
+	if (m_pMapList[client.m_cMapIndex] != nullptr) {
+		iStX = client.m_sX / 20;
+		iStY = client.m_sY / 20;
+		m_pMapList[client.m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iPlayerActivity++;
 
-		switch (m_pClientList[iClientH]->m_cSide) {
-			case 0: m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iNeutralActivity++;
+		switch (client.m_cSide) {
+			case 0: m_pMapList[client.m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iNeutralActivity++;
 				break;
-			case 1: m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iAresdenActivity++;
+			case 1: m_pMapList[client.m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iAresdenActivity++;
 				break;
-			case 2: m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iElvineActivity++;
+			case 2: m_pMapList[client.m_cMapIndex]->m_stTempSectorInfo[iStX][iStY].iElvineActivity++;
 				break;
 		}
 	}
@@ -8790,33 +8770,33 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 	switch (m_iLogChatOption) {
 			// Chat Logs of only players
 		case 1:
-			if (m_pClientList[iClientH]->m_iAdminUserLevel == 0) {
+			if (client.m_iAdminUserLevel == 0) {
 				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
-				wsprintf(cTemp, "Loc(%s) IP(%s) PC(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
+				wsprintf(cTemp, "Loc(%s) IP(%s) PC(%s):\"%s\"", client.m_cMapName, client.m_cIPaddress, client.m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 			}
 			break;
 			// Chat Logs of only GM
 		case 2:
-			if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) {
+			if (client.m_iAdminUserLevel > 0) {
 				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
-				wsprintf(cTemp, "Loc(%s) IP(%s) GM(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
+				wsprintf(cTemp, "Loc(%s) IP(%s) GM(%s):\"%s\"", client.m_cMapName, client.m_cIPaddress, client.m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 			}
 			break;
 			// Chat logs of all
 		case 3:
-			if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) {
+			if (client.m_iAdminUserLevel > 0) {
 				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
-				wsprintf(cTemp, "Loc(%s) IP(%s) GM(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
+				wsprintf(cTemp, "Loc(%s) IP(%s) GM(%s):\"%s\"", client.m_cMapName, client.m_cIPaddress, client.m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 			} else {
 				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
-				wsprintf(cTemp, "Loc(%s) IP(%s) PC(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
+				wsprintf(cTemp, "Loc(%s) IP(%s) PC(%s):\"%s\"", client.m_cMapName, client.m_cIPaddress, client.m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 			}
 			break;
@@ -8828,10 +8808,10 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 
 	/*	// New 08/05/2004
 	// Log GM Chats
-	if (m_pClientList[iClientH]->m_iAdminUserLevel > 0){
+	if (client.m_iAdminUserLevel > 0){
 		std::memset(cTemp, 0, sizeof(cTemp));
 		pData[dwMsgSize-1] = 0;
-		wsprintf(cTemp,"GM Chat(%s):\"%s\"",m_pClientList[iClientH]->m_cCharName,cp);
+		wsprintf(cTemp,"GM Chat(%s):\"%s\"",client.m_cCharName,cp);
 		bSendMsgToLS(MSGID_GAMEMASTERLOG,iClientH, false,cTemp);
 	}*/
 
@@ -8840,19 +8820,19 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 		case '@':
 			// °°Àº ±æµå¿¡°Ô º¸³»´Â ¸Þ½ÃÁö
 			*cp = 32;
-			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 1) &&
-					  (m_pClientList[iClientH]->m_iSP >= 3)) {
+			if ((client.m_iTimeLeft_ShutUp == 0) && (client.m_iLevel > 1) &&
+					  (client.m_iSP >= 3)) {
 				// ½ºÅ×¹Ì³Ê°¡ ÃæºÐÇÏ¸é ÀüÃ¼ ¸Þ½ÃÁö¸¦ º¸³½´Ù.
 				//v1.42
-				if (m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar == 0) {
-					m_pClientList[iClientH]->m_iSP -= 3;
+				if (client.m_iTimeLeft_FirmStaminar == 0) {
+					client.m_iSP -= 3;
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_SP, 0, 0, 0, nullptr);
 				}
 				cSendMode = 1;
 			} else cSendMode = 0;
 
 			// ÀüÃ¼ Ã¤ÆÃ ¸Þ½ÃÁö¸¦ »ç¿ëÇÒ ¼ö ¾ø´Â °æ¿ì¶ó¸é
-			if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) cSendMode = 0;
+			if (client.m_iTimeLeft_ShutUp > 0) cSendMode = 0;
 			break;
 
 			// New 08/05/2004
@@ -8860,9 +8840,9 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 		case '$':
 			*cp = 32;
 
-			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iSP >= 3)) {
-				if (m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar == 0) {
-					m_pClientList[iClientH]->m_iSP -= 3;
+			if ((client.m_iTimeLeft_ShutUp == 0) && (client.m_iSP >= 3)) {
+				if (client.m_iTimeLeft_FirmStaminar == 0) {
+					client.m_iSP -= 3;
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_SP, 0, 0, 0, nullptr);
 				}
 				cSendMode = 4;
@@ -8870,7 +8850,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 				cSendMode = 0;
 			}
 
-			if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) {
+			if (client.m_iTimeLeft_ShutUp > 0) {
 				cSendMode = 0;
 			}
 			break;
@@ -8879,68 +8859,68 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			// ÀüÃ¼ »ç¿ëÀÚ¿¡°Ô Àü´ÞµÇ´Â ¸Þ½ÃÁöÀÌ´Ù.
 			// ¸¸¾à °ü¸®±ÇÇÑÀÌ ÀÖ°Å³ª ±æµå¸¶½ºÅÍÀÎ°æ¿ì ÀüÃ¼¼­¹ö¿¡ º¸³»´Â ¸Þ¼¼Áö
 			*cp = 32;
-			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 10) &&
-					  (m_pClientList[iClientH]->m_iSP > 5) && m_pClientList[iClientH]->m_iGuildRank != -1) {
-				if (m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar == 0) {
-					m_pClientList[iClientH]->m_iSP -= 3;
+			if ((client.m_iTimeLeft_ShutUp == 0) && (client.m_iLevel > 10) &&
+					  (client.m_iSP > 5) && client.m_iGuildRank != -1) {
+				if (client.m_iTimeLeft_FirmStaminar == 0) {
+					client.m_iSP -= 3;
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_SP, 0, 0, 0, nullptr);
 				}
 				cSendMode = 1;
 			} else cSendMode = 0;
 
 			// ÀüÃ¼ Ã¤ÆÃ ¸Þ½ÃÁö¸¦ »ç¿ëÇÒ ¼ö ¾ø´Â °æ¿ì¶ó¸é
-			if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) cSendMode = 0;
+			if (client.m_iTimeLeft_ShutUp > 0) cSendMode = 0;
 
 			// v1.4334 ÀüÃ¼ ¿ÜÄ¡±â ¸·±â
-			if (m_pClientList[iClientH]->m_iHP < 0) cSendMode = 0;
+			if (client.m_iHP < 0) cSendMode = 0;
 
 			// ¸¸¾à °ü¸®±ÇÇÑÀÌ ÀÖ´Ù¸é
-			if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) cSendMode = 10;
+			if (client.m_iAdminUserLevel > 0) cSendMode = 10;
 			break;
 
 		case '!':
 			// ÀüÃ¼ »ç¿ëÀÚ¿¡°Ô Àü´ÞµÇ´Â ¸Þ½ÃÁöÀÌ´Ù.
 			// °°Àº ±æµå¿¡°Ô º¸³»´Â ¸Þ½ÃÁö
 			*cp = 32;
-			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 10) &&
-					  (m_pClientList[iClientH]->m_iSP >= 5)) {
+			if ((client.m_iTimeLeft_ShutUp == 0) && (client.m_iLevel > 10) &&
+					  (client.m_iSP >= 5)) {
 				// ½ºÅ×¹Ì³Ê°¡ ÃæºÐÇÏ¸é ÀüÃ¼ ¸Þ½ÃÁö¸¦ º¸³½´Ù.
 				//v1.42
-				if (m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar == 0) {
-					m_pClientList[iClientH]->m_iSP -= 5;
+				if (client.m_iTimeLeft_FirmStaminar == 0) {
+					client.m_iSP -= 5;
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_SP, 0, 0, 0, nullptr);
 				}
 				cSendMode = 2; // ¸Þ½ÃÁö Ã¢¿¡ ¶ç¿î´Ù.
 			} else cSendMode = 0;
 
 			// ÀüÃ¼ Ã¤ÆÃ ¸Þ½ÃÁö¸¦ »ç¿ëÇÒ ¼ö ¾ø´Â °æ¿ì¶ó¸é
-			if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) cSendMode = 0;
+			if (client.m_iTimeLeft_ShutUp > 0) cSendMode = 0;
 
 			// v1.4334 ÀüÃ¼ ¿ÜÄ¡±â ¸·±â
-			if (m_pClientList[iClientH]->m_iHP <= 0) cSendMode = 0;
+			if (client.m_iHP <= 0) cSendMode = 0;
 
 			// ¸¸¾à °ü¸®±ÇÇÑÀÌ ÀÖ´Ù¸é
-			if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) cSendMode = 35; // GM Chat By Carlos
+			if (client.m_iAdminUserLevel > 0) cSendMode = 35; // GM Chat By Carlos
 			break;
 
 		case '~':
 			// °°Àº Æí¿¡°Ô º¸³»´Â ¸Þ½ÃÁö
 			*cp = 32;
-			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 1) &&
-					  (m_pClientList[iClientH]->m_iSP >= 3)) {
+			if ((client.m_iTimeLeft_ShutUp == 0) && (client.m_iLevel > 1) &&
+					  (client.m_iSP >= 3)) {
 				// ½ºÅ×¹Ì³Ê°¡ ÃæºÐÇÏ¸é ÀüÃ¼ ¸Þ½ÃÁö¸¦ º¸³½´Ù.
 				//v1.42
-				if (m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar == 0) {
-					m_pClientList[iClientH]->m_iSP -= 3;
+				if (client.m_iTimeLeft_FirmStaminar == 0) {
+					client.m_iSP -= 3;
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_SP, 0, 0, 0, nullptr);
 				}
 				cSendMode = 3;
 			} else cSendMode = 0;
 
 			// ÀüÃ¼ Ã¤ÆÃ ¸Þ½ÃÁö¸¦ »ç¿ëÇÒ ¼ö ¾ø´Â °æ¿ì¶ó¸é
-			if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) cSendMode = 0;
+			if (client.m_iTimeLeft_ShutUp > 0) cSendMode = 0;
 			// v1.4334 ÀüÃ¼ ¿ÜÄ¡±â ¸·±â
-			if (m_pClientList[iClientH]->m_iHP <= 0) cSendMode = 0;
+			if (client.m_iHP <= 0) cSendMode = 0;
 			break;
 
 		case '/':
@@ -8957,18 +8937,18 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 
 			// New 10/05/2004
 			if (memcmp(cp, "/begincrusadetotalwar", 21) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel > 3) {
+				if (client.m_iAdminUserLevel > 3) {
 					GlobalStartCrusadeMode();
-					wsprintf(cTemp, "(%s) GM Order(%s): begincrusadetotalwar", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
+					wsprintf(cTemp, "(%s) GM Order(%s): begincrusadetotalwar", client.m_cIPaddress, client.m_cCharName);
 					bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 				}
 				return;
 			}
 
 			if (memcmp(cp, "/endcrusadetotalwar", 19) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel > 3) {
+				if (client.m_iAdminUserLevel > 3) {
 					ManualEndCrusadeMode(0);
-					wsprintf(cTemp, "(%s) GM Order(%s): endcrusadetotalwar", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
+					wsprintf(cTemp, "(%s) GM Order(%s): endcrusadetotalwar", client.m_cIPaddress, client.m_cCharName);
 					bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 				}
 				return;
@@ -9043,7 +9023,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			}
 
 			if (memcmp(cp, "/who", 4) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelWho) {
+				if (client.m_iAdminUserLevel >= m_iAdminLevelWho) {
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_TOTALUSERS, 0, 0, 0, nullptr);
 				}
 				return;
@@ -9051,24 +9031,24 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 
 			//50Cent - Capture The Flag
 			if (memcmp(cp, "/startctf", 9) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel >= 4) StartCaptureTheFlag();
+				if (client.m_iAdminUserLevel >= 4) StartCaptureTheFlag();
 				return;
 			}
 			if (memcmp(cp, "/endctf", 7) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel >= 4) EndCaptureTheFlag(0);
+				if (client.m_iAdminUserLevel >= 4) EndCaptureTheFlag(0);
 				return;
 			}
 
 
 			if (memcmp(cp, "/happyhour ", 11) == 0) { // MORLA 2.3 - Comando Happy Hour
-				if (m_pClientList[iClientH]->m_iAdminUserLevel == 0) return;
+				if (client.m_iAdminUserLevel == 0) return;
 				ManualStartHappyHour(iClientH, cp, dwMsgSize - 21);
 				return;
 			}
 
 
 			if (memcmp(cp, "/porpatas", 3) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel > 0)
+				if (client.m_iAdminUserLevel > 0)
 					DeleteClient(iClientH, true, true);
 				return;
 			}
@@ -9085,7 +9065,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 
 			//criticals by MihD
 			if (memcmp(cp, "/criticals", 10) == 0) {
-				PlayerOrder_GetCrits(iClientH);
+				PlayerOrder_GetCrits(client);
 				return;
 			}
 
@@ -9106,7 +9086,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 
 			if (memcmp(cp, "/ballpoints", 10) == 0) {
 				char cInfoString[50];
-				wsprintf(cInfoString, " You have got:(%d) Ball Points. ", m_pClientList[iClientH]->m_iBallPoints);
+				wsprintf(cInfoString, " You have got:(%d) Ball Points. ", client.m_iBallPoints);
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, cInfoString);
 				return;
 			}
@@ -9369,7 +9349,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			}
 
 			if (memcmp(cp, "/energysphere ", 14) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelEnergySphere) EnergySphereProcessor(true, iClientH);
+				if (client.m_iAdminUserLevel >= m_iAdminLevelEnergySphere) EnergySphereProcessor(true, iClientH);
 				return;
 			}
 			if (memcmp(cp, "/banip ", 7) == 0) {
@@ -9393,7 +9373,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 				return;
 			}
 
-			if ((memcmp(cp, "/shutdownthisserverrightnow ", 28) == 0) && (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelShutdown)) {
+			if ((memcmp(cp, "/shutdownthisserverrightnow ", 28) == 0) && (client.m_iAdminUserLevel >= m_iAdminLevelShutdown)) {
 				// Ä¿¸Çµå¿¡ ÀÇÇÑ ¼­¹ö ¼Ë´Ù¿î ¸í·É ºñ»ó»çÅÂ¿¡ ´ëºñÇÏ±â À§ÇÔÀÌ´Ù.
 				m_cShutDownCode = 2;
 				m_bOnExitProcess = true;
@@ -9412,53 +9392,53 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 				return;
 			}
 
-			if ((memcmp(cp, "/setobservermode ", 17) == 0) && (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelObserver)) {
+			if ((memcmp(cp, "/setobservermode ", 17) == 0) && (client.m_iAdminUserLevel >= m_iAdminLevelObserver)) {
 				// °ü¶÷ÀÚ ¸ðµå·Î ÀüÈ¯
 				AdminOrder_SetObserverMode(iClientH);
 				return;
 			}
 
-			if ((memcmp(cp, "/getticket ", 11) == 0) && (m_pClientList[iClientH]->m_iAdminUserLevel >= 2)) {
+			if ((memcmp(cp, "/getticket ", 11) == 0) && (client.m_iAdminUserLevel >= 2)) {
 				AdminOrder_GetFightzoneTicket(iClientH);
 				return;
 			}
 
 			if (memcmp(cp, "/beginapocalypse", 16) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel > 3) {
-					if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == false) return;
+				if (client.m_iAdminUserLevel > 3) {
+					if (client.m_bIsAdminCommandEnabled == false) return;
 					GlobalStartApocalypseMode();
-					wsprintf(cTemp, "GM Order(%s): beginapocalypse", m_pClientList[iClientH]->m_cCharName);
+					wsprintf(cTemp, "GM Order(%s): beginapocalypse", client.m_cCharName);
 					bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 				}
 				return;
 			}
 
 			if (memcmp(cp, "/endapocalypse", 14) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel > 3) {
-					if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == false) return;
+				if (client.m_iAdminUserLevel > 3) {
+					if (client.m_bIsAdminCommandEnabled == false) return;
 					GlobalEndApocalypseMode();
-					wsprintf(cTemp, "GM Order(%s): endapocalypse", m_pClientList[iClientH]->m_cCharName);
+					wsprintf(cTemp, "GM Order(%s): endapocalypse", client.m_cCharName);
 					bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 				}
 				return;
 			}
 
 			if (memcmp(cp, "/beginheldenian ", 16) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel > 2) {
+				if (client.m_iAdminUserLevel > 2) {
 					ManualStartHeldenianMode(iClientH, cp, dwMsgSize - 21);
 				}
 				return;
 			}
 
 			if (memcmp(cp, "/endheldenian ", 14) == 0) {
-				if (m_pClientList[iClientH]->m_iAdminUserLevel > 2) {
+				if (client.m_iAdminUserLevel > 2) {
 					ManualEndHeldenianMode(iClientH, cp, dwMsgSize - 21);
 				}
 				return;
 			}
 
 			if (memcmp(cp, "/beginheldenianfight", 20) == 0) {
-				if ((m_pClientList[iClientH]->m_iAdminUserLevel > 2) && (m_bIsHeldenianMode == 1)) {
+				if ((client.m_iAdminUserLevel > 2) && (m_bIsHeldenianMode == 1)) {
 					NotifyStartHeldenianFightMode();
 				}
 				return;
@@ -9471,7 +9451,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 	// ¸ÕÀú ½ºÆ®¸µÀÇ ³¡¿¡ nullptr ´Ù½Ã Áý¾î ³Ö¾î È®ÀÎÇÑ´Ù.
 	pData[dwMsgSize - 1] = 0;
 
-	if ((m_pClientList[iClientH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ] == 1) && (iDice(1, 3) != 2)) {
+	if ((client.m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ] == 1) && (iDice(1, 3) != 2)) {
 		// Confuse Language¿¡ °É¸° »óÅÂ. ¸Þ½ÃÁö¸¦ ¿Ö°î½ÃÅ²´Ù.
 		cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 17);
 
@@ -9492,7 +9472,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 17);
 
-	if ((cSendMode == 0) && (m_pClientList[iClientH]->m_iWhisperPlayerIndex != -1)) {
+	if ((cSendMode == 0) && (client.m_iWhisperPlayerIndex != -1)) {
 		// ÀÏ¹Ý ¸Þ½ÃÁöÀÌ°í ±Ó¼Ó¸» ¸ðµå¶ó¸é º»ÀÎ°ú »ó´ë¹æ¿¡°Ô¸¸ Àü¼ÛÇÑ´Ù.
 		cSendMode = 20;
 
@@ -9500,7 +9480,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 		if (*cp == '#') cSendMode = 0;
 
 		// ÀüÃ¼ Ã¤ÆÃ ¸Þ½ÃÁö¸¦ »ç¿ëÇÒ ¼ö ¾ø´Â °æ¿ì¶ó¸é ±Ó¼Ó¸» ¶ÇÇÑ ÇÒ ¼ö ¾ø´Ù.
-		if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) cSendMode = 0;
+		if (client.m_iTimeLeft_ShutUp > 0) cSendMode = 0;
 	}
 
 	// Ã¤ÆÃ ¸Þ½ÃÁö¸¦ ±×´ë·Î ÀÎÁ¢ÇÑ ÇÃ·¹ÀÌ¾îµé¿¡°Ô ¹ß¼ÛÇÑ´Ù.
@@ -9518,16 +9498,16 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 					case 0:
 						if (m_pClientList[i]->m_bIsInitComplete == false) break;
 
-						if ((m_pClientList[i]->m_cMapIndex == m_pClientList[iClientH]->m_cMapIndex) &&
-								  (m_pClientList[i]->m_sX > m_pClientList[iClientH]->m_sX - 10) &&
-								  (m_pClientList[i]->m_sX < m_pClientList[iClientH]->m_sX + 10) &&
-								  (m_pClientList[i]->m_sY > m_pClientList[iClientH]->m_sY - 7) &&
-								  (m_pClientList[i]->m_sY < m_pClientList[iClientH]->m_sY + 7)) {
+						if ((m_pClientList[i]->m_cMapIndex == client.m_cMapIndex) &&
+								  (m_pClientList[i]->m_sX > client.m_sX - 10) &&
+								  (m_pClientList[i]->m_sX < client.m_sX + 10) &&
+								  (m_pClientList[i]->m_sY > client.m_sY - 7) &&
+								  (m_pClientList[i]->m_sY < client.m_sY + 7)) {
 
 							// Crusade
 							if (m_bIsCrusadeMode == true) {
-								if ((m_pClientList[iClientH]->m_cSide != 0) && (m_pClientList[i]->m_cSide != 0) &&
-										  (m_pClientList[i]->m_cSide != m_pClientList[iClientH]->m_cSide)) {
+								if ((client.m_cSide != 0) && (m_pClientList[i]->m_cSide != 0) &&
+										  (m_pClientList[i]->m_cSide != client.m_cSide)) {
 									// Å©·ç¼¼ÀÌµå ¸ðµå¿¡¼­´Â ¼­·Î ÆíÀÌ ´Ù¸£¸é ¸»À» ÇÒ ¼ö ¾ø´Ù.
 								} else iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
 							} else iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
@@ -9537,13 +9517,13 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 					case 1:
 						if (m_pClientList[i]->m_bIsInitComplete == false) break;
 
-						if ((memcmp(m_pClientList[i]->m_cGuildName, m_pClientList[iClientH]->m_cGuildName, 20) == 0) &&
+						if ((memcmp(m_pClientList[i]->m_cGuildName, client.m_cGuildName, 20) == 0) &&
 								  (memcmp(m_pClientList[i]->m_cGuildName, "NONE", 4) != 0)) {
 
 							// Crusade
 							if (m_bIsCrusadeMode == true) {
-								if ((m_pClientList[iClientH]->m_cSide != 0) && (m_pClientList[i]->m_cSide != 0) &&
-										  (m_pClientList[i]->m_cSide != m_pClientList[iClientH]->m_cSide)) {
+								if ((client.m_cSide != 0) && (m_pClientList[i]->m_cSide != 0) &&
+										  (m_pClientList[i]->m_cSide != client.m_cSide)) {
 									// Å©·ç¼¼ÀÌµå ¸ðµå¿¡¼­´Â ¼­·Î ÆíÀÌ ´Ù¸£¸é ¸»À» ÇÒ ¼ö ¾ø´Ù.
 								} else iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
 							} else iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
@@ -9555,8 +9535,8 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 					case 35: // GM Chat By Carlos
 						// Crusade
 						if (m_bIsCrusadeMode == true) {
-							if ((m_pClientList[iClientH]->m_cSide != 0) && (m_pClientList[i]->m_cSide != 0) &&
-									  (m_pClientList[i]->m_cSide != m_pClientList[iClientH]->m_cSide)) {
+							if ((client.m_cSide != 0) && (m_pClientList[i]->m_cSide != 0) &&
+									  (m_pClientList[i]->m_cSide != client.m_cSide)) {
 								// Å©·ç¼¼ÀÌµå ¸ðµå¿¡¼­´Â ¼­·Î ÆíÀÌ ´Ù¸£¸é ¸»À» ÇÒ ¼ö ¾ø´Ù.
 							} else iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
 						} else iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
@@ -9565,13 +9545,13 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 					case 3:
 						if (m_pClientList[i]->m_bIsInitComplete == false) break;
 
-						if ((m_pClientList[i]->m_cSide == m_pClientList[iClientH]->m_cSide))
+						if ((m_pClientList[i]->m_cSide == client.m_cSide))
 							iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
 						break;
 
 					case 4:
 						if (m_pClientList[i]->m_bIsInitComplete == false) break;
-						if ((m_pClientList[i]->m_iPartyID != 0) && (m_pClientList[i]->m_iPartyID == m_pClientList[iClientH]->m_iPartyID))
+						if ((m_pClientList[i]->m_iPartyID != 0) && (m_pClientList[i]->m_iPartyID == client.m_iPartyID))
 							iRet = m_pClientList[i]->m_pXSock->iSendMsg(pData, dwMsgSize);
 						break;
 				}
@@ -9589,37 +9569,37 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			}
 	} else {
 		// New 16/05/2004
-		iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(pData, dwMsgSize);
+		iRet = client.m_pXSock->iSendMsg(pData, dwMsgSize);
 
-		if (m_pClientList[ m_pClientList[iClientH]->m_iWhisperPlayerIndex ] != nullptr &&
-				  strcmp(m_pClientList[iClientH]->m_cWhisperPlayerName, m_pClientList[ m_pClientList[iClientH]->m_iWhisperPlayerIndex ]->m_cCharName) == 0) {
-			iRet = m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_pXSock->iSendMsg(pData, dwMsgSize);
+		if (m_pClientList[ client.m_iWhisperPlayerIndex ] != nullptr &&
+				  strcmp(client.m_cWhisperPlayerName, m_pClientList[ client.m_iWhisperPlayerIndex ]->m_cCharName) == 0) {
+			iRet = m_pClientList[client.m_iWhisperPlayerIndex]->m_pXSock->iSendMsg(pData, dwMsgSize);
 			switch (m_iLogChatOption) {
 
 				case 1:
-					if (m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_iAdminUserLevel == 0) {
+					if (m_pClientList[client.m_iWhisperPlayerIndex]->m_iAdminUserLevel == 0) {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto Player(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
+						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto Player(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;
 
 				case 2:
-					if (m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
+					if (m_pClientList[client.m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
+						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;
 
 				case 3:
-					if (m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
+					if (m_pClientList[client.m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
+						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					} else {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "Player Whisper   (%s):\"%s\"\tto Player(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
+						wsprintf(cTemp, "Player Whisper   (%s):\"%s\"\tto Player(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;
@@ -11251,15 +11231,181 @@ void CGame::NpcBehavior_Flee(int iNpcH) {
 	}
 }
 
+void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint32_t dwMsgSize, char cKey) {
+	int iClientH = client.id_;
+	switch (msgId) { // 84148741
+
+		case DEF_REQUEST_RESURRECTPLAYER_YES:
+			RequestResurrectPlayer(client, true);
+			break;
+
+		case DEF_REQUEST_RESURRECTPLAYER_NO:
+			RequestResurrectPlayer(client, false);
+			break;
+
+			//Shorcut para Criticals by 
+		case DEF_REQUEST_CRITICALSADD:
+			PlayerOrder_GetCrits(client);
+			break;
+
+			//Shorcut para Criticals by 
+		case DEF_REQUEST_SHOWBALLPOINTS:
+			SendNotifyMsg(0, iClientH, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, nullptr);
+			;
+			break;
+
+		case DEF_REQUEST_ANGEL: // Angels by Snoopy...
+			GetAngelHandler(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_SELLITEMLIST:
+			RequestSellItemListHandler(iClientH, pData);
+			break;
+
+		case MSGID_REQUEST_RESTART:
+			RequestRestartHandler(iClientH);
+			SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+			break;
+
+		case MSGID_REQUEST_PANNING:
+			iRequestPanningMapDataRequest(iClientH, pData);
+			break;
+
+		case MSGID_REQUEST_NOTICEMENT:
+			RequestNoticementHandler(iClientH, pData);
+			break;
+
+		case MSGID_BWM_COMMAND_SHUTUP:
+			_BWM_Command_Shutup(pData);
+			break;
+
+		case MSGID_BWM_INIT:
+			_BWM_Init(iClientH, pData);
+			break;
+
+		case MSGID_REQUEST_SETITEMPOS:
+			_SetItemPos(iClientH, pData);
+			break;
+
+		case MSGID_REQUEST_FULLOBJECTDATA:
+			RequestFullObjectData(iClientH, pData);
+			break;
+
+		case MSGID_REQUEST_RETRIEVEITEM:
+			RequestRetrieveItemHandler(iClientH, pData);
+			break;
+
+		case MSGID_REQUEST_CIVILRIGHT:
+			RequestCivilRightHandler(iClientH, pData);
+			break;
+
+		case MSGID_REQUEST_TELEPORT:
+			RequestTeleportHandler(iClientH, "1");
+			break;
+
+		case MSGID_REQUEST_INITPLAYER:
+			RequestInitPlayerHandler(iClientH, pData, cKey);
+			SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+			break;
+
+		case MSGID_REQUEST_INITDATA:
+		{
+			uint32_t dwTime = timeGetTime();
+			// Anti Bump
+			if (client.m_bIsClientConnected == true) {
+				if (m_pClientList[iClientH] == nullptr) break;
+				wsprintf(G_cTxt, "(!!!) Client (%s) connection closed!. Sniffer suspect!.", client.m_cCharName);
+				PutLogList(G_cTxt);
+				m_pMapList[client.m_cMapIndex]->ClearOwner(2, iClientH, DEF_OWNERTYPE_PLAYER, client.m_sX, client.m_sY);
+				bRemoveFromDelayEventList(iClientH, DEF_OWNERTYPE_PLAYER, 0);
+
+				bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, iClientH, false);
+				if ((dwTime - m_dwGameTime2) > 3000) { // 3 segs
+					client.m_bIsClientConnected = false;
+					m_iTotalClients--;
+					delete m_pClientList[iClientH];
+					m_pClientList[iClientH] = nullptr;
+				}
+				break;
+			} else {
+				client.m_bIsClientConnected = true;
+				RequestInitDataHandler(iClientH, pData, cKey);
+			}
+		}
+		break;
+
+		case MSGID_COMMAND_COMMON:
+			ClientCommonHandler(iClientH, pData);
+			break;
+
+		case MSGID_COMMAND_MOTION:
+			ClientMotionHandler(iClientH, pData);
+			break;
+
+		case MSGID_COMMAND_CHECKCONNECTION:
+			CheckConnectionHandler(iClientH, pData);
+			break;
+
+		case MSGID_COMMAND_CHATMSG:
+			ChatMsgHandler(client, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_CREATENEWGUILD:
+			RequestCreateNewGuildHandler(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_DISBANDGUILD:
+			RequestDisbandGuildHandler(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_FIGHTZONE_RESERVE:
+			FightzoneReserveHandler(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_LEVELUPSETTINGS:
+			LevelUpSettingsHandler(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_STATECHANGEPOINT:
+			StateChangeHandler(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_HELDENIANTELEPORT:
+			RequestHeldenianTeleport(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_NPCSPEAKTELEPORT:
+			RequestNpcSpeakTeleport(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_HELDENIAN_SCROLL:
+			RequestHeldenianScroll(iClientH, pData, dwMsgSize);
+			break;
+
+		case MSGID_REQUEST_CITYHALLTELEPORT:
+			if (memcmp(client.m_cLocation, "aresden", 7) == 0) {
+				RequestTeleportHandler(iClientH, "2   ", "elvine", 205, 63);
+			} else if (memcmp(client.m_cLocation, "elvine", 6) == 0) {
+				RequestTeleportHandler(client.id_, "2   ", "aresden", 49, 49);
+			}
+			break;
+
+		default:
+		{
+			char m_msgBuff[1000];
+			wsprintf(m_msgBuff, "Unknown message received! (0x%.8X) Delete Client", msgId);
+			PutLogList(m_msgBuff);
+			DeleteClient(client.id_, true, true); // v1.4
+		}
+		break;
+	}
+}
+
 void CGame::MsgProcess() {
 	char * pData, cFrom, cKey;
 	uint32_t dwMsgSize, * dwpMsgID;
 	uint16_t * wpMsgType;
 	int i, iClientH;
-	char m_msgBuff[1000];
-	uint32_t dwTime;
-	dwTime = timeGetTime();
-
 
 	if ((m_bF5pressed == true) && (m_bF1pressed == true)) {
 		PutLogList("(XXX) RELOADING CONFIGS MANUALY...");
@@ -11301,179 +11447,23 @@ void CGame::MsgProcess() {
 		if (m_iCurMsgs > m_iMaxMsgs) m_iMaxMsgs = m_iCurMsgs;
 
 		switch (cFrom) {
-
-
 			case DEF_MSGFROM_CLIENT:
-				/*m_pClientList[iClientH]->m_cConnectionCheck++;
-				if (m_pClientList[iClientH]->m_cConnectionCheck > 3) {
-					wsprintf(G_cTxt, "Client Hex Edit: (%s) Player: (%s) - has removed 3203203 (check connection handler).", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
+			{
+				/*client.m_cConnectionCheck++;
+				if (client.m_cConnectionCheck > 3) {
+					wsprintf(G_cTxt, "Client Hex Edit: (%s) Player: (%s) - has removed 3203203 (check connection handler).", client.m_cIPaddress, client.m_cCharName);
 					PutHackLogFileList(G_cTxt);
 					DeleteClient(iClientH, true, true);
 					break;
 				}*/
-
-
-				dwpMsgID = (uint32_t *) (pData + DEF_INDEX4_MSGID);
-				switch (*dwpMsgID) { // 84148741
-
-					case DEF_REQUEST_RESURRECTPLAYER_YES:
-						RequestResurrectPlayer(iClientH, true);
-						break;
-
-					case DEF_REQUEST_RESURRECTPLAYER_NO:
-						RequestResurrectPlayer(iClientH, false);
-						break;
-
-						//Shorcut para Criticals by 
-					case DEF_REQUEST_CRITICALSADD:
-						PlayerOrder_GetCrits(iClientH);
-						break;
-
-						//Shorcut para Criticals by 
-					case DEF_REQUEST_SHOWBALLPOINTS:
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, nullptr);
-						;
-						break;
-
-					case DEF_REQUEST_ANGEL: // Angels by Snoopy...
-						GetAngelHandler(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_SELLITEMLIST:
-						RequestSellItemListHandler(iClientH, pData);
-						break;
-
-					case MSGID_REQUEST_RESTART:
-						RequestRestartHandler(iClientH);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
-						break;
-
-					case MSGID_REQUEST_PANNING:
-						iRequestPanningMapDataRequest(iClientH, pData);
-						break;
-
-					case MSGID_REQUEST_NOTICEMENT:
-						RequestNoticementHandler(iClientH, pData);
-						break;
-
-					case MSGID_BWM_COMMAND_SHUTUP:
-						_BWM_Command_Shutup(pData);
-						break;
-
-					case MSGID_BWM_INIT:
-						_BWM_Init(iClientH, pData);
-						break;
-
-					case MSGID_REQUEST_SETITEMPOS:
-						_SetItemPos(iClientH, pData);
-						break;
-
-					case MSGID_REQUEST_FULLOBJECTDATA:
-						RequestFullObjectData(iClientH, pData);
-						break;
-
-					case MSGID_REQUEST_RETRIEVEITEM:
-						RequestRetrieveItemHandler(iClientH, pData);
-						break;
-
-					case MSGID_REQUEST_CIVILRIGHT:
-						RequestCivilRightHandler(iClientH, pData);
-						break;
-
-					case MSGID_REQUEST_TELEPORT:
-						RequestTeleportHandler(iClientH, "1");
-						break;
-
-					case MSGID_REQUEST_INITPLAYER:
-						RequestInitPlayerHandler(iClientH, pData, cKey);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
-						break;
-
-					case MSGID_REQUEST_INITDATA:
-						// Anti Bump
-						if (m_pClientList[iClientH]->m_bIsClientConnected == true) {
-							if (m_pClientList[iClientH] == nullptr) break;
-							wsprintf(G_cTxt, "(!!!) Client (%s) connection closed!. Sniffer suspect!.", m_pClientList[iClientH]->m_cCharName);
-							PutLogList(G_cTxt);
-							m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->ClearOwner(2, iClientH, DEF_OWNERTYPE_PLAYER, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY);
-							bRemoveFromDelayEventList(iClientH, DEF_OWNERTYPE_PLAYER, 0);
-
-							bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, iClientH, false);
-							if ((dwTime - m_dwGameTime2) > 3000) { // 3 segs
-								m_pClientList[iClientH]->m_bIsClientConnected = false;
-								m_iTotalClients--;
-								delete m_pClientList[iClientH];
-								m_pClientList[iClientH] = nullptr;
-							}
-							break;
-						} else {
-							m_pClientList[iClientH]->m_bIsClientConnected = true;
-							RequestInitDataHandler(iClientH, pData, cKey);
-						}
-						break;
-
-					case MSGID_COMMAND_COMMON:
-						ClientCommonHandler(iClientH, pData);
-						break;
-
-					case MSGID_COMMAND_MOTION:
-						ClientMotionHandler(iClientH, pData);
-						break;
-
-					case MSGID_COMMAND_CHECKCONNECTION:
-						CheckConnectionHandler(iClientH, pData);
-						break;
-
-					case MSGID_COMMAND_CHATMSG:
-						ChatMsgHandler(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_CREATENEWGUILD:
-						RequestCreateNewGuildHandler(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_DISBANDGUILD:
-						RequestDisbandGuildHandler(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_FIGHTZONE_RESERVE:
-						FightzoneReserveHandler(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_LEVELUPSETTINGS:
-						LevelUpSettingsHandler(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_STATECHANGEPOINT:
-						StateChangeHandler(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_HELDENIANTELEPORT:
-						RequestHeldenianTeleport(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_NPCSPEAKTELEPORT:
-						RequestNpcSpeakTeleport(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_HELDENIAN_SCROLL:
-						RequestHeldenianScroll(iClientH, pData, dwMsgSize);
-						break;
-
-					case MSGID_REQUEST_CITYHALLTELEPORT:
-						if (memcmp(m_pClientList[iClientH]->m_cLocation, "aresden", 7) == 0) {
-							RequestTeleportHandler(iClientH, "2   ", "elvine", 205, 63);
-						} else if (memcmp(m_pClientList[iClientH]->m_cLocation, "elvine", 6) == 0) {
-							RequestTeleportHandler(iClientH, "2   ", "aresden", 49, 49);
-						}
-						break;
-
-					default:
-						wsprintf(m_msgBuff, "Unknown message received! (0x%.8X) Delete Client", *dwpMsgID);
-						PutLogList(m_msgBuff);
-						DeleteClient(iClientH, true, true); // v1.4
-						break;
+				CClient *clientPtr = m_pClientList[iClientH];
+				if (!clientPtr) {
+					continue;
 				}
+				CClient &client = *clientPtr;
+				dwpMsgID = (uint32_t *) (pData + DEF_INDEX4_MSGID);
+				processClientMsg(client, *dwpMsgID, pData, dwMsgSize, cKey);
+			}
 				break;
 
 			case DEF_MSGFROM_LOGSERVER:
@@ -11675,7 +11665,6 @@ void CGame::MsgProcess() {
 				break;
 		}
 	}
-
 }
 
 bool CGame::bPutMsgQuene(char cFrom, char * pData, uint32_t dwMsgSize, int iIndex, char cKey) {
@@ -12092,7 +12081,7 @@ void CGame::DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * 
 			  (((int) m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwCount - iAmount) > 0)) {
 		// ¼Òºñ¼º ¾ÆÀÌÅÛÀÌ¾ú°í ¼ö·®¸¸Å­ °¨¼Ò½ÃÅ°°í ³²Àº °Ô ÀÖ´Ù¸é
 		pItem = new class CItem;
-		if (_bInitItemAttr(pItem, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName) == false) {
+		if (_bInitItemAttr(*pItem, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName) == false) {
 			// ºÐÇÒÇÏ°íÀÚ ÇÏ´Â ¾ÆÀÌÅÛÀÌ ¸®½ºÆ®¿¡ ¾ø´Â °Å´Ù. ÀÌ·± ÀÏÀº ÀÏ¾î³¯ ¼ö°¡ ¾øÁö¸¸
 			delete pItem;
 			return;
@@ -12151,20 +12140,19 @@ void CGame::DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * 
 		if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP) &&
 				  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_wCurLifeSpan == 0)) {
 			// Èñ»ýÀÇ µ¹ÀÎ °æ¿ì ¼ö¸íÀÌ 0ÀÎ »óÅÂ·Î ¶³¾îÁö¸é »ç¶óÁø´Ù.
-			delete m_pClientList[iClientH]->m_pItemList[sItemIndex];
-			m_pClientList[iClientH]->m_pItemList[sItemIndex] = nullptr;
+			m_pClientList[iClientH]->m_pItemList[sItemIndex].reset();
 		} else {
 			// ¾ÆÀÌÅÛÀ» ¼­ÀÖ´Â À§Ä¡¿¡ ¹ö¸°´Ù.
 			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 					  m_pClientList[iClientH]->m_sY,
-					  m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+					  &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 			// v1.41 Èñ±Í ¾ÆÀÌÅÛÀ» ¶³¾î¶ß¸° °ÍÀÌ¶ó¸é ·Î±×¸¦ ³²±ä´Ù.
 			// v2.17 2002-7-31 ÇÃ·¹ÀÌ¾î°¡ Á×¾î¼­ ¶³¾îÁø°Ç ¸ðµç ·Î±×°¡ ³²´Â´Ù.
 			if (bByPlayer == true)
-				_bItemLog(DEF_ITEMLOG_DROP, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+				_bItemLog(DEF_ITEMLOG_DROP, iClientH, (int) - 1, &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 			else
-				_bItemLog(DEF_ITEMLOG_DROP, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[sItemIndex], true);
+				_bItemLog(DEF_ITEMLOG_DROP, iClientH, (int) - 1, &*m_pClientList[iClientH]->m_pItemList[sItemIndex], true);
 
 			// ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®¿¡°Ô ¾ÆÀÌÅÛÀÌ ¶³¾îÁø °ÍÀ» ¾Ë¸°´Ù.
 			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
@@ -12360,11 +12348,11 @@ bool CGame::_bAddClientItemList(int iClientH, class CItem * pItem, int * pDelReq
 	// ÁýÀ» ¾ÆÀÌÅÛ Áß·®°è»ê
 	if ((pItem->m_cItemType == DEF_ITEMTYPE_CONSUME) || (pItem->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 		// ¼ö·®°³³äÀÌ ÀÖ´Â ¾ÆÀÌÅÛ
-		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, pItem->m_dwCount)) > _iCalcMaxLoad(iClientH))
+		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(*pItem, pItem->m_dwCount)) > _iCalcMaxLoad(iClientH))
 			return false;
 	} else {
 		// ¼ö·® °³³äÀÌ ¾ø´Â ¾ÆÀÌÅÛ
-		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, 1)) > _iCalcMaxLoad(iClientH))
+		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(*pItem, 1)) > _iCalcMaxLoad(iClientH))
 			return false;
 	}
 
@@ -12388,7 +12376,7 @@ bool CGame::_bAddClientItemList(int iClientH, class CItem * pItem, int * pDelReq
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (m_pClientList[iClientH]->m_pItemList[i] == nullptr) {
 
-			m_pClientList[iClientH]->m_pItemList[i] = pItem;
+			m_pClientList[iClientH]->m_pItemList[i].reset(pItem);
 			// v1.3 ¾ÆÀÌÅÛÀÇ À§Ä¡´Â ¹«Á¶°Ç 100, 100
 			m_pClientList[iClientH]->m_ItemPosList[i].x = 40;
 			m_pClientList[iClientH]->m_ItemPosList[i].y = 30;
@@ -12443,7 +12431,7 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify) {
 		}
 	}
 
-	if (iGetItemWeight(m_pClientList[iClientH]->m_pItemList[sItemIndex], 1) > (m_pClientList[iClientH]->m_iStr + m_pClientList[iClientH]->m_iAngelicStr)*100) return false;
+	if (iGetItemWeight(*m_pClientList[iClientH]->m_pItemList[sItemIndex], 1) > (m_pClientList[iClientH]->m_iStr + m_pClientList[iClientH]->m_iAngelicStr)*100) return false;
 
 	cEquipPos = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos;
 
@@ -13234,7 +13222,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 	for (i = 1; i <= iNum; i++) {
 
 		pItem = new class CItem;
-		if (_bInitItemAttr(pItem, cItemName) == false) {
+		if (_bInitItemAttr(*pItem, cItemName) == false) {
 			// ±¸ÀÔÇÏ°íÀÚ ÇÏ´Â ¾ÆÀÌÅÛÀÌ ¾ÆÀÌÅÛ ¸®½ºÆ®»ó¿¡ ¾ø´Ù. ±¸ÀÔÀÌ ºÒ°¡´ÉÇÏ´Ù.
 			delete pItem;
 		} else {
@@ -13475,7 +13463,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 		// ¼Òºñ¼º ¾ÆÀÌÅÛÀÌ¾ú°í ¼ö·®¸¸Å­ °¨¼Ò½ÃÅ°°í ³²Àº °Ô ÀÖ´Ù¸é
 
 		pItem = new class CItem;
-		if (_bInitItemAttr(pItem, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName) == false) {
+		if (_bInitItemAttr(*pItem, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName) == false) {
 			// ºÐÇÒÇÏ°íÀÚ ÇÏ´Â ¾ÆÀÌÅÛÀÌ ¸®½ºÆ®¿¡ ¾ø´Â °Å´Ù. ÀÌ·± ÀÏÀº ÀÏ¾î³¯ ¼ö°¡ ¾øÁö¸¸
 			delete pItem;
 			return;
@@ -13726,9 +13714,9 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 			// ¾ÆÀÌÅÛÀ» ¼­ÀÖ´Â À§Ä¡¿¡ ¹ö¸°´Ù.
 			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 					  m_pClientList[iClientH]->m_sY,
-					  m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+					  &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 			// v1.411
-			_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+			_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 			// ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®¿¡°Ô ¾ÆÀÌÅÛÀÌ ¶³¾îÁø °ÍÀ» ¾Ë¸°´Ù.
 			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
@@ -13745,7 +13733,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 			if (cOwnerType == DEF_OWNERTYPE_PLAYER) {
 				// ĳ���Ϳ��� �������� �־��.
 				memcpy(cCharName, m_pClientList[sOwnerH]->m_cCharName, 10);
-				pItem = m_pClientList[iClientH]->m_pItemList[sItemIndex];
+				pItem = &*m_pClientList[iClientH]->m_pItemList[sItemIndex];
 
 				// v2.03 ũ�缼�̵� ����ΰ�쵵 ��� ������ �����ϴ�.
 
@@ -13879,9 +13867,9 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					// ¾ÆÀÌÅÛÀ» ¼­ÀÖ´Â À§Ä¡¿¡ ¹ö¸°´Ù.
 					m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 							  m_pClientList[iClientH]->m_sY,
-							  m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+							  &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 					// v1.41 Èñ±Í ¾ÆÀÌÅÛÀ» ¶³¾î¶ß¸° °ÍÀÌ¶ó¸é ·Î±×¸¦ ³²±ä´Ù.
-					_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+					_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 					// ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®¿¡°Ô ¾ÆÀÌÅÛÀÌ ¶³¾îÁø °ÍÀ» ¾Ë¸°´Ù.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
@@ -13923,10 +13911,10 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 						// ½ÇÆÐÇßÀ¸¹Ç·Î ¹Ù´Ú¿¡ ¶³±º´Ù.
 						m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 								  m_pClientList[iClientH]->m_sY,
-								  m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+								  &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 						// v1.41 Èñ±Í ¾ÆÀÌÅÛÀ» ¶³¾î¶ß¸° °ÍÀÌ¶ó¸é ·Î±×¸¦ ³²±ä´Ù.
-						_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+						_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 						// ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®¿¡°Ô ¾ÆÀÌÅÛÀÌ ¶³¾îÁø °ÍÀ» ¾Ë¸°´Ù.
 						SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
@@ -13959,15 +13947,15 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 						}
 
 						// ÀÌ ¾ÆÀÌÅÛÀº »èÁ¦½ÃÄÑ¾ß ÇÑ´Ù.
-						delete m_pClientList[iClientH]->m_pItemList[sItemIndex];
+						m_pClientList[iClientH]->m_pItemList[sItemIndex].reset();
 					} else {
 						// ±æµå Å»Åð ½ÅÃ»¼­°¡ ¾Æ´Ï¶ó¸é ¹Ù´Ú¿¡ ¶³±º´Ù. Å©·ç¼¼ÀÌµå ¸ðµåÀÏ¶§µµ ±æµå °ü·Ã ¿¬»ê ºÒ°¡
 						m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 								  m_pClientList[iClientH]->m_sY,
-								  m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+								  &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 						// v1.41 Èñ±Í ¾ÆÀÌÅÛÀ» ¶³¾î¶ß¸° °ÍÀÌ¶ó¸é ·Î±×¸¦ ³²±ä´Ù.
-						_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+						_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 						// ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®¿¡°Ô ¾ÆÀÌÅÛÀÌ ¶³¾îÁø °ÍÀ» ¾Ë¸°´Ù.
 						SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
@@ -13985,10 +13973,10 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 
 					m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 							  m_pClientList[iClientH]->m_sY,
-							  m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+							  &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 					// v1.41 Èñ±Í ¾ÆÀÌÅÛÀ» ¶³¾î¶ß¸° °ÍÀÌ¶ó¸é ·Î±×¸¦ ³²±ä´Ù.
-					_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+					_bItemLog(DEF_ITEMLOG_DROP, iClientH, 0, &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
 					// ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®¿¡°Ô ¾ÆÀÌÅÛÀÌ ¶³¾îÁø °ÍÀ» ¾Ë¸°´Ù.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
@@ -15733,7 +15721,7 @@ int CGame::SetItemCount(int iClientH, const char * pItemName, uint32_t dwCount) 
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if ((m_pClientList[iClientH]->m_pItemList[i] != nullptr) && (memcmp(m_pClientList[iClientH]->m_pItemList[i]->m_cName, cTmpName, 20) == 0)) {
 
-			wWeight = iGetItemWeight(m_pClientList[iClientH]->m_pItemList[i], 1); // m_pClientList[iClientH]->m_pItemList[i]->m_wWeight;
+			wWeight = iGetItemWeight(*m_pClientList[iClientH]->m_pItemList[i], 1); // m_pClientList[iClientH]->m_pItemList[i]->m_wWeight;
 
 			// Ä«¿îÆ®°¡ 0ÀÌ¸é ¸ðµÎ ¼Ò¸ðµÈ °ÍÀÌ¹Ç·Î ¸®½ºÆ®¿¡¼­ »èÁ¦ÇÑ´Ù.
 			if (dwCount == 0) {
@@ -15756,7 +15744,7 @@ int CGame::SetItemCount(int iClientH, int iItemIndex, uint32_t dwCount) {
 	if (m_pClientList[iClientH] == nullptr) return -1;
 	if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == nullptr) return -1;
 
-	wWeight = iGetItemWeight(m_pClientList[iClientH]->m_pItemList[iItemIndex], 1); //m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wWeight;
+	wWeight = iGetItemWeight(*m_pClientList[iClientH]->m_pItemList[iItemIndex], 1); //m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wWeight;
 
 	// Ä«¿îÆ®°¡ 0ÀÌ¸é ¸ðµÎ ¼Ò¸ðµÈ °ÍÀÌ¹Ç·Î ¸®½ºÆ®¿¡¼­ »èÁ¦ÇÑ´Ù.
 	if (dwCount == 0) {
@@ -18937,7 +18925,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						break;
 				}
 
-				_bInitItemAttr(pItem, cItemName);
+				_bInitItemAttr(*pItem, cItemName);
 
 				// v2.15 Â¸Â¶Â¹Ã½Ã€Â¸Â·ÃŽ Â»Ã½Â±Ã¤ Â¾Ã†Ã€ÃŒÃ…Ã›Â¿Â¡ Â°Ã­Ã€Â¯Â¹Ã¸ÃˆÂ£ Ã€ÃºÃ€Ã¥
 				pItem->m_sTouchEffectType = DEF_ITET_ID;
@@ -20354,9 +20342,9 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 							// Ares in elv
 							whitelist = {"middleland", "huntzone1", "elvined1", "elvfarm"};
 						}
-						if(!whitelist.empty()) {
+						if (!whitelist.empty()) {
 							std::string target = cDestMapName;
-							if(std::find(whitelist.begin(), whitelist.end(), target) == whitelist.end()) {
+							if (std::find(whitelist.begin(), whitelist.end(), target) == whitelist.end()) {
 								return;
 							}
 						}
@@ -21691,62 +21679,39 @@ bool CGame::bPlayerItemToBank(int iClientH, short sItemIndex) {
 	for (i = 0; i < DEF_MAXBANKITEMS; i++)
 		if (m_pClientList[iClientH]->m_pItemInBankList[i] == nullptr) {
 			iIndex = i;
-			goto NEXT_STEP_PLTB;
+			// ¾ÆÀÌÅÛÀ» ÀúÀåÇÒ °ø°£ÀÌ ³²¾ÆÀÖ´Ù.
+			// ¸ÕÀú ÀåÂøµÇ¾î ÀÖ´Ù¸é ÇØÁ¦½ÃÅ²´Ù.
+			ReleaseItemHandler(iClientH, sItemIndex, true);
+
+			// ¾ÆÀÌÅÛ Å¬·¡½ºÀÇ ÁÖ¼Ò¸¦ ¹Ù²Û´Ù.
+			std::swap(m_pClientList[iClientH]->m_pItemInBankList[iIndex], m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+			m_pClientList[iClientH]->m_bIsItemEquipped[sItemIndex] = false;
+
+			// ¾ÆÀÌÅÛ ¸®½ºÆ®ÀÇ ºó °ø°£À» »èÁ¦ÇÑ´Ù.
+			for (i = 1; i < DEF_MAXITEMS; i++)
+				if ((m_pClientList[iClientH]->m_pItemList[i - 1] == nullptr) && (m_pClientList[iClientH]->m_pItemList[i] != nullptr)) {
+					std::swap(m_pClientList[iClientH]->m_pItemList[i - 1], m_pClientList[iClientH]->m_pItemList[i]);
+					m_pClientList[iClientH]->m_bIsItemEquipped[i - 1] = m_pClientList[iClientH]->m_bIsItemEquipped[i];
+					m_pClientList[iClientH]->m_pItemList[i] = nullptr;
+					m_pClientList[iClientH]->m_bIsItemEquipped[i] = false;
+				}
+
+			return true;
 		}
-	// ´õÀÌ»ó ÀúÀåÇÒ °ø°£ÀÌ ¾ø´Ù.
+
 	return false;
-
-NEXT_STEP_PLTB:
-	;
-
-	// ¾ÆÀÌÅÛÀ» ÀúÀåÇÒ °ø°£ÀÌ ³²¾ÆÀÖ´Ù.
-	// ¸ÕÀú ÀåÂøµÇ¾î ÀÖ´Ù¸é ÇØÁ¦½ÃÅ²´Ù.
-	ReleaseItemHandler(iClientH, sItemIndex, true);
-
-	// ¾ÆÀÌÅÛ Å¬·¡½ºÀÇ ÁÖ¼Ò¸¦ ¹Ù²Û´Ù.
-	m_pClientList[iClientH]->m_pItemInBankList[iIndex] = m_pClientList[iClientH]->m_pItemList[sItemIndex];
-	// ÇÃ·¹ÀÌ¾î ¾ÆÀÌÅÛ ¸®½ºÆ®¸¦ Å¬¸®¾îÇÏ°í
-	m_pClientList[iClientH]->m_pItemList[sItemIndex] = nullptr;
-	m_pClientList[iClientH]->m_bIsItemEquipped[sItemIndex] = false;
-
-	// ¾ÆÀÌÅÛ ¸®½ºÆ®ÀÇ ºó °ø°£À» »èÁ¦ÇÑ´Ù.
-	for (i = 1; i < DEF_MAXITEMS; i++)
-		if ((m_pClientList[iClientH]->m_pItemList[i - 1] == nullptr) && (m_pClientList[iClientH]->m_pItemList[i] != nullptr)) {
-			m_pClientList[iClientH]->m_pItemList[i - 1] = m_pClientList[iClientH]->m_pItemList[i];
-			m_pClientList[iClientH]->m_bIsItemEquipped[i - 1] = m_pClientList[iClientH]->m_bIsItemEquipped[i];
-			m_pClientList[iClientH]->m_pItemList[i] = nullptr;
-			m_pClientList[iClientH]->m_bIsItemEquipped[i] = false;
-		}
-
-	return true;
 }
 
 bool CGame::bBankItemToPlayer(int iClientH, short sItemIndex) {
-	register int i, iIndex;
-
 	if (m_pClientList[iClientH] == nullptr) return false;
-
 	if (m_pClientList[iClientH]->m_pItemInBankList[sItemIndex] == nullptr) return false;
-
-	for (i = 0; i < DEF_MAXITEMS; i++)
+	for (int i = 0; i < DEF_MAXITEMS; i++) {
 		if (m_pClientList[iClientH]->m_pItemList[i] == nullptr) {
-			iIndex = i;
-			goto NEXT_STEP_PLTB;
+			std::swap(m_pClientList[iClientH]->m_pItemList[i], m_pClientList[iClientH]->m_pItemInBankList[sItemIndex]);
+			return true;
 		}
-	// ´õÀÌ»ó °®°íÀÖÀ» °ø°£ÀÌ ¾ø´Ù.
+	}
 	return false;
-
-NEXT_STEP_PLTB:
-	;
-
-	// ¾ÆÀÌÅÛÀ» ¼ÒÁöÇÒ °ø°£ÀÌ ³²¾ÆÀÖ´Ù.
-
-	// ¾ÆÀÌÅÛ Å¬·¡½ºÀÇ ÁÖ¼Ò¸¦ ¹Ù²Û´Ù.
-	m_pClientList[iClientH]->m_pItemList[iIndex] = m_pClientList[iClientH]->m_pItemInBankList[sItemIndex];
-
-	m_pClientList[iClientH]->m_pItemInBankList[sItemIndex] = nullptr;
-
-	return true;
 }
 
 bool CGame::__bReadMapInfo(int iMapIndex) {
@@ -24364,7 +24329,7 @@ void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 		else iItemWeight = iGetItemWeight(m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex], 1); //m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_wWeight;
 		 */
 		// v1.432
-		iItemWeight = iGetItemWeight(m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex], m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount);
+		iItemWeight = iGetItemWeight(*m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex], m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount);
 
 		if ((iItemWeight + m_pClientList[iClientH]->m_iCurWeightLoad) > _iCalcMaxLoad(iClientH)) {
 			// ÇÑ°èÁß·® ÃÊ°ú, ¾ÆÀÌÅÛÀ» Ã£À» ¼ö ¾ø´Ù.
@@ -24403,15 +24368,11 @@ void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 					SetItemCount(iClientH, i, m_pClientList[iClientH]->m_pItemList[i]->m_dwCount + m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount);
 
 					// ¹ðÅ© ¾ÆÀÌÅÛ »èÁ¦
-					delete m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex];
-					m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex] = nullptr;
-
+					m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex].reset();
 					// ºó °ø°£À» ¾ø¾Ø´Ù.
 					for (j = 0; j <= DEF_MAXBANKITEMS - 2; j++) {
 						if ((m_pClientList[iClientH]->m_pItemInBankList[j + 1] != nullptr) && (m_pClientList[iClientH]->m_pItemInBankList[j] == nullptr)) {
-							m_pClientList[iClientH]->m_pItemInBankList[j] = m_pClientList[iClientH]->m_pItemInBankList[j + 1];
-
-							m_pClientList[iClientH]->m_pItemInBankList[j + 1] = nullptr;
+							std::swap(m_pClientList[iClientH]->m_pItemInBankList[j], m_pClientList[iClientH]->m_pItemInBankList[j + 1]);
 						}
 					}
 
@@ -24458,21 +24419,15 @@ RRIH_NOQUANTITY:
 				if (m_pClientList[iClientH]->m_pItemList[i] == nullptr) {
 					// ºó °ø°£À» Ã£¾Ò´Ù.
 					// ¸ÕÀú ÁÖ¼Ò¸¦ ¿Å±ä´Ù.
-					m_pClientList[iClientH]->m_pItemList[i] = m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex];
+					std::swap(m_pClientList[iClientH]->m_pItemList[i], m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]);
 					// v1.3 1-27 12:22
 					m_pClientList[iClientH]->m_ItemPosList[i].x = 40;
 					m_pClientList[iClientH]->m_ItemPosList[i].y = 30;
-
 					m_pClientList[iClientH]->m_bIsItemEquipped[i] = false;
-
-					m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex] = nullptr;
-
 					// ºó °ø°£À» ¾ø¾Ø´Ù.
 					for (j = 0; j <= DEF_MAXBANKITEMS - 2; j++) {
 						if ((m_pClientList[iClientH]->m_pItemInBankList[j + 1] != nullptr) && (m_pClientList[iClientH]->m_pItemInBankList[j] == nullptr)) {
-							m_pClientList[iClientH]->m_pItemInBankList[j] = m_pClientList[iClientH]->m_pItemInBankList[j + 1];
-
-							m_pClientList[iClientH]->m_pItemInBankList[j + 1] = nullptr;
+							std::swap(m_pClientList[iClientH]->m_pItemInBankList[j], m_pClientList[iClientH]->m_pItemInBankList[j + 1]);
 						}
 					}
 
@@ -24548,14 +24503,8 @@ bool CGame::bSetItemToBankItem(int iClientH, short sItemIndex) {
 
 	for (i = 0; i < DEF_MAXBANKITEMS; i++)
 		if (m_pClientList[iClientH]->m_pItemInBankList[i] == nullptr) {
-			// ºñ¾îÀÖ´Â À§Ä¡¸¦ Ã£¾Ò´Ù.
-
-			m_pClientList[iClientH]->m_pItemInBankList[i] = m_pClientList[iClientH]->m_pItemList[sItemIndex];
-			pItem = m_pClientList[iClientH]->m_pItemInBankList[i];
-			// !!! ¾ÆÀÌÅÛÀÇ Æ÷ÀÎÅÍ¸¦ ÀÌµ¿ÇßÀ¸´Ï ±âÁ¸ÀÇ Æ÷ÀÎÅÍ´Â nullptr°ªÀ¸·Î ÇÒ´ç.
-			m_pClientList[iClientH]->m_pItemList[sItemIndex] = nullptr;
-
-			// ¼ÒÁöÇ° ÃÑ Áß·® Àç °è»ê
+			std::swap(m_pClientList[iClientH]->m_pItemInBankList[i], m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+			pItem = m_pClientList[iClientH]->m_pItemInBankList[i].get();
 			iCalcTotalWeight(iClientH);
 
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
@@ -24565,10 +24514,9 @@ bool CGame::bSetItemToBankItem(int iClientH, short sItemIndex) {
 
 			cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
 
-			*cp = i; // À§Ä¡ ÀúÀå
+			*cp = i;
 			cp++;
 
-			// 1°³.
 			*cp = 1;
 			cp++;
 
@@ -25174,18 +25122,18 @@ void CGame::GetRewardMoneyHandler(int iClientH) {
 	pItem = new class CItem;
 	std::memset(cItemName, 0, sizeof (cItemName));
 	wsprintf(cItemName, "Gold");
-	_bInitItemAttr(pItem, cItemName);
+	_bInitItemAttr(*pItem, cItemName);
 	//pItem->m_dwCount = m_pClientList[iClientH]->m_iRewardGold;
 
 	// (iWeightLeft / pItem->m_wWeight)°¡ ÃÖ´ë ¹ÞÀ» ¼ö ÀÖ´Â Gold°¹¼ö. °®°íÀÖ´Â Æ÷»ó±Ý°ú ºñ±³ÇÑ´Ù.
-	if ((iWeightLeft / iGetItemWeight(pItem, 1)) >= m_pClientList[iClientH]->m_iRewardGold) {
+	if ((iWeightLeft / iGetItemWeight(*pItem, 1)) >= m_pClientList[iClientH]->m_iRewardGold) {
 		// Æ÷»ó±ÝÀ» ¸ðµÎ ¹ÞÀ» ¼ö ÀÖ´Ù.
 		pItem->m_dwCount = m_pClientList[iClientH]->m_iRewardGold;
 		iRewardGoldLeft = 0;
 	} else {
 		// (iWeightLeft / pItem->m_wWeight)¸¸ ¹Þ´Â´Ù.
-		pItem->m_dwCount = (iWeightLeft / iGetItemWeight(pItem, 1));
-		iRewardGoldLeft = m_pClientList[iClientH]->m_iRewardGold - (iWeightLeft / iGetItemWeight(pItem, 1));
+		pItem->m_dwCount = (iWeightLeft / iGetItemWeight(*pItem, 1));
+		iRewardGoldLeft = m_pClientList[iClientH]->m_iRewardGold - (iWeightLeft / iGetItemWeight(*pItem, 1));
 	}
 
 	if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
@@ -27808,7 +27756,7 @@ void CGame::DeleteNpc(int iNpcH) {
 				if (pItem == nullptr) {
 					pItem = new class CItem;
 				}
-				if (_bInitItemAttr(pItem, iItemIDs[j]) == false ||
+				if (_bInitItemAttr(*pItem, iItemIDs[j]) == false ||
 						  m_pMapList[ m_pNpcList[iNpcH]->m_cMapIndex ]->bGetIsMoveAllowedTile(ItemPositions[j].x, ItemPositions[j].y) == false) {
 					delete pItem;
 					pItem = nullptr;
@@ -27830,7 +27778,7 @@ void CGame::DeleteNpc(int iNpcH) {
 				}
 			}
 		} else {
-			if (_bInitItemAttr(pItem, iItemID) == false) {
+			if (_bInitItemAttr(*pItem, iItemID) == false) {
 				delete pItem;
 				pItem = nullptr;
 			} else {
@@ -27859,7 +27807,7 @@ void CGame::DeleteNpc(int iNpcH) {
 				case 4: iSlateID = 871;
 					break;
 			}
-			if (_bInitItemAttr(pItem2, iSlateID) == false) {
+			if (_bInitItemAttr(*pItem2, iSlateID) == false) {
 				delete pItem2;
 				pItem2 = nullptr;
 			} else {
@@ -28055,15 +28003,14 @@ void CGame::ItemDepleteHandler(int iClientH, short sItemIndex, bool bIsUseItemRe
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 380) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 381) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 382)) {
-		_bItemLog(DEF_ITEMLOG_DEPLETE, iClientH, -1, m_pClientList[iClientH]->m_pItemList[sItemIndex], false);
+		_bItemLog(DEF_ITEMLOG_DEPLETE, iClientH, -1, &*m_pClientList[iClientH]->m_pItemList[sItemIndex], false);
 	} else if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 247) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 248)) {
-		_bItemLog(DEF_ITEMLOG_DEPLETE, iClientH, -1, m_pClientList[iClientH]->m_pItemList[sItemIndex], false);
+		_bItemLog(DEF_ITEMLOG_DEPLETE, iClientH, -1, &*m_pClientList[iClientH]->m_pItemList[sItemIndex], false);
 	}
 	ReleaseItemHandler(iClientH, sItemIndex, true);
 	SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMDEPLETED_ERASEITEM, sItemIndex, (int) bIsUseItemResult, 0, nullptr);
-	delete m_pClientList[iClientH]->m_pItemList[sItemIndex];
-	m_pClientList[iClientH]->m_pItemList[sItemIndex] = nullptr;
+	m_pClientList[iClientH]->m_pItemList[sItemIndex].reset();
 	m_pClientList[iClientH]->m_bIsItemEquipped[sItemIndex] = false;
 	m_pClientList[iClientH]->m_cArrowIndex = _iGetArrowItemIndex(iClientH);
 	iCalcTotalWeight(iClientH);
@@ -28245,7 +28192,7 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 								}
 						}
 						if (strlen(cSlateType) > 0)
-							_bItemLog(DEF_ITEMLOG_USE, iClientH, strlen(cSlateType), m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+							_bItemLog(DEF_ITEMLOG_USE, iClientH, strlen(cSlateType), &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 					}
 				}
 				break;

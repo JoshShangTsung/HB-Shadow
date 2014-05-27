@@ -1,11 +1,6 @@
 #include "Client.h"
 #include <cstring>
-CClient::CClient(HWND hWnd) {
-	register int i;
-
-	m_pXSock = new class XSocket(hWnd, DEF_CLIENTSOCKETBLOCKLIMIT);
-	m_pXSock->bInitBufferSize(DEF_MSGBUFFERSIZE);
-
+CClient::CClient(int index, std::unique_ptr<XSocket> &&socket): id_(index), m_pXSock(std::move(socket)) {
 	std::memset(m_cProfile, 0, sizeof(m_cProfile));
 	strcpy(m_cProfile, "__________");
 
@@ -42,10 +37,10 @@ CClient::CClient(HWND hWnd) {
 
 	m_bIsSafeAttackMode = false;
 
-	for (i = 0; i < DEF_MAXITEMEQUIPPOS; i++)
+	for (int i = 0; i < DEF_MAXITEMEQUIPPOS; i++)
 		m_sItemEquipmentStatus[i] = -1;
 
-	for (i = 0; i < DEF_MAXITEMS; i++) {
+	for (int i = 0; i < DEF_MAXITEMS; i++) {
 		m_pItemList[i] = nullptr;
 		m_ItemPosList[i].x = 40;
 		m_ItemPosList[i].y = 30;
@@ -53,17 +48,17 @@ CClient::CClient(HWND hWnd) {
 	}
 	m_cArrowIndex = -1;
 
-	for (i = 0; i < DEF_MAXBANKITEMS; i++) {
+	for (int i = 0; i < DEF_MAXBANKITEMS; i++) {
 		m_pItemInBankList[i] = nullptr;
 	}
 
-	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
+	for (int i = 0; i < DEF_MAXMAGICTYPE; i++)
 		m_cMagicMastery[i] = 0;
 
-	for (i = 0; i < DEF_MAXSKILLTYPE; i++)
+	for (int i = 0; i < DEF_MAXSKILLTYPE; i++)
 		m_cSkillMastery[i] = 0;
 
-	for (i = 0; i < DEF_MAXSKILLTYPE; i++) {
+	for (int i = 0; i < DEF_MAXSKILLTYPE; i++) {
 		m_bSkillUsingStatus[i] = false;
 		m_iSkillUsingTimeID[i] = 0;
 	}
@@ -104,13 +99,13 @@ CClient::CClient(HWND hWnd) {
 	m_iHitRatio = 0;
 	m_iDefenseRatio = 0;
 
-	for (i = 0; i < DEF_MAXITEMEQUIPPOS; i++) m_iDamageAbsorption_Armor[i] = 0;
+	for (int i = 0; i < DEF_MAXITEMEQUIPPOS; i++) m_iDamageAbsorption_Armor[i] = 0;
 	m_iDamageAbsorption_Shield = 0;
 
 	m_iHPstock = 0;
 	m_bIsKilled = false;
 
-	for (i = 0; i < DEF_MAXMAGICEFFECTS; i++)
+	for (int i = 0; i < DEF_MAXMAGICEFFECTS; i++)
 		m_cMagicEffectStatus[i] = 0;
 
 	m_iWhisperPlayerIndex = -1;
@@ -196,7 +191,7 @@ CClient::CClient(HWND hWnd) {
 	std::memset(m_cExchangeName, 0, sizeof(m_cExchangeName));
 	std::memset(m_cExchangeItemName, 0, sizeof(m_cExchangeItemName));
 
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		m_cExchangeItemIndex[i] = -1;
 		m_iExchangeItemAmount[i] = 0;
 	}
@@ -261,7 +256,7 @@ CClient::CClient(HWND hWnd) {
 	m_dwCrusadeGUID = 0;
 	m_dwHeldenianGUID = 0;
 
-	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
+	for (int i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
 		m_stCrusadeStructureInfo[i].cType = 0;
 		m_stCrusadeStructureInfo[i].cSide = 0;
 		m_stCrusadeStructureInfo[i].sX = 0;
@@ -301,22 +296,6 @@ CClient::CClient(HWND hWnd) {
 	m_dwDSLAT = m_dwDSLATOld = m_dwDSLATS = 0;
 	m_iDSCount = 0;
 
-}
-
-CClient::~CClient() {
-	int i;
-
-	if (m_pXSock != nullptr) delete m_pXSock;
-	for (i = 0; i < DEF_MAXITEMS; i++)
-		if (m_pItemList[i] != nullptr) {
-			delete m_pItemList[i];
-			m_pItemList[i] = nullptr;
-		}
-	for (i = 0; i < DEF_MAXBANKITEMS; i++)
-		if (m_pItemInBankList[i] != nullptr) {
-			delete m_pItemInBankList[i];
-			m_pItemInBankList[i] = nullptr;
-		}
 }
 
 bool CClient::bCreateNewParty() {

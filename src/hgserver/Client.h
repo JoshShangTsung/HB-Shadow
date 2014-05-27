@@ -7,6 +7,8 @@
 #include "GuildsMan.h"
 #include "Magic.h"
 #include "GlobalDef.h"
+#include <memory>
+#include <array>
 
 #define DEF_CLIENTSOCKETBLOCKLIMIT	15
 
@@ -24,7 +26,8 @@
 
 class CClient {
 public:
-
+	CClient(int index, std::unique_ptr<XSocket> &&socket);
+	int id_;
 	char m_cWarType;
 	char m_cVar;
 	int m_iRecentWalkTime;
@@ -46,9 +49,7 @@ public:
 	//int m_iUninteruptibleCheck;
 	//char m_cConnectionCheck;
 
-	CClient(HWND hWnd);
-	virtual ~CClient();
-
+	
 	char m_cCharName[11];
 	char m_cAccountName[11];
 	char m_cAccountPassword[11];
@@ -125,9 +126,9 @@ public:
 	char m_cAttackBonus_SM;
 	char m_cAttackBonus_L;
 
-	class CItem * m_pItemList[DEF_MAXITEMS];
+	std::array<std::unique_ptr<CItem>, DEF_MAXITEMS> m_pItemList;
 	POINT m_ItemPosList[DEF_MAXITEMS];
-	class CItem * m_pItemInBankList[DEF_MAXBANKITEMS];
+	std::array<std::unique_ptr<CItem>, DEF_MAXBANKITEMS> m_pItemInBankList;
 
 	bool m_bIsItemEquipped[DEF_MAXITEMS];
 	short m_sItemEquipmentStatus[DEF_MAXITEMEQUIPPOS];
@@ -158,7 +159,7 @@ public:
 
 	int m_iFightzoneNumber, m_iReserveTime, m_iFightZoneTicketNumber;
 
-	class XSocket * m_pXSock;
+	std::unique_ptr<XSocket> m_pXSock;
 
 	int m_iAdminUserLevel;
 	int m_iRating;
