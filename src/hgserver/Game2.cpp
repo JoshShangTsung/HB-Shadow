@@ -20728,8 +20728,6 @@ void CGame::AdminOrder_CheckStats(int iClientH, char *pData, uint32_t dwMsgSize)
 	}
 }
 
-// v2.16 2002-5-21 °í±¤Çö Ãß°¡
-
 bool CGame::bCheckIsItemUpgradeSuccess(int iClientH, int iItemIndex, int iSomH, bool bBonus) {
 	int iValue, iProb, iResult;
 
@@ -20737,11 +20735,6 @@ bool CGame::bCheckIsItemUpgradeSuccess(int iClientH, int iItemIndex, int iSomH, 
 	iValue = (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
 
 	switch (iValue) {
-
-
-			//	www.mundohelbreath.com | Maneja el % de upgrade de xelimas y merien
-			//	www.mundohelbreath.com | Maneja el % de upgrade de xelimas y merien
-
 		case 0: iProb = 90;
 			break; // %80 de hacerla +1  
 		case 1: iProb = 65;
@@ -20765,9 +20758,6 @@ bool CGame::bCheckIsItemUpgradeSuccess(int iClientH, int iItemIndex, int iSomH, 
 		default: iProb = 0;
 			break;
 	}
-	//	www.mundohelbreath.com | Maneja el % de upgrade de xelimas y merien
-	//	www.mundohelbreath.com | Maneja el % de upgrade de xelimas y merien
-
 	if (((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute & 0x00000001) != 0) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2 > 100)) {
 
 		if (iProb > 20)

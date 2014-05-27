@@ -577,7 +577,7 @@ public:
 	void ApplyPKpenalty(short sAttackerH, short sVictumH);
 	bool bSetItemToBankItem(int iClientH, short sItemIndex);
 	void RequestRetrieveItemHandler(CClient &client, char *pData);
-	void RequestCivilRightHandler(int iClientH, char * pData);
+	void RequestCivilRightHandler(CClient &client, char * pData);
 	bool bCheckLimitedUser(int iClientH);
 	void LevelUpSettingsHandler(int iClientH, char * pData, uint32_t dwMsgSize);
 	// v1.4311-3 ���� �Լ�  ������ ���� �Լ� ���� FightzoneReserveHandler
@@ -674,9 +674,9 @@ public:
 	void DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogout = true, bool bForceCloseConn = false);
 	int iComposeInitMapData(short sX, short sY, int iClientH, char * pData);
 	void RequestInitDataHandler(int iClientH, char * pData, char cKey);
-	void RequestInitPlayerHandler(int iClientH, char * pData, char cKey);
+	void RequestInitPlayerHandler(CClient &client, char * pData, char cKey);
 	int iClientMotion_Move_Handler(int iClientH, short sX, short sY, char cDir, char cMoveType);
-	void ClientMotionHandler(int iClientH, char * pData);
+	void ClientMotionHandler(CClient &client, char * pData);
 	void DisplayInfo(HDC hdc);
 	void OnClientRead(CClient &client);
 	bool bInit();

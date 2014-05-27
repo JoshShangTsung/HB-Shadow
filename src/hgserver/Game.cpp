@@ -787,171 +787,162 @@ void CGame::DisplayInfo(HDC hdc) {
 		}
 }
 
-void CGame::ClientMotionHandler(int iClientH, char * pData) {
+void CGame::ClientMotionHandler(CClient &client, char * pData) {
+	int iRet;
 
-	uint32_t * dwp, dwClientTime;
-	uint16_t * wp, wCommand, wTargetObjectID;
-	short * sp, sX, sY, dX, dY, wType;
-	char * cp, cDir;
-	int iRet, iTemp;
-
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-	if (m_pClientList[iClientH]->m_bIsKilled == true) return;
-	m_pClientList[iClientH]->m_dwLastActionTime = m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
-	/*m_pClientList[iClientH]->m_cConnectionCheck++;
-	if (m_pClientList[iClientH]->m_cConnectionCheck > 50) {
-		wsprintf(G_cTxt, "Hex: (%s) Player: (%s) - removed 03203203h, vital to hack detection.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
+	if (client.m_bIsInitComplete == false) return;
+	if (client.m_bIsKilled == true) return;
+	client.m_dwLastActionTime = client.m_dwAFKCheckTime = timeGetTime();
+	/*client.m_cConnectionCheck++;
+	if (client.m_cConnectionCheck > 50) {
+		wsprintf(G_cTxt, "Hex: (%s) Player: (%s) - removed 03203203h, vital to hack detection.", client.m_cIPaddress, client.m_cCharName);
 		PutHackLogFileList(G_cTxt);
 		DeleteClient(iClientH, true, true);
 		return;
 	}*/
-	wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
-	wCommand = *wp;
+	uint16_t *wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
+	uint16_t wCommand = *wp;
 
-	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
+	char *cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 
-	sp = (short *) cp;
-	sX = *sp;
+	short *sp = (short *) cp;
+	short sX = *sp;
 	cp += 2;
 
 	sp = (short *) cp;
-	sY = *sp;
+	short sY = *sp;
 	cp += 2;
 
-	cDir = *cp;
+	char cDir = *cp;
 	cp++;
 
 	sp = (short *) cp;
-	dX = *sp;
+	short dX = *sp;
 	cp += 2;
 
 	sp = (short *) cp;
-	dY = *sp;
+	short dY = *sp;
 	cp += 2;
 
 	sp = (short *) cp;
-	wType = *sp;
+	short wType = *sp;
 	cp += 2;
 
-	if ((wCommand == DEF_OBJECTATTACK) || (wCommand == DEF_OBJECTATTACKMOVE)) { // v1.4
+	
+	uint16_t wTargetObjectID = 0;
+	if ((wCommand == DEF_OBJECTATTACK) || (wCommand == DEF_OBJECTATTACKMOVE)) {
 		wp = (uint16_t *) cp;
 		wTargetObjectID = *wp;
 		cp += 2;
 	}
 
-	// v2.171
-	dwp = (uint32_t *) cp;
-	dwClientTime = *dwp;
+	uint32_t *dwp = (uint32_t *) cp;
+	uint32_t dwClientTime = *dwp;
 	cp += 4;
-	CheckDenialServiceAttack(iClientH, dwClientTime);
-
+	CheckDenialServiceAttack(client.id_, dwClientTime);
+	int iClientH = client.id_;
 	switch (wCommand) {
 		case DEF_OBJECTSTOP:
-			iRet = iClientMotion_Stop_Handler(iClientH, sX, sY, cDir);
+			iRet = iClientMotion_Stop_Handler(client.id_, sX, sY, cDir);
 			if (iRet == 1) {
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTSTOP, 0, 0, 0);
-			} else if (iRet == 2) SendObjectMotionRejectMsg(iClientH);
+				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTSTOP, 0, 0, 0);
+			} else if (iRet == 2) {
+				SendObjectMotionRejectMsg(client.id_);
+			}
 			break;
 
 		case DEF_OBJECTRUN:
-			// ´Þ¸°°Í¿¡ ´ëÇÑ È¿°ú¸¦ Ã³¸®ÇÑ´Ù. Ã¼·Â°¨¼Òµîµî
-			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 1);
+			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 1);
 			if (iRet == 1) {
-				// ÀÎÁ¢ÇÑ Å¬¶óÀÌ¾ðÆ®µé¿¡°Ô ÀÌµ¿ ÀÌº¥Æ®¸¦ ¾Ë¸°´Ù.
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTRUN, 0, 0, 0);
-				if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bGetIsTeleport(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY)) {
-					RequestTeleportHandler(iClientH, "3");
+				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTRUN, 0, 0, 0);
+				if (m_pMapList[client.m_cMapIndex]->bGetIsTeleport(client.m_sX, client.m_sY)) {
+					RequestTeleportHandler(client.id_, "3");
 				}
 			}
-			if ((m_pClientList[iClientH] != nullptr) && (m_pClientList[iClientH]->m_iHP <= 0)) ClientKilledHandler(iClientH, 0, 0, 1); // v1.4
-			// v2.171
-			bCheckClientMoveFrequency(iClientH, dwClientTime);
+			if ((m_pClientList[iClientH] != nullptr) && (client.m_iHP <= 0)) {
+				ClientKilledHandler(iClientH, 0, 0, 1);
+			}
+			bCheckClientMoveFrequency(client.id_, dwClientTime);
 			break;
 
 		case DEF_OBJECTMOVE:
-			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 2);
+			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 2);
 			if (iRet == 1) {
-				// ÀÎÁ¢ÇÑ Å¬¶óÀÌ¾ðÆ®µé¿¡°Ô ÀÌµ¿ ÀÌº¥Æ®¸¦ ¾Ë¸°´Ù.
 				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
-				if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bGetIsTeleport(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY)) {
-					RequestTeleportHandler(iClientH, "3");
+				if (m_pMapList[client.m_cMapIndex]->bGetIsTeleport(client.m_sX, client.m_sY)) {
+					RequestTeleportHandler(client.id_, "3");
 				}
 			}
-			if ((m_pClientList[iClientH] != nullptr) && (m_pClientList[iClientH]->m_iHP <= 0)) ClientKilledHandler(iClientH, 0, 0, 1); // v1.4
-			// v2.171
-			bCheckClientMoveFrequency(iClientH, dwClientTime);
+			if ((m_pClientList[iClientH] != nullptr) && (client.m_iHP <= 0)) {
+				ClientKilledHandler(client.id_, 0, 0, 1);
+			}
+			bCheckClientMoveFrequency(client.id_, dwClientTime);
 			break;
 
 		case DEF_OBJECTDAMAGEMOVE:
-			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 0);
+			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 0);
 			if (iRet == 1) {
-				// ÀÎÁ¢ÇÑ Å¬¶óÀÌ¾ðÆ®µé¿¡°Ô ÀÌµ¿ ÀÌº¥Æ®¸¦ ¾Ë¸°´Ù.
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGEMOVE, m_pClientList[iClientH]->m_iLastDamage, 0, 0);
-				if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bGetIsTeleport(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY)) {
-					RequestTeleportHandler(iClientH, "3");
+				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGEMOVE, client.m_iLastDamage, 0, 0);
+				if (m_pMapList[client.m_cMapIndex]->bGetIsTeleport(client.m_sX, client.m_sY)) {
+					RequestTeleportHandler(client.id_, "3");
 				}
 			}
-			if ((m_pClientList[iClientH] != nullptr) && (m_pClientList[iClientH]->m_iHP <= 0)) ClientKilledHandler(iClientH, 0, 0, 1); // v1.4
+			if ((m_pClientList[iClientH] != nullptr) && (client.m_iHP <= 0)) {
+				ClientKilledHandler(iClientH, 0, 0, 1);
+			}
 			break;
 
 		case DEF_OBJECTATTACKMOVE:
-			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 0);
+			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 0);
 			if ((iRet == 1) && (m_pClientList[iClientH] != nullptr)) {
-				// ÀÎÁ¢ÇÑ Å¬¶óÀÌ¾ðÆ®µé¿¡°Ô ÀÌµ¿ ÀÌº¥Æ®¸¦ ¾Ë¸°´Ù.
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTATTACKMOVE, 0, 0, 0);
-				// °ø°Ý È¿°ú¸¦ °è»ê
-				iClientMotion_Attack_Handler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, dX, dY, wType, cDir, wTargetObjectID, false, true); // v1.4
-				if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bGetIsTeleport(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY)) {
-					RequestTeleportHandler(iClientH, "3");
+				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTATTACKMOVE, 0, 0, 0);
+				iClientMotion_Attack_Handler(client.id_, client.m_sX, client.m_sY, dX, dY, wType, cDir, wTargetObjectID, false, true);
+				if (m_pMapList[client.m_cMapIndex]->bGetIsTeleport(client.m_sX, client.m_sY)) {
+					RequestTeleportHandler(client.id_, "3");
 				}
 			}
-			if ((m_pClientList[iClientH] != nullptr) && (m_pClientList[iClientH]->m_iHP <= 0)) ClientKilledHandler(iClientH, 0, 0, 1); // v1.4
-			// v2.171
-			bCheckClientAttackFrequency(iClientH, dwClientTime);
+			if ((m_pClientList[iClientH] != nullptr) && (client.m_iHP <= 0)) {
+				ClientKilledHandler(client.id_, 0, 0, 1);
+			}
+			bCheckClientAttackFrequency(client.id_, dwClientTime);
 			break;
 
 		case DEF_OBJECTATTACK:
-			// ÀÌ À§¿¡¼­ wTypeÀÌ ÇÕ´çÇÑÁö¸¦ ¸ÕÀú Ã³¸®ÇÑ´Ù.
-			_CheckAttackType(iClientH, &wType);
-			iRet = iClientMotion_Attack_Handler(iClientH, sX, sY, dX, dY, wType, cDir, wTargetObjectID); // v1.4
+			_CheckAttackType(client.id_, &wType);
+			iRet = iClientMotion_Attack_Handler(client.id_, sX, sY, dX, dY, wType, cDir, wTargetObjectID);
 			if (iRet == 1) {
 				if (wType >= 20) {
-					// ÇÊ»ì±â Ä«¿îÆ®¸¦ °¨¼ÒÇÑ´Ù.
-					m_pClientList[iClientH]->m_iSuperAttackLeft--;
-					// Ä«¿îÆ®°¡ ¸¶ÀÌ³Ê½º°¡ µÉ ÀÏÀº ¾ø°ÚÁö¸¸ ¿¡·¯ ¹æÁö¿ë
-					if (m_pClientList[iClientH]->m_iSuperAttackLeft < 0) m_pClientList[iClientH]->m_iSuperAttackLeft = 0;
+					client.m_iSuperAttackLeft--;
+					if (client.m_iSuperAttackLeft < 0) client.m_iSuperAttackLeft = 0;
 				}
 
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, wType);
-			} else if (iRet == 2) SendObjectMotionRejectMsg(iClientH);
-			// v2.171
-			bCheckClientAttackFrequency(iClientH, dwClientTime);
+				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, wType);
+			} else if (iRet == 2) SendObjectMotionRejectMsg(client.id_);
+			bCheckClientAttackFrequency(client.id_, dwClientTime);
 			break;
 
 		case DEF_OBJECTGETITEM:
-			iRet = iClientMotion_GetItem_Handler(iClientH, sX, sY, cDir);
+			iRet = iClientMotion_GetItem_Handler(client.id_, sX, sY, cDir);
 			if (iRet == 1) {
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTGETITEM, 0, 0, 0);
-			} else if (iRet == 2) SendObjectMotionRejectMsg(iClientH);
+				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTGETITEM, 0, 0, 0);
+			} else if (iRet == 2) SendObjectMotionRejectMsg(client.id_);
 			break;
 
 		case DEF_OBJECTMAGIC:
-			iRet = iClientMotion_Magic_Handler(iClientH, sX, sY, cDir);
+			iRet = iClientMotion_Magic_Handler(client.id_, sX, sY, cDir);
 			//client hp recorded here ONLY if its less than
 			if (iRet == 1) {
-				if (m_pClientList[iClientH]->m_bMagicPauseTime == false) {
-					m_pClientList[iClientH]->m_bMagicPauseTime = true;
-					iTemp = 10;
-					SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMAGIC, dX, iTemp, 0);
-					m_pClientList[iClientH]->m_iSpellCount++;
-					bCheckClientMagicFrequency(iClientH, dwClientTime);
-				} else if (m_pClientList[iClientH]->m_bMagicPauseTime == true) {
-					wsprintf(G_cTxt, "Cast Delay Hack: (%s) Player: (%s) - player casting too fast.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
+				if (client.m_bMagicPauseTime == false) {
+					client.m_bMagicPauseTime = true;
+					SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMAGIC, dX, 10, 0);
+					client.m_iSpellCount++;
+					bCheckClientMagicFrequency(client.id_, dwClientTime);
+				} else if (client.m_bMagicPauseTime == true) {
+					wsprintf(G_cTxt, "Cast Delay Hack: (%s) Player: (%s) - player casting too fast.", client.m_cIPaddress, client.m_cCharName);
 					PutHackLogFileList(G_cTxt);
-					DeleteClient(iClientH, true, true);
+					DeleteClient(client.id_, true, true);
 				}
-			} else if (iRet == 2) SendObjectMotionRejectMsg(iClientH);
+			} else if (iRet == 2) SendObjectMotionRejectMsg(client.id_);
 			break;
 
 		default:
@@ -1281,42 +1272,37 @@ int CGame::iClientMotion_Move_Handler(int iClientH, short sX, short sY, char cDi
 	return 1;
 }
 
-void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
+void CGame::RequestInitPlayerHandler(CClient &client, char * pData, char cKey) {
 	register int i;
 	char * cp, cCharName[11], cAccountName[11], cAccountPassword[11], cTxt[120];
 	bool bIsObserverMode;
 
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == true) return;
-
-	// ÇÃ·¹ÀÌ¾îÀÇ ÀÌ¸§, °èÁ¤ÀÇ ÀÌ¸§, ÆÐ½º¿öµå¸¦ ±â·ÏÇÏ°í ·Î±× ¼­¹ö·Î ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ Àü¼ÛÀ» ¿äÃ»ÇÑ´Ù.
-
+	if (client.m_bIsInitComplete == true) return;
 	std::memset(cCharName, 0, sizeof (cCharName));
 	std::memset(cAccountName, 0, sizeof (cAccountName));
 	std::memset(cAccountPassword, 0, sizeof (cAccountPassword));
 
-	std::memset(m_pClientList[iClientH]->m_cCharName, 0, sizeof (m_pClientList[iClientH]->m_cCharName));
-	std::memset(m_pClientList[iClientH]->m_cAccountName, 0, sizeof (m_pClientList[iClientH]->m_cAccountName));
-	std::memset(m_pClientList[iClientH]->m_cAccountPassword, 0, sizeof (m_pClientList[iClientH]->m_cAccountPassword));
+	std::memset(client.m_cCharName, 0, sizeof (client.m_cCharName));
+	std::memset(client.m_cAccountName, 0, sizeof (client.m_cAccountName));
+	std::memset(client.m_cAccountPassword, 0, sizeof (client.m_cAccountPassword));
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 
 	memcpy(cCharName, cp, 10);
 	cp += 10;
 
-	std::memset(cTxt, 0, sizeof (cTxt)); // v1.4
+	std::memset(cTxt, 0, sizeof (cTxt));
 	memcpy(cTxt, cCharName, 10);
 	m_Misc.bDecode(cKey, cTxt);
 	std::memset(cCharName, 0, sizeof (cCharName));
 	memcpy(cCharName, cTxt, 10);
 
-	//testcode
 	if (strlen(cTxt) == 0) PutLogList("RIPH - cTxt: Char nullptr!");
 
 	memcpy(cAccountName, cp, 10);
 	cp += 10;
 
-	std::memset(cTxt, 0, sizeof (cTxt)); // v1.4
+	std::memset(cTxt, 0, sizeof (cTxt));
 	memcpy(cTxt, cAccountName, 10);
 	m_Misc.bDecode(cKey, cTxt);
 	std::memset(cAccountName, 0, sizeof (cAccountName));
@@ -1325,7 +1311,7 @@ void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
 	memcpy(cAccountPassword, cp, 10);
 	cp += 10;
 
-	std::memset(cTxt, 0, sizeof (cTxt)); // v1.4
+	std::memset(cTxt, 0, sizeof (cTxt));
 	memcpy(cTxt, cAccountPassword, 10);
 	m_Misc.bDecode(cKey, cTxt);
 	std::memset(cAccountPassword, 0, sizeof (cAccountPassword));
@@ -1334,58 +1320,45 @@ void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
 	bIsObserverMode = (bool) * cp;
 	cp++;
 
-	// Áßº¹µÈ °èÁ¤À» °®°íÀÖ´Â Ä³¸¯ÅÍ¸¦ »èÁ¦ÇÑ´Ù.
-	for (i = 1; i < DEF_MAXCLIENTS; i++)
-		if ((m_pClientList[i] != nullptr) && (iClientH != i) && (memcmp(m_pClientList[i]->m_cAccountName, cAccountName, 10) == 0)) {
-			// ÆÐ½º¿öµå°¡ ÀÏÄ¡ÇÏ¸é ¶Õ°í µé¾î°¥ ¼ö ÀÖ´Ù. ±×·¯³ª ´Ù¸£¸é Á¢¼Ó ºÒ°¡.
+	for (i = 1; i < DEF_MAXCLIENTS; i++) {
+		if ((m_pClientList[i] != nullptr) && (client.id_ != i) && (memcmp(m_pClientList[i]->m_cAccountName, cAccountName, 10) == 0)) {
 			if (memcmp(m_pClientList[i]->m_cAccountPassword, cAccountPassword, 10) == 0) {
-				// ÆÐ½º¿öµå°¡ ÀÏÄ¡ÇÑ´Ù.
 				wsprintf(G_cTxt, "<%d> Duplicate account player! Deleted with data save : CharName(%s) AccntName(%s) IP(%s)", i, m_pClientList[i]->m_cCharName, m_pClientList[i]->m_cAccountName, m_pClientList[i]->m_cIPaddress);
 				PutLogList(G_cTxt);
-				//PutLogFileList(G_cTxt);
-				DeleteClient(i, true, true, false); // 3¹øÂ° false:·Î±× ¼­¹ö·Î Ä«¿îÆÃ ´Ù¿îÀº ÇÏÁö ¸»¶ó´Â ¸Þ½ÃÁö
+				DeleteClient(i, true, true, false);
 			} else {
-				// v1.4 °èÁ¤ Á¤º¸¸¦ ÀÔ·ÂÇØ¾ß ·Î±×ÀÎ ¼­¹ö·Î Åëº¸°¡ °¡´ÉÇÏ´Ù.
-				memcpy(m_pClientList[iClientH]->m_cCharName, cCharName, 10);
-				memcpy(m_pClientList[iClientH]->m_cAccountName, cAccountName, 10);
-				memcpy(m_pClientList[iClientH]->m_cAccountPassword, cAccountPassword, 10);
-
-				// ÆÐ½º¿öµå°¡ ÀÏÄ¡ÇÏÁö ¾Ê´Â´Ù.  Á¢¼Ó ºÒ°¡.
-				DeleteClient(iClientH, false, false, false);
+				memcpy(client.m_cCharName, cCharName, 10);
+				memcpy(client.m_cAccountName, cAccountName, 10);
+				memcpy(client.m_cAccountPassword, cAccountPassword, 10);
+				DeleteClient(client.id_, false, false, false);
 				return;
 			}
 		}
+	}
 
-	// Áßº¹µÈ ÀÌ¸§À» °®°í ÀÖ´Â Ä³¸¯ÅÍ°¡ ÀÖ´Ù¸é ¸¶Âù°¡Áö·Î »èÁ¦
-	for (i = 1; i < DEF_MAXCLIENTS; i++)
-		if ((m_pClientList[i] != nullptr) && (iClientH != i) && (memcmp(m_pClientList[i]->m_cCharName, cCharName, 10) == 0)) {
-			// ÆÐ½º¿öµå°¡ ÀÏÄ¡ÇÏ¸é ¶Õ°í µé¾î°¥ ¼ö ÀÖ´Ù. ±×·¯³ª ´Ù¸£¸é Á¢¼Ó ºÒ°¡.
+	for (i = 1; i < DEF_MAXCLIENTS; i++) {
+		if ((m_pClientList[i] != nullptr) && (client.id_ != i) && (memcmp(m_pClientList[i]->m_cCharName, cCharName, 10) == 0)) {
 			if (memcmp(m_pClientList[i]->m_cAccountPassword, cAccountPassword, 10) == 0) {
 				wsprintf(G_cTxt, "<%d> Duplicate player! Deleted with data save : CharName(%s) IP(%s)", i, m_pClientList[i]->m_cCharName, m_pClientList[i]->m_cIPaddress);
 				PutLogList(G_cTxt);
 				//PutLogFileList(G_cTxt);
 				DeleteClient(i, true, true, false);
 			} else {
-				// v1.4 °èÁ¤ Á¤º¸¸¦ ÀÔ·ÂÇØ¾ß ·Î±×ÀÎ ¼­¹ö·Î Åëº¸°¡ °¡´ÉÇÏ´Ù.
-				memcpy(m_pClientList[iClientH]->m_cCharName, cCharName, 10);
-				memcpy(m_pClientList[iClientH]->m_cAccountName, cAccountName, 10);
-				memcpy(m_pClientList[iClientH]->m_cAccountPassword, cAccountPassword, 10);
-
-				// ÆÐ½º¿öµå°¡ ÀÏÄ¡ÇÏÁö ¾Ê´Â´Ù.  Á¢¼Ó ºÒ°¡.
-				DeleteClient(iClientH, false, false);
+				memcpy(client.m_cCharName, cCharName, 10);
+				memcpy(client.m_cAccountName, cAccountName, 10);
+				memcpy(client.m_cAccountPassword, cAccountPassword, 10);
+				DeleteClient(client.id_, false, false);
 				return;
 			}
 		}
+	}
 
-	// Á¤º¸ ÀÔ·Â
-	memcpy(m_pClientList[iClientH]->m_cCharName, cCharName, 10);
-	memcpy(m_pClientList[iClientH]->m_cAccountName, cAccountName, 10);
-	memcpy(m_pClientList[iClientH]->m_cAccountPassword, cAccountPassword, 10);
+	memcpy(client.m_cCharName, cCharName, 10);
+	memcpy(client.m_cAccountName, cAccountName, 10);
+	memcpy(client.m_cAccountPassword, cAccountPassword, 10);
 
-	m_pClientList[iClientH]->m_bIsObserverMode = bIsObserverMode;
-
-	// Log Server·Î µ¥ÀÌÅÍ ¿äÃ» ¸Þ½ÃÁö¸¦ º¸³½´Ù.
-	bSendMsgToLS(MSGID_REQUEST_PLAYERDATA, iClientH);
+	client.m_bIsObserverMode = bIsObserverMode;
+	bSendMsgToLS(MSGID_REQUEST_PLAYERDATA, client.id_);
 }
 
 // 05/22/2004 - Hypnotoad - sends client to proper location after dieing
@@ -11295,7 +11268,7 @@ void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint3
 			break;
 
 		case MSGID_REQUEST_CIVILRIGHT:
-			RequestCivilRightHandler(iClientH, pData);
+			RequestCivilRightHandler(client, pData);
 			break;
 
 		case MSGID_REQUEST_TELEPORT:
@@ -11303,8 +11276,8 @@ void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint3
 			break;
 
 		case MSGID_REQUEST_INITPLAYER:
-			RequestInitPlayerHandler(iClientH, pData, cKey);
-			SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+			RequestInitPlayerHandler(client, pData, cKey);
+			SendNotifyMsg(0, client.id_, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
 			break;
 
 		case MSGID_REQUEST_INITDATA:
@@ -11338,7 +11311,7 @@ void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint3
 			break;
 
 		case MSGID_COMMAND_MOTION:
-			ClientMotionHandler(iClientH, pData);
+			ClientMotionHandler(client, pData);
 			break;
 
 		case MSGID_COMMAND_CHECKCONNECTION:
@@ -24238,60 +24211,46 @@ bool CGame::bCheckLimitedUser(int iClientH) {
 	return false;
 }
 
-void CGame::RequestCivilRightHandler(int iClientH, char */*pData*/) {
-	char * cp, cData[100];
-	uint32_t * dwp;
-	uint16_t * wp, wResult;
-	int iRet;
+void CGame::RequestCivilRightHandler(CClient &client, char */*pData*/) {
+	if (client.m_bIsInitComplete == false) return;
+	if ((m_bAdminSecurity == true) && (client.m_iAdminUserLevel > 0)) return;
 
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-	if ((m_bAdminSecurity == true) && (m_pClientList[iClientH]->m_iAdminUserLevel > 0)) return;
-
-	// ?횑쨔횑 횉횗 쨍쨋?쨩?횉 쩌횘쩌횙?횑 ?횜쨈횢쨍챕 쩍횄쨔횓짹횉?쨩 째징횁첬 쩌철 쩐첩쨈횢.
-	if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) wResult = 0;
-	else wResult = 1;
-
-	// 쨌쨔쨘짠?횑 5 ?횑횉횕쨋처쨉쨉 쩍횄쨔횓짹횉?쨩 쩐챵?쨩 쩌철 쩐첩쨈횢.
-	if (m_pClientList[iClientH]->m_iLevel < 5) wResult = 0;
+	uint16_t wResult = 1;
+	if (memcmp(client.m_cLocation, "NONE", 4) != 0) wResult = 0;
+	if (client.m_iLevel < 5) wResult = 0;
 
 	if (wResult == 1) {
-		// 횉철?챌 쨍횎?횉 ?횑쨍짠?쨩 횉횘쨈챌횉횗쨈횢.
-		std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof (m_pClientList[iClientH]->m_cLocation));
-		strcpy(m_pClientList[iClientH]->m_cLocation, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName);
+		std::memset(client.m_cLocation, 0, sizeof (client.m_cLocation));
+		strcpy(client.m_cLocation, m_pMapList[client.m_cMapIndex]->m_cLocationName);
 	}
 
-	// Side 횉횘쨈챌
-	if (memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0)
-		m_pClientList[iClientH]->m_cSide = 1;
+	if (memcmp(client.m_cLocation, "are", 3) == 0)
+		client.m_cSide = 1;
 
-	if (memcmp(m_pClientList[iClientH]->m_cLocation, "elv", 3) == 0)
-		m_pClientList[iClientH]->m_cSide = 2;
+	if (memcmp(client.m_cLocation, "elv", 3) == 0)
+		client.m_cSide = 2;
 
-	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+	char cData[100];
+	uint32_t *dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = MSGID_RESPONSE_CIVILRIGHT;
-	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+	uint16_t *wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
 	*wp = wResult;
 
-	// v1.41 쨍횎 ?횑쨍짠 쩐횏쨌횁횁횥
-	cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
-	memcpy(cp, m_pClientList[iClientH]->m_cLocation, 10);
+	char *cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
+	memcpy(cp, client.m_cLocation, 10);
 	cp += 10;
 
-	// ??쨈채 쨍횧쩍횄횁철쨍짝 횇짭쨋처?횑쩐챨횈짰쩔징째횚 ?체쩌횤
-	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 16);
+	int iRet = client.m_pXSock->iSendMsg(cData, 16);
 	switch (iRet) {
 		case DEF_XSOCKEVENT_QUENEFULL:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			// 쨍횧쩍횄횁철쨍짝 쨘쨍쨀쩐쨋짠 쩔징쨌짱째징 쨔횩쨩첵횉횩쨈횢쨍챕 횁짝째횇횉횗쨈횢.
-			DeleteClient(iClientH, true, true);
+			DeleteClient(client.id_, true, true);
 			return;
 	}
-	// 횈짱쩌쨘?횑 쨔횢짼챤쨔횉쨌횓 쩔횥쩐챌?쨩 쨩천쨌횓 쨘쨍쨀쩍쨈횢.
-	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
-	RequestChangePlayMode(iClientH);
+	SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	RequestChangePlayMode(client.id_);
 }
 
 void CGame::RequestRetrieveItemHandler(CClient &client, char *pData) {
