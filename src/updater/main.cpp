@@ -1,178 +1,149 @@
 #include "../updaterlib/updaterlib.h"
 #include <iostream>
-#include <fstream>
-#include <stdexcept>
-#include <cstring>
-#include <algorithm>
-struct BinaryOstream {
+#include <deque>
 
-	void add(const void *ptr, std::size_t sz) {
-		str_.append(reinterpret_cast<const char*> (ptr), sz);
-	}
+struct App {
 
-	std::string str() {
-		return str_;
-	}
-
-	void reserve(std::size_t sz) {
-		str_.reserve(sz);
-	}
-private:
-	std::string str_;
-};
-
-template<typename T> typename std::enable_if<std::is_integral<T>::value, BinaryOstream&>::type operator<<(BinaryOstream &os, T v) {
-	os.add(&v, sizeof (T));
-	return os;
-}
-
-BinaryOstream& operator<<(BinaryOstream &os, const std::string &str) {
-	os << str.size();
-	os.add(str.data(), str.size());
-	return os;
-}
-
-struct BinaryIstream {
-
-	BinaryIstream(const std::string &str) : str_(str), size_(str_.size()) {
-	}
-
-	void get(void *ptr, std::size_t sz) {
-		if (remaining() < sz) {
-			throw std::runtime_error("Not enough data");
+	App() {
+		path_ = ".";
+		fds_ = getFileData(path_, "cache.dat");
+		client_ = Net::createPacketedClient(io_service_, "localhost", "1492");
+		while (io_service_.run_one()) {
+			update();
 		}
-		std::memcpy(ptr, str_.data() + index_, sz);
-		index_ += sz;
-	}
-
-	std::size_t remaining() const {
-		return size_ - index_;
+		if (updated_) {
+			saveCache(fds_, "cache.dat");
+		}
 	}
 private:
-	std::size_t index_ = 0;
-	const std::string str_;
-	const std::size_t size_;
-};
+	std::string path_;
+	FileDatas fds_;
+	asio::io_service io_service_;
+	Net::ClientPtr client_;
+	FileDatas serverFds_;
+	std::deque<std::string> toUpdate_;
+	std::string currentFile_;
+	FileData currentFileDesc_;
+	std::string currentFileData_;
+	bool updated_ = false;
 
-template<typename T> typename std::enable_if<std::is_integral<T>::value, BinaryIstream&>::type operator>>(BinaryIstream &is, T &v) {
-	is.get(&v, sizeof (T));
-	return is;
-}
-
-BinaryIstream& operator>>(BinaryIstream &is, std::string &str) {
-	decltype(str.size()) sz;
-	is >> sz;
-	str.assign(sz, 0);
-	is.get(&str[0], str.size());
-	return is;
-}
-
-void saveCache(const std::vector<FileData> &fds) {
-	BinaryOstream os;
-	os << fds.size();
-	for (const FileData &fd : fds) {
-		os << fd.name_ << fd.size_ << fd.checksum_ <<
-				  fd.timestamp_.year_ << fd.timestamp_.month_ << fd.timestamp_.day_ <<
-				  fd.timestamp_.hour_ << fd.timestamp_.minute_ << fd.timestamp_.second_ << fd.timestamp_.millisecond_;
+	void update() {
+		Net::Events events = client_->getEvents();
+		for (const Net::Event &ev : events) {
+			switch (ev.type_) {
+				case Net::EventType::CONNECTED:
+					onConnected();
+					break;
+				case Net::EventType::DISCONNECTED:
+					onDisconnected();
+					break;
+				case Net::EventType::MSG:
+					onMsg(ev.msg_);
+					break;
+			}
+		}
 	}
-	std::ofstream ofs("cache.dat", std::ios::out | std::ios::binary);
-	ofs << os.str();
-}
 
-void loadCache(std::vector<FileData> &fds) {
-	BinaryIstream is(readFile("cache.dat"));
-	decltype(fds.size()) sz = 0;
-	is >> sz;
-	fds.reserve(sz);
-	for (std::size_t i = 0; i < sz; ++i) {
+	void onConnected() {
+		std::cout << "Connected!" << std::endl;
+		BinaryOstream os;
+		os << OpcodeClientToSrv::REQUEST_FILEDATA;
+		client_->send(os.str());
+	}
+
+	void onDisconnected() {
+		std::cout << "Disconnected!" << std::endl;
+	}
+
+	void onMsg(const std::string& msg) {
+		BinaryIstream is(msg);
+		OpcodeSrvToClient op;
+		is >> op;
+		switch (op) {
+			case OpcodeSrvToClient::RESPONSE_FILEDATA:
+				onResponseFileData(is);
+				break;
+			case OpcodeSrvToClient::RESPONSE_FILE:
+				onResponseFile(is);
+				break;
+			case OpcodeSrvToClient::RESPONSE_FILE_FINISHED:
+				onResponseFileFinished();
+				break;
+		}
+	}
+
+	void onResponseFileData(BinaryIstream &is) {
+		std::string data;
+		is >> data;
+		serverFds_ = fromStr(data);
+		for (const auto &p : serverFds_) {
+			const std::string &name = p.first;
+			const FileData &fd = p.second;
+			auto iter = fds_.find(name);
+			if (iter == fds_.end()) {
+				toUpdate_.push_back(name);
+			} else {
+				const FileData &lfd = iter->second;
+				if (fd.size_ != lfd.size_ || fd.checksum_ != lfd.checksum_) {
+					toUpdate_.push_back(name);
+				}
+			}
+		}
+		requestNextFile();
+	}
+
+	void requestNextFile() {
+		if (toUpdate_.empty()) {
+			client_->close();
+			return;
+		}
+		currentFile_ = toUpdate_.front();
+		toUpdate_.pop_front();
+		std::cout << "Requesting file " << currentFile_ << " " << std::endl;
+		currentFileDesc_ = serverFds_.at(currentFile_);
+		currentFileData_.clear();
+		currentFileData_.reserve(currentFileDesc_.size_);
+		BinaryOstream os;
+		os << OpcodeClientToSrv::REQUEST_FILE;
+		os << currentFile_;
+		client_->send(os.str());
+	}
+
+	void onResponseFile(BinaryIstream &is) {
+		std::string data;
+		is >> data;
+		currentFileData_.append(data);
+		if (currentFileDesc_.size_ > 0) {
+			std::size_t lastProgress = ((currentFileData_.size() - data.size())*100) / currentFileDesc_.size_;
+			std::size_t currentProgress = (currentFileData_.size()*100) / currentFileDesc_.size_;
+			for (int i = 0; i < currentProgress - lastProgress; ++i) {
+				std::cout << "*";
+			}
+		}
+	}
+
+	void onResponseFileFinished() {
+		std::cout << " Got file " << currentFile_ << std::endl;
+		std::string fullPath = toStr(path_, "/", currentFile_);
+		makeFullPath(filePath(fullPath));
+		writeFile(fullPath, currentFileData_);
+		updated_ = true;
 		FileData fd;
-		is >> fd.name_ >> fd.size_ >> fd.checksum_ >>
-				  fd.timestamp_.year_ >> fd.timestamp_.month_ >> fd.timestamp_.day_ >>
-				  fd.timestamp_.hour_ >> fd.timestamp_.minute_ >> fd.timestamp_.second_ >> fd.timestamp_.millisecond_;
-		fds.push_back(fd);
+		fd.size_ = currentFileData_.size();
+		fd.checksum_ = calculateChecksum(currentFileData_);
+		fd.timestamp_ = getModificationTime(fullPath);
+		fds_[currentFile_] = fd;
+		requestNextFile();
 	}
-}
-
-void print(const std::vector<FileData> &fds) {
-	for (const FileData &fd : fds) {
-		std::cout << fd.name_ << " " << fd.size_ << " " << fd.checksum_ << " " <<
-				  (int) fd.timestamp_.year_ << "/" << (int) fd.timestamp_.month_ << "/" << (int) fd.timestamp_.day_ << " " <<
-				  (int) fd.timestamp_.hour_ << ":" << (int) fd.timestamp_.minute_ << ":" << (int) fd.timestamp_.second_ << "." << fd.timestamp_.millisecond_ << std::endl;
-	}
-}
+};
 
 int main() {
 	try {
-#if 0
-		std::vector<FileData> fds = getFileData(".");
-		saveCache(fds);
-#endif
-#if 1
-		std::vector<FileData> fds;
-		try {
-			loadCache(fds);
-			std::vector<LightFileData> lfds = getLightFileData(".");
-			bool updated = false;
-			for(const LightFileData &lfd: lfds) {
-				if(lfd.name_ == "cache.dat") continue;
-				FileData *fdPtr = nullptr;
-				for(FileData &fd : fds) {
-					if(fd.name_ == lfd.name_) {
-						fdPtr = &fd;
-					}
-				}
-				if(fdPtr) {
-					if(fdPtr->timestamp_ != lfd.timestamp_) {
-						// Modified
-						fdPtr->timestamp_ = lfd.timestamp_;
-						std::string data = readFile(toStr("./", lfd.name_).c_str());
-						fdPtr->size_ = data.size();
-						fdPtr->checksum_ = calculateChecksum(data);
-						updated = true;
-					}
-				} else {
-					// New file
-					FileData fd;						
-					fd.name_ = lfd.name_;
-					fd.timestamp_ = lfd.timestamp_;
-					std::string data = readFile(toStr("./", lfd.name_).c_str());
-					fd.size_ = data.size();
-					fd.checksum_ = calculateChecksum(data);
-					fds.push_back(fd);
-					updated = true;
-				}
-			}
-			std::vector<std::string> toRemove;
-			for(FileData &fd: fds) {
-				if(fd.name_ == "cache.dat") continue;
-				bool found = false;
-				for(const LightFileData &lfd: lfds) {
-					if(lfd.name_ == fd.name_) {
-						found = true;
-					}
-				}
-				if(!found) {
-					updated = true;
-					std::cout << fd.name_ << " Removed" << std::endl;
-					toRemove.push_back(fd.name_);
-				}
-			}
-			auto iter = std::remove_if(fds.begin(), fds.end(), [&toRemove](const FileData &fd){return std::find(toRemove.begin(), toRemove.end(), fd.name_) != toRemove.end();});
-			fds.erase(iter, fds.end());
-			if(updated) {
-				std::cout << "Refreshing cache" << std::endl;
-				saveCache(fds);
-			}
-		}catch(std::exception &) {
-			std::cout << "Caching data..." << std::endl;
-			fds = getFileData(".");
-			saveCache(fds);
-		}
-		//print(fds);
-#endif
+		App app;
 	} catch (std::exception &e) {
 		std::cout << "Exception " << e.what() << std::endl;
+	} catch (...) {
+		std::cout << "Exception!" << std::endl;
 	}
 	return 0;
 }
-

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="94">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <logicalFolder name="updater" displayName="updater" projectFiles="true">
-      <itemPath>../../../src/updater/main.cpp</itemPath>
+    <logicalFolder name="updaterserver"
+                   displayName="updaterserver"
+                   projectFiles="true">
+      <itemPath>../../../src/updaterserver/main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -18,6 +20,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../../src/updater</Elem>
+    <Elem>../../../src/updaterserver</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -33,7 +36,7 @@
           <commandLine>-Wall -Wextra</commandLine>
         </ccTool>
         <linkerTool>
-          <output>../../../bin/updater</output>
+          <output>../../../bin/updaterserver</output>
           <linkerLibItems>
             <linkerLibProjectItem>
               <makeArtifact PL="../UpdaterLib"
@@ -53,7 +56,10 @@
           <commandLine>-static -mwindows</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../../src/updater/main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../../src/updaterserver/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -78,7 +84,7 @@
           <developmentMode>5</developmentMode>
         </asmTool>
         <linkerTool>
-          <output>../../../bin/updater</output>
+          <output>../../../bin/updaterserver</output>
           <linkerLibItems>
             <linkerLibProjectItem>
               <makeArtifact PL="../UpdaterLib"
@@ -98,7 +104,10 @@
           <commandLine>-static -mwindows</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../../src/updater/main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../../src/updaterserver/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
     </conf>
   </confs>
