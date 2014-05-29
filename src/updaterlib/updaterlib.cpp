@@ -332,6 +332,29 @@ std::string filePath(const std::string &path) {
 	return path.substr(0, i);
 }
 
+void launchProcess(const std::string &fileName) {
+	STARTUPINFO siStartupInfo;
+	PROCESS_INFORMATION piProcessInfo;
+	memset(&siStartupInfo, 0, sizeof (siStartupInfo));
+	memset(&piProcessInfo, 0, sizeof (piProcessInfo));
+	siStartupInfo.cb = sizeof (siStartupInfo);
+
+	::CreateProcess(fileName.c_str(), // application name/path
+			  NULL, // command line (optional)
+			  NULL, // no process attributes (default)
+			  NULL, // default security attributes
+			  false,
+			  CREATE_DEFAULT_ERROR_MODE | CREATE_NEW_CONSOLE,
+			  NULL, // default env
+			  NULL, // default working dir
+			  &siStartupInfo,
+			  &piProcessInfo);
+}
+
+void closeThisProcess() {
+	::TerminateProcess(GetCurrentProcess(), 0);
+	::ExitProcess(0); // exit this process
+}
 namespace Net {
 	namespace Packeted {
 
@@ -513,6 +536,9 @@ namespace Net {
 					io_service_.post([this]() {
 						socket_.close(); });
 				}
+				std::string address() const {
+					return toStr(socket_.remote_endpoint().address().to_string(), ":", socket_.remote_endpoint().port());
+				}
 			private:
 				ClientId id_ = 0;
 
@@ -577,8 +603,7 @@ namespace Net {
 				client->setId(id);
 				clients_.insert(client);
 				clientsById_[id] = client;
-				events_.push_back({EventType::CONNECTED, id,
-					{}});
+				events_.push_back({EventType::CONNECTED, id, client->address()});
 			}
 
 			void Clients::remove(ClientPtr client) {

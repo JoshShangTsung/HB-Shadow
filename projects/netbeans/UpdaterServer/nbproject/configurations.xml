@@ -4,7 +4,7 @@
     <logicalFolder name="updaterserver"
                    displayName="updaterserver"
                    projectFiles="true">
-      <itemPath>../../../src/updaterserver/main.cpp</itemPath>
+      <itemPath>../../../src/updaterserver/updaterserver.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -53,10 +53,10 @@
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>Mswsock</linkerLibLibItem>
           </linkerLibItems>
-          <commandLine>-static -mwindows</commandLine>
+          <commandLine>-static</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../../src/updaterserver/main.cpp"
+      <item path="../../../src/updaterserver/updaterserver.cpp"
             ex="false"
             tool="1"
             flavor2="0">
@@ -101,10 +101,10 @@
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>Mswsock</linkerLibLibItem>
           </linkerLibItems>
-          <commandLine>-static -mwindows</commandLine>
+          <commandLine>-static</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../../src/updaterserver/main.cpp"
+      <item path="../../../src/updaterserver/updaterserver.cpp"
             ex="false"
             tool="1"
             flavor2="0">

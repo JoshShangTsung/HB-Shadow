@@ -253,6 +253,8 @@ std::string asStr(const FileDatas &fds);
 FileDatas fromStr(const std::string &str);
 uint32_t calculateChecksum(const std::string &data);
 Timestamp getModificationTime(const std::string &path);
+void launchProcess(const std::string &fileName);
+void closeThisProcess();
 enum class OpcodeClientToSrv : uint32_t {
 	REQUEST_FILEDATA,
 	REQUEST_FILE
