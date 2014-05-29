@@ -8,7 +8,12 @@
 #include <set>
 #include <map>
 #include <thread>
+
+#define ASIO_STANDALONE
+#include <asio.hpp>
+
 #include <windows.h>
+
 
 bool operator==(const Timestamp &a, const Timestamp &b) {
 	return a.millisecond_ == b.millisecond_ &&
@@ -62,37 +67,89 @@ void writeFile(const std::string &fileName, const std::string &data) {
 	}
 	ofs << data;
 }
+
+std::pair<std::vector<std::string>, std::vector<std::string>> getFiles(const std::string &path) {
+	WIN32_FIND_DATA ffd;
+	HANDLE hFind = FindFirstFile(toStr(path, "/*").c_str(), &ffd);
+	if (hFind == INVALID_HANDLE_VALUE) {
+		throw std::runtime_error(toStr("Error retrieving files at ", path));
+	}
+	std::vector<std::string> files;
+	std::vector<std::string> folders;
+	do {
+		if (strcmp(ffd.cFileName, ".") != 0 && strcmp(ffd.cFileName, "..") != 0) {
+			if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				folders.push_back(ffd.cFileName);
+			} else {
+				files.push_back(ffd.cFileName);
+			}
+		}
+	} while (FindNextFile(hFind, &ffd) != 0);
+	auto e = GetLastError();
+	if (e != ERROR_NO_MORE_FILES) {
+		FindClose(hFind);
+		throw std::runtime_error(toStr("Error retrieving files at ", path, ": ", e));
+	}
+	FindClose(hFind);
+	hFind = INVALID_HANDLE_VALUE;
+	return std::make_pair(std::move(files), std::move(folders));
+}
+
+Checksum calculateChecksum(const std::string &data) {
+	return std::accumulate(data.begin(), data.end(), (Checksum) 0);
+}
+
+Timestamp getModificationTime(const std::string &path) {
+	HANDLE hFile = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+	if (hFile == INVALID_HANDLE_VALUE) {
+		throw std::runtime_error(toStr("Couldn't read file ", path, " for ts"));
+	}
+	FILETIME ftCreate, ftAccess, ftWrite;
+	// Retrieve the file times for the file.
+	if (!GetFileTime(hFile, &ftCreate, &ftAccess, &ftWrite)) {
+		CloseHandle(hFile);
+		throw std::runtime_error(toStr("Couldn't get file ", path, " time"));
+	}
+	CloseHandle(hFile);
+	// Convert the last-write time to local time.
+	SYSTEMTIME stUTC;
+	FileTimeToSystemTime(&ftWrite, &stUTC);
+
+	SYSTEMTIME stLocal;
+	SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+	Timestamp ret;
+	ret.year_ = stLocal.wYear;
+	ret.month_ = stLocal.wMonth;
+	ret.day_ = stLocal.wDay;
+	ret.hour_ = stLocal.wHour;
+	ret.minute_ = stLocal.wMinute;
+	ret.second_ = stLocal.wSecond;
+	ret.millisecond_ = stLocal.wMilliseconds;
+	return ret;
+}
+
+
 namespace {
+
+	struct FileData {
+		uint32_t size_;
+		Checksum checksum_;
+		Timestamp timestamp_;
+	};
+
+	struct LightFileData {
+		Timestamp timestamp_;
+	};
+	typedef std::unordered_map<std::string, FileData> FileDatas;
+	typedef std::unordered_map<std::string, LightFileData> LightFileDatas;
+	void print(const FileDatas &fds);
+	FileDatas getFileData(const std::string &path, const std::string &fileName);
+	std::string asStr(const FileDatas &fds);
+	FileDatas fromStr(const std::string &str);
 
 	FileDatas getFileData(const std::string &path);
 	LightFileDatas getLightFileData(const std::string &path);
-
-	std::pair<std::vector<std::string>, std::vector<std::string>> getFiles(const std::string &path) {
-		WIN32_FIND_DATA ffd;
-		HANDLE hFind = FindFirstFile(toStr(path, "/*").c_str(), &ffd);
-		if (hFind == INVALID_HANDLE_VALUE) {
-			throw std::runtime_error(toStr("Error retrieving files at ", path));
-		}
-		std::vector<std::string> files;
-		std::vector<std::string> folders;
-		do {
-			if (strcmp(ffd.cFileName, ".") != 0 && strcmp(ffd.cFileName, "..") != 0) {
-				if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-					folders.push_back(ffd.cFileName);
-				} else {
-					files.push_back(ffd.cFileName);
-				}
-			}
-		} while (FindNextFile(hFind, &ffd) != 0);
-		auto e = GetLastError();
-		if (e != ERROR_NO_MORE_FILES) {
-			FindClose(hFind);
-			throw std::runtime_error(toStr("Error retrieving files at ", path, ": ", e));
-		}
-		FindClose(hFind);
-		hFind = INVALID_HANDLE_VALUE;
-		return std::make_pair(std::move(files), std::move(folders));
-	}
+	void saveCache(const FileDatas &fds, const std::string &fileName);
 
 	void addFileData(FileDatas &ret, const std::string &realPath, const std::string &path) {
 		std::vector<std::string> files;
@@ -152,89 +209,52 @@ namespace {
 		fds = fromStr(readFile(fileName));
 	}
 
-}
-
-uint32_t calculateChecksum(const std::string &data) {
-	return std::accumulate(data.begin(), data.end(), (uint32_t) 0);
-}
-
-Timestamp getModificationTime(const std::string &path) {
-	HANDLE hFile = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) {
-		throw std::runtime_error(toStr("Couldn't read file ", path, " for ts"));
+	void saveCache(const FileDatas &fds, const std::string &fileName) {
+		std::string str = asStr(fds);
+		std::ofstream ofs(fileName, std::ios::out | std::ios::binary);
+		ofs << str;
 	}
-	FILETIME ftCreate, ftAccess, ftWrite;
-	// Retrieve the file times for the file.
-	if (!GetFileTime(hFile, &ftCreate, &ftAccess, &ftWrite)) {
-		CloseHandle(hFile);
-		throw std::runtime_error(toStr("Couldn't get file ", path, " time"));
+
+	std::string asStr(const FileDatas &fds) {
+		BinaryOstream os;
+		uint32_t sz = fds.size();
+		os << sz;
+		for (const std::pair<std::string, FileData> &p : fds) {
+			const std::string &name = p.first;
+			const FileData &fd = p.second;
+			os << name << fd.size_ << fd.checksum_ <<
+					  fd.timestamp_.year_ << fd.timestamp_.month_ << fd.timestamp_.day_ <<
+					  fd.timestamp_.hour_ << fd.timestamp_.minute_ << fd.timestamp_.second_ << fd.timestamp_.millisecond_;
+		}
+		return os.str();
 	}
-	CloseHandle(hFile);
-	// Convert the last-write time to local time.
-	SYSTEMTIME stUTC;
-	FileTimeToSystemTime(&ftWrite, &stUTC);
 
-	SYSTEMTIME stLocal;
-	SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
-	Timestamp ret;
-	ret.year_ = stLocal.wYear;
-	ret.month_ = stLocal.wMonth;
-	ret.day_ = stLocal.wDay;
-	ret.hour_ = stLocal.wHour;
-	ret.minute_ = stLocal.wMinute;
-	ret.second_ = stLocal.wSecond;
-	ret.millisecond_ = stLocal.wMilliseconds;
-	return ret;
-}
-
-void saveCache(const FileDatas &fds, const std::string &fileName) {
-	std::string str = asStr(fds);
-	std::ofstream ofs(fileName, std::ios::out | std::ios::binary);
-	ofs << str;
-}
-
-std::string asStr(const FileDatas &fds) {
-	BinaryOstream os;
-	uint32_t sz = fds.size();
-	os << sz;
-	for (const std::pair<std::string, FileData> &p : fds) {
-		const std::string &name = p.first;
-		const FileData &fd = p.second;
-		os << name << fd.size_ << fd.checksum_ <<
-				  fd.timestamp_.year_ << fd.timestamp_.month_ << fd.timestamp_.day_ <<
-				  fd.timestamp_.hour_ << fd.timestamp_.minute_ << fd.timestamp_.second_ << fd.timestamp_.millisecond_;
+	FileDatas fromStr(const std::string &str) {
+		FileDatas fds;
+		BinaryIstream is(str);
+		uint32_t sz = 0;
+		is >> sz;
+		fds.reserve(sz);
+		for (std::size_t i = 0; i < sz; ++i) {
+			std::string name;
+			FileData fd;
+			is >> name >> fd.size_ >> fd.checksum_ >>
+					  fd.timestamp_.year_ >> fd.timestamp_.month_ >> fd.timestamp_.day_ >>
+					  fd.timestamp_.hour_ >> fd.timestamp_.minute_ >> fd.timestamp_.second_ >> fd.timestamp_.millisecond_;
+			fds.insert(std::make_pair(std::move(name), std::move(fd)));
+		}
+		return fds;
 	}
-	return os.str();
-}
 
-FileDatas fromStr(const std::string &str) {
-	FileDatas fds;
-	BinaryIstream is(str);
-	uint32_t sz = 0;
-	is >> sz;
-	fds.reserve(sz);
-	for (std::size_t i = 0; i < sz; ++i) {
-		std::string name;
-		FileData fd;
-		is >> name >> fd.size_ >> fd.checksum_ >>
-				  fd.timestamp_.year_ >> fd.timestamp_.month_ >> fd.timestamp_.day_ >>
-				  fd.timestamp_.hour_ >> fd.timestamp_.minute_ >> fd.timestamp_.second_ >> fd.timestamp_.millisecond_;
-		fds.insert(std::make_pair(std::move(name), std::move(fd)));
+	void print(std::ostream &os, const FileDatas &fds) {
+		for (const auto &p : fds) {
+			const std::string &name = p.first;
+			const FileData &fd = p.second;
+			os << name << " " << fd.size_ << " " << fd.checksum_ << " " <<
+					  (int) fd.timestamp_.year_ << "/" << (int) fd.timestamp_.month_ << "/" << (int) fd.timestamp_.day_ << " " <<
+					  (int) fd.timestamp_.hour_ << ":" << (int) fd.timestamp_.minute_ << ":" << (int) fd.timestamp_.second_ << "." << fd.timestamp_.millisecond_ << std::endl;
+		}
 	}
-	return fds;
-}
-
-void print(std::ostream &os, const FileDatas &fds) {
-	for (const auto &p : fds) {
-		const std::string &name = p.first;
-		const FileData &fd = p.second;
-		os << name << " " << fd.size_ << " " << fd.checksum_ << " " <<
-				  (int) fd.timestamp_.year_ << "/" << (int) fd.timestamp_.month_ << "/" << (int) fd.timestamp_.day_ << " " <<
-				  (int) fd.timestamp_.hour_ << ":" << (int) fd.timestamp_.minute_ << ":" << (int) fd.timestamp_.second_ << "." << fd.timestamp_.millisecond_ << std::endl;
-	}
-}
-
-namespace {
 
 	void updateFd(FileData &fd, const LightFileData &lfd, const std::string &path, const std::string &name) {
 		fd.timestamp_ = lfd.timestamp_;
@@ -242,55 +262,56 @@ namespace {
 		fd.size_ = data.size();
 		fd.checksum_ = calculateChecksum(data);
 	}
-}
 
-FileDatas getFileData(const std::string &path, const std::string &fileName) {
-	FileDatas fds;
-	try {
-		loadCache(fds, fileName);
-		LightFileDatas lfds = getLightFileData(path);
-		lfds.erase(fileName);
-		bool updated = false;
-		for (const auto &p : lfds) {
-			const std::string &name = p.first;
-			const LightFileData &lfd = p.second;
-			auto iter = fds.find(name);
-			if (iter != fds.end()) {
-				FileData &fd = iter->second;
-				if (fd.timestamp_ != lfd.timestamp_) {
-					// Modified
+	FileDatas getFileData(const std::string &path, const std::string &fileName) {
+		FileDatas fds;
+		try {
+			loadCache(fds, fileName);
+			LightFileDatas lfds = getLightFileData(path);
+			lfds.erase(fileName);
+			bool updated = false;
+			for (const auto &p : lfds) {
+				const std::string &name = p.first;
+				const LightFileData &lfd = p.second;
+				auto iter = fds.find(name);
+				if (iter != fds.end()) {
+					FileData &fd = iter->second;
+					if (fd.timestamp_ != lfd.timestamp_) {
+						// Modified
+						updateFd(fd, lfd, path, name);
+						updated = true;
+					}
+				} else {
+					// New file
+					FileData fd;
 					updateFd(fd, lfd, path, name);
+					fds.insert(std::make_pair(name, std::move(fd)));
 					updated = true;
 				}
-			} else {
-				// New file
-				FileData fd;
-				updateFd(fd, lfd, path, name);
-				fds.insert(std::make_pair(name, std::move(fd)));
-				updated = true;
 			}
-		}
-		std::vector<std::string> toRemove;
-		for (const auto &p : fds) {
-			const std::string &name = p.first;
-			auto iter = lfds.find(name);
-			if (iter == lfds.end()) {
-				updated = true;
-				toRemove.push_back(name);
+			std::vector<std::string> toRemove;
+			for (const auto &p : fds) {
+				const std::string &name = p.first;
+				auto iter = lfds.find(name);
+				if (iter == lfds.end()) {
+					updated = true;
+					toRemove.push_back(name);
+				}
 			}
-		}
-		std::for_each(toRemove.begin(), toRemove.end(), [&fds](const std::string & name) {
-			fds.erase(name);
-		});
-		if (updated) {
+			std::for_each(toRemove.begin(), toRemove.end(), [&fds](const std::string & name) {
+				fds.erase(name);
+			});
+			if (updated) {
+				saveCache(fds, fileName);
+			}
+		} catch (std::exception &e) {
+			fds = getFileData(path);
+			fds.erase(fileName);
 			saveCache(fds, fileName);
 		}
-	} catch (std::exception &e) {
-		fds = getFileData(path);
-		fds.erase(fileName);
-		saveCache(fds, fileName);
+		return fds;
 	}
-	return fds;
+
 }
 
 void makePath(const std::string &path) {
@@ -354,6 +375,22 @@ void closeThisProcess() {
 	::ExitProcess(0); // exit this process
 }
 namespace Net {
+	namespace {
+
+		struct MyNetwork : public Network {
+			std::size_t poll() override {
+				return service_.poll();
+			}
+			asio::io_service service_;
+		};
+	}
+
+	Network::~Network() {
+	}
+
+	NetworkPtr createNetwork() {
+		return std::make_unique<MyNetwork>();
+	}
 	namespace Packeted {
 
 		struct Message {
@@ -474,9 +511,9 @@ namespace Net {
 			class Clients : public IClients {
 			public:
 
-				void addServer(asio::io_service& io_service,
-						  const asio::ip::tcp::endpoint& endpoint) override {
-					servers_.emplace_back(*this, io_service, endpoint);
+				void addServer(Network& network, uint16_t port) override {
+					asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), port);
+					servers_.emplace_back(*this, static_cast<MyNetwork&>(network).service_, endpoint);
 				}
 				void add(ClientPtr client);
 				void remove(ClientPtr client);
@@ -774,8 +811,8 @@ namespace Net {
 		return std::make_unique<Packeted::Server::Clients>();
 	}
 
-	ClientPtr createPacketedClient(asio::io_service& io_service, const char *host, const char *port) {
-
+	ClientPtr createPacketedClient(Network& network, const char *host, const char *port) {
+		asio::io_service &io_service = static_cast<MyNetwork&>(network).service_;
 		asio::ip::tcp::resolver resolver(io_service);
 		auto endpoint_iterator = resolver.resolve({host, port});
 		auto ret = std::make_shared<Packeted::Client::PacketedClient>(io_service);
@@ -943,7 +980,7 @@ private:
 
 int main2(int) {
 	try {
-		asio::io_service io_service;
+		Net::NetworkPtr net = Net::createNetwork();
 		ActionRegister ar;
 		RequestLoginAction::doRegister(ar);
 		RequestNewAccountAction::doRegister(ar);
@@ -951,13 +988,10 @@ int main2(int) {
 		ClientsListener listener(*clients, ar);
 		auto ports = {2848};
 		for (int i : ports) {
-			asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), i);
-			clients->addServer(io_service, endpoint);
+			clients->addServer(*net, i);
 		}
-		std::thread t([&io_service]() {
-			io_service.run();
-		});
 		while (true) {
+			net->poll();
 			auto events = clients->getEvents();
 			for (const Net::ServerEvent &ev : events) {
 				switch (ev.type_) {
@@ -982,6 +1016,20 @@ int main2(int) {
 	 */
 }
 
+
+namespace {
+
+	enum class OpcodeClientToSrv : uint32_t {
+		REQUEST_FILEDATA,
+		REQUEST_FILE
+	};
+
+	enum class OpcodeSrvToClient {
+		RESPONSE_FILEDATA,
+		RESPONSE_FILE,
+		RESPONSE_FILE_FINISHED
+	};
+}
 namespace Updater {
 
 	struct Cfg {
@@ -1014,7 +1062,7 @@ namespace Updater {
 	struct Client {
 
 		Client(Listener &listener, Cfg &cfg, Cache &fds, Net::ClientPtr &&ptr) : listener_(listener), client_(std::move(ptr)), cfg_(cfg), fds_(fds) {
-			
+
 		}
 
 		void update() {
@@ -1070,7 +1118,7 @@ namespace Updater {
 			std::string fileName_;
 			FileData fd_;
 			uint32_t partialSize_;
-			uint32_t partialChecksum_;
+			Checksum partialChecksum_;
 			std::string tmpName_;
 			std::ofstream tmpFile_;
 		};
@@ -1086,7 +1134,7 @@ namespace Updater {
 
 		void onDisconnected() {
 			running_ = false;
-			if(!connected_) {
+			if (!connected_) {
 				listener_.couldntConnect();
 			}
 		}
@@ -1217,28 +1265,25 @@ namespace Updater {
 
 	struct App {
 
-		App(Listener &listener, const std::string &address, const std::string &port) : fds_(cfg_), listener_(listener) {
-			std::remove(cfg_.oldUpdaterName_.c_str());
-			listener_.loadingCache();
-			fds_.load();
-			client_ = std::make_unique<Client>(listener_, cfg_, fds_, Net::createPacketedClient(io_service_, address.c_str(), port.c_str()));
-			listener_.connecting(address, port);
-			while (client_->isRunning()) {
-				if (io_service_.poll()) {
-					client_->update();
+		App(Listener &listener, const std::string &address, const std::string &port) {
+			Net::NetworkPtr net = Net::createNetwork();
+			Cfg cfg;
+			Cache fds(cfg);
+			std::remove(cfg.oldUpdaterName_.c_str());
+			listener.loadingCache();
+			fds.load();
+			std::unique_ptr<Client> client = std::make_unique<Client>(listener, cfg, fds, Net::createPacketedClient(*net, address.c_str(), port.c_str()));
+			listener.connecting(address, port);
+			while (client->isRunning()) {
+				if (net->poll()) {
+					client->update();
 				} else {
 					std::this_thread::sleep_for(std::chrono::milliseconds(10));
 				}
 			}
-			fds_.commitCache();
-			listener_.jobDone();
+			fds.commitCache();
+			listener.jobDone();
 		}
-	private:
-		Cfg cfg_;
-		Cache fds_;
-		Listener &listener_;
-		asio::io_service io_service_;
-		std::unique_ptr<Client> client_;
 	};
 
 	void run(Listener &listener, const std::string &address, const std::string &port) {
@@ -1256,14 +1301,15 @@ namespace UpdateServer {
 	struct App {
 
 		App(Listener &listener, uint16_t port) : listener_(listener) {
+			net_ = Net::createNetwork();
 			listener.loadingMetadata();
 			fds_ = getFileData(cfg_.watchedPath_, "cache.dat");
 			filedata_ = asStr(fds_);
 			clients_ = Net::createPacketedClients();
-			clients_->addServer(io_service_, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port));
+			clients_->addServer(*net_, port);
 			listener.listening(port);
 			while (true) {
-				if (io_service_.poll()) {
+				if (net_->poll()) {
 					update();
 				} else {
 					std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -1271,6 +1317,7 @@ namespace UpdateServer {
 			}
 		}
 	private:
+		Net::NetworkPtr net_;
 		Listener &listener_;
 		Cfg cfg_;
 		FileDatas fds_;

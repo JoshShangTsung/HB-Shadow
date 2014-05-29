@@ -1,13 +1,12 @@
 #pragma once
 #include <unordered_map>
+#include <vector>
 #include <string>
 #include <sstream>
 #include <stdexcept>
 #include <cstring>
 #include <memory>
 
-#define ASIO_STANDALONE
-#include <asio.hpp>
 
 namespace std {
 
@@ -15,7 +14,7 @@ namespace std {
 		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 	}
 }
-
+// Network
 namespace Net {
 	typedef std::size_t ClientId;
 
@@ -31,10 +30,14 @@ namespace Net {
 		std::string msg_;
 	};
 	typedef std::vector<ServerEvent> ServerEvents;
-
+	struct Network {
+		virtual std::size_t poll()=0;
+		virtual ~Network();
+	};
+	typedef std::unique_ptr<Network> NetworkPtr;
+	NetworkPtr createNetwork();
 	struct IClients {
-		virtual void addServer(asio::io_service& io_service,
-				  const asio::ip::tcp::endpoint& endpoint) = 0;
+		virtual void addServer(Network& network, uint16_t port) = 0;
 		virtual ServerEvents getEvents() = 0;
 		virtual void send(ClientId id, const std::string &data) = 0;
 		virtual void close(ClientId id) = 0;
@@ -59,9 +62,10 @@ namespace Net {
 
 	ClientsPtr createPacketedClients();
 
-	ClientPtr createPacketedClient(asio::io_service& io_service, const char*address, const char*port);
+	ClientPtr createPacketedClient(Network& network, const char*address, const char*port);
 }
 
+// Timestamp
 struct Timestamp {
 	int16_t year_;
 	int8_t month_;
@@ -75,6 +79,7 @@ struct Timestamp {
 bool operator==(const Timestamp &a, const Timestamp &b);
 bool operator!=(const Timestamp &a, const Timestamp &b);
 
+// BinaryOstream
 struct BinaryOstream {
 
 	void add(const void *ptr, std::size_t sz) {
@@ -105,6 +110,7 @@ template<typename T> typename std::enable_if<std::is_enum<T>::value, BinaryOstre
 	return os;
 }
 
+// BinaryIstream
 struct BinaryIstream {
 
 	BinaryIstream(const std::string &str) : str_(str), size_(str_.size()) {
@@ -164,6 +170,7 @@ template<typename T> typename std::enable_if<std::is_enum<T>::value, BinaryIstre
 	return is;
 }
 
+// Fix Len Str
 template<std::size_t L> struct FixLenStr {
 	constexpr static std::size_t LENGTH = L;
 
@@ -216,16 +223,7 @@ template<std::size_t len> BinaryIstream &operator>>(BinaryIstream &is, FixLenStr
 	return is;
 }
 
-struct FileData {
-	uint32_t size_;
-	uint32_t checksum_;
-	Timestamp timestamp_;
-};
-
-struct LightFileData {
-	Timestamp timestamp_;
-};
-
+// toStr
 namespace I {
 
 	void toStr(std::ostream &);
@@ -242,40 +240,25 @@ template<typename... Args> std::string toStr(Args&&... args) {
 	return ss.str();
 }
 
-
+// File utils
 std::string readFile(const std::string &fileName);
 void writeFile(const std::string &fileName, const std::string &data);
-typedef std::unordered_map<std::string, FileData> FileDatas;
-typedef std::unordered_map<std::string, LightFileData> LightFileDatas;
-void print(const FileDatas &fds);
-FileDatas getFileData(const std::string &path, const std::string &fileName);
-std::string asStr(const FileDatas &fds);
-FileDatas fromStr(const std::string &str);
-uint32_t calculateChecksum(const std::string &data);
+std::pair<std::vector<std::string>, std::vector<std::string>> getFiles(const std::string &path);
+typedef uint32_t Checksum;
+Checksum calculateChecksum(const std::string &data);
 Timestamp getModificationTime(const std::string &path);
-void launchProcess(const std::string &fileName);
-void closeThisProcess();
-
-enum class OpcodeClientToSrv : uint32_t {
-	REQUEST_FILEDATA,
-	REQUEST_FILE
-};
-
-enum class OpcodeSrvToClient {
-	RESPONSE_FILEDATA,
-	RESPONSE_FILE,
-	RESPONSE_FILE_FINISHED
-};
-void saveCache(const FileDatas &fds, const std::string &fileName);
 void makeFullPath(const std::string &path);
 std::string filePath(const std::string &path);
+
+void launchProcess(const std::string &fileName);
+void closeThisProcess();
 
 namespace Updater {
 
 	struct Listener {
 		virtual void loadingCache() = 0;
 		virtual void connecting(const std::string &address, const std::string &port) = 0;
-		virtual void couldntConnect()=0;
+		virtual void couldntConnect() = 0;
 		virtual void requestingFileData() = 0;
 		virtual void updaterUpdateRequired(std::size_t totalSize) = 0;
 		virtual void updatesRequired(std::size_t numFiles, std::size_t totalSize) = 0;
@@ -299,8 +282,8 @@ namespace UpdateServer {
 		virtual void listening(uint16_t port) = 0;
 		virtual void clientConnected(Net::ClientId id, const std::string &address) = 0;
 		virtual void clientDisconnected(Net::ClientId id) = 0;
-		virtual void clientRequestedBadFile(Net::ClientId id, const std::string &file)=0;
-		virtual void clientRequestedFile(Net::ClientId id, const std::string &file)=0;
+		virtual void clientRequestedBadFile(Net::ClientId id, const std::string &file) = 0;
+		virtual void clientRequestedFile(Net::ClientId id, const std::string &file) = 0;
 	protected:
 
 		~Listener() {
