@@ -1,129 +1,37 @@
 #include "../updaterlib/updaterlib.h"
 #include <iostream>
-#include <map>
-#include <thread>
 
-struct App {
+struct MyListener : public UpdateServer::Listener {
 
-	App() {
-		watchedPath_ = "watched";
-		std::cout << "Loading file metadata..." << std::endl;
-		fds_ = getFileData(watchedPath_, "cache.dat");
-		filedata_ = asStr(fds_);
-		clients_ = Net::createPacketedClients();
-		clients_->addServer(io_service_, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 1492));
-		std::cout << "Listening..." << std::endl;
-		while (true) {
-			if (io_service_.poll()) {
-				update();
-			} else {
-				std::cout << '.';
-				std::cout.flush();
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
-			}
-		}
-	}
-private:
-	std::string watchedPath_;
-	FileDatas fds_;
-	std::string filedata_;
-	asio::io_service io_service_;
-	Net::ClientsPtr clients_;
-
-	struct Client {
-
-		Client(Net::ClientId id, Net::IClients &clients) : id_(id), clients_(clients) {
-		}
-
-		void send(const std::string &msg) {
-			clients_.send(id_, msg);
-		}
-
-		void close() {
-			clients_.close(id_);
-		}
-		Net::ClientId id_;
-		Net::IClients &clients_;
-	};
-	std::map<Net::ClientId, Client> clis_;
-
-	void update() {
-		Net::ServerEvents events = clients_->getEvents();
-		for (const Net::ServerEvent &ev : events) {
-			switch (ev.type_) {
-				case Net::EventType::CONNECTED:
-					onConnected(ev.id_, ev.msg_);
-					break;
-				case Net::EventType::DISCONNECTED:
-					onDisconnected(ev.id_);
-					break;
-				case Net::EventType::MSG:
-					onMsg(ev.id_, ev.msg_);
-					break;
-			}
-		}
+	void loadingMetadata() override {
+		std::cout << "Loading metadata..." << std::endl;
 	}
 
-	void onConnected(Net::ClientId id, const std::string &msg) {
-		std::cout << id << " Connected from " << msg << "!" << std::endl;
-		clis_.insert(std::make_pair(id, Client(id, *clients_)));
+	void listening(uint16_t port) override {
+		std::cout << "Listening at port " << port << std::endl;
 	}
 
-	void onDisconnected(Net::ClientId id) {
-		std::cout << id << " Disconnected!" << std::endl;
-		clis_.erase(id);
+	void clientConnected(Net::ClientId id, const std::string &address) override {
+		std::cout << "Client " << id << " connected from " << address.substr(0, address.find_first_of(":")) << std::endl;
 	}
 
-	void onMsg(Net::ClientId id, const std::string&msg) {
-		Client &client = clis_.at(id);
-		BinaryIstream is(msg);
-		OpcodeClientToSrv op;
-		is>>op;
-		switch (op) {
-			case OpcodeClientToSrv::REQUEST_FILEDATA:
-				onRequestFileData(client);
-				break;
-			case OpcodeClientToSrv::REQUEST_FILE:
-				onRequestFile(is, client);
-				break;
-		}
+	void clientDisconnected(Net::ClientId id) override {
+		std::cout << "Client " << id << " disconnected" << std::endl;
 	}
 
-	void onRequestFileData(Client &client) {
-		BinaryOstream os;
-		os << OpcodeSrvToClient::RESPONSE_FILEDATA;
-		os << filedata_;
-		client.send(os.str());
+	void clientRequestedBadFile(Net::ClientId id, const std::string &file) override {
+		std::cout << "Client " << id << " requested bad file " << file << std::endl;
 	}
 
-	void onRequestFile(BinaryIstream &is, Client &client) {
-		std::string fileName;
-		is >> fileName;
-		auto iter = fds_.find(fileName);
-		if (iter == fds_.end()) {
-			std::cout << "Requesting invalid file " << fileName << std::endl;
-			client.close();
-			return;
-		}
-		std::string data = readFile(toStr(watchedPath_, "/", fileName));
-		constexpr std::size_t chunk_size = 1024 * 30 - sizeof (uint32_t);
-		for (std::size_t i = 0; i * chunk_size < data.size(); ++i) {
-			std::size_t sz = std::min(chunk_size, data.size() - i * chunk_size);
-			BinaryOstream os;
-			os.reserve(sizeof (OpcodeSrvToClient) + sz + sizeof (uint32_t));
-			os << OpcodeSrvToClient::RESPONSE_FILE;
-			os << data.substr(i * chunk_size, chunk_size);
-			client.send(os.str());
-		}
-		BinaryOstream os;
-		os << OpcodeSrvToClient::RESPONSE_FILE_FINISHED;
-		client.send(os.str());
+	void clientRequestedFile(Net::ClientId /*id*/, const std::string &/*file*/) override {
+		// nop
 	}
 };
 
 int main() {
 	try {
-		App app;
+		MyListener listener;
+		UpdateServer::run(listener, 1492);
 	} catch (std::exception &e) {
 		std::cout << "Exception " << e.what() << std::endl;
 	} catch (...) {

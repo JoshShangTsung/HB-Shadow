@@ -1,269 +1,85 @@
 #include "../updaterlib/updaterlib.h"
 #include <iostream>
-#include <deque>
-#include <fstream>
-#include <thread>
 
-struct Cfg {
-	std::string updaterName_ = "updater.exe";
-	std::string oldUpdaterName_ = toStr(updaterName_, ".old");
-	std::string path_ = ".";
-	std::string cacheFile_ = "cache.dat";
-};
+struct MyListener : public Updater::Listener {
 
-struct Cache {
-
-	Cache(Cfg &cfg) : cfg_(cfg) {
-	}
-	void load() {
-		fds_ = getFileData(cfg_.path_, cfg_.cacheFile_);
-	}
-	FileDatas fds_;
-
-	void commitCache() {
-		if (updated_) {
-			saveCache(fds_, cfg_.cacheFile_);
-		}
-	}
-	bool updated_ = false;
-private:
-	Cfg &cfg_;
-};
-
-struct Client {
-
-	Client(Cfg &cfg, Cache &fds, Net::ClientPtr &&ptr) : client_(std::move(ptr)), cfg_(cfg), fds_(fds) {
+	void loadingCache() override {
+		std::cout << "Loading cache..." << std::endl;
 	}
 
-	void update() {
-		Net::Events events = client_->getEvents();
-		for (const Net::Event &ev : events) {
-			switch (ev.type_) {
-				case Net::EventType::CONNECTED:
-					onConnected();
-					break;
-				case Net::EventType::DISCONNECTED:
-					onDisconnected();
-					break;
-				case Net::EventType::MSG:
-					onMsg(ev.msg_);
-					break;
-			}
-		}
-	}
-	
-	bool isRunning() const {
-		return running_;
-	}
-private:
-	bool running_ = true;
-	Net::ClientPtr client_;
-	Cfg &cfg_;
-	Cache &fds_;
-	FileDatas serverFds_;
-	std::deque<std::string> toUpdate_;
-
-	struct CurrentFile {
-
-		void reset(const FileDatas &fds, const std::string &path, const std::string &fileName) {
-			std::string fullPath = toStr(path, "/", fileName);
-			std::string fp = filePath(fullPath);
-			makeFullPath(fp);
-			name_ = fileName;
-			path_ = fp;
-			fileName_ = fullPath;
-			fd_ = fds.at(fileName);
-			partialSize_ = 0;
-			partialChecksum_ = 0;
-			tmpName_ = fileName + ".tmp";
-			tmpFile_.close();
-			tmpFile_.clear();
-			tmpFile_.open(toStr(path, "/", tmpName_), std::ios::out | std::ios::binary);
-		}
-		std::string name_;
-		std::string path_;
-		std::string fileName_;
-		FileData fd_;
-		uint32_t partialSize_;
-		uint32_t partialChecksum_;
-		std::string tmpName_;
-		std::ofstream tmpFile_;
-	};
-	CurrentFile currentFile_;
-
-	void onConnected() {
-		std::cout << "Connected!" << std::endl;
-		BinaryOstream os;
-		os << OpcodeClientToSrv::REQUEST_FILEDATA;
-		client_->send(os.str());
+	void connecting(const std::string &/*address*/, const std::string&/*port*/) override {
+		std::cout << "Connecting to updating site..." << std::endl;
 	}
 
-	void onDisconnected() {
-		std::cout << "Disconnected!" << std::endl;
-		running_ = false;
+	void couldntConnect() override {
+		std::cout << "Couldn't connect to updating site!" << std::endl;
+	}
+	void requestingFileData() override {
+		std::cout << "Requesting list of updates..." << std::endl;
 	}
 
-	void onMsg(const std::string& msg) {
-		BinaryIstream is(msg);
-		OpcodeSrvToClient op;
-		is >> op;
-		switch (op) {
-			case OpcodeSrvToClient::RESPONSE_FILEDATA:
-				onResponseFileData(is);
-				break;
-			case OpcodeSrvToClient::RESPONSE_FILE:
-				onResponseFile(is);
-				break;
-			case OpcodeSrvToClient::RESPONSE_FILE_FINISHED:
-				onResponseFileFinished();
-				break;
-		}
+	void updaterUpdateRequired(std::size_t totalSize) override {
+		std::cout << "A new updater was found." << std::endl;
+		currentFileIndex_ = 0;
+		totalFiles_ = 1;
+		totalSize_ = totalSize;
+		accumulatedSize_ = 0;
 	}
 
-	void onResponseFileData(BinaryIstream &is) {
-		std::string data;
-		is >> data;
-		serverFds_ = fromStr(data);
-		for (const auto &p : serverFds_) {
-			const std::string &name = p.first;
-			const FileData &fd = p.second;
-			auto iter = fds_.fds_.find(name);
-			if (iter == fds_.fds_.end()) {
-				toUpdate_.push_back(name);
-			} else {
-				const FileData &lfd = iter->second;
-				if (fd.size_ != lfd.size_ || fd.checksum_ != lfd.checksum_) {
-					toUpdate_.push_back(name);
-				}
-			}
-		}
-		if (std::find(toUpdate_.begin(), toUpdate_.end(), cfg_.updaterName_) != toUpdate_.end()) {
-			requestFile(cfg_.updaterName_);
-		} else {
-			requestNextFile();
-		}
+	void updatesRequired(std::size_t numFiles, std::size_t totalSize) override {
+		currentFileIndex_ = 0;
+		totalFiles_ = numFiles;
+		totalSize_ = totalSize;
+		accumulatedSize_ = 0;
 	}
 
-	void requestNextFile() {
-		if (toUpdate_.empty()) {
-			client_->close();
-			return;
-		}
-		std::string fileName = toUpdate_.front();
-		toUpdate_.pop_front();
-		requestFile(fileName);
+	void noUpdatesRequired() override {
+		std::cout << "No updates found" << std::endl;
 	}
 
-	void requestFile(const std::string &fileName) {
-		std::cout << "Requesting file " << fileName << ": ";
+	void requestingFile(const std::string &name, std::size_t sz) override {
+		std::cout << (currentFileIndex_ + 1) << " of " << totalFiles_ << '\t' << name << '\t';
 		std::cout.flush();
-
-		currentFile_.reset(serverFds_, cfg_.path_, fileName);
-
-		BinaryOstream os;
-		os << OpcodeClientToSrv::REQUEST_FILE;
-		os << fileName;
-		client_->send(os.str());
+		currentFileSize_ = 0;
+		currentFileTotalSize_ = sz;
 	}
 
-	void onResponseFile(BinaryIstream &is) {
-		std::string data;
-		is >> data;
-		currentFile_.partialSize_ += data.size();
-		currentFile_.partialChecksum_ = std::accumulate(data.begin(), data.end(), currentFile_.partialChecksum_);
-		currentFile_.tmpFile_.write(data.data(), data.size());
-		if (currentFile_.fd_.size_ > 0) {
-			auto sz = currentFile_.partialSize_;
-			auto totalsz = currentFile_.fd_.size_;
-			std::size_t lastProgress = ((sz - data.size())*100) / totalsz;
-			std::size_t currentProgress = (sz * 100) / totalsz;
-			const int d = currentProgress - lastProgress;
-			if (d) {
-				for (int i = 0; i < d; ++i) {
-					std::cout << "*";
-				}
-				std::cout.flush();
+	void gotChunk(const std::size_t sz) override {
+		const int lastPct = currentFileSize_ / (currentFileTotalSize_ / double(100));
+		currentFileSize_ += sz;
+		accumulatedSize_ += sz;
+		const int currentPct = currentFileSize_ / (currentFileTotalSize_ / double(100));
+		const int diff = currentPct - lastPct;
+		if (diff) {
+			for (int i = 0; i < diff; ++i) {
+				std::cout << '*';
 			}
+			std::cout.flush();
 		}
 	}
 
-	void onResponseFileFinished() {
-		currentFile_.tmpFile_.close();
-		if (currentFile_.name_ == cfg_.updaterName_) {
-			onUpdaterFileFinished();
-		} else {
-			onCommonFileFinished();
-		}
+	void fileFinished() override {
+		const int accumulatedPct = accumulatedSize_ / (totalSize_ / double(100));
+		std::cout << '\t' << accumulatedPct << "%\t" << accumulatedSize_ << "\t" << totalSize_ << std::endl;
+		++currentFileIndex_;
 	}
 
-	void onUpdaterFileFinished() {
-		validateFile();
-		std::cout << " Got new updater!" << std::endl;
-		std::rename(cfg_.updaterName_.c_str(), cfg_.oldUpdaterName_.c_str());
-		std::rename(currentFile_.tmpName_.c_str(), currentFile_.fileName_.c_str());
-		//updateFds();
-		//commitCache();
-		launchProcess(currentFile_.fileName_);
-		closeThisProcess();
-	}
-
-	void onCommonFileFinished() {
-		validateFile();
-		std::cout << " Got file " << currentFile_.name_ << std::endl;
-		std::remove(currentFile_.fileName_.c_str()); // Hope that this happens atomically.
-		std::rename(currentFile_.tmpName_.c_str(), currentFile_.fileName_.c_str());
-		updateFds();
-		requestNextFile();
-	}
-
-	void updateFds() {
-		FileData fd;
-		fd.size_ = currentFile_.partialSize_;
-		fd.checksum_ = currentFile_.partialChecksum_;
-		fd.timestamp_ = getModificationTime(currentFile_.fileName_);
-		fds_.fds_[currentFile_.name_] = fd;
-		fds_.updated_ = true;
-	}
-
-	void validateFile() {
-		if (currentFile_.partialSize_ != currentFile_.fd_.size_) {
-			std::remove(currentFile_.tmpName_.c_str());
-			throw std::runtime_error(toStr("Retrieved file ", currentFile_.name_, " size mismatch! (Got ", currentFile_.partialSize_, ", expected ", currentFile_.fd_.size_, ")"));
-		}
-		if (currentFile_.partialChecksum_ != currentFile_.fd_.checksum_) {
-			std::remove(currentFile_.tmpName_.c_str());
-			throw std::runtime_error(toStr("Retrieved file ", currentFile_.name_, " checksum mismatch! (Got ", currentFile_.partialChecksum_, ", expected ", currentFile_.fd_.checksum_, ")"));
-		}
-	}
-};
-
-struct App {
-
-	App() : fds_(cfg_) {
-		std::remove(cfg_.oldUpdaterName_.c_str());
-		fds_.load();
-		client_ = std::make_unique<Client>(cfg_, fds_, Net::createPacketedClient(io_service_, "localhost", "1492"));
-		while (client_->isRunning()) {
-			if(io_service_.poll()) {
-				client_->update();
-			} else {
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
-			}
-		}
-		fds_.commitCache();
+	void jobDone() override {
 		std::cout << "Everything is up to date" << std::endl;
-		std::system("pause");
 	}
 private:
-	Cfg cfg_;
-	Cache fds_;
-	asio::io_service io_service_;
-	std::unique_ptr<Client> client_;
+	std::size_t totalFiles_;
+	std::size_t totalSize_;
+	std::size_t currentFileTotalSize_;
+	std::size_t currentFileSize_;
+	std::size_t currentFileIndex_;
+	std::size_t accumulatedSize_;
 };
 
 int main() {
 	try {
-		App app;
+		MyListener listener;
+		Updater::run(listener, "localhost", "1492");
 	} catch (std::exception &e) {
 		std::cout << "Exception " << e.what() << std::endl;
 	} catch (...) {

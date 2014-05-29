@@ -4,10 +4,10 @@
 #include <fstream>
 #include <tuple>
 #include <algorithm>
-#include <iostream>
 #include <deque>
 #include <set>
 #include <map>
+#include <thread>
 #include <windows.h>
 
 bool operator==(const Timestamp &a, const Timestamp &b) {
@@ -224,11 +224,11 @@ FileDatas fromStr(const std::string &str) {
 	return fds;
 }
 
-void print(const FileDatas &fds) {
+void print(std::ostream &os, const FileDatas &fds) {
 	for (const auto &p : fds) {
 		const std::string &name = p.first;
 		const FileData &fd = p.second;
-		std::cout << name << " " << fd.size_ << " " << fd.checksum_ << " " <<
+		os << name << " " << fd.size_ << " " << fd.checksum_ << " " <<
 				  (int) fd.timestamp_.year_ << "/" << (int) fd.timestamp_.month_ << "/" << (int) fd.timestamp_.day_ << " " <<
 				  (int) fd.timestamp_.hour_ << ":" << (int) fd.timestamp_.minute_ << ":" << (int) fd.timestamp_.second_ << "." << fd.timestamp_.millisecond_ << std::endl;
 	}
@@ -286,8 +286,6 @@ FileDatas getFileData(const std::string &path, const std::string &fileName) {
 			saveCache(fds, fileName);
 		}
 	} catch (std::exception &e) {
-		std::cout << "Exception loading cache: " << e.what() << std::endl;
-		std::cout << "Caching data..." << std::endl;
 		fds = getFileData(path);
 		fds.erase(fileName);
 		saveCache(fds, fileName);
@@ -536,6 +534,7 @@ namespace Net {
 					io_service_.post([this]() {
 						socket_.close(); });
 				}
+
 				std::string address() const {
 					return toStr(socket_.remote_endpoint().address().to_string(), ":", socket_.remote_endpoint().port());
 				}
@@ -981,4 +980,397 @@ int main2(int) {
 	return 0;
 }
 	 */
+}
+
+namespace Updater {
+
+	struct Cfg {
+		std::string updaterName_ = "updater.exe";
+		std::string oldUpdaterName_ = toStr(updaterName_, ".old");
+		std::string path_ = ".";
+		std::string cacheFile_ = "cache.dat";
+	};
+
+	struct Cache {
+
+		Cache(Cfg &cfg) : cfg_(cfg) {
+		}
+
+		void load() {
+			fds_ = getFileData(cfg_.path_, cfg_.cacheFile_);
+		}
+		FileDatas fds_;
+
+		void commitCache() {
+			if (updated_) {
+				saveCache(fds_, cfg_.cacheFile_);
+			}
+		}
+		bool updated_ = false;
+	private:
+		Cfg &cfg_;
+	};
+
+	struct Client {
+
+		Client(Listener &listener, Cfg &cfg, Cache &fds, Net::ClientPtr &&ptr) : listener_(listener), client_(std::move(ptr)), cfg_(cfg), fds_(fds) {
+			
+		}
+
+		void update() {
+			Net::Events events = client_->getEvents();
+			for (const Net::Event &ev : events) {
+				switch (ev.type_) {
+					case Net::EventType::CONNECTED:
+						onConnected();
+						break;
+					case Net::EventType::DISCONNECTED:
+						onDisconnected();
+						break;
+					case Net::EventType::MSG:
+						onMsg(ev.msg_);
+						break;
+				}
+			}
+		}
+
+		bool isRunning() const {
+			return running_;
+		}
+	private:
+		Listener &listener_;
+		bool running_ = true;
+		Net::ClientPtr client_;
+		Cfg &cfg_;
+		Cache &fds_;
+		FileDatas serverFds_;
+		std::size_t requiredUpdateSize_ = 0;
+		std::deque<std::string> toUpdate_;
+		bool connected_ = false;
+
+		struct CurrentFile {
+
+			void reset(const FileDatas &fds, const std::string &path, const std::string &fileName) {
+				std::string fullPath = toStr(path, "/", fileName);
+				std::string fp = filePath(fullPath);
+				makeFullPath(fp);
+				name_ = fileName;
+				path_ = fp;
+				fileName_ = fullPath;
+				fd_ = fds.at(fileName);
+				partialSize_ = 0;
+				partialChecksum_ = 0;
+				tmpName_ = fileName + ".tmp";
+				tmpFile_.close();
+				tmpFile_.clear();
+				tmpFile_.open(toStr(path, "/", tmpName_), std::ios::out | std::ios::binary);
+			}
+			std::string name_;
+			std::string path_;
+			std::string fileName_;
+			FileData fd_;
+			uint32_t partialSize_;
+			uint32_t partialChecksum_;
+			std::string tmpName_;
+			std::ofstream tmpFile_;
+		};
+		CurrentFile currentFile_;
+
+		void onConnected() {
+			connected_ = true;
+			BinaryOstream os;
+			os << OpcodeClientToSrv::REQUEST_FILEDATA;
+			client_->send(os.str());
+			listener_.requestingFileData();
+		}
+
+		void onDisconnected() {
+			running_ = false;
+			if(!connected_) {
+				listener_.couldntConnect();
+			}
+		}
+
+		void onMsg(const std::string& msg) {
+			BinaryIstream is(msg);
+			OpcodeSrvToClient op;
+			is >> op;
+			switch (op) {
+				case OpcodeSrvToClient::RESPONSE_FILEDATA:
+					onResponseFileData(is);
+					break;
+				case OpcodeSrvToClient::RESPONSE_FILE:
+					onResponseFile(is);
+					break;
+				case OpcodeSrvToClient::RESPONSE_FILE_FINISHED:
+					onResponseFileFinished();
+					break;
+			}
+		}
+
+		void onResponseFileData(BinaryIstream &is) {
+			std::string data;
+			is >> data;
+			serverFds_ = fromStr(data);
+			for (const auto &p : serverFds_) {
+				const std::string &name = p.first;
+				const FileData &fd = p.second;
+				auto iter = fds_.fds_.find(name);
+				if (iter == fds_.fds_.end()) {
+					toUpdate_.push_back(name);
+					requiredUpdateSize_ += fd.size_;
+				} else {
+					const FileData &lfd = iter->second;
+					if (fd.size_ != lfd.size_ || fd.checksum_ != lfd.checksum_) {
+						toUpdate_.push_back(name);
+						requiredUpdateSize_ += fd.size_;
+					}
+				}
+			}
+			if (std::find(toUpdate_.begin(), toUpdate_.end(), cfg_.updaterName_) != toUpdate_.end()) {
+				listener_.updaterUpdateRequired(serverFds_.at(cfg_.updaterName_).size_);
+				requestFile(cfg_.updaterName_);
+			} else if (!toUpdate_.empty()) {
+				listener_.updatesRequired(toUpdate_.size(), requiredUpdateSize_);
+				requestNextFile();
+			} else {
+				listener_.noUpdatesRequired();
+				running_ = false;
+			}
+		}
+
+		void requestNextFile() {
+			if (toUpdate_.empty()) {
+				client_->close();
+				return;
+			}
+			std::string fileName = toUpdate_.front();
+			toUpdate_.pop_front();
+			requestFile(fileName);
+		}
+
+		void requestFile(const std::string &fileName) {
+			currentFile_.reset(serverFds_, cfg_.path_, fileName);
+			BinaryOstream os;
+			os << OpcodeClientToSrv::REQUEST_FILE;
+			os << fileName;
+			client_->send(os.str());
+			listener_.requestingFile(fileName, currentFile_.fd_.size_);
+		}
+
+		void onResponseFile(BinaryIstream &is) {
+			std::string data;
+			is >> data;
+			currentFile_.partialSize_ += data.size();
+			currentFile_.partialChecksum_ = std::accumulate(data.begin(), data.end(), currentFile_.partialChecksum_);
+			currentFile_.tmpFile_.write(data.data(), data.size());
+			listener_.gotChunk(data.size());
+		}
+
+		void onResponseFileFinished() {
+			currentFile_.tmpFile_.close();
+			if (currentFile_.name_ == cfg_.updaterName_) {
+				onUpdaterFileFinished();
+			} else {
+				onCommonFileFinished();
+				requestNextFile();
+			}
+		}
+
+		void onUpdaterFileFinished() {
+			validateFile();
+			std::rename(cfg_.updaterName_.c_str(), cfg_.oldUpdaterName_.c_str());
+			std::rename(currentFile_.tmpName_.c_str(), currentFile_.fileName_.c_str());
+			listener_.fileFinished();
+			launchProcess(currentFile_.fileName_);
+			closeThisProcess();
+		}
+
+		void onCommonFileFinished() {
+			validateFile();
+			std::remove(currentFile_.fileName_.c_str()); // Hope that this happens atomically.
+			std::rename(currentFile_.tmpName_.c_str(), currentFile_.fileName_.c_str());
+			updateFds();
+			listener_.fileFinished();
+		}
+
+		void updateFds() {
+			FileData fd;
+			fd.size_ = currentFile_.partialSize_;
+			fd.checksum_ = currentFile_.partialChecksum_;
+			fd.timestamp_ = getModificationTime(currentFile_.fileName_);
+			fds_.fds_[currentFile_.name_] = fd;
+			fds_.updated_ = true;
+		}
+
+		void validateFile() {
+			if (currentFile_.partialSize_ != currentFile_.fd_.size_) {
+				std::remove(currentFile_.tmpName_.c_str());
+				throw std::runtime_error(toStr("Retrieved file ", currentFile_.name_, " size mismatch! (Got ", currentFile_.partialSize_, ", expected ", currentFile_.fd_.size_, ")"));
+			}
+			if (currentFile_.partialChecksum_ != currentFile_.fd_.checksum_) {
+				std::remove(currentFile_.tmpName_.c_str());
+				throw std::runtime_error(toStr("Retrieved file ", currentFile_.name_, " checksum mismatch! (Got ", currentFile_.partialChecksum_, ", expected ", currentFile_.fd_.checksum_, ")"));
+			}
+		}
+	};
+
+	struct App {
+
+		App(Listener &listener, const std::string &address, const std::string &port) : fds_(cfg_), listener_(listener) {
+			std::remove(cfg_.oldUpdaterName_.c_str());
+			listener_.loadingCache();
+			fds_.load();
+			client_ = std::make_unique<Client>(listener_, cfg_, fds_, Net::createPacketedClient(io_service_, address.c_str(), port.c_str()));
+			listener_.connecting(address, port);
+			while (client_->isRunning()) {
+				if (io_service_.poll()) {
+					client_->update();
+				} else {
+					std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				}
+			}
+			fds_.commitCache();
+			listener_.jobDone();
+		}
+	private:
+		Cfg cfg_;
+		Cache fds_;
+		Listener &listener_;
+		asio::io_service io_service_;
+		std::unique_ptr<Client> client_;
+	};
+
+	void run(Listener &listener, const std::string &address, const std::string &port) {
+		App app(listener, address, port);
+	}
+}
+
+
+namespace UpdateServer {
+
+	struct Cfg {
+		std::string watchedPath_ = "watched";
+	};
+
+	struct App {
+
+		App(Listener &listener, uint16_t port) : listener_(listener) {
+			listener.loadingMetadata();
+			fds_ = getFileData(cfg_.watchedPath_, "cache.dat");
+			filedata_ = asStr(fds_);
+			clients_ = Net::createPacketedClients();
+			clients_->addServer(io_service_, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port));
+			listener.listening(port);
+			while (true) {
+				if (io_service_.poll()) {
+					update();
+				} else {
+					std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				}
+			}
+		}
+	private:
+		Listener &listener_;
+		Cfg cfg_;
+		FileDatas fds_;
+		std::string filedata_;
+		asio::io_service io_service_;
+		Net::ClientsPtr clients_;
+
+		struct Client {
+
+			Client(Net::ClientId id, Net::IClients &clients) : id_(id), clients_(clients) {
+			}
+
+			void send(const std::string &msg) {
+				clients_.send(id_, msg);
+			}
+
+			void close() {
+				clients_.close(id_);
+			}
+			Net::ClientId id_;
+			Net::IClients &clients_;
+		};
+		std::map<Net::ClientId, Client> clis_;
+
+		void update() {
+			Net::ServerEvents events = clients_->getEvents();
+			for (const Net::ServerEvent &ev : events) {
+				switch (ev.type_) {
+					case Net::EventType::CONNECTED:
+						onConnected(ev.id_, ev.msg_);
+						break;
+					case Net::EventType::DISCONNECTED:
+						onDisconnected(ev.id_);
+						break;
+					case Net::EventType::MSG:
+						onMsg(ev.id_, ev.msg_);
+						break;
+				}
+			}
+		}
+
+		void onConnected(Net::ClientId id, const std::string &msg) {
+			listener_.clientConnected(id, msg);
+			clis_.insert(std::make_pair(id, Client(id, *clients_)));
+		}
+
+		void onDisconnected(Net::ClientId id) {
+			listener_.clientDisconnected(id);
+			clis_.erase(id);
+		}
+
+		void onMsg(Net::ClientId id, const std::string&msg) {
+			Client &client = clis_.at(id);
+			BinaryIstream is(msg);
+			OpcodeClientToSrv op;
+			is>>op;
+			switch (op) {
+				case OpcodeClientToSrv::REQUEST_FILEDATA:
+					onRequestFileData(client);
+					break;
+				case OpcodeClientToSrv::REQUEST_FILE:
+					onRequestFile(is, client);
+					break;
+			}
+		}
+
+		void onRequestFileData(Client &client) {
+			BinaryOstream os;
+			os << OpcodeSrvToClient::RESPONSE_FILEDATA;
+			os << filedata_;
+			client.send(os.str());
+		}
+
+		void onRequestFile(BinaryIstream &is, Client &client) {
+			std::string fileName;
+			is >> fileName;
+			auto iter = fds_.find(fileName);
+			if (iter == fds_.end()) {
+				listener_.clientRequestedBadFile(client.id_, fileName);
+				client.close();
+				return;
+			}
+			listener_.clientRequestedFile(client.id_, fileName);
+			std::string data = readFile(toStr(cfg_.watchedPath_, "/", fileName));
+			constexpr std::size_t chunk_size = 1024 * 30 - sizeof (uint32_t);
+			for (std::size_t i = 0; i * chunk_size < data.size(); ++i) {
+				std::size_t sz = std::min(chunk_size, data.size() - i * chunk_size);
+				BinaryOstream os;
+				os.reserve(sizeof (OpcodeSrvToClient) + sz + sizeof (uint32_t));
+				os << OpcodeSrvToClient::RESPONSE_FILE;
+				os << data.substr(i * chunk_size, chunk_size);
+				client.send(os.str());
+			}
+			BinaryOstream os;
+			os << OpcodeSrvToClient::RESPONSE_FILE_FINISHED;
+			client.send(os.str());
+		}
+	};
+
+	void run(Listener &listener, uint16_t port) {
+		App app(listener, port);
+	}
 }

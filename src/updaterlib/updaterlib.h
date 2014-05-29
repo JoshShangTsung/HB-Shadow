@@ -255,6 +255,7 @@ uint32_t calculateChecksum(const std::string &data);
 Timestamp getModificationTime(const std::string &path);
 void launchProcess(const std::string &fileName);
 void closeThisProcess();
+
 enum class OpcodeClientToSrv : uint32_t {
 	REQUEST_FILEDATA,
 	REQUEST_FILE
@@ -268,3 +269,43 @@ enum class OpcodeSrvToClient {
 void saveCache(const FileDatas &fds, const std::string &fileName);
 void makeFullPath(const std::string &path);
 std::string filePath(const std::string &path);
+
+namespace Updater {
+
+	struct Listener {
+		virtual void loadingCache() = 0;
+		virtual void connecting(const std::string &address, const std::string &port) = 0;
+		virtual void couldntConnect()=0;
+		virtual void requestingFileData() = 0;
+		virtual void updaterUpdateRequired(std::size_t totalSize) = 0;
+		virtual void updatesRequired(std::size_t numFiles, std::size_t totalSize) = 0;
+		virtual void noUpdatesRequired() = 0;
+		virtual void requestingFile(const std::string &name, std::size_t sz) = 0;
+		virtual void gotChunk(const std::size_t sz) = 0;
+		virtual void fileFinished() = 0;
+		virtual void jobDone() = 0;
+	protected:
+
+		~Listener() {
+		}
+	};
+
+	void run(Listener &listener, const std::string &address, const std::string &port);
+}
+namespace UpdateServer {
+
+	struct Listener {
+		virtual void loadingMetadata() = 0;
+		virtual void listening(uint16_t port) = 0;
+		virtual void clientConnected(Net::ClientId id, const std::string &address) = 0;
+		virtual void clientDisconnected(Net::ClientId id) = 0;
+		virtual void clientRequestedBadFile(Net::ClientId id, const std::string &file)=0;
+		virtual void clientRequestedFile(Net::ClientId id, const std::string &file)=0;
+	protected:
+
+		~Listener() {
+		}
+	};
+
+	void run(Listener &listener, uint16_t port);
+}
