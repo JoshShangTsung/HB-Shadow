@@ -79,7 +79,7 @@ private:
 int main() {
 	try {
 		MyListener listener;
-		Updater::run(listener, "localhost", "1492");
+		Updater::run(listener, "updateserver.doesntexist.com", "1492");
 	} catch (std::exception &e) {
 		std::cout << "Exception " << e.what() << std::endl;
 	} catch (...) {
