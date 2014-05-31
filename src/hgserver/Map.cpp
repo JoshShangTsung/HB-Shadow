@@ -513,7 +513,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 		token = pStrTok->pGet();
 	}
 
-	// ũ�⿡ �°� Ÿ���� ���Ѵ�.
+	
 	m_pTile = (class CTile *)new class CTile[m_sSizeX * m_sSizeY];
 
 	// Ÿ���� ������ �о���δ�.
@@ -555,7 +555,7 @@ bool CMap::bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int *
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
 		if ((m_pTeleportLoc[i] != nullptr) && (m_pTeleportLoc[i]->m_sSrcX == sX) && (m_pTeleportLoc[i]->m_sSrcY == sY)) {
-			// ���� ��ǥ�� ���� �ڷ���Ʈ ��ġ�� ã�Ҵ�. 	
+			
 			memcpy(pMapName, m_pTeleportLoc[i]->m_cDestMapName, 10);
 			*pDx = m_pTeleportLoc[i]->m_sDestX;
 			*pDy = m_pTeleportLoc[i]->m_sDestY;
@@ -719,14 +719,14 @@ void CMap::_SetupNoAttackArea() {
 			for (ix = m_rcNoAttackRect[i].left; ix <= m_rcNoAttackRect[i].right; ix++)
 				for (iy = m_rcNoAttackRect[i].top; iy <= m_rcNoAttackRect[i].bottom; iy++) {
 					pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);
-					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004; // 3��° ��Ʈ�� �����Ѵ�. �������� 
+					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004; 
 				}
 		} else if (m_rcNoAttackRect[i].top == -10) {
 			// �� ���� ��� ������.	
 			for (ix = 0; ix < m_sSizeX; ix++)
 				for (iy = 0; iy < m_sSizeY; iy++) {
 					pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);
-					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004; // 3��° ��Ʈ�� �����Ѵ�. ��������
+					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004; 
 				}
 		}
 	}

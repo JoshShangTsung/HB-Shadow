@@ -65,7 +65,7 @@
 
 #define DEF_EXPSTOCKTIME		1000*10		// ExpStock�� ����ϴ� �ð� ���� 
 #define DEF_MSGQUENESIZE		100000		// �޽��� ť ������ 10���� 
-#define DEF_AUTOEXPTIME			1000*60*6	// �ڵ����� ����ġ�� �ö󰡴� �ð����� 
+#define DEF_AUTOEXPTIME			1000*60*6	
 #define DEF_TOTALLEVELUPPOINT	3			// �������� �Ҵ��ϴ� �� ����Ʈ �� 
 
 
@@ -143,7 +143,7 @@
 #define DEF_MAXFIGHTZONE 10 
 
 //============================
-#define DEF_LEVELLIMIT		20				// ü���� ���� ����ġ!!!			
+#define DEF_LEVELLIMIT		20				
 //============================
 
 //============================
@@ -155,7 +155,7 @@
 //============================
 
 //============================
-#define DEF_PLAYERMAXLEVEL	180				// �ִ� ����: Npc.cfg ���Ͽ� �����Ǿ� ���� ���� ��� m_iPlayerMaxLevel�� �Էµȴ�.
+#define DEF_PLAYERMAXLEVEL	180				
 //============================
 
 //============================
@@ -504,7 +504,7 @@ public:
 	void UserCommand_DissmissGuild(int iClientH, char * pData, uint32_t dwMsgSize);
 	// v1.4311-3 ���� �Լ� ����  Expire -> Ban ���� 
 	void UserCommand_BanGuildsman(int iClientH, char * pData, uint32_t dwMsgSize);
-	// v1.4311-3 �߰� �Լ� ���� �̺�Ʈ�� ����Ͽ� ��ڰ� �������� �����س��´�.
+	
 	int iGetExpLevel(int iExp);
 	void ___RestorePlayerRating(int iClientH);
 	void CalcExpStock(int iClientH);
@@ -849,7 +849,7 @@ public:
 	bool m_bIsSubLogSockAvailable[DEF_MAXSUBLOGSOCK];
 	int m_iCurSubLogSockIndex;
 	int m_iSubLogSockFailCount;
-	int m_iSubLogSockActiveCount; // v1.5 ���� ���� ���°� �����ǰ� �ִ� sub-log-socket ����
+	int m_iSubLogSockActiveCount; 
 	int m_iAutoRebootingCount; // v1.5 �ڵ� ����� �� Ƚ�� 
 
 	class CBuildItem * m_pBuildItemList[DEF_MAXBUILDITEMS];
@@ -894,7 +894,7 @@ public:
 		int iCasualties;
 	} m_stMeteorStrikeResult;
 
-	// �̵鷣���� ������ �����ϴ� ����ü. �̵鷣�带 ������� �ʴ� ���������� �� ������ �޾� �����Ѵ�.
+	
 
 	struct {
 		char cType; // �̰� nullptr�̸� ���ǵ��� �������� �ǹ�.

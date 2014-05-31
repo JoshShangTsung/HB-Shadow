@@ -31,13 +31,13 @@
 #define DEF_XSOCKEVENT_SOCKETCLOSED				-127	// ������ �����. 
 #define DEF_XSOCKEVENT_BLOCK					-128	// �޽����� �����ٰ� ������ �?�� �����̴�.
 #define DEF_XSOCKEVENT_SOCKETERROR				-129	// ���Ͽ� ������ �߻��ߴ�. �̰�� Ŭ������ �����Ͽ��� �Ѵ�.
-#define DEF_XSOCKEVENT_CRITICALERROR			-130    // ġ������ ������ ���α׷� ��ü�� ����� �Ѵ�.
+#define DEF_XSOCKEVENT_CRITICALERROR			-130    
 #define DEF_XSOCKEVENT_NOTINITIALIZED			-131	// Ŭ������ �ʱ�ȭ ���� ���� ���·� ���ƴ�.
 #define DEF_XSOCKEVENT_MSGSIZETOOLARGE			-132	// �������� �ϴ� �޽����� ����� �ʹ� ũ��.
-#define DEF_XSOCKEVENT_CONFIRMCODENOTMATCH		-133	// Ȯ���ڵ尡 ��ġ���� �ʴ´�. �����Ǿ�� �Ѵ�.
+#define DEF_XSOCKEVENT_CONFIRMCODENOTMATCH		-133	
 #define DEF_XSOCKEVENT_QUENEFULL                -134    // ��� ť�� ���� ���.
 #define DEF_XSOCKEVENT_UNSENTDATASENDBLOCK		-135    // ť�� �ִ� �����͸� �����ٰ� �� ����� �ɷȴ�. 
-#define DEF_XSOCKEVENT_UNSENTDATASENDCOMPLETE	-136	// ť�� �ִ� ��� �����͸� ���´�.
+#define DEF_XSOCKEVENT_UNSENTDATASENDCOMPLETE	-136	
 
 #define DEF_XSOCKBLOCKLIMIT						300		// �� Ŭ���� ������ ?���̻� ��ϵǸ� ���̻� �����͸� ������ �� ���. 	
 

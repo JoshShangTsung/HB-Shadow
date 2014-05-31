@@ -17,7 +17,7 @@
 #define DEF_EQUIPPOS_BACK		12  //680h
 #define DEF_EQUIPPOS_RELEASEALL	13	//682h
 
-#define DEF_ITEMTYPE_NOTUSED	-1	// v1.4 ������ ���Ǿ����� ����μ��� ������ �ʴ� ������: ��������� ��ü�ȴ�.
+#define DEF_ITEMTYPE_NOTUSED	-1	
 #define DEF_ITEMTYPE_NONE		 0
 #define DEF_ITEMTYPE_EQUIP		 1
 #define DEF_ITEMTYPE_APPLY		 2
@@ -36,12 +36,12 @@
 #define DEF_ITEMEFFECTTYPE_NONE				0
 #define DEF_ITEMEFFECTTYPE_ATTACK			1		// ���ġ: value1 D value2 + value3
 #define DEF_ITEMEFFECTTYPE_DEFENSE			2		// ���ɷ� 
-#define DEF_ITEMEFFECTTYPE_ATTACK_ARROW		3		// ȭ���� ����ϴ� ��ݹ���. ���� ��ü�� ��ݷ��� ���.		
+#define DEF_ITEMEFFECTTYPE_ATTACK_ARROW		3		
 #define DEF_ITEMEFFECTTYPE_HP   		    4		// HP��� ȿ�� 
 #define DEF_ITEMEFFECTTYPE_MP   		    5		// MP��� ȿ�� 
 #define DEF_ITEMEFFECTTYPE_SP   		    6		// SP��� ȿ�� 
-#define DEF_ITEMEFFECTTYPE_HPSTOCK 		    7		// HP��� ȿ��. �ﰢ������ ������ ��Ÿ������ �ʴ´�. 
-#define DEF_ITEMEFFECTTYPE_GET			    8		// ��´�. ����⳪ ������ 
+#define DEF_ITEMEFFECTTYPE_HPSTOCK 		    7		
+#define DEF_ITEMEFFECTTYPE_GET			    8		
 #define DEF_ITEMEFFECTTYPE_STUDYSKILL		9		// ����� ���� �������̴�.
 #define DEF_ITEMEFFECTTYPE_SHOWLOCATION		10		// ��ġ�� ǥ���ϴ� ������. 
 #define DEF_ITEMEFFECTTYPE_MAGIC			11		// ����ϸ� ���� ȿ�� ��� ������ 

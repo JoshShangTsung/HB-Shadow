@@ -240,7 +240,7 @@ bool CMisc::bCheckValidName(char *pStr) {
 				// ���� 
 
 			} else return false;
-			i++; // !!! �������Ѿ߸� �´�.
+			i++; 
 		}
 	}
 

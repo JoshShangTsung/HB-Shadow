@@ -3,8 +3,8 @@
 
 
 
-#define DEF_SKILLEFFECTTYPE_GET			    1		// ��´�. ����⳪ ������ 
-#define DEF_SKILLEFFECTTYPE_PRETEND			2		// ...�� ü �ϴ� 
+#define DEF_SKILLEFFECTTYPE_GET			    1		
+#define DEF_SKILLEFFECTTYPE_PRETEND			2		
 #define DEF_SKILLEFFECTTYPE_TAMING			3		//  ����̱� �迭	
 
 class CSkill {

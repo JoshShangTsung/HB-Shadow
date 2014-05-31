@@ -40,7 +40,7 @@ XSocket::~XSocket() {
 	for (i = 0; i < DEF_XSOCKBLOCKLIMIT; i++)
 		if (m_pUnsentDataList[i] != nullptr) delete m_pUnsentDataList[i];
 
-	// ������ ���� �а� �ݴ´�.
+	
 	_CloseConn();
 }
 
@@ -179,12 +179,12 @@ int XSocket::_iOnRead() {
 		if (m_dwReadSize == 0) {
 			// ����� �� �о��. 
 			m_cStatus = DEF_XSOCKSTATUS_READINGBODY;
-			// �о�� �� ��ü ����� ����Ѵ�.
+			
 			wp = (uint16_t *) (m_pRcvBuffer + 1);
-			m_dwReadSize = (int) (*wp - 3); // ��� ������� �������� �ʴ´�. 
+			m_dwReadSize = (int) (*wp - 3); 
 
 			if (m_dwReadSize == 0) {
-				// ��ü ����� 0�̸� ��ü�κ��� ���� �ʿ䰡 �����Ƿ� 
+				
 				m_cStatus = DEF_XSOCKSTATUS_READINGHEADER;
 				m_dwReadSize = 3;
 				m_dwTotalReadSize = 0;
@@ -220,7 +220,7 @@ int XSocket::_iOnRead() {
 		m_dwTotalReadSize += iRet;
 
 		if (m_dwReadSize == 0) {
-			// ��ü�� �� �о��. ������ �̺�Ʈ�� ���� ���¸� �ٲ۴�. 
+			
 			m_cStatus = DEF_XSOCKSTATUS_READINGHEADER;
 			m_dwReadSize = 3;
 			m_dwTotalReadSize = 0;
@@ -244,7 +244,7 @@ int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 					// �Ҵ��� �޸𸮰� ���. �̰��� ������ ����� ���.
 					return DEF_XSOCKEVENT_CRITICALERROR;
 				case 0:
-					// ť�� ����á��. �� ���� Ŭ������ �����Ǿ�߸� �Ѵ�.
+					
 					return DEF_XSOCKEVENT_QUENEFULL;
 				case 1:
 					// ���������� �����͸� ����ߴ�.
@@ -275,7 +275,7 @@ int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 							return DEF_XSOCKEVENT_CRITICALERROR;
 							break;
 						case 0:
-							// ť�� ����á��. �� ���� Ŭ������ �����Ǿ�߸� �Ѵ�.
+							
 							return DEF_XSOCKEVENT_QUENEFULL;
 							break;
 						case 1:
@@ -293,7 +293,7 @@ int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 }
 
 
-// �� �Լ��� _SendUnsentData������ ����Ѵ�. ����� �ƴ� �����ÿ��� ��������, �?���¸� ������ ��ۻ��¿����� ���� ��ŭ�� ���� ��ȯ.
+
 
 int XSocket::_iSend_ForInternalUse(char * cData, int iSize) {
 	int iOutLen, iRet, WSAErr;
@@ -348,7 +348,7 @@ int XSocket::_iSendUnsentData() {
 		iRet = _iSend_ForInternalUse(m_pUnsentDataList[m_sHead], m_iUnsentDataSize[m_sHead]);
 
 		if (iRet == m_iUnsentDataSize[m_sHead]) {
-			// Headť�� �����͸� �� ���´�.	���� �����͸� ������.
+			
 			delete m_pUnsentDataList[m_sHead];
 			m_pUnsentDataList[m_sHead] = nullptr;
 			m_iUnsentDataSize[m_sHead] = 0;
@@ -361,7 +361,7 @@ int XSocket::_iSendUnsentData() {
 			if (iRet < 0)
 				return iRet;
 
-			// �����͸� �� ������ ���ϰ� �� ��� ���°� �߻��ߴ�. ������ ���� �����͸� ���ܳ��´�.
+			
 			pTemp = new char[m_iUnsentDataSize[m_sHead] - iRet];
 			memcpy(pTemp, m_pUnsentDataList[m_sHead] + iRet, m_iUnsentDataSize[m_sHead] - iRet);
 
@@ -453,7 +453,7 @@ bool XSocket::bAccept(class XSocket * pXSock, unsigned int uiMsg) {
 	if (pXSock == nullptr) return false;
 
 	iLength = sizeof (Addr);
-	// Ŭ���̾�Ʈ�� ������ �޴´� . 
+	
 	AcceptedSock = accept(m_Sock, (struct sockaddr FAR *) &Addr, (int FAR *) &iLength);
 	if (AcceptedSock == INVALID_SOCKET)
 		return false;
@@ -525,7 +525,7 @@ bool _InitWinsock() {
 	uint16_t wVersionRequested;
 	WSADATA wsaData;
 
-	// ������ ������ üũ�Ѵ�.
+	
 	wVersionRequested = MAKEWORD(2, 2);
 	iErrCode = WSAStartup(wVersionRequested, &wsaData);
 	if (iErrCode) return false;
