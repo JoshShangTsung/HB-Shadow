@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <set>
 #include <functional>
-
+/*
 #define DEF_DELAYEVENTTYPE_DAMAGEOBJECT				1
 #define DEF_DELAYEVENTTYPE_MAGICRELEASE				2
 #define DEF_DELAYEVENTTYPE_USEITEM_SKILL			3
@@ -10,9 +10,19 @@
 #define DEF_DELAYEVENTTYPE_DOMETEORSTRIKEDAMAGE		5
 #define DEF_DELAYEVENTTYPE_CALCMETEORSTRIKEEFFECT	6
 #define DEF_DELAYEVENTTYPE_ANCIENT_TABLET			7
-
+*/
+enum class DelayEventType {
+	ANY,
+	DAMAGEOBJECT,
+	MAGICRELEASE,
+	USEITEM_SKILL,
+	METEORSTRIKE,
+	DOMETEORSTRIKEDAMAGE,
+	CALCMETEORSTRIKEEFFECT,
+	ANCIENT_TABLET
+};
 struct DelayEvent {
-	int delayType_;
+	DelayEventType delayType_;
 	int effectType_;
 
 	char mapIndex_;
@@ -34,7 +44,7 @@ struct DelayEvents {
 
 	bool remove(int iH, char cType, int iEffectType);
 	void process(const std::function<void(const DelayEvent&)> &f);
-	bool add(int iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3);
+	bool add(DelayEventType iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3);
 	void reset();
 private:
 	std::multiset<DelayEvent> events_;

@@ -39,7 +39,7 @@ void DelayEvents::process(const std::function<void(const DelayEvent&) > &f) {
 	events_.erase(iter, events_.end());
 }
 
-bool DelayEvents::add(int iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3) {
+bool DelayEvents::add(DelayEventType iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3) {
 	DelayEvent ev;
 	ev.delayType_ = iDelayType;
 	ev.effectType_ = iEffectType;
