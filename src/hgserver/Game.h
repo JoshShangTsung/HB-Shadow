@@ -70,7 +70,6 @@
 
 
 #define DEF_MAXDYNAMICOBJECTS	60000
-#define DEF_MAXDELAYEVENTS		60000
 #define DEF_GUILDSTARTRANK		12
 
 #define DEF_SSN_LIMIT_MULTIPLY_VALUE	2	// SSN-limit ���ϴ� �� 
@@ -539,9 +538,6 @@ public:
 	int _iGetTotalClients();
 	void SendObjectMotionRejectMsg(int iClientH);
 	void SetInvisibilityFlag(short sOwnerH, char cOwnerType, bool bStatus);
-	bool bRemoveFromDelayEventList(int iH, char cType, int iEffectType);
-	void DelayEventProcessor();
-	bool bRegisterDelayEvent(int iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3);
 	int iGetFollowerNumber(short sOwnerH, char cOwnerType);
 	int _iCalcSkillSSNpoint(int iLevel);
 	void OnKeyUp(WPARAM wParam, LPARAM lParam);
@@ -604,7 +600,6 @@ public:
 	void ToggleCombatModeHandler(int iClientH);
 	void GuildNotifyHandler(char * pData, uint32_t dwMsgSize);
 	void SendGuildMsg(int iClientH, uint16_t wNotifyMsgType, short sV1, short sV2, char * pString);
-	void DelayEventProcess();
 	void TimeHitPointsUp(int iClientH);
 	void CalculateGuildEffect(int iVictimH, char cVictimType, short sAttackerH);
 	void OnStartGameSignal();
@@ -728,6 +723,7 @@ public:
 			  int iItemSpreadType, int iSpreadRange,
 			  int *iItemIDs, POINT *BasePos, int *iNumItem);
 
+	void processDelayedEvent(CDelayEvent &ev);
 	// Majestic Code By Diuuude
 	int m_iMajesticPointsPerLevel;
 	int m_iMajesticMinLevel;
@@ -764,7 +760,7 @@ public:
 	class CMap * m_pMapList[DEF_MAXMAPS];
 	class CNpcItem * m_pTempNpcItem[DEF_MAXNPCITEMS];
 	class CDynamicObject * m_pDynamicObjectList[DEF_MAXDYNAMICOBJECTS];
-	class CDelayEvent * m_pDelayEventList[DEF_MAXDELAYEVENTS];
+	DelayEvents delayEvents_;
 	class CBallSystem * m_pBallItemConfigList[DEF_MAXBALLITEMS];
 
 	class CMsg * m_pMsgQuene[DEF_MSGQUENESIZE];

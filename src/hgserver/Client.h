@@ -127,21 +127,21 @@ public:
 	char m_cAttackBonus_L;
 
 	std::array<std::unique_ptr<CItem>, DEF_MAXITEMS> m_pItemList;
-	POINT m_ItemPosList[DEF_MAXITEMS];
+	std::array<POINT, DEF_MAXITEMS> m_ItemPosList;
 	std::array<std::unique_ptr<CItem>, DEF_MAXBANKITEMS> m_pItemInBankList;
 
-	bool m_bIsItemEquipped[DEF_MAXITEMS];
-	short m_sItemEquipmentStatus[DEF_MAXITEMEQUIPPOS];
+	std::array<bool, DEF_MAXITEMS> m_bIsItemEquipped;
+	std::array<short, DEF_MAXITEMEQUIPPOS> m_sItemEquipmentStatus;
 	char m_cArrowIndex;
 
-	char m_cMagicMastery[DEF_MAXMAGICTYPE];
-	unsigned char m_cSkillMastery[DEF_MAXSKILLTYPE];
+	std::array<char, DEF_MAXMAGICTYPE> m_cMagicMastery;
+	std::array<unsigned char, DEF_MAXSKILLTYPE> m_cSkillMastery;
 
-	int m_iSkillSSN[DEF_MAXSKILLTYPE];
-	bool m_bSkillUsingStatus[DEF_MAXSKILLTYPE];
-	int m_iSkillUsingTimeID[DEF_MAXSKILLTYPE];
+	std::array<int, DEF_MAXSKILLTYPE> m_iSkillSSN;
+	std::array<bool, DEF_MAXSKILLTYPE> m_bSkillUsingStatus;
+	std::array<int, DEF_MAXSKILLTYPE> m_iSkillUsingTimeID;
 
-	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS];
+	std::array<char, DEF_MAXMAGICEFFECTS> m_cMagicEffectStatus;
 
 	int m_iWhisperPlayerIndex;
 	char m_cProfile[256];
@@ -313,11 +313,12 @@ public:
 
 	
 
-	struct {
+	struct CrusadeStructureInfo {
 		char cType;
 		char cSide;
 		short sX, sY;
-	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
+	};
+	std::array<CrusadeStructureInfo, DEF_MAXCRUSADESTRUCTURES> m_stCrusadeStructureInfo;
 	int m_iCSIsendPoint;
 
 	char m_cSendingMapName[11];
@@ -344,10 +345,11 @@ public:
 	int m_iPartyMemberCount; 
 	int m_iPartyGUID; 
 
-	struct {
+	struct PartyMember {
 		int iIndex;
 		char cName[11];
-	} m_stPartyMemberName[DEF_MAXPARTYMEMBERS];
+	};
+	std::array<PartyMember, DEF_MAXPARTYMEMBERS> m_stPartyMemberName;
 
 	
 	uint32_t m_dwLastActionTime, m_dwLastDamageTime;
