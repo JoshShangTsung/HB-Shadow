@@ -106,9 +106,13 @@ public:
 
 	uint32_t m_dwCount;
 	short m_sTouchEffectType;
-	short m_sTouchEffectValue1, m_sTouchEffectValue2, m_sTouchEffectValue3;
+	short m_sTouchEffectValue1;
+	short m_sTouchEffectValue2;
+	short m_sTouchEffectValue3;
 	char m_cItemColor;
-	short m_sItemSpecEffectValue1, m_sItemSpecEffectValue2, m_sItemSpecEffectValue3;
+	short m_sItemSpecEffectValue1;
+	short m_sItemSpecEffectValue2;
+	short m_sItemSpecEffectValue3;
 	uint16_t m_wCurLifeSpan;
 	uint32_t m_dwAttribute;
 	void RequestBallItem(int iClientH, char *pData, uint32_t dwMsgSize);
