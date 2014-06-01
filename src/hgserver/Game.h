@@ -723,7 +723,7 @@ public:
 			  int iItemSpreadType, int iSpreadRange,
 			  int *iItemIDs, POINT *BasePos, int *iNumItem);
 
-	void processDelayedEvent(CDelayEvent &ev);
+	void processDelayedEvent(const DelayEvent &ev);
 	// Majestic Code By Diuuude
 	int m_iMajesticPointsPerLevel;
 	int m_iMajesticMinLevel;

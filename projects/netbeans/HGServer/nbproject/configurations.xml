@@ -9,6 +9,7 @@
       <itemPath>../../../src/hgserver/Client.h</itemPath>
       <itemPath>../../../src/hgserver/DebugDialog.cpp</itemPath>
       <itemPath>../../../src/hgserver/DebugDialog.h</itemPath>
+      <itemPath>../../../src/hgserver/DelayEvent.cpp</itemPath>
       <itemPath>../../../src/hgserver/DelayEvent.h</itemPath>
       <itemPath>../../../src/hgserver/DynamicObject.cpp</itemPath>
       <itemPath>../../../src/hgserver/DynamicObject.h</itemPath>
@@ -123,6 +124,11 @@
       <item path="../../../src/hgserver/DebugDialog.h"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DelayEvent.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../../src/hgserver/DelayEvent.h" ex="false" tool="3" flavor2="0">
@@ -329,6 +335,11 @@
       <item path="../../../src/hgserver/DebugDialog.h"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/DelayEvent.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../../src/hgserver/DelayEvent.h" ex="false" tool="3" flavor2="0">
