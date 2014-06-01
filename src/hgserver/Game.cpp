@@ -11302,7 +11302,7 @@ void CGame::processClientMsg(CClient &client, uint32_t msgId, char *pData, uint3
 			break;
 
 		case MSGID_COMMAND_COMMON:
-			ClientCommonHandler(iClientH, pData);
+			ClientCommonHandler(client, pData);
 			break;
 
 		case MSGID_COMMAND_MOTION:
@@ -11687,15 +11687,14 @@ bool CGame::bGetMsgQuene(char * pFrom, char * pData, uint32_t * pMsgSize, int * 
 	return true;
 }
 
-void CGame::ClientCommonHandler(int iClientH, char * pData) {
+void CGame::ClientCommonHandler(CClient &client, char * pData) {
 	uint16_t * wp, wCommand;
 	short * sp, sX, sY;
 	int * ip, iV1, iV2, iV3, iV4;
 	char * cp, cDir, * pString;
-
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-	if (m_pClientList[iClientH]->m_bIsKilled == true) return;
+	int iClientH = client.id_;
+	if (client.m_bIsInitComplete == false) return;
+	if (client.m_bIsKilled == true) return;
 
 	wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
 	wCommand = *wp;
@@ -11750,12 +11749,12 @@ void CGame::ClientCommonHandler(int iClientH, char * pData) {
 
 		case DEF_COMMONTYPE_SETGUILDTELEPORTLOC:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SETGUILDTELEPORTLOC");
-			RequestSetGuildTeleportLocHandler(iClientH, iV1, iV2, m_pClientList[iClientH]->m_iGuildGUID, "middleland");
+			RequestSetGuildTeleportLocHandler(iClientH, iV1, iV2, client.m_iGuildGUID, "middleland");
 			break;
 
 		case DEF_COMMONTYPE_SETGUILDCONSTRUCTLOC:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SETGUILDCONSTRUCTLOC");
-			RequestSetGuildConstructLocHandler(iClientH, iV1, iV2, m_pClientList[iClientH]->m_iGuildGUID, pString);
+			RequestSetGuildConstructLocHandler(iClientH, iV1, iV2, client.m_iGuildGUID, pString);
 			break;
 
 		case DEF_COMMONTYPE_GUILDTELEPORT:
@@ -11850,7 +11849,7 @@ void CGame::ClientCommonHandler(int iClientH, char * pData) {
 		case DEF_COMMONTYPE_TALKTONPC:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_TALKTONPC");
 			// works for client, but for npc it returns middleland
-			// if ((m_pMapList[m_pNpcList[iV1]->m_cMapIndex]->m_cName) != (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName)) break;
+			// if ((m_pMapList[m_pNpcList[iV1]->m_cMapIndex]->m_cName) != (m_pMapList[client.m_cMapIndex]->m_cName)) break;
 			NpcTalkHandler(iClientH, iV1);
 			break;
 
@@ -11891,7 +11890,7 @@ void CGame::ClientCommonHandler(int iClientH, char * pData) {
 
 		case DEF_COMMONTYPE_REQ_USEITEM:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_USEITEM");
-			UseItemHandler(iClientH, iV1, iV2, iV3, iV4);
+			UseItemHandler(client, iV1, iV2, iV3, iV4);
 			break;
 
 		case DEF_COMMONTYPE_REQ_GETREWARDMONEY:
@@ -27969,7 +27968,7 @@ void CGame::NpcBehavior_Stop(int iNpcH) {
 	}
 }
 
-void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, short sDestItemID) {
+void CGame::UseItemHandler(CClient &client, short sItemIndex, short dX, short dY, short sDestItemID) {
 	int iTemp, iMax, iV1, iV2, iV3, iSEV1, iEffectResult = 0;
 	uint32_t dwTime;
 	short sTemp, sTmpType, sTmpAppr1;
@@ -27982,49 +27981,49 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 	//wsprintf(G_cTxt, "%d", sDestItemID);
 	//PutLogList(G_cTxt);
 
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsKilled == true) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
+	if (client.m_bIsKilled == true) return;
+	if (client.m_bIsInitComplete == false) return;
 
 	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return;
-	if (m_pClientList[iClientH]->m_pItemList[sItemIndex] == nullptr) return;
-
-	if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_PERM) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_EAT) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_SKILL) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST)) {
+	auto &itemPtr = client.m_pItemList[sItemIndex];
+	if (!itemPtr) return;
+	CItem &item = *itemPtr;
+	if ((item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_USE_PERM) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_ARROW) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_EAT) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_USE_SKILL) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST)) {
 	} else return;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_EAT)) {
+	if ((item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_EAT)) {
 
 
-		switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType) {
+		switch (item.m_sItemEffectType) {
 			case DEF_ITEMEFFECTTYPE_WARM:
 
 				// �õ� ������ ��� �ص� �Ǿ�ٴ� �޼����� �����ش�.
-				if (m_pClientList[iClientH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 1) {
+				if (client.m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 1) {
 					//	SetIceFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
 
-					delayEvents_.remove(iClientH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_ICE);
+					delayEvents_.remove(client.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_ICE);
 
 					// ȿ�� ������ �� �߻��� ������ �̺�Ʈ�� ����Ѵ�.
 					delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (1 * 1000),
-							  iClientH, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
+							  client.id_, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
 
 
 					//				SendNotifyMsg(nullptr, iClientH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_ICE, nullptr, nullptr, nullptr);
 				}
 
-				m_pClientList[iClientH]->m_dwWarmEffectTime = dwTime;
+				client.m_dwWarmEffectTime = dwTime;
 				break;
 
 			case DEF_ITEMEFFECTTYPE_LOTTERY:
 
-				iTemp = iDice(1, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1);
-				if (iTemp == iDice(1, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1)) {
+				iTemp = iDice(1, item.m_sItemSpecEffectValue1);
+				if (iTemp == iDice(1, item.m_sItemSpecEffectValue1)) {
 
 
 				} else {
@@ -28034,17 +28033,17 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 				break;
 
 			case DEF_ITEMEFFECTTYPE_SLATES:
-				if (m_pClientList[iClientH]->m_pItemList[sItemIndex] != nullptr) {
+				{
 					// Full Ancient Slate ??
-					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 867) {
+					if (item.m_sIDnum == 867) {
 						// Slates dont work on Heldenian Map
-						switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2) {
+						switch (item.m_sItemSpecEffectValue2) {
 							case 2: // Bezerk slate
-								m_pClientList[iClientH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_BERSERK ] = true;
-								SetBerserkFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+								client.m_cMagicEffectStatus[ DEF_MAGICTYPE_BERSERK ] = true;
+								SetBerserkFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 								delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_BERSERK, dwTime + (1000 * 600),
-										  iClientH, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
-								SendNotifyMsg(0, iClientH, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_BERSERK, 1, 0, nullptr);
+										  client.id_, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
+								SendNotifyMsg(0, client.id_, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_BERSERK, 1, 0, nullptr);
 								strcpy(cSlateType, "Berserk");
 								break;
 
@@ -28060,10 +28059,10 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 								if (strlen(cSlateType) == 0) {
 									strcpy(cSlateType, "Exp");
 								}
-								SetSlateFlag(iClientH, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2, true);
-								delayEvents_.add(DelayEventType::ANCIENT_TABLET, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2,
-										  dwTime + (1000 * 600), iClientH, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
-								switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2) {
+								SetSlateFlag(client.id_, item.m_sItemSpecEffectValue2, true);
+								delayEvents_.add(DelayEventType::ANCIENT_TABLET, item.m_sItemSpecEffectValue2,
+										  dwTime + (1000 * 600), client.id_, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
+								switch (item.m_sItemSpecEffectValue2) {
 									case 1:
 										iEffectResult = 4;
 										break;
@@ -28076,182 +28075,182 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 								}
 						}
 						if (strlen(cSlateType) > 0)
-							_bItemLog(DEF_ITEMLOG_USE, iClientH, strlen(cSlateType), &*m_pClientList[iClientH]->m_pItemList[sItemIndex]);
+							_bItemLog(DEF_ITEMLOG_USE, client.id_, strlen(cSlateType), &item);
 					}
 				}
 				break;
 			case DEF_ITEMEFFECTTYPE_HP:
-				iMax = iGetMaxHP(iClientH);
-				if (m_pClientList[iClientH]->m_iHP < iMax) {
+				iMax = iGetMaxHP(client.id_);
+				if (client.m_iHP < iMax) {
 
-					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1 == 0) {
-						iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
-						iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
-						iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue3;
+					if (item.m_sItemSpecEffectValue1 == 0) {
+						iV1 = item.m_sItemEffectValue1;
+						iV2 = item.m_sItemEffectValue2;
+						iV3 = item.m_sItemEffectValue3;
 					} else {
-						iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
-						iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2;
-						iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue3;
+						iV1 = item.m_sItemSpecEffectValue1;
+						iV2 = item.m_sItemSpecEffectValue2;
+						iV3 = item.m_sItemSpecEffectValue3;
 					}
 
-					m_pClientList[iClientH]->m_iHP += (iDice(iV1, iV2) + iV3);
-					if (m_pClientList[iClientH]->m_iHP > iMax) m_pClientList[iClientH]->m_iHP = iMax;
-					if (m_pClientList[iClientH]->m_iHP <= 0) m_pClientList[iClientH]->m_iHP = 1;
+					client.m_iHP += (iDice(iV1, iV2) + iV3);
+					if (client.m_iHP > iMax) client.m_iHP = iMax;
+					if (client.m_iHP <= 0) client.m_iHP = 1;
 
 					iEffectResult = 1;
 				}
 				break;
 
 			case DEF_ITEMEFFECTTYPE_MP:
-				iMax = iGetMaxMP(iClientH);
-				if (m_pClientList[iClientH]->m_iMP < iMax) {
+				iMax = iGetMaxMP(client.id_);
+				if (client.m_iMP < iMax) {
 
-					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1 == 0) {
-						iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
-						iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
-						iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue3;
+					if (item.m_sItemSpecEffectValue1 == 0) {
+						iV1 = item.m_sItemEffectValue1;
+						iV2 = item.m_sItemEffectValue2;
+						iV3 = item.m_sItemEffectValue3;
 					} else {
-						iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
-						iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2;
-						iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue3;
+						iV1 = item.m_sItemSpecEffectValue1;
+						iV2 = item.m_sItemSpecEffectValue2;
+						iV3 = item.m_sItemSpecEffectValue3;
 					}
 
-					m_pClientList[iClientH]->m_iMP += (iDice(iV1, iV2) + iV3);
-					if (m_pClientList[iClientH]->m_iMP > iMax)
-						m_pClientList[iClientH]->m_iMP = iMax;
+					client.m_iMP += (iDice(iV1, iV2) + iV3);
+					if (client.m_iMP > iMax)
+						client.m_iMP = iMax;
 
 					iEffectResult = 2;
 				}
 				break;
 
 			case DEF_ITEMEFFECTTYPE_SP:
-				iMax = iGetMaxSP(iClientH);
-				if (m_pClientList[iClientH]->m_iSP < iMax) {
+				iMax = iGetMaxSP(client.id_);
+				if (client.m_iSP < iMax) {
 
-					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1 == 0) {
-						iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
-						iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
-						iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue3;
+					if (item.m_sItemSpecEffectValue1 == 0) {
+						iV1 = item.m_sItemEffectValue1;
+						iV2 = item.m_sItemEffectValue2;
+						iV3 = item.m_sItemEffectValue3;
 					} else {
-						iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
-						iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2;
-						iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue3;
+						iV1 = item.m_sItemSpecEffectValue1;
+						iV2 = item.m_sItemSpecEffectValue2;
+						iV3 = item.m_sItemSpecEffectValue3;
 					}
 
-					m_pClientList[iClientH]->m_iSP += (iDice(iV1, iV2) + iV3);
-					if (m_pClientList[iClientH]->m_iSP > iMax)
-						m_pClientList[iClientH]->m_iSP = iMax;
+					client.m_iSP += (iDice(iV1, iV2) + iV3);
+					if (client.m_iSP > iMax)
+						client.m_iSP = iMax;
 
 					iEffectResult = 3;
 				}
 
-				if (m_pClientList[iClientH]->m_bIsPoisoned == true) {
+				if (client.m_bIsPoisoned == true) {
 
-					m_pClientList[iClientH]->m_bIsPoisoned = false;
+					client.m_bIsPoisoned = false;
 
-					SetPoisonFlag(iClientH, DEF_OWNERTYPE_PLAYER, false); // removes poison aura when using a revitalizing potion
-					SendNotifyMsg(0, iClientH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_POISON, 0, 0, nullptr);
+					SetPoisonFlag(client.id_, DEF_OWNERTYPE_PLAYER, false); // removes poison aura when using a revitalizing potion
+					SendNotifyMsg(0, client.id_, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_POISON, 0, 0, nullptr);
 				}
 				break;
 
 			case DEF_ITEMEFFECTTYPE_HPSTOCK:
-				iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
-				iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
-				iV3 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue3;
+				iV1 = item.m_sItemEffectValue1;
+				iV2 = item.m_sItemEffectValue2;
+				iV3 = item.m_sItemEffectValue3;
 
-				m_pClientList[iClientH]->m_iHPstock += iDice(iV1, iV2) + iV3;
-				if (m_pClientList[iClientH]->m_iHPstock < 0) m_pClientList[iClientH]->m_iHPstock = 0;
-				if (m_pClientList[iClientH]->m_iHPstock > 500) m_pClientList[iClientH]->m_iHPstock = 500;
+				client.m_iHPstock += iDice(iV1, iV2) + iV3;
+				if (client.m_iHPstock < 0) client.m_iHPstock = 0;
+				if (client.m_iHPstock > 500) client.m_iHPstock = 500;
 
 
-				m_pClientList[iClientH]->m_iHungerStatus += iDice(iV1, iV2) + iV3;
-				if (m_pClientList[iClientH]->m_iHungerStatus > 100) m_pClientList[iClientH]->m_iHungerStatus = 100;
-				if (m_pClientList[iClientH]->m_iHungerStatus < 0) m_pClientList[iClientH]->m_iHungerStatus = 0;
+				client.m_iHungerStatus += iDice(iV1, iV2) + iV3;
+				if (client.m_iHungerStatus > 100) client.m_iHungerStatus = 100;
+				if (client.m_iHungerStatus < 0) client.m_iHungerStatus = 0;
 				break;
 
 			case DEF_ITEMEFFECTTYPE_REPPLUS:
 				iMax = 10000;
-				if (m_pClientList[iClientH]->m_iRating < iMax) m_pClientList[iClientH]->m_iRating += 1;
+				if (client.m_iRating < iMax) client.m_iRating += 1;
 				iEffectResult = 7;
 				break;
 
 			case DEF_ITEMEFFECTTYPE_STUDYSKILL:
 
-				iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
-				iV2 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
-				iSEV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
+				iV1 = item.m_sItemEffectValue1;
+				iV2 = item.m_sItemEffectValue2;
+				iSEV1 = item.m_sItemSpecEffectValue1;
 
 				if (iSEV1 == 0) {
 
-					TrainSkillResponse(true, iClientH, iV1, iV2);
+					TrainSkillResponse(true, client.id_, iV1, iV2);
 				} else {
-					TrainSkillResponse(true, iClientH, iV1, iSEV1);
+					TrainSkillResponse(true, client.id_, iV1, iSEV1);
 				}
 				break;
 
 			case DEF_ITEMEFFECTTYPE_STUDYMAGIC:
 
-				iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+				iV1 = item.m_sItemEffectValue1;
 				if (m_pMagicConfigList[iV1] != nullptr)
-					RequestStudyMagicHandler(iClientH, m_pMagicConfigList[iV1]->m_cName, false);
+					RequestStudyMagicHandler(client.id_, m_pMagicConfigList[iV1]->m_cName, false);
 				break;
 
 			case DEF_ITEMEFFECTTYPE_ADDBALLPOINTS:
 				char cInfoString[56];
-				iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
-				m_pClientList[iClientH]->m_iBallPoints += iV1;
+				iV1 = item.m_sItemEffectValue1;
+				client.m_iBallPoints += iV1;
 
-				wsprintf(cInfoString, "%d Ball Points added. Total Amount: %d ", iV1, m_pClientList[iClientH]->m_iBallPoints);
-				SendNotifyMsg(0, iClientH, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, cInfoString);
+				wsprintf(cInfoString, "%d Ball Points added. Total Amount: %d ", iV1, client.m_iBallPoints);
+				SendNotifyMsg(0, client.id_, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, cInfoString);
 
 				break;
 
 				/*case DEF_ITEMEFFECTTYPE_LOTTERY:
-					iLottery = iDice(1, m_pClientList[iClientH]->m_pItemList[sItemIndex]->
+					iLottery = iDice(1, item.
 					break;*/
 
 				// New 15/05/2004 Changed
 			case DEF_ITEMEFFECTTYPE_MAGIC:
 
-				if ((m_pClientList[iClientH]->m_iStatus & 0x10) != 0) {
-					if (m_pClientList[iClientH]->m_iAdminUserLevel == 0) {
-						SetInvisibilityFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
+				if ((client.m_iStatus & 0x10) != 0) {
+					if (client.m_iAdminUserLevel == 0) {
+						SetInvisibilityFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
 
-						delayEvents_.remove(iClientH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_INVISIBILITY);
-						m_pClientList[ iClientH ]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = 0;
+						delayEvents_.remove(client.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_INVISIBILITY);
+						client.m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = 0;
 					}
 				}
 
-				switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1) {
+				switch (item.m_sItemEffectValue1) {
 					case 1:
 
 						// testcode
-						if (bCheckIfIsFlagCarrier(iClientH)) ShowClientMsg(iClientH, "You can not use that item being a flag carrier.");
-						else RequestTeleportHandler(iClientH, "1   ");
+						if (bCheckIfIsFlagCarrier(client.id_)) ShowClientMsg(client.id_, "You can not use that item being a flag carrier.");
+						else RequestTeleportHandler(client.id_, "1   ");
 						break;
 
 					case 2:
 
-						if (bCheckIfIsFlagCarrier(iClientH)) ShowClientMsg(iClientH, "You can not use that item being a flag carrier.");
-						else PlayerMagicHandler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, 32, true);
+						if (bCheckIfIsFlagCarrier(client.id_)) ShowClientMsg(client.id_, "You can not use that item being a flag carrier.");
+						else PlayerMagicHandler(client.id_, client.m_sX, client.m_sY, 32, true);
 						break;
 
 					case 3:
 
-						if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_bIsFightZone == false)
-							PlayerMagicHandler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, 34, true);
+						if (m_pMapList[client.m_cMapIndex]->m_bIsFightZone == false)
+							PlayerMagicHandler(client.id_, client.m_sX, client.m_sY, 34, true);
 						break;
 
 					case 4:
 
-						switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2) {
+						switch (item.m_sItemEffectValue2) {
 							case 1:
 
-								if (bCheckIfIsFlagCarrier(iClientH)) ShowClientMsg(iClientH, "You can not use that item being a flag carrier.");
+								if (bCheckIfIsFlagCarrier(client.id_)) ShowClientMsg(client.id_, "You can not use that item being a flag carrier.");
 								else {
-									if (memcmp(m_pClientList[iClientH]->m_cMapName, "bisle", 5) != 0) {
-										ItemDepleteHandler(iClientH, sItemIndex, true, true);
-										RequestTeleportHandler(iClientH, "2   ", "bisle", -1, -1);
+									if (memcmp(client.m_cMapName, "bisle", 5) != 0) {
+										ItemDepleteHandler(client.id_, sItemIndex, true, true);
+										RequestTeleportHandler(client.id_, "2   ", "bisle", -1, -1);
 									}
 								}
 
@@ -28273,18 +28272,18 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 								GetLocalTime(&SysTime);
 
 
-								if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sTouchEffectValue1 != SysTime.wMonth) ||
-										  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sTouchEffectValue2 != SysTime.wDay) ||
-										  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sTouchEffectValue3 <= SysTime.wHour)) {
+								if ((item.m_sTouchEffectValue1 != SysTime.wMonth) ||
+										  (item.m_sTouchEffectValue2 != SysTime.wDay) ||
+										  (item.m_sTouchEffectValue3 <= SysTime.wHour)) {
 
 								} else {
 									char cDestMapName[11];
 									std::memset(cDestMapName, 0, sizeof (cDestMapName));
-									wsprintf(cDestMapName, "fightzone%d", m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2 - 10);
-									if (memcmp(m_pClientList[iClientH]->m_cMapName, cDestMapName, 10) != 0) {
+									wsprintf(cDestMapName, "fightzone%d", item.m_sItemEffectValue2 - 10);
+									if (memcmp(client.m_cMapName, cDestMapName, 10) != 0) {
 										//v1.42
-										ItemDepleteHandler(iClientH, sItemIndex, true, true);
-										RequestTeleportHandler(iClientH, "2   ", cDestMapName, -1, -1);
+										ItemDepleteHandler(client.id_, sItemIndex, true, true);
+										RequestTeleportHandler(client.id_, "2   ", cDestMapName, -1, -1);
 									}
 								}
 								break;
@@ -28293,83 +28292,83 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 
 					case 5:
 						// new
-						if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex] == 0) break;
-						if (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "GodH", 4) == 0) break;
-						if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2 > 8) {
-							if ((m_bHeldenianInitiated == true) && (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_bIsHeldenianMap == true)) {
-								PlayerMagicHandler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, 31, true,
-										  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2);
+						if (m_pMapList[client.m_cMapIndex] == 0) break;
+						if (memcmp(m_pMapList[client.m_cMapIndex]->m_cName, "GodH", 4) == 0) break;
+						if (item.m_sItemEffectValue2 > 8) {
+							if ((m_bHeldenianInitiated == true) && (m_pMapList[client.m_cMapIndex]->m_bIsHeldenianMap == true)) {
+								PlayerMagicHandler(client.id_, client.m_sX, client.m_sY, 31, true,
+										  item.m_sItemEffectValue2);
 							}
 						}
-						PlayerMagicHandler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, 31, true,
-								  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2);
+						PlayerMagicHandler(client.id_, client.m_sX, client.m_sY, 31, true,
+								  item.m_sItemEffectValue2);
 						break;
 				}
 				break;
 
 			case DEF_ITEMEFFECTTYPE_FIRMSTAMINAR:
-				m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
-				if (m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar > 20 * 30) m_pClientList[iClientH]->m_iTimeLeft_FirmStaminar = 20 * 30;
+				client.m_iTimeLeft_FirmStaminar += item.m_sItemEffectValue1;
+				if (client.m_iTimeLeft_FirmStaminar > 20 * 30) client.m_iTimeLeft_FirmStaminar = 20 * 30;
 				break;
 
 			case DEF_ITEMEFFECTTYPE_CHANGEATTR:
-				switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1) {
+				switch (item.m_sItemEffectValue1) {
 					case 1:
 
-						m_pClientList[iClientH]->m_cHairColor++;
-						if (m_pClientList[iClientH]->m_cHairColor > 15) m_pClientList[iClientH]->m_cHairColor = 0;
+						client.m_cHairColor++;
+						if (client.m_cHairColor > 15) client.m_cHairColor = 0;
 
-						sTemp = (m_pClientList[iClientH]->m_cHairStyle << 8) | (m_pClientList[iClientH]->m_cHairColor << 4) | (m_pClientList[iClientH]->m_cUnderwear);
-						m_pClientList[iClientH]->m_sAppr1 = sTemp;
+						sTemp = (client.m_cHairStyle << 8) | (client.m_cHairColor << 4) | (client.m_cUnderwear);
+						client.m_sAppr1 = sTemp;
 						break;
 
 					case 2:
 
-						m_pClientList[iClientH]->m_cHairStyle++;
-						if (m_pClientList[iClientH]->m_cHairStyle > 7) m_pClientList[iClientH]->m_cHairStyle = 0;
+						client.m_cHairStyle++;
+						if (client.m_cHairStyle > 7) client.m_cHairStyle = 0;
 
-						sTemp = (m_pClientList[iClientH]->m_cHairStyle << 8) | (m_pClientList[iClientH]->m_cHairColor << 4) | (m_pClientList[iClientH]->m_cUnderwear);
-						m_pClientList[iClientH]->m_sAppr1 = sTemp;
+						sTemp = (client.m_cHairStyle << 8) | (client.m_cHairColor << 4) | (client.m_cUnderwear);
+						client.m_sAppr1 = sTemp;
 						break;
 
 					case 3:
 
 
-						m_pClientList[iClientH]->m_cSkin++;
-						if (m_pClientList[iClientH]->m_cSkin > 3)
-							m_pClientList[iClientH]->m_cSkin = 1;
+						client.m_cSkin++;
+						if (client.m_cSkin > 3)
+							client.m_cSkin = 1;
 
-						if (m_pClientList[iClientH]->m_cSex == 1) sTemp = 1;
-						else if (m_pClientList[iClientH]->m_cSex == 2) sTemp = 4;
+						if (client.m_cSex == 1) sTemp = 1;
+						else if (client.m_cSex == 2) sTemp = 4;
 
-						switch (m_pClientList[iClientH]->m_cSkin) {
+						switch (client.m_cSkin) {
 							case 2: sTemp += 1;
 								break;
 							case 3: sTemp += 2;
 								break;
 						}
-						m_pClientList[iClientH]->m_sType = sTemp;
+						client.m_sType = sTemp;
 						break;
 
 					case 4:
 
-						sTemp = m_pClientList[iClientH]->m_sAppr3 & 0xFF0F;
+						sTemp = client.m_sAppr3 & 0xFF0F;
 						if (sTemp == 0) {
 
-							if (m_pClientList[iClientH]->m_cSex == 1)
-								m_pClientList[iClientH]->m_cSex = 2;
-							else m_pClientList[iClientH]->m_cSex = 1;
+							if (client.m_cSex == 1)
+								client.m_cSex = 2;
+							else client.m_cSex = 1;
 
 
-							if (m_pClientList[iClientH]->m_cSex == 1) {
+							if (client.m_cSex == 1) {
 
 								sTmpType = 1;
-							} else if (m_pClientList[iClientH]->m_cSex == 2) {
+							} else if (client.m_cSex == 2) {
 
 								sTmpType = 4;
 							}
 
-							switch (m_pClientList[iClientH]->m_cSkin) {
+							switch (client.m_cSkin) {
 								case 1:
 
 									break;
@@ -28381,117 +28380,117 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 									break;
 							}
 
-							sTmpAppr1 = (m_pClientList[iClientH]->m_cHairStyle << 8) | (m_pClientList[iClientH]->m_cHairColor << 4) | (m_pClientList[iClientH]->m_cUnderwear);
-							m_pClientList[iClientH]->m_sType = sTmpType;
-							m_pClientList[iClientH]->m_sAppr1 = sTmpAppr1;
+							sTmpAppr1 = (client.m_cHairStyle << 8) | (client.m_cHairColor << 4) | (client.m_cUnderwear);
+							client.m_sType = sTmpType;
+							client.m_sAppr1 = sTmpAppr1;
 							//
 						}
 						break;
 				}
 
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 				break;
 		}
 
 
-		ItemDepleteHandler(iClientH, sItemIndex, true, true);
+		ItemDepleteHandler(client.id_, sItemIndex, true, true);
 
 		switch (iEffectResult) {
 			case 1:
-				SendNotifyMsg(0, iClientH, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+				SendNotifyMsg(0, client.id_, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 				break;
 			case 2:
-				SendNotifyMsg(0, iClientH, DEF_NOTIFY_MP, 0, 0, 0, nullptr);
+				SendNotifyMsg(0, client.id_, DEF_NOTIFY_MP, 0, 0, 0, nullptr);
 				break;
 			case 3:
-				SendNotifyMsg(0, iClientH, DEF_NOTIFY_SP, 0, 0, 0, nullptr);
+				SendNotifyMsg(0, client.id_, DEF_NOTIFY_SP, 0, 0, 0, nullptr);
 				break;
 			case 4: // Invincible
-				SendNotifyMsg(0, iClientH, DEF_NOTIFY_SLATE_INVINCIBLE, 0, 0, 0, nullptr);
+				SendNotifyMsg(0, client.id_, DEF_NOTIFY_SLATE_INVINCIBLE, 0, 0, 0, nullptr);
 				break;
 			case 5: // Mana
-				SendNotifyMsg(0, iClientH, DEF_NOTIFY_SLATE_MANA, 0, 0, 0, nullptr);
+				SendNotifyMsg(0, client.id_, DEF_NOTIFY_SLATE_MANA, 0, 0, 0, nullptr);
 				break;
 			case 6: // EXP
-				SendNotifyMsg(0, iClientH, DEF_NOTIFY_SLATE_EXP, 0, 0, 0, nullptr);
+				SendNotifyMsg(0, client.id_, DEF_NOTIFY_SLATE_EXP, 0, 0, 0, nullptr);
 				break;
 			default:
 				break;
 			case 7: //Rep
 				char cRepMessage[60];
 				wsprintf(cRepMessage, "You have Earned 1 Rep Point.");
-				ShowClientMsg(iClientH, cRepMessage);
+				ShowClientMsg(client.id_, cRepMessage);
 				break;
 		}
-	} else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST) {
+	} else if (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST) {
 
 
-		if (_bDepleteDestTypeItemUseEffect(iClientH, dX, dY, sItemIndex, sDestItemID) == true)
-			ItemDepleteHandler(iClientH, sItemIndex, true, true);
-	} else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW) {
+		if (_bDepleteDestTypeItemUseEffect(client.id_, dX, dY, sItemIndex, sDestItemID) == true)
+			ItemDepleteHandler(client.id_, sItemIndex, true, true);
+	} else if (item.m_cItemType == DEF_ITEMTYPE_ARROW) {
 
-		m_pClientList[iClientH]->m_cArrowIndex = _iGetArrowItemIndex(iClientH);
-	} else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_PERM) {
+		client.m_cArrowIndex = _iGetArrowItemIndex(client.id_);
+	} else if (item.m_cItemType == DEF_ITEMTYPE_USE_PERM) {
 
-		switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType) {
+		switch (item.m_sItemEffectType) {
 			case DEF_ITEMEFFECTTYPE_SHOWLOCATION:
-				iV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
+				iV1 = item.m_sItemEffectValue1;
 				switch (iV1) {
 					case 1:
 
-						if (strcmp(m_pClientList[iClientH]->m_cMapName, "aresden") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 1, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "elvine") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 2, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "middleland") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 3, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "default") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 4, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "huntzone2") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 5, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "huntzone1") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 6, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "huntzone4") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 7, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "huntzone3") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 8, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "arefarm") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 9, 0, nullptr);
-						else if (strcmp(m_pClientList[iClientH]->m_cMapName, "elvfarm") == 0)
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 10, 0, nullptr);
-						else SendNotifyMsg(0, iClientH, DEF_NOTIFY_SHOWMAP, iV1, 0, 0, nullptr);
+						if (strcmp(client.m_cMapName, "aresden") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 1, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "elvine") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 2, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "middleland") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 3, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "default") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 4, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "huntzone2") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 5, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "huntzone1") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 6, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "huntzone4") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 7, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "huntzone3") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 8, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "arefarm") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 9, 0, nullptr);
+						else if (strcmp(client.m_cMapName, "elvfarm") == 0)
+							SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 10, 0, nullptr);
+						else SendNotifyMsg(0, client.id_, DEF_NOTIFY_SHOWMAP, iV1, 0, 0, nullptr);
 						break;
 				}
 				break;
 		}
-	} else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_SKILL) {
+	} else if (item.m_cItemType == DEF_ITEMTYPE_USE_SKILL) {
 
 
-		if ((m_pClientList[iClientH]->m_pItemList[sItemIndex] == nullptr) ||
-				  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_wCurLifeSpan <= 0) ||
-				  (m_pClientList[iClientH]->m_bSkillUsingStatus[ m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill ] == true)) {
+		if ((client.m_pItemList[sItemIndex] == nullptr) ||
+				  (item.m_wCurLifeSpan <= 0) ||
+				  (client.m_bSkillUsingStatus[ item.m_sRelatedSkill ] == true)) {
 
 			return;
 		} else {
-			if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_wMaxLifeSpan != 0) {
+			if (item.m_wMaxLifeSpan != 0) {
 
-				m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_wCurLifeSpan--;
-				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_wCurLifeSpan <= 0) {
+				item.m_wCurLifeSpan--;
+				if (item.m_wCurLifeSpan <= 0) {
 
 
-					SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMLIFESPANEND, DEF_EQUIPPOS_NONE, sItemIndex, 0, nullptr);
+					SendNotifyMsg(0, client.id_, DEF_NOTIFY_ITEMLIFESPANEND, DEF_EQUIPPOS_NONE, sItemIndex, 0, nullptr);
 				} else {
 
 					int iSkillUsingTimeID = (int) timeGetTime();
 
-					delayEvents_.add(DelayEventType::USEITEM_SKILL, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill,
-							  dwTime + m_pSkillConfigList[ m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill ]->m_sValue2 * 1000,
-							  iClientH, DEF_OWNERTYPE_PLAYER, m_pClientList[iClientH]->m_cMapIndex, dX, dY,
-							  m_pClientList[iClientH]->m_cSkillMastery[ m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill ], iSkillUsingTimeID, 0);
+					delayEvents_.add(DelayEventType::USEITEM_SKILL, item.m_sRelatedSkill,
+							  dwTime + m_pSkillConfigList[ item.m_sRelatedSkill ]->m_sValue2 * 1000,
+							  client.id_, DEF_OWNERTYPE_PLAYER, client.m_cMapIndex, dX, dY,
+							  client.m_cSkillMastery[ item.m_sRelatedSkill ], iSkillUsingTimeID, 0);
 
 
-					m_pClientList[iClientH]->m_bSkillUsingStatus[ m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill ] = true;
-					m_pClientList[iClientH]->m_iSkillUsingTimeID[ m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill ] = iSkillUsingTimeID; //v1.12
+					client.m_bSkillUsingStatus[ item.m_sRelatedSkill ] = true;
+					client.m_iSkillUsingTimeID[ item.m_sRelatedSkill ] = iSkillUsingTimeID; //v1.12
 				}
 			}
 		}

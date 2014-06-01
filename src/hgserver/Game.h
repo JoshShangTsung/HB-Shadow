@@ -552,7 +552,7 @@ public:
 	void Effect_HpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
 	void Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3, bool bExp, int iAttr = 0);
 	void Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
-	void UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, short sDestItemID);
+	void UseItemHandler(CClient &client, short sItemIndex, short dX, short dY, short sDestItemID);
 	void NpcBehavior_Stop(int iNpcH);
 	void ItemDepleteHandler(int iClientH, short sItemIndex, bool bIsUseItemResult, bool bIsItemUsed);
 	int _iGetArrowItemIndex(int iClientH);
@@ -628,7 +628,7 @@ public:
 	bool _bAddClientItemList(int iClientH, class CItem * pItem, int * pDelReq);
 	int iClientMotion_GetItem_Handler(int iClientH, short sX, short sY, char cDir);
 	void DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * pItemName, bool bByPlayer = true);
-	void ClientCommonHandler(int iClientH, char * pData);
+	void ClientCommonHandler(CClient &client, char * pData);
 	bool __fastcall bGetMsgQuene(char * pFrom, char * pData, uint32_t * pMsgSize, int * pIndex, char * pKey);
 	void processClientMsg(CClient &client, uint32_t msgId, char *pData, uint32_t dwMsgSize, char cKey);
 	void MsgProcess();
