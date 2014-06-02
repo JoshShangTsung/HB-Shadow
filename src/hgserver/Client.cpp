@@ -370,7 +370,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 			break;
 	}
 
-	game_.SendNotifyMsg(0, *this, DEF_NOTIFY_KILLED, 0, 0, 0, cAttackerName);
+	this->SendNotifyMsg(0,DEF_NOTIFY_KILLED, 0, 0, 0, cAttackerName);
 	// �ٸ� Ŭ���̾�Ʈ���� �״� ���� ���.
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		sAttackerWeapon = ((game_.m_pClientList[iAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
@@ -487,14 +487,14 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 
 				//this->m_iExp -= iDice(1, 100);
 				//if (this->m_iExp < 0) this->m_iExp = 0;
-				//SendNotifyMsg(nullptr, *this, DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
+				//this->SendNotifyMsg(nullptr,DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
 			} else {
 				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, this->m_cLocation, 10) == 0) {
 
 
 					//this->m_iExp -= iDice(1, 100);
 					//if (this->m_iExp < 0) this->m_iExp = 0;
-					//SendNotifyMsg(nullptr, *this, DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
+					//this->SendNotifyMsg(nullptr,DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
 				} else {
 
 					game_.ApplyCombatKilledPenalty(id_, 2, bIsSAattacked);
@@ -546,7 +546,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 						wsprintf(G_cTxt, "Enemy Player Killed by Npc! Construction +%d", (this->m_iLevel / 2));
 						PutLogList(G_cTxt);
 						// ���ְ�� �ٷ� �뺸.
-						game_.SendNotifyMsg(0, *game_.m_pClientList[i], DEF_NOTIFY_CONSTRUCTIONPOINT, game_.m_pClientList[i]->m_iConstructionPoint, game_.m_pClientList[i]->m_iWarContribution, 0, nullptr);
+						game_.m_pClientList[i]->SendNotifyMsg(0,DEF_NOTIFY_CONSTRUCTIONPOINT, game_.m_pClientList[i]->m_iConstructionPoint, game_.m_pClientList[i]->m_iWarContribution, 0, nullptr);
 						return;
 					}
 			}
@@ -557,7 +557,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 		// this->m_iExp -= iDice(1, 50);
 		// if (this->m_iExp < 0) this->m_iExp = 0;
 
-		// SendNotifyMsg(nullptr, *this, DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
+		// this->SendNotifyMsg(nullptr,DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
 	}
 	//----------------------------EK Announcer-------------------------
 	//---- Function: CGame::ClientKilledHandler                    ----
@@ -613,7 +613,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	{
 		if ((game_.m_pClientList[i] != nullptr)) // Check if this->is avtice
 		{
-			game_.SendNotifyMsg(0, *game_.m_pClientList[i], DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to client
+			game_.m_pClientList[i]->SendNotifyMsg(0,DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to client
 			// Log EK
 			wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName); // Log message
 			PutLogFileList(G_cTxt); // Enter into logs
@@ -623,3 +623,1571 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	//----                   End EK Announcer Code                 ----
 	//-----------------------------------------------------------------
 }
+
+
+void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4, uint32_t sV5, uint32_t sV6, uint32_t sV7, uint32_t sV8, uint32_t sV9, char * pString2) {
+	char cData[1000];
+	uint32_t * dwp;
+	uint16_t * wp;
+	char * cp;
+	short * sp;
+	int * ip, iRet, i;
+
+	std::memset(cData, 0, sizeof (cData));
+
+	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+	*dwp = MSGID_NOTIFY;
+	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+	*wp = wMsgType;
+
+	cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
+
+
+	switch (wMsgType) {
+		case DEF_NOTIFY_HELDENIANCOUNT:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV3;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV4;
+			cp += 2;
+
+			cp += 14;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 14);
+
+			break;
+
+		case DEF_NOTIFY_NOMOREAGRICULTURE:
+		case DEF_NOTIFY_AGRICULTURESKILLLIMIT:
+		case DEF_NOTIFY_AGRICULTURENOAREA:
+		case DEF_NOTIFY_HAPPYHOURSTAR:
+		case DEF_NOTIFY_HAPPYHOUREND:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+			// Crafting
+		case DEF_NOTIFY_CRAFTING_FAIL: //reversed by Snoopy: 0x0BF1:
+			ip = (int *) cp;
+			*ip = (int) sV1;
+			cp += 4;
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+			// New 18/05/2004
+		case DEF_NOTIFY_SPAWNEVENT:
+			*cp = (char) sV3;
+			cp++;
+
+			sp = (short *) cp;
+			*cp = sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*cp = sV2;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 11);
+			break;
+
+		case DEF_NOTIFY_QUESTCOUNTER:
+			ip = (int *) cp;
+			*ip = sV1;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 24);
+			break;
+
+		case DEF_NOTIFY_REQRANGO: // Morla2.2 - Notify Rango
+			ip = (int *) cp;
+			*ip = sV1;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = sV2;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 24);
+			break;
+
+		case DEF_NOTIFY_APOCGATECLOSE:
+		case DEF_NOTIFY_APOCGATEOPEN:
+			ip = (int *) cp;
+			*ip = sV1;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = sV2;
+			cp += 4;
+
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 24);
+			break;
+
+		case DEF_NOTIFY_ABADDONKILLED:
+			memcpy(cp, game_.m_pClientList[iFromH]->m_cCharName, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 24);
+			break;
+
+		case DEF_NOTIFY_APOCFORCERECALLPLAYERS:
+		case DEF_NOTIFY_APOCGATESTARTMSG:
+		case DEF_NOTIFY_APOCGATEENDMSG:
+		case DEF_NOTIFY_NORECALL:
+			//50Cent - Capture The Flag
+		case DEF_NOTIFY_CAPTURETHEFLAGSTART:
+		case DEF_NOTIFY_ARESDENCAPTUREDELVINEFLAG:
+		case DEF_NOTIFY_ELVINECAPTUREDARESDENFLAG:
+		case DEF_NOTIFY_ELVINEFLAGBACKTOCH:
+		case DEF_NOTIFY_ARESDENFLAGBACKTOCH:
+		case DEF_NOTIFY_ELVINEWINSROUND:
+		case DEF_NOTIFY_ARESDENWINSROUND:
+		case DEF_NOTIFY_ELVINEWINCTF:
+		case DEF_NOTIFY_ARESDENWINCTF:
+		case DEF_NOTIFY_TIECTF:
+
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_FORCERECALLTIME:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+			// New 16/05/2004
+			//0xB4E2, 0xBEB
+		case DEF_NOTIFY_MONSTERCOUNT:
+		case DEF_NOTIFY_SLATE_STATUS:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+			//0x0BE5, 0x0BE7, 0x0BE8, 0x0BEA
+		case DEF_NOTIFY_0BE8:
+		case DEF_NOTIFY_HELDENIANTELEPORT:
+		case DEF_NOTIFY_HELDENIANEND:
+		case DEF_NOTIFY_RESURRECTPLAYER:
+		case DEF_NOTIFY_SLATE_EXP:
+		case DEF_NOTIFY_SLATE_MANA:
+		case DEF_NOTIFY_SLATE_INVINCIBLE:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_SLATE_CREATEFAIL:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_SLATE_CREATESUCCESS:
+			dwp = (uint32_t *) cp;
+			*dwp = sV1;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+			// New 07/05/2004
+			// Party Notify Msg's
+		case DEF_NOTIFY_PARTY:
+
+			switch (sV1) {
+				case 4:
+				case 6:
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV1;
+					cp += 2;
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV2;
+					cp += 2;
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV3;
+					cp += 2;
+					memcpy(cp, pString, 10);
+					cp += 10;
+					iRet = this->m_pXSock->iSendMsg(cData, 12 + 10);
+					this->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+					break;
+
+				case 5:
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV1;
+					cp += 2;
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV2;
+					cp += 2;
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV3;
+					cp += 2;
+					memcpy(cp, pString, sV3 * 11);
+					cp += sV3 * 11;
+					iRet = this->m_pXSock->iSendMsg(cData, 12 + sV3 * 11);
+					this->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+					break;
+
+				default:
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV1;
+					cp += 2;
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV2;
+					cp += 2;
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV3;
+					cp += 2;
+					wp = (uint16_t *) cp;
+					*wp = (uint16_t) sV4;
+					cp += 2;
+					iRet = this->m_pXSock->iSendMsg(cData, 14);
+					this->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+					break;
+			}
+			break;
+
+		case DEF_NOTIFY_REQGUILDNAMEANSWER:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 30);
+			break;
+
+			// New 06/05/2004
+			// Upgrade Notify Msg's
+		case DEF_NOTIFY_ITEMUPGRADEFAIL:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_ITEMATTRIBUTECHANGE:
+		case DEF_NOTIFY_GIZONITEMUPGRADELEFT:
+			sp = (short *) cp;
+			*sp = sV1;
+			cp += 2;
+
+			dwp = (uint32_t *) cp;
+			*dwp = sV2;
+			cp += 4;
+
+			dwp = (uint32_t *) cp;
+			*dwp = sV3;
+			cp += 4;
+
+			dwp = (uint32_t *) cp;
+			*dwp = sV4;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 20);
+			break;
+
+		case DEF_NOTIFY_UPGRADEHEROCAPE:
+		case DEF_NOTIFY_GIZONITEMCANGE:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			*cp = (char) sV2;
+			cp++;
+
+			sp = (short *) cp;
+			*sp = (short) sV3;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV4;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV5;
+			cp += 2;
+
+			*cp = (char) sV6;
+			cp++;
+
+			*cp = (char) sV7;
+			cp++;
+
+			dwp = (uint32_t *) cp;
+			*dwp = sV8;
+			cp += 4;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 41);
+			break;
+
+			// 2.06 - by KLKS
+		case DEF_NOTIFY_CHANGEPLAYMODE:
+			memcpy(cp, pString, 10);
+			cp += 10;
+			iRet = this->m_pXSock->iSendMsg(cData, 16);
+			break;
+			//
+
+		case DEF_NOTIFY_TCLOC:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV4;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV5;
+			cp += 2;
+
+			memcpy(cp, pString2, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 34);
+			break;
+
+			//New 11/05/2004
+		case DEF_NOTIFY_GRANDMAGICRESULT:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV3;
+			cp += 2;
+
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV4;
+			cp += 2;
+
+			if (sV9 > 0) {
+				memcpy(cp, pString2, (sV9 * 2) + 2);
+				cp += (sV9 * 2) + 2;
+			} else {
+				sp = (short *) cp;
+				*sp = 0;
+				cp += 2;
+			}
+			iRet = this->m_pXSock->iSendMsg(cData, (sV9 * 2) + 26);
+			break;
+
+		case DEF_NOTIFY_MAPSTATUSNEXT:
+			memcpy(cp, pString, sV1);
+			cp += sV1;
+			iRet = this->m_pXSock->iSendMsg(cData, 6 + sV1);
+			break;
+
+		case DEF_NOTIFY_MAPSTATUSLAST:
+			memcpy(cp, pString, sV1);
+			cp += sV1;
+			iRet = this->m_pXSock->iSendMsg(cData, 6 + sV1);
+			break;
+
+		case DEF_NOTIFY_LOCKEDMAP:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 18);
+			break;
+
+		case DEF_NOTIFY_BUILDITEMSUCCESS:
+		case DEF_NOTIFY_BUILDITEMFAIL:
+
+			if (sV1 >= 0) {
+				sp = (short *) cp;
+				*sp = (short) sV1;
+				cp += 2;
+			} else {
+				sp = (short *) cp;
+				*sp = (short) sV1 + 10000;
+				cp += 2;
+			}
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_HELP:
+		case DEF_NOTIFY_QUESTREWARD:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			ip = (int *) cp;
+			*ip = (int) sV3;
+			cp += 4;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			ip = (int *) cp;
+			*ip = (int) sV4;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 38);
+			break;
+
+		case DEF_NOTIFY_CANNOTCONSTRUCT:
+		case DEF_NOTIFY_METEORSTRIKECOMING:
+		case DEF_NOTIFY_METEORSTRIKEHIT:
+		case DEF_NOTIFY_HELPFAILED:
+		case DEF_NOTIFY_SPECIALABILITYENABLED:
+		case DEF_NOTIFY_FORCEDISCONN:
+		case DEF_NOTIFY_OBSERVERMODE:
+		case DEF_NOTIFY_QUESTCOMPLETED:
+		case DEF_NOTIFY_QUESTABORTED:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_QUESTCONTENTS:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV3;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV4;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV5;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV6;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV7;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV8;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV9;
+			cp += 2;
+
+			if (pString2 != nullptr) memcpy(cp, pString2, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 44);
+			break;
+
+		case DEF_NOTIFY_ENERGYSPHERECREATED:
+		case DEF_NOTIFY_ITEMCOLORCHANGE:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_NOMORECRUSADESTRUCTURE:
+		case DEF_NOTIFY_EXCHANGEITEMCOMPLETE:
+		case DEF_NOTIFY_CANCELEXCHANGEITEM:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_SETEXCHANGEITEM:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV3;
+			cp += 2;
+
+			ip = (int *) cp;
+			*ip = (int) sV4;
+			cp += 4;
+
+			*cp = (char) sV5;
+			cp++;
+
+			sp = (short *) cp;
+			*sp = (short) sV6;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV7;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV8;
+			cp += 2;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			memcpy(cp, game_.m_pClientList[iFromH]->m_cCharName, 10);
+			cp += 10;
+
+			// v1.42
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV9;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 57);
+			break;
+
+		case DEF_NOTIFY_OPENEXCHANGEWINDOW:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV3;
+			cp += 2;
+
+			ip = (int *) cp;
+			*ip = (int) sV4;
+			cp += 4;
+
+			*cp = (char) sV5;
+			cp++;
+
+			sp = (short *) cp;
+			*sp = (short) sV6;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV7;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV8;
+			cp += 2;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			memcpy(cp, game_.m_pClientList[iFromH]->m_cCharName, 10);
+			cp += 10;
+
+			// v1.42
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV9;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 57);
+			break;
+
+		case DEF_NOTIFY_NOTFLAGSPOT:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_ITEMPOSLIST:
+			for (i = 0; i < DEF_MAXITEMS; i++) {
+				sp = (short *) cp;
+				*sp = (short) this->m_ItemPosList[i].x;
+				cp += 2;
+				sp = (short *) cp;
+				*sp = (short) this->m_ItemPosList[i].y;
+				cp += 2;
+			}
+			iRet = this->m_pXSock->iSendMsg(cData, 6 + DEF_MAXITEMS * 4);
+			break;
+
+		case DEF_NOTIFY_ENEMYKILLS:
+			ip = (int *) cp;
+			*ip = (int) sV1;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_CRUSADE:
+			ip = (int *) cp;
+			*ip = (int) sV1;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = (int) sV2;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = (int) sV3;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = (int) sV4;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 22);
+			break;
+
+		case DEF_NOTIFY_CONSTRUCTIONPOINT:
+		case DEF_NOTIFY_SPECIALABILITYSTATUS:
+		case DEF_NOTIFY_DAMAGEMOVE:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV3;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 12);
+			break;
+
+		case DEF_NOTIFY_DOWNSKILLINDEXSET:
+		case DEF_NOTIFY_RESPONSE_CREATENEWPARTY:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_ADMINIFO:
+			switch (sV1) {
+				case 1: {
+					auto &npc = *game_.m_pNpcList[sV2];
+					ip = (int *) cp;
+					*ip = npc.m_iHP;
+					cp += 4;
+
+					ip = (int *) cp;
+					*ip = npc.m_iDefenseRatio;
+					cp += 4;
+
+					ip = (int *) cp;
+					*ip = npc.m_bIsSummoned;
+					cp += 4;
+
+					ip = (int *) cp;
+					*ip = npc.m_cActionLimit;
+					cp += 4;
+
+					ip = (int *) cp;
+					*ip = npc.m_iHitDice;
+					cp += 4;
+
+					dwp = (uint32_t *) cp; // v1.4
+					*dwp = npc.m_dwDeadTime;
+					cp += 4;
+
+					dwp = (uint32_t *) cp;
+					*dwp = npc.m_dwRegenTime;
+					cp += 4;
+
+					ip = (int *) cp;
+					*ip = (int) npc.m_bIsKilled;
+					cp += 4;
+
+					iRet = this->m_pXSock->iSendMsg(cData, 26 + 12);
+				} break;
+			}
+			break;
+
+		case DEF_NOTIFY_HELDENIANSTART:
+		case DEF_NOTIFY_NPCTALK:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV3;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV4;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV5;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV6;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV7;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV8;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = (short) sV9;
+			cp += 2;
+
+			if (pString != nullptr) memcpy(cp, pString, 20);
+			cp += 20;
+
+			if (pString2 != nullptr) memcpy(cp, pString2, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 64);
+			break;
+
+		case DEF_NOTIFY_CRAFTING_SUCCESS: //reversed by Snoopy: 0x0BF0
+		case DEF_NOTIFY_PORTIONSUCCESS:
+		case DEF_NOTIFY_LOWPORTIONSKILL:
+		case DEF_NOTIFY_PORTIONFAIL:
+		case DEF_NOTIFY_NOMATCHINGPORTION:
+
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_SUPERATTACKLEFT:
+			sp = (short *) cp;
+			*sp = this->m_iSuperAttackLeft;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_SAFEATTACKMODE:
+			*cp = this->m_bIsSafeAttackMode;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 7);
+			break;
+
+		case DEF_NOTIFY_QUERY_JOINPARTY:
+		case DEF_NOTIFY_IPACCOUNTINFO:
+			strcpy(cp, pString);
+			cp += strlen(pString);
+
+			iRet = this->m_pXSock->iSendMsg(cData, 6 + strlen(pString) + 1);
+			break;
+
+		case DEF_NOTIFY_REWARDGOLD:
+			dwp = (uint32_t *) cp;
+			*dwp = this->m_iRewardGold;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_SERVERSHUTDOWN:
+			*cp = (char) sV1;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 7);
+			break;
+
+		case DEF_NOTIFY_GLOBALATTACKMODE:
+		case DEF_NOTIFY_WHETHERCHANGE:
+			*cp = (char) sV1;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 7);
+			break;
+
+		case DEF_NOTIFY_FISHCANCELED:
+		case DEF_NOTIFY_FISHSUCCESS:
+		case DEF_NOTIFY_FISHFAIL:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_DEBUGMSG:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_FISHCHANCE:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_ENERGYSPHEREGOALIN:
+		case DEF_NOTIFY_EVENTFISHMODE:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV3;
+			cp += 2;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 32);
+			break;
+
+		case DEF_NOTIFY_NOTICEMSG:
+			memcpy(cp, pString, strlen(pString));
+			cp += strlen(pString);
+
+			*cp = 0;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, strlen(pString) + 7);
+			break;
+
+		case DEF_NOTIFY_CANNOTRATING:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_RATINGPLAYER:
+			*cp = (char) sV1;
+			cp++;
+
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			ip = (int *) cp;
+			*ip = this->m_iRating;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 22);
+			break;
+
+		case DEF_NOTIFY_ADMINUSERLEVELLOW:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_PLAYERSHUTUP:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 19);
+			break;
+
+		case DEF_NOTIFY_TIMECHANGE:
+			*cp = (char) sV1;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 7);
+			break;
+
+		case DEF_NOTIFY_TOBERECALLED:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_HUNGER:
+			*cp = (char) sV1;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 7);
+			break;
+
+		case DEF_NOTIFY_PLAYERPROFILE:
+			if (strlen(pString) > 100) {
+				memcpy(cp, pString, 100);
+				cp += 100;
+			} else {
+				memcpy(cp, pString, strlen(pString));
+				cp += strlen(pString);
+			}
+			*cp = 0;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 7 + strlen(pString));
+			break;
+
+			// New 10/05/2004 Changed
+		case DEF_NOTIFY_WHISPERMODEON:
+		case DEF_NOTIFY_WHISPERMODEOFF:
+		case DEF_NOTIFY_PLAYERNOTONGAME:
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			memcpy(cp, "          ", 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 27);
+			break;
+
+			// New 15/05/2004 Changed
+		case DEF_NOTIFY_PLAYERONGAME:
+			memcpy(cp, pString, 10);
+			cp += 10;
+
+			if (pString[0] != 0) {
+				memcpy(cp, pString2, 14);
+				cp += 14;
+			}
+
+			iRet = this->m_pXSock->iSendMsg(cData, 31);
+			break;
+
+			// New 06/05/2004
+		case DEF_NOTIFY_ITEMSOLD:
+		case DEF_NOTIFY_ITEMREPAIRED:
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV1;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV2;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 14);
+			break;
+
+			// New 06/05/2004
+		case DEF_NOTIFY_REPAIRITEMPRICE:
+		case DEF_NOTIFY_SELLITEMPRICE:
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV1;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV2;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV3;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV4;
+			cp += 4;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 42);
+			break;
+
+		case DEF_NOTIFY_CANNOTREPAIRITEM:
+		case DEF_NOTIFY_CANNOTSELLITEM:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 30);
+
+			break;
+
+		case DEF_NOTIFY_SHOWMAP:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_SKILLUSINGEND:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_TOTALUSERS:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) game_.m_iTotalGameServerClients; //_iGetTotalClients();
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 8);
+			break;
+
+		case DEF_NOTIFY_MAGICEFFECTOFF:
+		case DEF_NOTIFY_MAGICEFFECTON:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV2;
+			cp += 4;
+
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV3;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 16);
+			break;
+
+		case DEF_NOTIFY_CANNOTITEMTOBANK:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_SERVERCHANGE:
+			memcpy(cp, this->m_cMapName, 10);
+			cp += 10;
+			if (game_.m_iGameServerMode == 1)
+				if (memcmp(game_.m_cLogServerAddr, game_.m_cGameServerAddr, 15) == 0)
+					memcpy(cp, game_.m_cGameServerAddrExternal, 15);
+				else
+					memcpy(cp, game_.m_cLogServerAddr, 15);
+			else
+				memcpy(cp, game_.m_cLogServerAddr, 15);
+			cp += 15;
+			ip = (int *) cp;
+			*ip = game_.m_iLogServerPort;
+			cp += 4;
+			iRet = this->m_pXSock->iSendMsg(cData, 16 + 19);
+			break;
+
+		case DEF_NOTIFY_SKILL:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_SETITEMCOUNT:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) sV2;
+			cp += 4;
+
+			*cp = (char) sV3;
+			cp++;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 13);
+			break;
+
+		case DEF_NOTIFY_ITEMDEPLETED_ERASEITEM:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_DROPITEMFIN_COUNTCHANGED:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			ip = (int *) cp;
+			*ip = (int) sV2;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 12);
+			break;
+
+		case DEF_NOTIFY_DROPITEMFIN_ERASEITEM:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			ip = (int *) cp;
+			*ip = (int) sV2;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 12);
+			break;
+
+		case DEF_NOTIFY_CANNOTGIVEITEM:
+		case DEF_NOTIFY_GIVEITEMFIN_COUNTCHANGED:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			ip = (int *) cp;
+			*ip = (int) sV2;
+			cp += 4;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 32);
+			break;
+
+		case DEF_NOTIFY_GIVEITEMFIN_ERASEITEM:
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+
+			ip = (int *) cp;
+			*ip = (int) sV2;
+			cp += 4;
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 32);
+			break;
+
+		case DEF_NOTIFY_ENEMYKILLREWARD:
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iExp;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iEnemyKillCount;
+			cp += 4;
+			memcpy(cp, game_.m_pClientList[sV1]->m_cCharName, 10);
+			cp += 10;
+			memcpy(cp, game_.m_pClientList[sV1]->m_cGuildName, 20);
+			cp += 20;
+			sp = (short *) cp;
+			*sp = (short) game_.m_pClientList[sV1]->m_iGuildRank;
+			cp += 2;
+			sp = (short *) cp;
+			*sp = (short) this->m_iWarContribution;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 48);
+			break;
+
+		case DEF_NOTIFY_PKCAPTURED:
+
+
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV1;
+			cp += 2;
+			wp = (uint16_t *) cp;
+			*wp = (uint16_t) sV2;
+			cp += 2;
+			memcpy(cp, pString, 10);
+			cp += 10;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iRewardGold;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = this->m_iExp;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 28);
+			break;
+
+		case DEF_NOTIFY_PKPENALTY:
+
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iExp;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iStr;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iVit;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iDex;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iInt;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iMag;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iCharisma;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iPKCount;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 38);
+			break;
+
+		case DEF_NOTIFY_TRAVELERLIMITEDLEVEL:
+		case DEF_NOTIFY_LIMITEDLEVEL:
+
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iExp;
+			cp += 4;
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_ITEMRELEASED:
+		case DEF_NOTIFY_ITEMLIFESPANEND:
+
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
+			sp = (short *) cp;
+			*sp = (short) sV2;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_KILLED:
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 26);
+			break;
+
+		case DEF_NOTIFY_EXP:
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iExp;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = this->m_iRating;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 14);
+			break;
+
+		case DEF_NOTIFY_HP: // Fixed Party Info by xXx// 50cent
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iHP;
+			cp += 4;
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iMP;
+			cp += 4;
+
+			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
+				int iH = game_.m_stPartyInfo[this->m_iPartyID].iIndex[i];
+				if (game_.m_pClientList[iH] != nullptr) {
+					game_.m_pClientList[iH]->SendNotifyMsg(0,DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+				}
+			}
+			iRet = this->m_pXSock->iSendMsg(cData, 14);
+			break;
+
+		case DEF_NOTIFY_PARTYMEMBERSTATUS:// 50 cent
+			for (i = 0; i < game_.m_stPartyInfo[this->m_iPartyID].iTotalMembers; i++) {
+				ip = (int *) cp;
+				*ip = (uint32_t) game_.m_pClientList[game_.m_stPartyInfo[this->m_iPartyID].iIndex[i]]->m_iHP;
+				cp += 4;
+
+				ip = (int *) cp;
+				*ip = (uint32_t) game_.iGetMaxHP(game_.m_stPartyInfo[this->m_iPartyID].iIndex[i]);
+				cp += 4;
+
+				ip = (int *) cp;
+				*ip = (uint32_t) game_.m_pClientList[game_.m_stPartyInfo[this->m_iPartyID].iIndex[i]]->m_iMP;
+				cp += 4;
+
+				ip = (int *) cp;
+				*ip = (uint32_t) game_.iGetMaxMP(game_.m_stPartyInfo[this->m_iPartyID].iIndex[i]);
+				cp += 4;
+				//screemin fix/update :D -  Poison mode
+				ip = (int *) cp;
+				*ip = (uint32_t) game_.m_pClientList[game_.m_stPartyInfo[this->m_iPartyID].iIndex[i]]->m_bIsPoisoned;
+				cp += 2;
+
+			}
+			iRet = this->m_pXSock->iSendMsg(cData, 6 + (game_.m_stPartyInfo[this->m_iPartyID].iTotalMembers * 18));
+			break;
+
+		case DEF_NOTIFY_MP: // Fixed Party Info by xXx
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iMP;
+			cp += 4;
+
+			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
+				int iH = game_.m_stPartyInfo[this->m_iPartyID].iIndex[i];
+				if (game_.m_pClientList[iH] != nullptr) {
+					game_.m_pClientList[iH]->SendNotifyMsg(0,DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+				}
+			}
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+
+
+		case DEF_NOTIFY_SP: // Fixed Party Info by xXx
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iSP;
+			cp += 4;
+
+			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
+				int iH = game_.m_stPartyInfo[this->m_iPartyID].iIndex[i];
+				if (game_.m_pClientList[iH] != nullptr) {
+					game_.m_pClientList[iH]->SendNotifyMsg(0,DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+				}
+			}
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+		case DEF_NOTIFY_CHARISMA:
+			dwp = (uint32_t *) cp;
+			*dwp = (uint32_t) this->m_iCharisma;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+			//MOG Fixes
+		case DEF_NOTIFY_STATECHANGE_FAILED:
+		case DEF_NOTIFY_SETTING_FAILED:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+		case DEF_NOTIFY_STATECHANGE_SUCCESS:
+		{
+			int i;
+
+			for (i = 0; i < DEF_MAXMAGICTYPE; i++) {
+				*cp = this->m_cMagicMastery[i];
+				cp++;
+			}
+
+			for (i = 0; i < DEF_MAXSKILLTYPE; i++) {
+				*cp = this->m_cSkillMastery[i];
+				cp++;
+			}
+
+			iRet = this->m_pXSock->iSendMsg(cData, 6 + DEF_MAXMAGICTYPE + DEF_MAXSKILLTYPE);
+		}
+			break;
+
+		case DEF_NOTIFY_SETTING_SUCCESS:
+		case DEF_NOTIFY_LEVELUP:
+			ip = (int *) cp;
+			*ip = this->m_iLevel;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = this->m_iStr;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = this->m_iVit;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = this->m_iDex;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = this->m_iInt;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = this->m_iMag;
+			cp += 4;
+
+			ip = (int *) cp;
+			*ip = this->m_iCharisma;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 34);
+			break;
+
+			/*
+		case DEF_NOTIFY_LEVELUP:
+			ip  = (int *)cp;
+			 *ip = to.m_iLevel;
+			cp += 4;
+
+			ip   = (int *)cp;
+			 *ip  = to.m_iStr;
+			cp  += 4;
+
+
+			ip   = (int *)cp;
+			 *ip  = to.m_iDex;
+			cp  += 4;
+
+			ip   = (int *)cp;
+			 *ip  = to.m_iInt;
+			cp  += 4;
+
+			ip   = (int *)cp;
+			 *ip  = to.m_iMag;
+			cp  += 4;
+
+			ip   = (int *)cp;
+			 *ip  = to.m_iCharisma;
+			cp  += 4;
+
+			iRet = to.m_pXSock->iSendMsg(cData, 34);
+			break;
+			 */
+		case DEF_NOTIFY_QUERY_DISMISSGUILDREQPERMISSION:
+		case DEF_NOTIFY_QUERY_JOINGUILDREQPERMISSION:
+		case DEF_NOTIFY_CANNOTJOINMOREGUILDSMAN:
+
+			memcpy(cp, game_.m_pClientList[iFromH]->m_cCharName, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 16);
+			break;
+
+		case DEF_COMMONTYPE_JOINGUILDAPPROVE:
+			if (game_.m_pClientList[iFromH] != nullptr)
+				memcpy(cp, game_.m_pClientList[iFromH]->m_cGuildName, 20);
+			else memcpy(cp, "?", 1);
+			cp += 20;
+
+			sp = (short *) cp;
+			*sp = DEF_GUILDSTARTRANK;
+			cp += 2;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 28);
+			break;
+
+		case DEF_COMMONTYPE_JOINGUILDREJECT:
+		case DEF_COMMONTYPE_DISMISSGUILDAPPROVE:
+		case DEF_COMMONTYPE_DISMISSGUILDREJECT:
+			if (game_.m_pClientList[iFromH] != nullptr)
+				memcpy(cp, game_.m_pClientList[iFromH]->m_cGuildName, 20);
+			else memcpy(cp, "?", 1);
+			cp += 20;
+
+			sp = (short *) cp;
+			*sp = DEF_GUILDSTARTRANK;
+			cp += 2;
+
+			memcpy(cp, this->m_cLocation, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 38);
+			break;
+
+		case DEF_NOTIFY_GUILDDISBANDED:
+
+			memcpy(cp, pString, 20);
+			cp += 20;
+
+			memcpy(cp, this->m_cLocation, 10);
+			cp += 10;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 36);
+			break;
+
+
+		case DEF_NOTIFY_FIGHTZONERESERVE:
+			ip = (int *) cp;
+			*ip = (int) sV1;
+			cp += 4;
+
+			iRet = this->m_pXSock->iSendMsg(cData, 10);
+			break;
+
+
+		case DEF_NOTIFY_NOGUILDMASTERLEVEL:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+
+
+		case DEF_NOTIFY_CANNOTBANGUILDMAN:
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			break;
+	}
+
+	switch (iRet) {
+		case DEF_XSOCKEVENT_QUENEFULL:
+		case DEF_XSOCKEVENT_SOCKETERROR:
+		case DEF_XSOCKEVENT_CRITICALERROR:
+		case DEF_XSOCKEVENT_SOCKETCLOSED:
+
+
+			//DeleteClient(iToH, true, true);
+			return;
+	}
+}
+

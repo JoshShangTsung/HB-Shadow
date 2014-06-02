@@ -378,6 +378,7 @@ public:
 	uint32_t m_dwDSLAT, m_dwDSLATOld, m_dwDSLATS;
 	int m_iDSCount;
 	void ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage);
+	void SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4 = 0, uint32_t sV5 = 0, uint32_t sV6 = 0, uint32_t sV7 = 0, uint32_t sV8 = 0, uint32_t sV9 = 0, char * pString2 = nullptr);
 };
 
 #define DEF_MAXCLIENTS				2000

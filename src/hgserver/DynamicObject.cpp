@@ -65,13 +65,13 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 										} else {
 											if (iDamage > 0) {
 
-												game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+												game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 
 												if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) {
 
 													// 1: Hold-Person
 													// 2: Paralize
-													game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], 0, nullptr);
+													game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], 0, nullptr);
 
 													m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = 0;
 													game_.delayEvents_.remove(sOwnerH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
@@ -87,7 +87,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 												m_pClientList[sOwnerH]->m_dwPoisonTime = dwTime;
 
 												game_.SetPoisonFlag(sOwnerH, cOwnerType, true); // poison aura appears from dynamic objects
-												game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_POISON, m_pClientList[sOwnerH]->m_iPoisonLevel, 0, nullptr);
+												game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_POISON, m_pClientList[sOwnerH]->m_iPoisonLevel, 0, nullptr);
 											}
 										}
 										break;
@@ -167,11 +167,11 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 										} else {
 											if (iDamage > 0) {
 
-												game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+												game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 
 												if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] == 1) {
 
-													game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], 0, nullptr);
+													game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], 0, nullptr);
 
 													m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = 0;
 													game_.delayEvents_.remove(sOwnerH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
@@ -187,7 +187,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 												game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (20 * 1000),
 														  sOwnerH, cOwnerType, 0, 0, 0, 1, 0, 0);
 
-												game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, 0, nullptr);
+												game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, 0, nullptr);
 											}
 										}
 										break;
@@ -260,7 +260,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 								} else {
 									if (iDamage > 0) {
 
-										game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+										game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 									}
 								}
 							}
@@ -308,13 +308,13 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 										} else {
 											if (iDamage > 0) {
 
-												game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+												game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 
 												if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) {
 
 													// 1: Hold-Person
 													// 2: Paralize
-													game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], 0, nullptr);
+													game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], 0, nullptr);
 
 													m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = 0;
 													game_.delayEvents_.remove(sOwnerH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
@@ -384,7 +384,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 								} else {
 									if (iDamage > 0) {
 
-										game_.SendNotifyMsg(0, *m_pClientList[sOwnerH], DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+										game_.m_pClientList[sOwnerH]->SendNotifyMsg(0,DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 									}
 								}
 							}
