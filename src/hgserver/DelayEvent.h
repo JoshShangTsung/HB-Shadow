@@ -36,7 +36,7 @@ struct DelayEvents {
 	bool remove(int iH, char cType, int iEffectType);
 	void process(const std::function<void(const DelayEvent&)> &f);
 	bool add(DelayEventType iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3);
-	void reset();
+	void clear();
 private:
 	std::multiset<DelayEvent> events_;
 };

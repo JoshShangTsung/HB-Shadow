@@ -24,9 +24,11 @@
 
 #define DEF_SPECABLTYTIMESEC	1200
 
+struct CGame;
 class CClient {
 public:
-	CClient(int index, std::unique_ptr<XSocket> &&socket);
+	CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket);
+	CGame &game_;
 	int id_;
 	char m_cWarType;
 	char m_cVar;
@@ -49,7 +51,7 @@ public:
 	//int m_iUninteruptibleCheck;
 	//char m_cConnectionCheck;
 
-	
+
 	char m_cCharName[11];
 	char m_cAccountName[11];
 	char m_cAccountPassword[11];
@@ -227,50 +229,50 @@ public:
 	bool m_bIsExchangeConfirm; // Has the user hit confirm? 
 	int iExchangeCount; //Keeps track of items which are on list
 
-	int m_iQuest; 
-	int m_iQuestID; 
-	int m_iAskedQuest; 
-	int m_iCurQuestCount; 
+	int m_iQuest;
+	int m_iQuestID;
+	int m_iAskedQuest;
+	int m_iCurQuestCount;
 
-	int m_iQuestRewardType; 
-	int m_iQuestRewardAmount; 
+	int m_iQuestRewardType;
+	int m_iQuestRewardAmount;
 
-	int m_iContribution; 
+	int m_iContribution;
 
-	bool m_bQuestMatchFlag_Loc; 
-	bool m_bIsQuestCompleted; 
+	bool m_bQuestMatchFlag_Loc;
+	bool m_bIsQuestCompleted;
 
 	int m_iCustomItemValue_Attack;
 	int m_iCustomItemValue_Defense;
 
-	int m_iMinAP_SM; 
+	int m_iMinAP_SM;
 	int m_iMinAP_L;
 
-	int m_iMaxAP_SM; 
+	int m_iMaxAP_SM;
 	int m_iMaxAP_L;
 
-	bool m_bIsNeutral; 
-	bool m_bIsObserverMode; 
+	bool m_bIsNeutral;
+	bool m_bIsObserverMode;
 
-	int m_iSpecialEventID; 
+	int m_iSpecialEventID;
 
-	int m_iSpecialWeaponEffectType; 
-	int m_iSpecialWeaponEffectValue; 
-	
-	
-	
+	int m_iSpecialWeaponEffectType;
+	int m_iSpecialWeaponEffectValue;
 
-	
+
+
+
+
 	int m_iAddHP, m_iAddSP, m_iAddMP;
 	int m_iAddAR, m_iAddPR, m_iAddDR;
 	int m_iAddMR, m_iAddAbsPD, m_iAddAbsMD;
-	int m_iAddCD, m_iAddExp, m_iAddGold; 
+	int m_iAddCD, m_iAddExp, m_iAddGold;
 
-	int m_iAddResistMagic; 
-	int m_iAddPhysicalDamage; 
+	int m_iAddResistMagic;
+	int m_iAddPhysicalDamage;
 	int m_iAddMagicalDamage;
 
-	int m_iAddAbsAir; 
+	int m_iAddAbsAir;
 	int m_iAddAbsEarth;
 	int m_iAddAbsFire;
 	int m_iAddAbsWater;
@@ -280,38 +282,36 @@ public:
 	int m_iMoveMsgRecvCount, m_iAttackMsgRecvCount, m_iRunMsgRecvCount, m_iSkillMsgRecvCount;
 	uint32_t m_dwMoveLAT, m_dwRunLAT, m_dwAttackLAT;
 
-	int m_iSpecialAbilityTime; 
-	bool m_bIsSpecialAbilityEnabled; 
-	uint32_t m_dwSpecialAbilityStartTime; 
-	int m_iSpecialAbilityLastSec; 
+	int m_iSpecialAbilityTime;
+	bool m_bIsSpecialAbilityEnabled;
+	uint32_t m_dwSpecialAbilityStartTime;
+	int m_iSpecialAbilityLastSec;
 
-	int m_iSpecialAbilityType; 
-	
-	
-	
-	
-	int m_iSpecialAbilityEquipPos; 
+	int m_iSpecialAbilityType;
+
+
+
+
+	int m_iSpecialAbilityEquipPos;
 	bool m_bIsAdminCommandEnabled;
-	int m_iAlterItemDropIndex; 
+	int m_iAlterItemDropIndex;
 
-	int m_iWarContribution; 
+	int m_iWarContribution;
 
-	uint32_t m_dwSpeedHackCheckTime; 
+	uint32_t m_dwSpeedHackCheckTime;
 	int m_iSpeedHackCheckExp;
 	uint32_t m_dwLogoutHackCheck;
 
 	uint32_t m_dwInitCCTimeRcv;
 	uint32_t m_dwInitCCTime;
 
-	char m_cLockedMapName[11]; 
-	int m_iLockedMapTime; 
+	char m_cLockedMapName[11];
+	int m_iLockedMapTime;
 
-	int m_iCrusadeDuty; 
-	uint32_t m_dwCrusadeGUID; 
+	int m_iCrusadeDuty;
+	uint32_t m_dwCrusadeGUID;
 	uint32_t m_dwHeldenianGUID;
 	bool m_bInRecallImpossibleMap;
-
-	
 
 	struct CrusadeStructureInfo {
 		char cType;
@@ -324,26 +324,26 @@ public:
 	char m_cSendingMapName[11];
 	bool m_bIsSendingMapStatus;
 
-	
+
 	int m_iConstructionPoint;
 
 	char m_cConstructMapName[11];
 	int m_iConstructLocX, m_iConstructLocY;
 
-	
+
 	bool m_bIsPlayerCivil;
 	bool m_bIsAttackModeChange;
 
-	
-	
+
+
 	int m_iPartyID;
 	int m_iPartyStatus;
 	int m_iReqJoinPartyClientH;
 	char m_cReqJoinPartyName[12];
 
-	int m_iPartyRank; 
-	int m_iPartyMemberCount; 
-	int m_iPartyGUID; 
+	int m_iPartyRank;
+	int m_iPartyMemberCount;
+	int m_iPartyGUID;
 
 	struct PartyMember {
 		int iIndex;
@@ -351,11 +351,11 @@ public:
 	};
 	std::array<PartyMember, DEF_MAXPARTYMEMBERS> m_stPartyMemberName;
 
-	
+
 	uint32_t m_dwLastActionTime, m_dwLastDamageTime;
 	int m_iDeadPenaltyTime;
 
-	
+
 	char m_cWhisperPlayerName[11];
 	bool m_bIsAdminOrderGoto;
 	bool m_bIsInsideWarehouse;
@@ -365,10 +365,10 @@ public:
 	bool m_pIsProcessingAllowed;
 	bool m_bIsClientConnected;
 
-	
+
 	char m_cHeroArmorBonus;
 
-	
+
 	bool m_bIsBeingResurrected;
 
 	uint32_t m_dwFightzoneDeadTime;
@@ -377,4 +377,18 @@ public:
 
 	uint32_t m_dwDSLAT, m_dwDSLATOld, m_dwDSLATS;
 	int m_iDSCount;
+	void ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage);
+};
+
+#define DEF_MAXCLIENTS				2000
+
+struct Clients {
+	typedef CClient *value_type;
+	typedef value_type &ref_type;
+
+	ref_type operator[](size_t index) {
+		return m_pClientList[index];
+	}
+private:
+	std::array<value_type, DEF_MAXCLIENTS> m_pClientList;
 };

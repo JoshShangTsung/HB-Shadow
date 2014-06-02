@@ -1,6 +1,11 @@
 #include "Client.h"
+#include "Game.h"
+#include "WINMAIN.H"
 #include <cstring>
-CClient::CClient(int index, std::unique_ptr<XSocket> &&socket): id_(index), m_pXSock(std::move(socket)) {
+
+extern char G_cTxt[512];
+
+CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): game_(game), id_(index), m_pXSock(std::move(socket)) {
 	std::memset(m_cProfile, 0, sizeof(m_cProfile));
 	strcpy(m_cProfile, "__________");
 
@@ -315,3 +320,306 @@ bool CClient::bCreateNewParty() {
 	return true;
 }
 
+void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage) {
+	char cAttackerName[21], cEKMsg[1000];
+	short sAttackerWeapon;
+	int i, iExH;
+	bool bIsSAattacked = false;
+
+	if (this->m_bIsInitComplete == false) return;
+	if (this->m_bIsKilled == true) return;
+
+	// �������� ��� �ð��� �Է��Ѵ�.
+	// 2002-7-4 �������� ������ �ø� �� �ֵ���
+	if (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cName, "fight", 5) == 0) {
+		this->m_dwFightzoneDeadTime = timeGetTime();
+		wsprintf(G_cTxt, "Fightzone Dead Time: %d", this->m_dwFightzoneDeadTime);
+		PutLogList(G_cTxt);
+	}
+
+	this->m_bIsKilled = true;
+	// HP�� 0�̴�.
+	this->m_iHP = 0;
+
+	// ���� ��ȯ ����� ��ȯ�� ����Ѵ�.
+	if (this->m_bIsExchangeMode == true) {
+		iExH = this->m_iExchangeH;
+		game_._ClearExchangeStatus(iExH);
+		game_._ClearExchangeStatus(id_);
+	}
+
+
+	game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
+
+	std::memset(cAttackerName, 0, sizeof (cAttackerName));
+	switch (cAttackerType) {
+		case DEF_OWNERTYPE_PLAYER_INDIRECT:
+		case DEF_OWNERTYPE_PLAYER:
+			if (game_.m_pClientList[iAttackerH] != nullptr)
+				memcpy(cAttackerName, game_.m_pClientList[iAttackerH]->m_cCharName, 10);
+			break;
+		case DEF_OWNERTYPE_NPC:
+			if (game_.m_pNpcList[iAttackerH] != nullptr)
+#ifdef DEF_LOCALNPCNAME     // v2.14 NPC �̸� �߹�ȭ�� ���� ����
+				wsprintf(cAttackerName, "NPCNPCNPC@%d", m_pNpcList[iAttackerH]->m_sType);
+#else
+				memcpy(cAttackerName, game_.m_pNpcList[iAttackerH]->m_cNpcName, 20);
+#endif
+			break;
+		default:
+			break;
+	}
+
+	game_.SendNotifyMsg(0, *this, DEF_NOTIFY_KILLED, 0, 0, 0, cAttackerName);
+	// �ٸ� Ŭ���̾�Ʈ���� �״� ���� ���.
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+		sAttackerWeapon = ((game_.m_pClientList[iAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
+	} else sAttackerWeapon = 1;
+	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDYING, sDamage, sAttackerWeapon, 0);
+	game_.m_pMapList[this->m_cMapIndex]->ClearOwner(12, id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
+	game_.m_pMapList[this->m_cMapIndex]->SetDeadOwner(id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
+	if (game_.m_pMapList[this->m_cMapIndex]->m_cType == DEF_MAPTYPE_NOPENALTY_NOREWARD) return;
+	if ((game_.m_pMapList[this->m_cMapIndex] != nullptr) &&
+			  (game_.m_bIsHeldenianMode == true) &&
+			  (game_.m_pMapList[this->m_cMapIndex]->m_bIsHeldenianMap == true)) {
+		if (this->m_cSide == 1) {
+			game_.m_iHeldenianAresdenDead++;
+		} else if (this->m_cSide == 2) {
+			game_.m_iHeldenianElvineDead++;
+		}
+		game_.UpdateHeldenianStatus();
+	}
+
+
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+		// v1.432
+		// Ư�� �ɷ��� �ִ� ����� ����� ���ߴ�.
+		switch (game_.m_pClientList[iAttackerH]->m_iSpecialAbilityType) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				bIsSAattacked = true;
+				break;
+		}
+
+		if (iAttackerH == id_) return; // �����̴�.
+
+		if (memcmp(this->m_cLocation, "NONE", 4) == 0) {
+			// ����ڰ� �������̴�.
+			if (this->m_iPKCount == 0) {
+
+
+
+				game_.ApplyPKpenalty(iAttackerH, id_);
+			} else {
+
+
+				game_.PK_KillRewardHandler(iAttackerH, id_);
+			}
+		} else {
+			// ����ڰ� �����ڰ� �ƴ϶� �� ���� �Ҽ��̴�.
+			if (this->m_iGuildRank == -1) {
+
+
+				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
+					// ����ڰ� �������̴�.
+					if (this->m_iPKCount == 0) {
+
+						game_.ApplyPKpenalty(iAttackerH, id_);
+					} else {
+						// �����ڴ� PK�� ��Ƶ� ������ ���� ���Ѵ�.
+
+					}
+				} else {
+
+					if (memcmp(this->m_cLocation, game_.m_pClientList[iAttackerH]->m_cLocation, 10) == 0) {
+
+						if (this->m_iPKCount == 0) {
+							// ����ڰ� ������ ����. PK�̴�.
+							game_.ApplyPKpenalty(iAttackerH, id_);
+						} else {
+							// �����ڸ� ��Ҵ�.
+							game_.PK_KillRewardHandler(iAttackerH, id_);
+						}
+					} else {
+						// ����ڰ� �ٸ� ���� �Ҽ�. ������ �������
+						game_.EnemyKillRewardHandler(iAttackerH, id_);
+					}
+				}
+			} else {
+				// ����ڴ� �����̴�.
+
+				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
+					// ����ڰ� �������̴�.
+					if (this->m_iPKCount == 0) {
+						// ������ ������ �����ڰ� �׿���. �����ڴ� PK�� �ȴ�.
+						game_.ApplyPKpenalty(iAttackerH, id_);
+					} else {
+						// �����ڴ� PK�� ��Ƶ� ������ ���� ���Ѵ�.
+
+					}
+				} else {
+
+					if (memcmp(this->m_cLocation, game_.m_pClientList[iAttackerH]->m_cLocation, 10) == 0) {
+
+						if (this->m_iPKCount == 0) {
+							// ����ڰ� ������ ����. PK�̴�.
+							game_.ApplyPKpenalty(iAttackerH, id_);
+						} else {
+							// �����ڸ� ��Ҵ�.
+							game_.PK_KillRewardHandler(iAttackerH, id_);
+						}
+					} else {
+						// ����ڰ� �ٸ� ���� �Ҽ�. ������ �������
+						game_.EnemyKillRewardHandler(iAttackerH, id_);
+					}
+				}
+			}
+		}
+
+
+		if (this->m_iPKCount == 0) {
+			// Innocent
+			if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
+				//�����ڿ��� ��ݹ޾� �׾��.
+
+				//this->m_iExp -= iDice(1, 100);
+				//if (this->m_iExp < 0) this->m_iExp = 0;
+				//SendNotifyMsg(nullptr, *this, DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
+			} else {
+				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, this->m_cLocation, 10) == 0) {
+
+
+					//this->m_iExp -= iDice(1, 100);
+					//if (this->m_iExp < 0) this->m_iExp = 0;
+					//SendNotifyMsg(nullptr, *this, DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
+				} else {
+
+					game_.ApplyCombatKilledPenalty(id_, 2, bIsSAattacked);
+				}
+			}
+		} else if ((this->m_iPKCount >= 1) && (this->m_iPKCount <= 3)) {
+			// Criminal
+			game_.ApplyCombatKilledPenalty(id_, 3, bIsSAattacked);
+		} else if ((this->m_iPKCount >= 4) && (this->m_iPKCount <= 11)) {
+			// Murderer
+			game_.ApplyCombatKilledPenalty(id_, 6, bIsSAattacked);
+		} else if ((this->m_iPKCount >= 12)) {
+			// Slaughterer
+			game_.ApplyCombatKilledPenalty(id_, 12, bIsSAattacked);
+		}
+	} else if (cAttackerType == DEF_OWNERTYPE_NPC) {
+
+		game_._bPKLog(DEF_PKLOG_BYNPC, id_, 0, cAttackerName);
+
+
+		if (this->m_iPKCount == 0) {
+			// Innocent
+			game_.ApplyCombatKilledPenalty(id_, 1, bIsSAattacked);
+		} else if ((this->m_iPKCount >= 1) && (this->m_iPKCount <= 3)) {
+			// Criminal
+			game_.ApplyCombatKilledPenalty(id_, 3, bIsSAattacked);
+		} else if ((this->m_iPKCount >= 4) && (this->m_iPKCount <= 11)) {
+			// Murderer
+			game_.ApplyCombatKilledPenalty(id_, 6, bIsSAattacked);
+		} else if ((this->m_iPKCount >= 12)) {
+			// Slaughterer
+			game_.ApplyCombatKilledPenalty(id_, 12, bIsSAattacked);
+		}
+		// ���� ����� NPC�� ����� ����Ʈ��� ���ְ�� �Ǽ� ����Ʈ �ΰ�
+		if (game_.m_pNpcList[iAttackerH]->m_iGuildGUID != 0) {
+
+			if (game_.m_pNpcList[iAttackerH]->m_cSide != this->m_cSide) {
+				// ����� ������ Ȥ�� ����Ʈ�� �� �÷��̾ �׿���. �ٷ� �뺸�Ѵ�.
+				// ���� ������ ���ְ��� �ִٸ� ��ٷ� �뺸. ������ �ٸ� ������ �˷���.
+				for (i = 1; i < DEF_MAXCLIENTS; i++)
+					if ((game_.m_pClientList[i] != nullptr) && (game_.m_pClientList[i]->m_iGuildGUID == game_.m_pNpcList[iAttackerH]->m_iGuildGUID) &&
+							  (game_.m_pClientList[i]->m_iCrusadeDuty == 3)) {
+						game_.m_pClientList[i]->m_iConstructionPoint += (this->m_iLevel / 2);
+
+						if (game_.m_pClientList[i]->m_iConstructionPoint > DEF_MAXCONSTRUCTIONPOINT)
+							game_.m_pClientList[i]->m_iConstructionPoint = DEF_MAXCONSTRUCTIONPOINT;
+
+						//testcode
+						wsprintf(G_cTxt, "Enemy Player Killed by Npc! Construction +%d", (this->m_iLevel / 2));
+						PutLogList(G_cTxt);
+						// ���ְ�� �ٷ� �뺸.
+						game_.SendNotifyMsg(0, *game_.m_pClientList[i], DEF_NOTIFY_CONSTRUCTIONPOINT, game_.m_pClientList[i]->m_iConstructionPoint, game_.m_pClientList[i]->m_iWarContribution, 0, nullptr);
+						return;
+					}
+			}
+		}
+	} else if (cAttackerType == DEF_OWNERTYPE_PLAYER_INDIRECT) {
+		game_._bPKLog(DEF_PKLOG_BYOTHER, id_, 0, nullptr);
+		// �÷��̾ �׾����� ����ڰ� �������̴�. �ƹ��� ������ ���.
+		// this->m_iExp -= iDice(1, 50);
+		// if (this->m_iExp < 0) this->m_iExp = 0;
+
+		// SendNotifyMsg(nullptr, *this, DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
+	}
+	//----------------------------EK Announcer-------------------------
+	//---- Function: CGame::ClientKilledHandler                    ----
+	//---- Description: Announces a message to alert all connected ----
+	//---- this-> an EK has taken place                           ----
+	//---- Version: HBX 2.03 Build                                 ----
+	//---- Date: November 07 2005                                  ----
+	//---- By: Daxation                                            ----
+	//---- Notes: Add char cEKMsg[1000]                            ----
+	//-----------------------------------------------------------------
+	std::memset(cEKMsg, 0, sizeof (cEKMsg));
+	//Multiple EK Messages
+	//Note - Remove section '01' and replace with alternative code for a single message
+	//Alternative code: wsprintf(cEKMsg, "%s killed %s", cAttackerName, this->m_cCharName);
+	// 01
+	switch (iDice(1, 10))
+		//You can add extra messages by creating a new case.
+		//Remember to increase iDice
+	{
+		case 1: // To reverse the order the names appear in the message reverse the last 2 parameters
+			wsprintf(cEKMsg, "%s whooped %s's ass!", cAttackerName, this->m_cCharName);
+			break;
+		case 2:
+			wsprintf(cEKMsg, "%s smashed %s's face into the ground!", cAttackerName, this->m_cCharName);
+			break;
+		case 3:
+			wsprintf(cEKMsg, "%s was sliced to pieces by %s", this->m_cCharName, cAttackerName);
+			break;
+		case 4:
+			wsprintf(cEKMsg, "%s says LAG LAG!! but gets PWNED by %s", this->m_cCharName, cAttackerName);
+			break;
+		case 5:
+			wsprintf(cEKMsg, "%s sent %s off too pie heaven!", cAttackerName, this->m_cCharName);
+			break;
+		case 6:
+			wsprintf(cEKMsg, "%s got beat by %s's ugly stick!", cAttackerName, this->m_cCharName);
+			break;
+		case 7:
+			wsprintf(cEKMsg, "%s OwneD! %s", cAttackerName, this->m_cCharName);
+			break;
+		case 8:
+			wsprintf(cEKMsg, "%s Sended %s To Revival Zone! Too Bad ;(", cAttackerName, this->m_cCharName);
+			break;
+		case 9:
+			wsprintf(cEKMsg, "%s says: I CAN OWN YOU! But gets OWNED by %s", this->m_cCharName, cAttackerName);
+			break;
+		case 10:
+			wsprintf(cEKMsg, "%s KilleD %s", cAttackerName, this->m_cCharName);
+			break;
+	}
+	// 01
+	for (i = 1; i < DEF_MAXCLIENTS; i++) // Check all this->
+	{
+		if ((game_.m_pClientList[i] != nullptr)) // Check if this->is avtice
+		{
+			game_.SendNotifyMsg(0, *game_.m_pClientList[i], DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to client
+			// Log EK
+			wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName); // Log message
+			PutLogFileList(G_cTxt); // Enter into logs
+		}
+	}
+	//-----------------------------------------------------------------
+	//----                   End EK Announcer Code                 ----
+	//-----------------------------------------------------------------
+}

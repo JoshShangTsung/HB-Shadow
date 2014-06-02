@@ -2,10 +2,11 @@
 #include "OccupyFlag.h"
 #include "Tile.h"
 #include "StrategicPoint.h"
-#include "Game.h"
 #include "StrTok.h"
 #include "TeleportLoc.h"
 #include "GlobalDef.h"
+#include "Client.h"
+#include <memory>
 
 
 #define DEF_OWNERTYPE_PLAYER			1
@@ -40,7 +41,7 @@
 #define DEF_MAXSECTORS					60
 #define DEF_MAXSTRIKEPOINTS				20
 
-class CMap {
+class CMap: public std::enable_shared_from_this<CMap> {
 public:
 
 	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);
@@ -81,7 +82,7 @@ public:
 
 	CMap(class CGame * pGame);
 	virtual ~CMap();
-
+	Clients &m_pClientList;
 	class CTile * m_pTile;
 	class CGame * m_pGame;
 	char m_cName[11];
@@ -246,4 +247,20 @@ public:
 	bool m_bIsRecallImpossible;
 	bool m_bIsApocalypseMap;
 	bool m_bIsHeldenianMap;
+};
+
+#define DEF_MAXMAPS					100
+
+struct Maps {
+	typedef std::shared_ptr<CMap> value_type;
+	typedef value_type &ref_type;
+	
+	ref_type operator[](size_t index) {
+		return m_pMapList[index];
+	}
+	void clear() {
+		m_pMapList = {{}};
+	}
+private:
+	std::array<value_type, DEF_MAXMAPS> m_pMapList;
 };

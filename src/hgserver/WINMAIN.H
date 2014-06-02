@@ -3,6 +3,7 @@
 
 void PutXSocketLogList(const char * cMsg);
 void PutXSocketLogFileList(const char * cMsg);
+void PutLogFileList(const char * cStr);
 bool InitApplication(HINSTANCE hInstance);
 bool InitInstance(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

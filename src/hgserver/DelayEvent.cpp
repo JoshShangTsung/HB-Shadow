@@ -56,6 +56,6 @@ bool DelayEvents::add(DelayEventType iDelayType, int iEffectType, uint32_t dwLas
 	return true;
 }
 
-void DelayEvents::reset() {
+void DelayEvents::clear() {
 	events_.clear();
 }

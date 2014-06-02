@@ -1,10 +1,10 @@
 #include "Map.h"
+#include "Game.h"
 #include <cstring>
 
 extern void PutLogFileList(char * cStr);
 
-CMap::CMap(class CGame * pGame)
-: m_bIsSnowEnabled(false) {
+CMap::CMap(class CGame * pGame): m_pClientList(pGame->m_pClientList), m_bIsSnowEnabled(false) {
 	int i, ix, iy;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)

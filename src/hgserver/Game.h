@@ -40,7 +40,6 @@
 #include "TempNpcItem.h"
 
 #define DEF_MAXADMINS				50
-#define DEF_MAXMAPS					100
 #define DEF_MAXAGRICULTURE			200
 #define DEF_MAXNPCTYPES				200
 #define DEF_MAXBUILDITEMS			300
@@ -48,7 +47,6 @@
 #define DEF_MAXBANNED				500
 #define DEF_MAXBALLITEMS			50
 #define DEF_MAXNPCITEMS				1000
-#define DEF_MAXCLIENTS				2000
 #define DEF_MAXNPCS					15000
 #define DEF_MAXITEMTYPES			5000
 #define DEF_CLIENTTIMEOUT			10000
@@ -189,6 +187,8 @@
 constexpr char _tmp_cTmpDirX[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
 constexpr char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 
+
+	int iDice(int iThrow, int iRange);
 class CGame {
 public:
 
@@ -534,7 +534,6 @@ public:
 	void UseSkillHandler(int iClientH, int iV1, int iV2, int iV3);
 	int iCalculateUseSkillItemEffect(int iOwnerH, char cOwnerType, char cOwnerSkill, int iSkillNum, char cMapIndex, int dX, int dY);
 	void ClearSkillUsingStatus(int iClientH);
-	void DynamicObjectEffectProcessor();
 	int _iGetTotalClients();
 	void SendObjectMotionRejectMsg(int iClientH);
 	void SetInvisibilityFlag(short sOwnerH, char cOwnerType, bool bStatus);
@@ -562,8 +561,6 @@ public:
 	void MobGenerator();
 	void CalculateSSN_SkillIndex(int iClientH, short sSkillIndex, int iValue);
 	void CalculateSSN_ItemIndex(int iClientH, short sWeaponIndex, int iValue);
-	void CheckDynamicObjectList();
-	int iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, uint32_t dwLastTime, int iV1 = 0);
 	int _iCalcMaxLoad(int iClientH);
 	void GetRewardMoneyHandler(int iClientH);
 	void _PenaltyItemDrop(int iClientH, int iTotal, bool bIsSAattacked = false);
@@ -603,11 +600,9 @@ public:
 	void TimeHitPointsUp(int iClientH);
 	void CalculateGuildEffect(int iVictimH, char cVictimType, short sAttackerH);
 	void OnStartGameSignal();
-	int iDice(int iThrow, int iRange);
 	bool _bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, char cSA);
 	bool _bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize);
 	void ReleaseItemHandler(int iClientH, short sItemIndex, bool bNotice);
-	void ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType, short sDamage);
 	int SetItemCount(int iClientH, const char * pItemName, uint32_t dwCount);
 	int SetItemCount(int iClientH, int iItemIndex, uint32_t dwCount);
 	uint32_t dwGetItemCount(int iClientH, const char * pName);
@@ -615,7 +610,7 @@ public:
 	void DismissGuildApproveHandler(int iClientH, char * pName);
 	void JoinGuildRejectHandler(int iClientH, char * pName);
 	void JoinGuildApproveHandler(int iClientH, char * pName);
-	void SendNotifyMsg(int iFromH, int iToH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4 = 0, uint32_t sV5 = 0, uint32_t sV6 = 0, uint32_t sV7 = 0, uint32_t sV8 = 0, uint32_t sV9 = 0, char * pString2 = nullptr);
+	void SendNotifyMsg(int iFromH, CClient &to, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4 = 0, uint32_t sV5 = 0, uint32_t sV6 = 0, uint32_t sV7 = 0, uint32_t sV8 = 0, uint32_t sV9 = 0, char * pString2 = nullptr);
 	void GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, uint16_t wObjectID, char * pItemName);
 	void RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum);
 	void ResponseDisbandGuildHandler(char * pData, uint32_t dwMsgSize);
@@ -755,11 +750,12 @@ public:
 	bool _bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t dwSize);
 	bool _bRegisterMap(char * pName);
 
-	class CClient * m_pClientList[DEF_MAXCLIENTS];
+	Clients m_pClientList;
 	class CNpc * m_pNpcList[DEF_MAXNPCS];
-	class CMap * m_pMapList[DEF_MAXMAPS];
+	Maps m_pMapList;
 	class CNpcItem * m_pTempNpcItem[DEF_MAXNPCITEMS];
-	class CDynamicObject * m_pDynamicObjectList[DEF_MAXDYNAMICOBJECTS];
+	DynamicObjects dynamicObjects_;
+	//class CDynamicObject * m_pDynamicObjectList[DEF_MAXDYNAMICOBJECTS];
 	DelayEvents delayEvents_;
 	class CBallSystem * m_pBallItemConfigList[DEF_MAXBALLITEMS];
 
@@ -1047,7 +1043,7 @@ public:
 	bool m_bIsHeldenianSchedule;
 	bool bReadBallSystemConfigFile(const char * cFn);
 
-private:
+
 	int __iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	int _iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	void _ClearExchangeStatus(int iToH);
