@@ -1,8 +1,9 @@
 #include "Npc.h"
 #include <cstring>
+
 CNpc::CNpc(const char * pName5) {
 	int i;
-	std::memset(m_cName, 0, sizeof(m_cName));
+	std::memset(m_cName, 0, sizeof (m_cName));
 	memcpy(m_cName, pName5, 5);
 
 	for (i = 0; i < DEF_MAXWAYPOINTS; i++)

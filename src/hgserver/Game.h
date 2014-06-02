@@ -154,11 +154,12 @@
 #define NO_MSGSPEEDCHECK
 constexpr char _tmp_cTmpDirX[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
 constexpr char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
-	int iDice(int iThrow, int iRange);
+int iDice(int iThrow, int iRange);
+
 class CGame {
 public:
 	int HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide);
-	
+
 	void GetAngelHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void SetAngelFlag(short sOwnerH, char cOwnerType, int iStatus, int iTemp);
 	void ReadMajesticSettings();
@@ -432,7 +433,7 @@ public:
 	void UserCommand_DissmissGuild(int iClientH, char * pData, uint32_t dwMsgSize);
 	// v1.4311-3 ���� �Լ� ����  Expire -> Ban ���� 
 	void UserCommand_BanGuildsman(int iClientH, char * pData, uint32_t dwMsgSize);
-	
+
 	int iGetExpLevel(int iExp);
 	void ___RestorePlayerRating(int iClientH);
 	void CalcExpStock(int iClientH);
@@ -714,6 +715,7 @@ public:
 	int m_iFightZoneReserve[DEF_MAXFIGHTZONE];
 	// v1.4311-3 ���� ���� �����忡 ������ ��� ��ɾ�� ���� �ʵǰ� ��.
 	int m_iFightzoneNoForceRecall;
+
 	struct {
 		__int64 iFunds;
 		__int64 iCrimes;
@@ -725,7 +727,7 @@ public:
 	bool m_bIsSubLogSockAvailable[DEF_MAXSUBLOGSOCK];
 	int m_iCurSubLogSockIndex;
 	int m_iSubLogSockFailCount;
-	int m_iSubLogSockActiveCount; 
+	int m_iSubLogSockActiveCount;
 	int m_iAutoRebootingCount; // v1.5 �ڵ� ����� �� Ƚ�� 
 	class CBuildItem * m_pBuildItemList[DEF_MAXBUILDITEMS];
 	class CItem * m_pDupItemIDList[DEF_MAXDUPITEMID];
@@ -741,6 +743,7 @@ public:
 	uint32_t m_dwApocalypseGUID;
 	// Daryl - Chat logging option
 	int m_iLogChatOption;
+
 	struct {
 		char cMapName[11]; // ��ġ�Ǵ� �� ��ġ
 		char cType; // ���๰ ����. ��� NPC ������.
@@ -751,29 +754,34 @@ public:
 	class CTeleportLoc m_pGuildTeleportLoc[DEF_MAXGUILDS];
 	char m_cHeldenianMapName[11];
 	int m_iLastCrusadeWinner; // New 13/05/2004
+
 	struct {
 		int iCrashedStructureNum;
 		int iStructureDamageAmount;
 		int iCasualties;
 	} m_stMeteorStrikeResult;
-	
+
 	struct {
 		char cType; // �̰� nullptr�̸� ���ǵ��� �������� �ǹ�.
 		char cSide; // ���̵�
 		short sX, sY; // ��ġ�� ��ġ 
 	} m_stMiddleCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
+
 	struct {
 		char m_cBannedIPaddress[21]; // Ŭ���̾�Ʈ�� IP address
 	} m_stBannedList[DEF_MAXBANNED];
+
 	struct {
 		char m_cGMName[11];
 	} m_stAdminList[DEF_MAXADMINS];
 	// Crusade Scheduler
+
 	struct {
 		int iDay;
 		int iHour;
 		int iMinute;
 	} m_stCrusadeWarSchedule[DEF_MAXSCHEDULE];
+
 	struct {
 		int iDay;
 		int StartiHour;
@@ -789,6 +797,7 @@ public:
 	short m_sLastCrusadeDate;
 	int m_iCrusadeWinnerSide;
 	int m_iPlayerMaxLevel;
+
 	struct {
 		int iTotalMembers;
 		int iIndex[9];

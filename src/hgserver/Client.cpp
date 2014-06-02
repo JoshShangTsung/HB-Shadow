@@ -3,14 +3,15 @@
 #include "WINMAIN.H"
 #include <cstring>
 extern char G_cTxt[512];
-CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): game_(game), id_(index), m_pXSock(std::move(socket)) {
-	std::memset(m_cProfile, 0, sizeof(m_cProfile));
+
+CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket) : game_(game), id_(index), m_pXSock(std::move(socket)) {
+	std::memset(m_cProfile, 0, sizeof (m_cProfile));
 	strcpy(m_cProfile, "__________");
-	std::memset(m_cCharName, 0, sizeof(m_cCharName));
-	std::memset(m_cAccountName, 0, sizeof(m_cAccountName));
-	std::memset(m_cAccountPassword, 0, sizeof(m_cAccountPassword));
-	std::memset(m_cGuildName, 0, sizeof(m_cGuildName));
-	std::memset(m_cLocation, 0, sizeof(m_cLocation));
+	std::memset(m_cCharName, 0, sizeof (m_cCharName));
+	std::memset(m_cAccountName, 0, sizeof (m_cAccountName));
+	std::memset(m_cAccountPassword, 0, sizeof (m_cAccountPassword));
+	std::memset(m_cGuildName, 0, sizeof (m_cGuildName));
+	std::memset(m_cLocation, 0, sizeof (m_cLocation));
 	strcpy(m_cLocation, "NONE");
 	m_iGuildRank = -1;
 	m_iGuildGUID = -1;
@@ -89,8 +90,8 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): gam
 	for (int i = 0; i < DEF_MAXMAGICEFFECTS; i++)
 		m_cMagicEffectStatus[i] = 0;
 	m_iWhisperPlayerIndex = -1;
-	std::memset(m_cWhisperPlayerName, 0, sizeof(m_cWhisperPlayerName));
-	m_iHungerStatus = 100; 
+	std::memset(m_cWhisperPlayerName, 0, sizeof (m_cWhisperPlayerName));
+	m_iHungerStatus = 100;
 	m_bIsWarLocation = false;
 	m_dwAFKCheckTime = 0;
 	m_bIsPoisoned = false;
@@ -109,7 +110,7 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): gam
 	m_iExpStock = 0;
 	m_iAllocatedFish = 0;
 	m_iFishChance = 0;
-	std::memset(m_cIPaddress, 0, sizeof(m_cIPaddress));
+	std::memset(m_cIPaddress, 0, sizeof (m_cIPaddress));
 	m_bIsOnWaitingProcess = false;
 	m_iSuperAttackLeft = 0;
 	m_iSuperAttackCount = 0;
@@ -132,7 +133,7 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): gam
 	m_iPartyID = 0;
 	m_iPartyStatus = 0;
 	m_iReqJoinPartyClientH = 0;
-	std::memset(m_cReqJoinPartyName, 0, sizeof(m_cReqJoinPartyName));
+	std::memset(m_cReqJoinPartyName, 0, sizeof (m_cReqJoinPartyName));
 	/*m_iPartyRank = -1;
 	m_iPartyMemberCount = 0;
 	m_iPartyGUID        = 0;
@@ -146,8 +147,8 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): gam
 	m_iFightZoneTicketNumber = m_iFightzoneNumber = m_iReserveTime = 0;
 	m_iPenaltyBlockYear = m_iPenaltyBlockMonth = m_iPenaltyBlockDay = 0;
 	m_iExchangeH = 0;
-	std::memset(m_cExchangeName, 0, sizeof(m_cExchangeName));
-	std::memset(m_cExchangeItemName, 0, sizeof(m_cExchangeItemName));
+	std::memset(m_cExchangeName, 0, sizeof (m_cExchangeName));
+	std::memset(m_cExchangeItemName, 0, sizeof (m_cExchangeItemName));
 	for (int i = 0; i < 4; i++) {
 		m_cExchangeItemIndex[i] = -1;
 		m_iExchangeItemAmount[i] = 0;
@@ -188,7 +189,7 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): gam
 	m_dwMoveLAT = m_dwRunLAT = m_dwAttackLAT = 0;
 	m_dwInitCCTimeRcv = 0;
 	m_dwInitCCTime = 0;
-	std::memset(m_cLockedMapName, 0, sizeof(m_cLockedMapName));
+	std::memset(m_cLockedMapName, 0, sizeof (m_cLockedMapName));
 	strcpy(m_cLockedMapName, "NONE");
 	m_iLockedMapTime = 0;
 	m_iCrusadeDuty = 0;
@@ -202,9 +203,9 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): gam
 	}
 	m_iCSIsendPoint = 0;
 	m_bIsSendingMapStatus = false;
-	std::memset(m_cSendingMapName, 0, sizeof(m_cSendingMapName));
+	std::memset(m_cSendingMapName, 0, sizeof (m_cSendingMapName));
 	m_iConstructionPoint = 0;
-	std::memset(m_cConstructMapName, 0, sizeof(m_cConstructMapName));
+	std::memset(m_cConstructMapName, 0, sizeof (m_cConstructMapName));
 	m_iConstructLocX = m_iConstructLocY = -1;
 	m_bIsAdminOrderGoto = false;
 	m_bIsInsideWarehouse = false;
@@ -224,6 +225,7 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket): gam
 	m_dwDSLAT = m_dwDSLATOld = m_dwDSLATS = 0;
 	m_iDSCount = 0;
 }
+
 bool CClient::bCreateNewParty() {
 	int i;
 	if (m_iPartyRank != -1) return false;
@@ -232,10 +234,11 @@ bool CClient::bCreateNewParty() {
 	m_iPartyGUID = (rand() % 999999) + timeGetTime();
 	for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
 		m_stPartyMemberName[i].iIndex = 0;
-		std::memset(m_stPartyMemberName[i].cName, 0, sizeof(m_stPartyMemberName[i].cName));
+		std::memset(m_stPartyMemberName[i].cName, 0, sizeof (m_stPartyMemberName[i].cName));
 	}
 	return true;
 }
+
 void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage) {
 	char cAttackerName[21], cEKMsg[1000];
 	short sAttackerWeapon;
@@ -278,7 +281,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 		default:
 			break;
 	}
-	this->SendNotifyMsg(0,DEF_NOTIFY_KILLED, 0, 0, 0, cAttackerName);
+	this->SendNotifyMsg(0, DEF_NOTIFY_KILLED, 0, 0, 0, cAttackerName);
 	// �ٸ� Ŭ���̾�Ʈ���� �״� ���� ���.
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		sAttackerWeapon = ((game_.m_pClientList[iAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
@@ -423,7 +426,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 						wsprintf(G_cTxt, "Enemy Player Killed by Npc! Construction +%d", (this->m_iLevel / 2));
 						PutLogList(G_cTxt);
 						// ���ְ�� �ٷ� �뺸.
-						game_.m_pClientList[i]->SendNotifyMsg(0,DEF_NOTIFY_CONSTRUCTIONPOINT, game_.m_pClientList[i]->m_iConstructionPoint, game_.m_pClientList[i]->m_iWarContribution, 0, nullptr);
+						game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, game_.m_pClientList[i]->m_iConstructionPoint, game_.m_pClientList[i]->m_iWarContribution, 0, nullptr);
 						return;
 					}
 			}
@@ -489,7 +492,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	{
 		if ((game_.m_pClientList[i] != nullptr)) // Check if this->is avtice
 		{
-			game_.m_pClientList[i]->SendNotifyMsg(0,DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to client
+			game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to client
 			// Log EK
 			wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName); // Log message
 			PutLogFileList(G_cTxt); // Enter into logs
@@ -499,6 +502,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	//----                   End EK Announcer Code                 ----
 	//-----------------------------------------------------------------
 }
+
 void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4, uint32_t sV5, uint32_t sV6, uint32_t sV7, uint32_t sV8, uint32_t sV9, char * pString2) {
 	char cData[1000];
 	uint32_t * dwp;
@@ -1046,7 +1050,8 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			break;
 		case DEF_NOTIFY_ADMINIFO:
 			switch (sV1) {
-				case 1: {
+				case 1:
+				{
 					auto &npc = *game_.m_pNpcList[sV2];
 					ip = (int *) cp;
 					*ip = npc.m_iHP;
@@ -1073,7 +1078,8 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 					*ip = (int) npc.m_bIsKilled;
 					cp += 4;
 					iRet = this->m_pXSock->iSendMsg(cData, 26 + 12);
-				} break;
+				}
+				break;
 			}
 			break;
 		case DEF_NOTIFY_HELDENIANSTART:
@@ -1535,7 +1541,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
 				int iH = game_.m_stPartyInfo[this->m_iPartyID].iIndex[i];
 				if (game_.m_pClientList[iH] != nullptr) {
-					game_.m_pClientList[iH]->SendNotifyMsg(0,DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+					game_.m_pClientList[iH]->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
 				}
 			}
 			iRet = this->m_pXSock->iSendMsg(cData, 14);
@@ -1562,7 +1568,8 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 				cp += 2;
 			}
 			iRet = this->m_pXSock->iSendMsg(cData, 6 + partyInfo.iTotalMembers * 18);
-	} break;
+		}
+		break;
 		case DEF_NOTIFY_MP:
 			dwp = (uint32_t *) cp;
 			*dwp = (uint32_t) this->m_iMP;
@@ -1570,7 +1577,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
 				int iH = game_.m_stPartyInfo[this->m_iPartyID].iIndex[i];
 				if (game_.m_pClientList[iH] != nullptr) {
-					game_.m_pClientList[iH]->SendNotifyMsg(0,DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+					game_.m_pClientList[iH]->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
 				}
 			}
 			iRet = this->m_pXSock->iSendMsg(cData, 10);
@@ -1582,7 +1589,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
 				int iH = game_.m_stPartyInfo[this->m_iPartyID].iIndex[i];
 				if (game_.m_pClientList[iH] != nullptr) {
-					game_.m_pClientList[iH]->SendNotifyMsg(0,DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+					game_.m_pClientList[iH]->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
 				}
 			}
 			iRet = this->m_pXSock->iSendMsg(cData, 10);
@@ -1696,6 +1703,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			return;
 	}
 }
+
 int CClient::iUpgradeHeroCapeRequirements(int iItemIndex) {
 	int iAfterItemID, iRequiredEnemyKills, iRequiredContribution, iStoneNumber, i;
 	int iBeforeItemID;
@@ -1706,13 +1714,13 @@ int CClient::iUpgradeHeroCapeRequirements(int iItemIndex) {
 	i = 0;
 	iBeforeItemID = this->m_pItemList[iItemIndex]->m_sIDnum;
 	if (iBeforeItemID == 400) {
-		game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, id_, (int) &*this->m_pItemList[iItemIndex], nullptr);
+		game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, id_, (int) & * this->m_pItemList[iItemIndex], nullptr);
 		iAfterItemID = 427;
 		iRequiredEnemyKills = 30;
 		iRequiredContribution = 50;
 		iStoneNumber = 657;
 	} else if (iBeforeItemID == 401) {
-		game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, id_, (int) &*this->m_pItemList[iItemIndex], nullptr);
+		game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, id_, (int) & * this->m_pItemList[iItemIndex], nullptr);
 		iAfterItemID = 428;
 		iRequiredEnemyKills = 30;
 		iRequiredContribution = 50;
@@ -1735,6 +1743,7 @@ int CClient::iUpgradeHeroCapeRequirements(int iItemIndex) {
 	}
 	return -1;
 }
+
 void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 	int i, iItemX, iItemY, iSoM, iSoX, iSomH, iSoxH, iCheckHeroCape; // v2.172
 	uint32_t dwTemp, dwSWEType, iValue;
@@ -1748,12 +1757,12 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 		if ((item.m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
 				  (item.m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
 				  (item.m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
-			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 			return;
 		}
 		iCheckHeroCape = this->iUpgradeHeroCapeRequirements(iItemIndex);
 		if (iCheckHeroCape > 0) {
-			this->SendNotifyMsg(0,DEF_NOTIFY_UPGRADEHEROCAPE, iItemIndex,
+			this->SendNotifyMsg(0, DEF_NOTIFY_UPGRADEHEROCAPE, iItemIndex,
 					  item.m_cItemType,
 					  item.m_wCurLifeSpan,
 					  item.m_cName,
@@ -1764,48 +1773,48 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 					  item.m_dwAttribute);
 			game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, -1, &item, false);
 		} else {
-			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 			game_._bItemLog(DEF_ITEMLOG_UPGRADEFAIL, this->id_, -1, &item, false);
 		}
 		return;
 	}
 	iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
 	if (iValue >= 15 || iValue < 0) {
-		this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
+		this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
 		return;
 	}
 	if ((item.m_sIDnum == 717) && (iValue >= 7) && (iValue < 0)) {
-		this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
+		this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
 		return;
 	}
 	switch (item.m_cCategory) {
 		case 46: // Pendants are category 46
 			if (item.m_cItemType != 1) {
-				this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+				this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 				return; // Pendants are type 1
 			}
 			if (item.m_cEquipPos < 11) {
-				this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+				this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 				return; // Pendants are left finger or more
 			}
 			if (item.m_sItemEffectType != 14) {
-				this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+				this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 				return; // Pendants are EffectType 14
 			}
 			switch (item.m_sItemEffectValue1) {
 				default: // Other items are not upgradable
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 					return; // Pendants are EffectType 14
 				case 16: // AngelicPandent(STR)
 				case 17: // AngelicPandent(DEX)
 				case 18: // AngelicPandent(INT)
 				case 19: // AngelicPandent(MAG)
 					if (this->m_iGizonItemUpgradeLeft <= 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					if (iValue >= 10) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					switch (iValue) {
@@ -1830,7 +1839,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						case 9: sItemUpgrade = 55;
 							break;
 						default:
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 							return;
 							break;
 					}
@@ -1841,24 +1850,24 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 					 return;
 					}*/
 					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					int iDicePTA = iDice(1, 100);
 					if (iDicePTA <= 70) {
 						this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
 						iValue++;
 						if (iValue > 10) iValue = 10;
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
 					} else {
 						this->m_iGizonItemUpgradeLeft--;
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 					}
 					return;
 					break;
@@ -1877,7 +1886,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 				case 2001://BlackKnightBHammer
 				case 2002://BlackKnightBarHammer
 					if (this->m_iGizonItemUpgradeLeft <= 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					sItemUpgrade = (iValue * (iValue + 6) / 8) + 2;
@@ -1890,11 +1899,11 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							}
 						}*/
 					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
-					this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
 					if ((iValue == 0) && (item.m_sIDnum == 703)) { // SangAhFlameberge
 						iItemX = this->m_ItemPosList[iItemIndex].x;
 						iItemY = this->m_ItemPosList[iItemIndex].y;
@@ -1902,7 +1911,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
 						if (game_._bInitItemAttr(item, 736) == false) { // SangAhGiantSword
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -1914,7 +1923,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -1931,7 +1940,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
 						if (game_._bInitItemAttr(item, 737) == false) { // DarkKnightGiantSword
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -1943,7 +1952,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
@@ -1961,7 +1970,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
 						if (game_._bInitItemAttr(item, 745) == false) { // BlackKnightTemple
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -1973,7 +1982,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
@@ -1990,8 +1999,8 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
@@ -2009,7 +2018,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
 						if (game_._bInitItemAttr(item, 2001) == false) { // BlackKnightBHammer
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -2021,7 +2030,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
@@ -2039,7 +2048,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
 						if (game_._bInitItemAttr(item, 2002) == false) { // BlackKnightBarHammer
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -2051,7 +2060,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
@@ -2068,8 +2077,8 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
@@ -2085,41 +2094,41 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
 					}
 					break;
 				case 717: // DarkKnightRapier
 					if (this->m_iGizonItemUpgradeLeft <= 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					sItemUpgrade = (iValue * (iValue + 6) / 8) + 2;
 					if ((item.m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
 							  (item.m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
 							  (item.m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 						return;
 					}
 					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
-					this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
 					iValue++;
 					if (iValue > 7) iValue = 7;
 					dwTemp = item.m_dwAttribute;
 					dwTemp = dwTemp & 0x0FFFFFFF;
 					item.m_dwAttribute = dwTemp | (iValue << 28);
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 					game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
 					break;
 				default:
 					if ((item.m_dwAttribute & 0x00F00000) != 0) {
 						dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
 						if (dwSWEType == 9) {
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 							return;
 						}
 					}
@@ -2137,7 +2146,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						}
 					if (iSoX > 0) {
 						if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSoxH) == false) {
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
 							if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
 							this->ItemDepleteHandler(iSoxH, false, true);
@@ -2165,7 +2174,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							}
 						}
 					}
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 					break;
 			}
 			return;
@@ -2173,7 +2182,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 			if ((item.m_dwAttribute & 0x00F00000) != 0) {
 				dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
 				if (dwSWEType == 9) {
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 					return;
 				}
 			}
@@ -2191,7 +2200,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 				}
 			if (iSoX > 0) {
 				if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSoxH) == false) {
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 					iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
 					if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
 					this->ItemDepleteHandler(iSoxH, false, true);
@@ -2219,19 +2228,19 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 					}
 				}
 			}
-			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 			return;
 		case 5:
 			if ((item.m_dwAttribute & 0x00F00000) != 0) {
 				dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
 				if (dwSWEType == 8) {
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 					return;
 				}
 			}
 			switch (item.m_sIDnum) {
 				case 623:
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 					return;
 				default:
 					break;
@@ -2250,7 +2259,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 				}
 			if (iSoM > 0) {
 				if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSomH, true) == false) {
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 					iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
 					if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
 					this->ItemDepleteHandler(iSomH, false, true);
@@ -2279,7 +2288,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 					this->ItemDepleteHandler(iSomH, false, true);
 				}
 			}
-			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, item.m_sItemSpecEffectValue1, nullptr, item.m_sItemSpecEffectValue2);
+			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, item.m_sItemSpecEffectValue1, nullptr, item.m_sItemSpecEffectValue2);
 			return;
 		case 6:
 		case 15:
@@ -2306,13 +2315,13 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 				case 729: // DarkMageHauberkW
 				case 730: // DarkMageChainMailW
 				case 731: // DarkMageLeggingsW
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 					return;
 				default:
 					if ((item.m_dwAttribute & 0x00F00000) != 0) {
 						dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
 						if (dwSWEType == 8) {
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 							return;
 						}
 					}
@@ -2330,7 +2339,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						}
 					if (iSoM > 0) {
 						if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSomH, true) == false) {
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
 							if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
 							this->ItemDepleteHandler(iSomH, false, true);
@@ -2360,7 +2369,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						}
 					}
 			}
-			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, item.m_sItemSpecEffectValue1, nullptr, item.m_sItemSpecEffectValue2);
+			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, item.m_sItemSpecEffectValue1, nullptr, item.m_sItemSpecEffectValue2);
 			return;
 		case 8:
 			switch (item.m_sIDnum) {
@@ -2376,16 +2385,16 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						return; 
 					}*/
 					if (this->m_iGizonItemUpgradeLeft <= 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					sItemUpgrade = (iValue * (iValue + 6) / 8) + 2;
 					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
 						return;
 					}
 					this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
-					this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
 					if (iValue == 0) {
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
@@ -2399,7 +2408,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
 						if (game_._bInitItemAttr(item, 738) == false) { // DarkMageMagicWand
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -2411,7 +2420,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
 								  item.m_wCurLifeSpan, item.m_cName,
 								  item.m_sSprite,
 								  item.m_sSpriteFrame,
@@ -2428,7 +2437,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
 						if (game_._bInitItemAttr(item, 746) == false) { // BlackMageTemple 
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
 						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -2440,7 +2449,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
 								  item.m_wCurLifeSpan, item.m_cName,
 								  item.m_sSprite,
 								  item.m_sSpriteFrame,
@@ -2457,8 +2466,8 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
-						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
@@ -2475,7 +2484,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
 						break;
 					}
@@ -2494,7 +2503,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						}
 					if (iSoX > 0) {
 						if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSoxH) == false) {
-							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							iValue = (item.m_dwAttribute & 0xF0000000) >> 28; // v2.172
 							if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
 							this->ItemDepleteHandler(iSoxH, false, true);
@@ -2510,15 +2519,16 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->ItemDepleteHandler(iSoxH, false, true);
 						}
 					}
-					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 					break;
 			}
 			break;
 		default:
-			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 			break;
 	}
 }
+
 void CClient::ItemDepleteHandler(short sItemIndex, bool bIsUseItemResult, bool bIsItemUsed) {
 	if (this->m_bIsInitComplete == false) return;
 	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return;
@@ -2540,12 +2550,13 @@ void CClient::ItemDepleteHandler(short sItemIndex, bool bIsUseItemResult, bool b
 		game_._bItemLog(DEF_ITEMLOG_DEPLETE, id_, -1, &item, false);
 	}
 	game_.ReleaseItemHandler(id_, sItemIndex, true);
-	this->SendNotifyMsg(0,DEF_NOTIFY_ITEMDEPLETED_ERASEITEM, sItemIndex, (int) bIsUseItemResult, 0, nullptr);
+	this->SendNotifyMsg(0, DEF_NOTIFY_ITEMDEPLETED_ERASEITEM, sItemIndex, (int) bIsUseItemResult, 0, nullptr);
 	itemPtr.reset();
 	this->m_bIsItemEquipped[sItemIndex] = false;
 	this->m_cArrowIndex = game_._iGetArrowItemIndex(id_);
 	this->iCalcTotalWeight();
 }
+
 int CClient::iCalcTotalWeight() {
 	register int i, iWeight;
 	short sItemIndex;
@@ -2568,13 +2579,14 @@ int CClient::iCalcTotalWeight() {
 	this->m_iCurWeightLoad = iWeight;
 	return iWeight;
 }
+
 bool CClient::bSetItemToBankItem(short sItemIndex) {
 	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return false;
 	auto &itemPtr = this->m_pItemList[sItemIndex];
 	if (!itemPtr) return false;
 	auto &item = *itemPtr;
 	int index = 0;
-	for(auto &bankItemPtr: this->m_pItemInBankList) {
+	for (auto &bankItemPtr : this->m_pItemInBankList) {
 		if (bankItemPtr) {
 			++index;
 			continue;
@@ -2642,6 +2654,7 @@ bool CClient::bSetItemToBankItem(short sItemIndex) {
 	}
 	return false;
 }
+
 bool CClient::bSetItemToBankItem(CItem * pItem) {
 	uint32_t * dwp;
 	uint16_t * wp;
@@ -2649,7 +2662,7 @@ bool CClient::bSetItemToBankItem(CItem * pItem) {
 	short * sp;
 	if (pItem == nullptr) return false;
 	int index = 0;
-	for(auto &bankItemPtr: m_pItemInBankList) {
+	for (auto &bankItemPtr : m_pItemInBankList) {
 		if (bankItemPtr) {
 			++index;
 			continue;
@@ -2716,9 +2729,11 @@ bool CClient::bSetItemToBankItem(CItem * pItem) {
 	}
 	return false;
 }
+
 int CClient::_iCalcMaxLoad() {
 	return (this->m_iStr + this->m_iAngelicStr + this->m_iLevel) * 500;
 }
+
 void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 	int iOldSSN, iSSNpoint, iWeaponIndex;
 	if (this->m_bIsInitComplete == false) return;
@@ -2808,10 +2823,11 @@ void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
 			// SKill�� ������ 600�� ������ �ٸ� ��ų�� �ϳ��� 1 ������.
 			game_.bCheckTotalSkillMasteryPoints(id_, sSkillIndex);
-			this->SendNotifyMsg(0,DEF_NOTIFY_SKILL, sSkillIndex, this->m_cSkillMastery[sSkillIndex], 0, nullptr);
+			this->SendNotifyMsg(0, DEF_NOTIFY_SKILL, sSkillIndex, this->m_cSkillMastery[sSkillIndex], 0, nullptr);
 		}
 	}
 }
+
 void CClient::CalculateSSN_SkillIndex(short sSkillIndex, int iValue) {
 	int iOldSSN, iSSNpoint, iWeaponIndex;
 	if (this->m_bIsInitComplete == false) return;
@@ -2897,7 +2913,7 @@ void CClient::CalculateSSN_SkillIndex(short sSkillIndex, int iValue) {
 		}
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
 			game_.bCheckTotalSkillMasteryPoints(id_, sSkillIndex);
-			this->SendNotifyMsg(0,DEF_NOTIFY_SKILL, sSkillIndex, this->m_cSkillMastery[sSkillIndex], 0, nullptr);
+			this->SendNotifyMsg(0, DEF_NOTIFY_SKILL, sSkillIndex, this->m_cSkillMastery[sSkillIndex], 0, nullptr);
 		}
 	}
 }
@@ -2909,16 +2925,19 @@ void CClient::_ClearQuestStatus() {
 	this->m_iQuestRewardAmount = 0;
 	this->m_bIsQuestCompleted = false;
 }
+
 int CClient::iGetMaxHP() {
 	int iRet = (this->m_iVit * 3) + (this->m_iLevel * 2) + ((this->m_iStr + this->m_iAngelicStr) / 2);
 	if (this->m_iSideEffect_MaxHPdown != 0)
 		iRet = iRet - (iRet / this->m_iSideEffect_MaxHPdown);
 	return iRet;
 }
+
 int CClient::iGetMaxMP() {
 	int iRet = (2 * (this->m_iMag + this->m_iAngelicMag)) + (2 * this->m_iLevel) + ((this->m_iInt + this->m_iAngelicInt) / 2);
 	return iRet;
 }
+
 int CClient::iGetMaxSP() {
 	int iRet = (2 * (this->m_iStr + this->m_iAngelicStr)) + (2 * this->m_iLevel);
 	return iRet;

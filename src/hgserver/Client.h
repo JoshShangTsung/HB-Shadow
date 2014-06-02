@@ -19,6 +19,7 @@
 #define DEF_MAXPARTYMEMBERS	8
 #define DEF_SPECABLTYTIMESEC	1200
 struct CGame;
+
 class CClient {
 public:
 	CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket);
@@ -221,6 +222,7 @@ public:
 	uint32_t m_dwCrusadeGUID;
 	uint32_t m_dwHeldenianGUID;
 	bool m_bInRecallImpossibleMap;
+
 	struct CrusadeStructureInfo {
 		char cType;
 		char cSide;
@@ -242,6 +244,7 @@ public:
 	int m_iPartyRank;
 	int m_iPartyMemberCount;
 	int m_iPartyGUID;
+
 	struct PartyMember {
 		int iIndex;
 		char cName[11];
@@ -282,6 +285,7 @@ public:
 	void AdminOrder_GetFightzoneTicket();
 };
 #define DEF_MAXCLIENTS				2000
+
 struct Clients {
 	typedef CClient *value_type;
 	typedef value_type &ref_type;

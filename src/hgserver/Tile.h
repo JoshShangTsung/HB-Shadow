@@ -30,7 +30,7 @@ public:
 	int m_iOccupyFlagIndex; // �� Ÿ�� ���� �� �ִ� ���ɱ���� �ε��� 
 
 	// Crusade
-	int m_iAttribute; 
+	int m_iAttribute;
 
 
 };

@@ -1,8 +1,9 @@
 #include "TeleportLoc.h"
 #include <cstring>
+
 CTeleportLoc::CTeleportLoc() {
 
-	std::memset(m_cDestMapName, 0, sizeof(m_cDestMapName));
+	std::memset(m_cDestMapName, 0, sizeof (m_cDestMapName));
 	//std::memset(m_cDestMapName2, 0, sizeof(m_cDestMapName2));
 	m_sSrcX = -1;
 	m_sSrcY = -1;

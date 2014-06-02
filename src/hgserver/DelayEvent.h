@@ -12,6 +12,7 @@ enum class DelayEventType {
 	CALCMETEORSTRIKEEFFECT,
 	ANCIENT_TABLET
 };
+
 struct DelayEvent {
 	DelayEventType delayType_;
 	int effectType_;
@@ -32,9 +33,8 @@ struct DelayEvent {
 bool operator<(const DelayEvent &a, const DelayEvent &b);
 
 struct DelayEvents {
-
 	bool remove(int iH, char cType, int iEffectType);
-	void process(const std::function<void(const DelayEvent&)> &f);
+	void process(const std::function<void(const DelayEvent&) > &f);
 	bool add(DelayEventType iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3);
 	void clear();
 private:

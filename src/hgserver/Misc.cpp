@@ -240,7 +240,7 @@ bool CMisc::bCheckValidName(char *pStr) {
 				// ���� 
 
 			} else return false;
-			i++; 
+			i++;
 		}
 	}
 
@@ -265,7 +265,7 @@ void CMisc::Temp() {
 	for (i = 1; i <= 444; i++)
 		fread(cTemp, 1, 5240, pSrcFileB);
 
-	std::memset(cTemp, 0, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof (cTemp));
 	strcpy(cTemp, "MAPSIZEX = 824 MAPSIZEY = 824 TILESIZE = 10");
 
 	// �� ���� ��� ����.
@@ -273,12 +273,12 @@ void CMisc::Temp() {
 
 	// �� ���� ���κ�
 	for (i = 1; i <= 80; i++) {
-		std::memset(cTemp, 0, sizeof(cTemp));
+		std::memset(cTemp, 0, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileA);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	std::memset(cTemp, 0, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof (cTemp));
 	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	//148
@@ -289,22 +289,22 @@ void CMisc::Temp() {
 
 	// �� ���� �߰��κ�
 	for (i = 1; i <= 524; i++) {
-		std::memset(cTemp, 0, sizeof(cTemp));
+		std::memset(cTemp, 0, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFile);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
 	// �� ���� �޺κ�
-	std::memset(cTemp, 0, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof (cTemp));
 	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	for (i = 1; i <= 80; i++) {
-		std::memset(cTemp, 0, sizeof(cTemp));
+		std::memset(cTemp, 0, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileB);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	std::memset(cTemp, 0, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof (cTemp));
 	for (i = 1; i <= 2; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	/*

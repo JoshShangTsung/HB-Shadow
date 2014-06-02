@@ -15,7 +15,7 @@ char * CStrTok::pGet() {
 	char cNextData;
 	bool bFlag;
 
-	std::memset(m_cToken, 0, sizeof(m_cToken));
+	std::memset(m_cToken, 0, sizeof (m_cToken));
 
 	while (m_iCurLoc < m_iDataLength) {
 

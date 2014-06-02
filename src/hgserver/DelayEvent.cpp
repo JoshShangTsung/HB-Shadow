@@ -7,9 +7,10 @@ bool operator<(const DelayEvent &a, const DelayEvent &b) {
 }
 
 namespace {
+
 	template<typename C, typename F> void erase(C &c, const F &f) {
-		for(auto iter = c.begin();iter != c.end();) {
-			if(f(*iter)) {
+		for (auto iter = c.begin(); iter != c.end();) {
+			if (f(*iter)) {
 				c.erase(iter++);
 			} else {
 				++iter;
@@ -17,6 +18,7 @@ namespace {
 		}
 	}
 }
+
 bool DelayEvents::remove(int iH, char cType, int iEffectType) {
 	if (iEffectType == 0) {
 		erase(events_, [iH, cType](const DelayEvent & ev) {

@@ -1,5 +1,6 @@
 #include "BuildItem.h"
 #include <cstring>
+
 CBuildItem::CBuildItem() {
 	std::memset(m_cName, 0, sizeof (m_cName));
 	m_sItemID = -1;

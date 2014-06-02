@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <array>
 #include <memory>
+
 class CDynamicObject {
 public:
 	CDynamicObject(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, uint32_t dwRegisterTime, uint32_t dwLastTime, int iV1);
@@ -15,8 +16,8 @@ public:
 	uint32_t m_dwRegisterTime;
 	uint32_t m_dwLastTime;
 
-	int m_iCount; 
-	int m_iV1; 
+	int m_iCount;
+	int m_iV1;
 };
 
 
@@ -25,6 +26,7 @@ public:
 struct Maps;
 struct Clients;
 struct CGame;
+
 struct DynamicObjects {
 	typedef std::unique_ptr<CDynamicObject> value_type;
 	typedef value_type &ref_type;
@@ -32,8 +34,10 @@ struct DynamicObjects {
 	void DynamicObjectEffectProcessor();
 	void CheckDynamicObjectList();
 	int iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, uint32_t dwLastTime, int iV1 = 0);
+
 	void clear() {
-		m_pDynamicObjectList = {{}};
+		m_pDynamicObjectList = {
+			{}};
 	}
 	ref_type operator[](size_t index) {
 		return m_pDynamicObjectList[index];

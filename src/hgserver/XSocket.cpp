@@ -40,7 +40,7 @@ XSocket::~XSocket() {
 	for (i = 0; i < DEF_XSOCKBLOCKLIMIT; i++)
 		if (m_pUnsentDataList[i] != nullptr) delete m_pUnsentDataList[i];
 
-	
+
 	_CloseConn();
 }
 
@@ -179,12 +179,12 @@ int XSocket::_iOnRead() {
 		if (m_dwReadSize == 0) {
 			// ����� �� �о��. 
 			m_cStatus = DEF_XSOCKSTATUS_READINGBODY;
-			
+
 			wp = (uint16_t *) (m_pRcvBuffer + 1);
-			m_dwReadSize = (int) (*wp - 3); 
+			m_dwReadSize = (int) (*wp - 3);
 
 			if (m_dwReadSize == 0) {
-				
+
 				m_cStatus = DEF_XSOCKSTATUS_READINGHEADER;
 				m_dwReadSize = 3;
 				m_dwTotalReadSize = 0;
@@ -220,7 +220,7 @@ int XSocket::_iOnRead() {
 		m_dwTotalReadSize += iRet;
 
 		if (m_dwReadSize == 0) {
-			
+
 			m_cStatus = DEF_XSOCKSTATUS_READINGHEADER;
 			m_dwReadSize = 3;
 			m_dwTotalReadSize = 0;
@@ -244,7 +244,7 @@ int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 					// �Ҵ��� �޸𸮰� ���. �̰��� ������ ����� ���.
 					return DEF_XSOCKEVENT_CRITICALERROR;
 				case 0:
-					
+
 					return DEF_XSOCKEVENT_QUENEFULL;
 				case 1:
 					// ���������� �����͸� ����ߴ�.
@@ -275,7 +275,7 @@ int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 							return DEF_XSOCKEVENT_CRITICALERROR;
 							break;
 						case 0:
-							
+
 							return DEF_XSOCKEVENT_QUENEFULL;
 							break;
 						case 1:
@@ -291,9 +291,6 @@ int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 
 	return iOutLen;
 }
-
-
-
 
 int XSocket::_iSend_ForInternalUse(char * cData, int iSize) {
 	int iOutLen, iRet, WSAErr;
@@ -348,7 +345,7 @@ int XSocket::_iSendUnsentData() {
 		iRet = _iSend_ForInternalUse(m_pUnsentDataList[m_sHead], m_iUnsentDataSize[m_sHead]);
 
 		if (iRet == m_iUnsentDataSize[m_sHead]) {
-			
+
 			delete m_pUnsentDataList[m_sHead];
 			m_pUnsentDataList[m_sHead] = nullptr;
 			m_iUnsentDataSize[m_sHead] = 0;
@@ -361,7 +358,7 @@ int XSocket::_iSendUnsentData() {
 			if (iRet < 0)
 				return iRet;
 
-			
+
 			pTemp = new char[m_iUnsentDataSize[m_sHead] - iRet];
 			memcpy(pTemp, m_pUnsentDataList[m_sHead] + iRet, m_iUnsentDataSize[m_sHead] - iRet);
 
@@ -453,7 +450,7 @@ bool XSocket::bAccept(class XSocket * pXSock, unsigned int uiMsg) {
 	if (pXSock == nullptr) return false;
 
 	iLength = sizeof (Addr);
-	
+
 	AcceptedSock = accept(m_Sock, (struct sockaddr FAR *) &Addr, (int FAR *) &iLength);
 	if (AcceptedSock == INVALID_SOCKET)
 		return false;
@@ -525,7 +522,7 @@ bool _InitWinsock() {
 	uint16_t wVersionRequested;
 	WSADATA wsaData;
 
-	
+
 	wVersionRequested = MAKEWORD(2, 2);
 	iErrCode = WSAStartup(wVersionRequested, &wsaData);
 	if (iErrCode) return false;

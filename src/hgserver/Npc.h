@@ -65,7 +65,7 @@ public:
 	int m_iGoldDiceMax;
 
 	char m_cSide; // NPC�� ���� �� 
-	char m_cActionLimit; 
+	char m_cActionLimit;
 	// 4�� ������ ���Ǿ�, 5�� ���๰   
 
 	char m_cSize; // 0: Small-Medium 1: Large
@@ -85,9 +85,9 @@ public:
 	short m_sBehaviorTurnCount; // �ൿ ī��Ʈ 
 	char m_cTargetSearchRange; // NPC��ݸ�ǥ �˻� ���� 
 
-	int m_iFollowOwnerIndex; 
-	char m_cFollowOwnerType; 
-	bool m_bIsSummoned; 
+	int m_iFollowOwnerIndex;
+	char m_cFollowOwnerType;
+	bool m_bIsSummoned;
 	uint32_t m_dwSummonedTime; // ��ȯ���� ��ð� 
 
 	int m_iTargetIndex; // NPC�� ��ݸ�ǥ �ε���
@@ -99,7 +99,7 @@ public:
 	int m_iWayPointIndex[DEF_MAXWAYPOINTS + 1];
 	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS];
 
-	bool m_bIsPermAttackMode; 
+	bool m_bIsPermAttackMode;
 	int m_iNoDieRemainExp; // ���� �ʰ� ���߽ÿ� ���� �� �ִ� ����ġ 
 	int m_iAttackStrategy; // ���� ���� �ΰ����� Ÿ��  
 	int m_iAILevel; // ���� ���� 
@@ -115,7 +115,7 @@ public:
 	bool m_bIsKilled;
 	bool m_bIsUnsummoned;
 
-	int m_iLastDamage; 
+	int m_iLastDamage;
 	int m_iSummonControlMode; // ��ȯ�� ���� ���: 0�̸� Free, 1 Hold 2 Tgt 
 	char m_cAttribute; // ���� �Ӽ�:  �� 1 �ϴ� 2 �� 3 �� 4  
 	int m_iAbsDamage; // ����� ���� ����� ���, ������ ���� ����� ��� 
@@ -143,7 +143,7 @@ public:
 	// �� ���� 0�̾�߸� ������ �Ѵ�.
 	int m_iManaStock; // �׷��� ���� ���׷������� ��� �������� 
 	bool m_bIsMaster; // ������ �������� ���� 
-	int m_iGuildGUID; 
+	int m_iGuildGUID;
 
 	char m_cCropType;
 	char m_cCropSkill;

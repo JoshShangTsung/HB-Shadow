@@ -41,7 +41,7 @@
 #define DEF_MAXSECTORS					60
 #define DEF_MAXSTRIKEPOINTS				20
 
-class CMap: public std::enable_shared_from_this<CMap> {
+class CMap : public std::enable_shared_from_this<CMap> {
 public:
 
 	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);
@@ -254,12 +254,14 @@ public:
 struct Maps {
 	typedef std::shared_ptr<CMap> value_type;
 	typedef value_type &ref_type;
-	
+
 	ref_type operator[](size_t index) {
 		return m_pMapList[index];
 	}
+
 	void clear() {
-		m_pMapList = {{}};
+		m_pMapList = {
+			{}};
 	}
 private:
 	std::array<value_type, DEF_MAXMAPS> m_pMapList;

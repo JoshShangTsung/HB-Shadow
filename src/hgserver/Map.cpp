@@ -4,7 +4,7 @@
 
 extern void PutLogFileList(char * cStr);
 
-CMap::CMap(class CGame * pGame): m_pClientList(pGame->m_pClientList), m_bIsSnowEnabled(false) {
+CMap::CMap(class CGame * pGame) : m_pClientList(pGame->m_pClientList), m_bIsSnowEnabled(false) {
 	int i, ix, iy;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
@@ -136,7 +136,7 @@ CMap::CMap(class CGame * pGame): m_pClientList(pGame->m_pClientList), m_bIsSnowE
 		m_stStrikePoint[i].dY = 0;
 		m_stStrikePoint[i].iHP = 0;
 		m_stStrikePoint[i].iMapIndex = -1;
-		std::memset(m_stStrikePoint[i].cRelatedMapName, 0, sizeof(m_stStrikePoint[i].cRelatedMapName));
+		std::memset(m_stStrikePoint[i].cRelatedMapName, 0, sizeof (m_stStrikePoint[i].cRelatedMapName));
 	}
 	m_iTotalStrikePoints = 0;
 	m_bIsDisabled = false;
@@ -437,10 +437,10 @@ bool CMap::bIsValidLoc(short sX, short sY) {
 bool CMap::bInit(char * pName) {
 	int i;
 	// �������� �ε��Ѵ�.
-	std::memset(m_cName, 0, sizeof(m_cName));
+	std::memset(m_cName, 0, sizeof (m_cName));
 	strcpy(m_cName, pName);
 
-	std::memset(m_cLocationName, 0, sizeof(m_cLocationName));
+	std::memset(m_cLocationName, 0, sizeof (m_cLocationName));
 
 	if (_bDecodeMapDataFileContents() == false)
 		return false;
@@ -454,7 +454,7 @@ bool CMap::bInit(char * pName) {
 bool CMap::_bDecodeMapDataFileContents() {
 	HANDLE hFile;
 	char cMapFileName[256], cHeader[260], cTemp[100];
-	
+
 	register int i, ix, iy;
 	char * token, cReadMode;
 	char seps[] = "= \t\n";
@@ -462,7 +462,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 	class CTile * pTile;
 	short * sp;
 
-	std::memset(cMapFileName, 0, sizeof(cMapFileName));
+	std::memset(cMapFileName, 0, sizeof (cMapFileName));
 	strcat(cMapFileName, "mapdata\\");
 	strcat(cMapFileName, m_cName);
 	strcat(cMapFileName, ".amd");
@@ -470,7 +470,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 	hFile = CreateFile(cMapFileName, GENERIC_READ, 0, nullptr, OPEN_EXISTING, 0, nullptr);
 	if (hFile == INVALID_HANDLE_VALUE) return false;
 
-	std::memset(cHeader, 0, sizeof(cHeader));
+	std::memset(cHeader, 0, sizeof (cHeader));
 	DWORD nRead;
 	ReadFile(hFile, (char *) cHeader, 256, &nRead, nullptr);
 
@@ -502,8 +502,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 					cReadMode = 0;
 					break;
 			}
-		}
-		else {
+		} else {
 			if (memcmp(token, "MAPSIZEX", 8) == 0) cReadMode = 1;
 			if (memcmp(token, "MAPSIZEY", 8) == 0) cReadMode = 2;
 			if (memcmp(token, "TILESIZE", 8) == 0) cReadMode = 3;
@@ -513,7 +512,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 		token = pStrTok->pGet();
 	}
 
-	
+
 	m_pTile = (class CTile *)new class CTile[m_sSizeX * m_sSizeY];
 
 	// Ÿ���� ������ �о���δ�.
@@ -555,7 +554,7 @@ bool CMap::bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int *
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
 		if ((m_pTeleportLoc[i] != nullptr) && (m_pTeleportLoc[i]->m_sSrcX == sX) && (m_pTeleportLoc[i]->m_sSrcY == sY)) {
-			
+
 			memcpy(pMapName, m_pTeleportLoc[i]->m_cDestMapName, 10);
 			*pDx = m_pTeleportLoc[i]->m_sDestX;
 			*pDy = m_pTeleportLoc[i]->m_sDestY;
@@ -719,14 +718,14 @@ void CMap::_SetupNoAttackArea() {
 			for (ix = m_rcNoAttackRect[i].left; ix <= m_rcNoAttackRect[i].right; ix++)
 				for (iy = m_rcNoAttackRect[i].top; iy <= m_rcNoAttackRect[i].bottom; iy++) {
 					pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);
-					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004; 
+					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004;
 				}
 		} else if (m_rcNoAttackRect[i].top == -10) {
 			// �� ���� ��� ������.	
 			for (ix = 0; ix < m_sSizeX; ix++)
 				for (iy = 0; iy < m_sSizeY; iy++) {
 					pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);
-					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004; 
+					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004;
 				}
 		}
 	}
