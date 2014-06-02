@@ -1,6 +1,5 @@
 #pragma once
-#include "item.h"
-
+struct CItem;
 class CFish {
 public:
 	CFish(char cMapIndex, short sX, short sY, short sType, class CItem * pItem, int iDifficulty);

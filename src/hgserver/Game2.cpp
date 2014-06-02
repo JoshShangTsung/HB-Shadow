@@ -1,12 +1,5 @@
 #include "Game.h"
 #include <cstring>
-extern void PutLogList(const char * cMsg);
-extern void PutLogFileList(const char * cStr);
-extern void PutAdminLogFileList(const char * cStr);
-extern void PutItemLogFileList(const char * cStr);
-extern void PutLogEventFileList(const char * cStr);
-extern void PutHackLogFileList(const char * cStr);
-extern void PutPvPLogFileList(const char * cStr);
 extern char G_cTxt[512];
 extern HWND G_hWnd;
 
@@ -4114,7 +4107,7 @@ void CGame::AdminOrder_Teleport(int iClientH, char * pData, uint32_t dwMsgSize) 
 	if (strcmp("dv", cMapName) == 0) bFlag = true;
 	if (strcmp("HBX", cMapName) == 0) bFlag = true;
 	if (bFlag == true)
-		RequestTeleportHandler(iClientH, "2   ", cMapName, dX, dY);
+		m_pClientList[iClientH]->RequestTeleportHandler("2   ", cMapName, dX, dY);
 	delete pStrTok;
 	return;
 }
@@ -7594,7 +7587,7 @@ void CGame::QuestAcceptedHandler(int iClientH) {
 		switch (m_pQuestConfigList[m_pClientList[iClientH]->m_iAskedQuest]->m_iType) {
 			case 10:
 				m_pClientList[iClientH]->_ClearQuestStatus();
-				RequestTeleportHandler(iClientH, "2   ", m_pQuestConfigList[m_pClientList[iClientH]->m_iAskedQuest]->m_cTargetName,
+				m_pClientList[iClientH]->RequestTeleportHandler("2   ", m_pQuestConfigList[m_pClientList[iClientH]->m_iAskedQuest]->m_cTargetName,
 						  m_pQuestConfigList[m_pClientList[iClientH]->m_iAskedQuest]->m_sX, m_pQuestConfigList[m_pClientList[iClientH]->m_iAskedQuest]->m_sY);
 				return;
 		}
@@ -9015,7 +9008,7 @@ void CGame::AdminOrder_SummonAll(int iClientH, char *pData, uint32_t dwMsgSize) 
 	else memcpy(cLocation, token, strlen(token));
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != nullptr) && (strcmp(m_pClientList[i]->m_cLocation, token) == 0)) {
-			RequestTeleportHandler(i, "2   ", cMapName, pX, pY);
+			m_pClientList[i]->RequestTeleportHandler("2   ", cMapName, pX, pY);
 		}
 	wsprintf(G_cTxt, "GM Order(%s): PC(%s) Summoned to (%s)", m_pClientList[iClientH]->m_cLocation,
 			  cLocation, cMapName);
@@ -9056,7 +9049,7 @@ void CGame::AdminOrder_SummonPlayer(int iClientH, char *pData, uint32_t dwMsgSiz
 				delete pStrTok;
 				return;
 			}
-			RequestTeleportHandler(i, "2   ", cMapName, pX, pY);
+			m_pClientList[i]->RequestTeleportHandler("2   ", cMapName, pX, pY);
 			delete pStrTok;
 			return;
 		}//m_pClientList[i]->m_cCharName
@@ -9544,7 +9537,7 @@ void CGame::RequestRestartHandler(CClient &client) {
 		client.m_iHungerStatus = 100;
 		std::memset(cTmpMap, 0, sizeof (cTmpMap));
 		strcpy(cTmpMap, client.m_cMapName);
-		RequestTeleportHandler(client.id_, "2   ", cTmpMap, -1, -1);
+		client.RequestTeleportHandler("2   ", cTmpMap, -1, -1);
 	}
 }
 
@@ -12747,7 +12740,7 @@ void CGame::AdminOrder_GoTo(int iClientH, char* pData, uint32_t dwMsgSize) {
 					bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cBuff);
 					std::memset(cMapName, 0, sizeof (cMapName));
 					strcpy(cMapName, m_pClientList[i]->m_cMapName);
-					RequestTeleportHandler(iClientH, "2   ", cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
+					m_pClientList[iClientH]->RequestTeleportHandler("2   ", cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
 				}
 				delete pStrTok;
 				return;
@@ -13289,33 +13282,6 @@ bool CGame::_bPKLog(int iAction, int iAttackerH, int iVictumH, char * pNPC) {
 	return true;
 }
 
-void CGame::RequestResurrectPlayer(CClient &client, bool bResurrect) {
-	if (bResurrect == false) {
-		client.m_bIsBeingResurrected = false;
-		return;
-	}
-	char buff[100];
-	if (client.m_bIsBeingResurrected == false) {
-		wsprintf(buff, "(!!!) Player(%s) Tried To Use Resurrection Hack", client.m_cCharName);
-		PutHackLogFileList(buff);
-		DeleteClient(client.id_, true, true, true, true);
-		return;
-	}
-	wsprintf(buff, "(*) Resurrect Player! %s", client.m_cCharName);
-	PutLogList(buff);
-	client.m_bIsKilled = false;
-	// Player's HP becomes half of the Max HP.
-	client.m_iHP = client.iGetMaxHP() / 2;
-	// Player's MP
-	client.m_iMP = ((client.m_iMag * 2)+(client.m_iLevel / 2)) + client.m_iInt / 2;
-	// Player's SP
-	client.m_iSP = (client.m_iStr * 2)+(client.m_iLevel / 2);
-	// Player's Hunger
-	client.m_iHungerStatus = 100;
-	client.m_bIsBeingResurrected = false;
-	RequestTeleportHandler(client.id_, "2   ", client.m_cMapName, client.m_sX, client.m_sY);
-}
-
 bool CGame::bCheckClientAttackFrequency(int iClientH, uint32_t dwClientTime) {
 	uint32_t dwTimeGap;
 	if (m_pClientList[iClientH] == nullptr) return false;
@@ -13783,7 +13749,7 @@ void CGame::RequestGuildTeleportHandler(int iClientH) {
 			strcpy(cMapName, m_pGuildTeleportLoc[i].m_cDestMapName);
 			wsprintf(G_cTxt, "ReqGuildTeleport: %d %d %d %s", m_pClientList[iClientH]->m_iGuildGUID, m_pGuildTeleportLoc[i].m_sDestX, m_pGuildTeleportLoc[i].m_sDestY, cMapName);
 			PutLogList(G_cTxt);
-			RequestTeleportHandler(iClientH, "2   ", cMapName, m_pGuildTeleportLoc[i].m_sDestX, m_pGuildTeleportLoc[i].m_sDestY);
+			m_pClientList[iClientH]->RequestTeleportHandler("2   ", cMapName, m_pGuildTeleportLoc[i].m_sDestX, m_pGuildTeleportLoc[i].m_sDestY);
 			return;
 		}
 	switch (m_pClientList[iClientH]->m_cSide) {
@@ -15876,7 +15842,7 @@ void CGame::AdminOrder_Pushplayer(int iClientH, char * pData, uint32_t dwMsgSize
 				//Defines I as Max clients
 				if (bFlag == true)
 					//Reqeust the Push/Teleport
-					RequestTeleportHandler(i, "2   ", cMapName, dX, dY);
+					m_pClientList[i]->RequestTeleportHandler("2   ", cMapName, dX, dY);
 				wsprintf(G_cTxt, "(%s) GM(%s) sends (%s) Player(%s) to [%s](%d,%d)", m_pClientList[iClientH]->m_cIPaddress,
 						  m_pClientList[iClientH]->m_cCharName, m_pClientList[i]->m_cIPaddress, m_pClientList[i]->m_cCharName, cMapName, dX, dY);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, G_cTxt);
@@ -15932,7 +15898,7 @@ void CGame::AdminOrder_Pushplayer(int iClientH, char * pData, uint32_t dwMsgSize
 		else memcpy(cGuildName, token, strlen(token));
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != nullptr) && (strcmp(m_pClientList[i]->m_cGuildName, token) == 0)) {
-			RequestTeleportHandler(i, "2   ", cMapName, pX, pY);
+			m_pClientList[i]->RequestTeleportHandler("2   ", cMapName, pX, pY);
 	}//m_pClientList[i]->m_cCharName
 	wsprintf(G_cTxt,"GM Order(%s): PC(%s) Summoned to (%s)", m_pClientList[iClientH]->m_cGuildName, cGuildName, cMapName);
 	bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, G_cTxt);
@@ -16311,7 +16277,7 @@ void CGame::AdminOrder_CleanMap(int iClientH, char * pData, uint32_t dwMsgSize) 
 					dY = m_pClientList[i]->m_sY;
 					std::memset(cMapName, 0, sizeof (cMapName));
 					strcpy(cMapName, m_pClientList[i]->m_cMapName);
-					RequestTeleportHandler(i, "2   ", cMapName, dX, dY);
+					m_pClientList[i]->RequestTeleportHandler("2   ", cMapName, dX, dY);
 				}
 			}
 		}
@@ -16389,7 +16355,7 @@ void CGame::Command_YellowBall(int iClientH, char* pData, uint32_t dwMsgSize) {
 					wsprintf(G_cTxt, "(%s) Player: (%s) - YellowBall MapName(%s)(%d %d)", m_pClientList[i]->m_cIPaddress, m_pClientList[i]->m_cCharName, m_pClientList[i]->m_cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
 					PutItemLogFileList(G_cTxt);
 					m_pClientList[iClientH]->ItemDepleteHandler(iSoxH, true, true);
-					RequestTeleportHandler(iClientH, "2   ", cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
+					m_pClientList[iClientH]->RequestTeleportHandler("2   ", cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
 					delete pStrTok;
 					return;
 				}
@@ -16648,17 +16614,6 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 		}
 	m_pClientList[iClientH]->ItemDepleteHandler(iSoxH, true, true);
 }
-/*
-at the end of client connection have a true switch
-at the start of client move handler check if the switch is true
-if it is not true add 1 warning, if the warning reaches 3
-delete client and log him, if the true switch
- */
-//and when a client walks into a map with dynamic portal
-//[KLKS] - [Pretty Good Coders] says:
-//u gotta inform it
-//[KLKS] - [Pretty Good Coders] says:
-//or else they wont see it
 
 void CGame::GlobalEndApocalypseMode() {
 	LocalEndApocalypseMode();
@@ -20209,11 +20164,11 @@ void CGame::RequestNpcSpeakTeleport(int iClientH, char * pData, uint32_t /*dwMsg
 	switch (iDice(1, 2)) {
 		case 1:
 			switch (m_pClientList[iClientH]->m_cSide) {
-				case 0: RequestTeleportHandler(iClientH, "2   ", "BtField", 68, 225);
+				case 0: m_pClientList[iClientH]->RequestTeleportHandler("2   ", "BtField", 68, 225);
 					break;
-				case 1: RequestTeleportHandler(iClientH, "2   ", "BtField", 68, 225);
+				case 1: m_pClientList[iClientH]->RequestTeleportHandler("2   ", "BtField", 68, 225);
 					break;
-				case 2: RequestTeleportHandler(iClientH, "2   ", "BtField", 202, 70);
+				case 2: m_pClientList[iClientH]->RequestTeleportHandler("2   ", "BtField", 202, 70);
 					break;
 			}
 			break;
@@ -20311,7 +20266,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 							  (m_pClientList[i]->m_iAdminUserLevel < 1) &&
 							  (x == m_pClientList[i]->m_cMapIndex)) {
 						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_0BE8, 0, 0, 0, nullptr);
-						RequestTeleportHandler(i, "1   ", nullptr, -1, -1);
+						m_pClientList[i]->RequestTeleportHandler("1   ", nullptr, -1, -1);
 					}
 				}
 				for (i = 0; i < DEF_MAXNPCS; i++) {
@@ -20491,7 +20446,7 @@ void CGame::AutomatedHeldenianTimer() {
 					if (m_pClientList[i]->m_bIsInitComplete != true) return;
 					if (m_pClientList[i]->m_cMapIndex == x) {
 						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_0BE8, 0, 0, 0, nullptr);
-						RequestTeleportHandler(i, "1   ", nullptr, -1, -1);
+						m_pClientList[i]->RequestTeleportHandler("1   ", nullptr, -1, -1);
 					}
 				}
 			}
@@ -20792,141 +20747,6 @@ void CGame::SetAngelFlag(short sOwnerH, char cOwnerType, int iStatus, int iTemp)
 		m_pClientList[sOwnerH]->m_iStatus = m_pClientList[sOwnerH]->m_iStatus | (iAngelicStars << 8);
 	}
 	SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
-}
-
-/*********************************************************************************************************************
- **  bool CGame::GetAngelHandler(int iClientH, char * pData, uint32_t dwMsgSize)										**
- ** description	  :: Reversed and coded by Snoopy																	**
- *********************************************************************************************************************/
-void CGame::GetAngelHandler(CClient &client, char * pData, uint32_t /*dwMsgSize*/) {
-	char *cp, cData[256], cTmpName[21];
-	int iAngel;
-	int iRet, iEraseReq, iRequiredMagesty;
-	char cItemName[21];
-	short * sp;
-	uint16_t * wp;
-	int * ip;
-	uint32_t * dwp;
-	if (client.m_bIsInitComplete == false) return;
-	if (_iGetItemSpaceLeft(client.id_) == 0) {
-		SendItemNotifyMsg(client.id_, DEF_NOTIFY_CANNOTCARRYMOREITEM, nullptr, 0);
-		return;
-	}
-	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	std::memset(cTmpName, 0, sizeof (cTmpName));
-	strcpy(cTmpName, cp);
-	cp += 20;
-	ip = (int *) cp;
-	iAngel = (int) *ip;
-	cp += 2;
-	wsprintf(G_cTxt, "PC(%s) obtained an Angel (%d).   %s(%d %d)", client.m_cCharName, iAngel, client.m_cMapName, client.m_sX, client.m_sY);
-	PutLogList(G_cTxt);
-	switch (iAngel) {
-		case 1:
-			wsprintf(cItemName, "AngelicPandent(STR)");
-			iRequiredMagesty = 5;
-			break;
-		case 2:
-			wsprintf(cItemName, "AngelicPandent(DEX)");
-			iRequiredMagesty = 5;
-			break;
-		case 3:
-			wsprintf(cItemName, "AngelicPandent(INT)");
-			iRequiredMagesty = 5;
-			break;
-		case 4:
-			wsprintf(cItemName, "AngelicPandent(MAG)");
-			iRequiredMagesty = 5;
-			break;
-		default:
-			PutLogList("Gail asked to create a wrong item!");
-			break;
-	}
-	CItem *pItem = new class CItem;
-	if (pItem == nullptr) return;
-	if (_bInitItemAttr(*pItem, cItemName) == true) {
-		pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
-		pItem->m_sTouchEffectValue1 = client.m_sCharIDnum1;
-		pItem->m_sTouchEffectValue2 = client.m_sCharIDnum2;
-		pItem->m_sTouchEffectValue3 = client.m_sCharIDnum3;
-		if (_bAddClientItemList(client.id_, pItem, &iEraseReq)) {
-			client.m_iGizonItemUpgradeLeft -= iRequiredMagesty;
-			m_pClientList[client.id_]->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, client.m_iGizonItemUpgradeLeft, 0, 0, nullptr);
-			std::memset(cData, 0, sizeof (cData));
-			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
-			*dwp = MSGID_NOTIFY;
-			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
-			*wp = DEF_NOTIFY_ITEMOBTAINED;
-			cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
-			*cp = 1;
-			cp++;
-			memcpy(cp, pItem->m_cName, 20);
-			cp += 20;
-			dwp = (uint32_t *) cp;
-			*dwp = pItem->m_dwCount;
-			cp += 4;
-			*cp = pItem->m_cItemType;
-			cp++;
-			*cp = pItem->m_cEquipPos;
-			cp++;
-			*cp = (char) 0;
-			cp++;
-			sp = (short *) cp;
-			*sp = pItem->m_sLevelLimit;
-			cp += 2;
-			*cp = pItem->m_cGenderLimit;
-			cp++;
-			wp = (uint16_t *) cp;
-			*wp = pItem->m_wCurLifeSpan;
-			cp += 2;
-			wp = (uint16_t *) cp;
-			*wp = pItem->m_wWeight;
-			cp += 2;
-			sp = (short *) cp;
-			*sp = pItem->m_sSprite;
-			cp += 2;
-			sp = (short *) cp;
-			*sp = pItem->m_sSpriteFrame;
-			cp += 2;
-			*cp = pItem->m_cItemColor;
-			cp++;
-			*cp = (char) pItem->m_sItemSpecEffectValue2;
-			cp++;
-			dwp = (uint32_t *) cp;
-			*dwp = pItem->m_dwAttribute;
-			cp += 4;
-			if (iEraseReq == 1) delete pItem;
-			iRet = client.m_pXSock->iSendMsg(cData, 53);
-			switch (iRet) {
-				case DEF_XSOCKEVENT_QUENEFULL:
-				case DEF_XSOCKEVENT_SOCKETERROR:
-				case DEF_XSOCKEVENT_CRITICALERROR:
-				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					DeleteClient(client.id_, true, true);
-					return;
-					break;
-			}
-		} else {
-			m_pMapList[client.m_cMapIndex]->bSetItem(client.m_sX, client.m_sY, pItem);
-			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, client.m_cMapIndex, client.m_sX, client.m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
-			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
-			*dwp = MSGID_NOTIFY;
-			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
-			*wp = DEF_NOTIFY_CANNOTCARRYMOREITEM;
-			iRet = client.m_pXSock->iSendMsg(cData, 6);
-			switch (iRet) {
-				case DEF_XSOCKEVENT_QUENEFULL:
-				case DEF_XSOCKEVENT_SOCKETERROR:
-				case DEF_XSOCKEVENT_CRITICALERROR:
-				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					DeleteClient(client.id_, true, true);
-					break;
-			}
-		}
-	} else {
-		delete pItem;
-		pItem = nullptr;
-	}
 }
 
 /*********************************************************************************************************************
@@ -22610,7 +22430,7 @@ void CGame::StartCaptureTheFlag() {
 void CGame::RequestCheckFlag(int iClientH) {
 	if (!m_bIsCTFMode) return;
 	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_cSide == 0) RequestTeleportHandler(iClientH, "2   ", "default", -1, -1);
+	if (m_pClientList[iClientH]->m_cSide == 0) m_pClientList[iClientH]->RequestTeleportHandler("2   ", "default", -1, -1);
 	if ((m_pClientList[iClientH]->m_sX == 151) && (m_pClientList[iClientH]->m_sY == 132))//Elvine Flag Cords
 	{
 		if (m_pClientList[iClientH]->m_iLevel >= 120) {
@@ -22633,7 +22453,7 @@ void CGame::RequestCheckFlag(int iClientH) {
 					}
 				}
 			}
-		} else RequestTeleportHandler(iClientH, "2   ", "elvine", -1, -1);
+		} else m_pClientList[iClientH]->RequestTeleportHandler("2   ", "elvine", -1, -1);
 	} else if ((m_pClientList[iClientH]->m_sX == 151) && (m_pClientList[iClientH]->m_sY == 128))//Aresden Flag Cords
 	{
 		if (m_pClientList[iClientH]->m_iLevel >= 120) {
@@ -22656,7 +22476,7 @@ void CGame::RequestCheckFlag(int iClientH) {
 					}
 				}
 			}
-		} else RequestTeleportHandler(iClientH, "2   ", "aresden", -1, -1);
+		} else m_pClientList[iClientH]->RequestTeleportHandler("2   ", "aresden", -1, -1);
 	}
 }
 

@@ -1,5 +1,7 @@
 #include "Client.h"
 #include "Game.h"
+#include <vector>
+#include <algorithm>
 #include "WINMAIN.H"
 #include <cstring>
 extern char G_cTxt[512];
@@ -492,7 +494,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	{
 		if ((game_.m_pClientList[i] != nullptr)) // Check if this->is avtice
 		{
-			game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to client
+			game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to *this
 			// Log EK
 			wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName); // Log message
 			PutLogFileList(G_cTxt); // Enter into logs
@@ -2647,7 +2649,7 @@ bool CClient::bSetItemToBankItem(short sItemIndex) {
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				// DeleteClient(iClientH, true, true);
+				// DeleteClient(id_, true, true);
 				return true;
 		}
 		return true;
@@ -2722,7 +2724,7 @@ bool CClient::bSetItemToBankItem(CItem * pItem) {
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				// DeleteClient(iClientH, true, true);
+				// DeleteClient(id_, true, true);
 				return true;
 		}
 		return true;
@@ -2979,5 +2981,771 @@ void CClient::AdminOrder_GetFightzoneTicket() {
 		this->m_iFightzoneNumber = iFightzoneN;
 		this->m_iFightZoneTicketNumber = iFightzoneTN;
 		this->m_iReserveTime = iReserveTime;
+	}
+}
+
+void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
+	char *cp, cData[256], cTmpName[21];
+	int iAngel;
+	int iRet, iEraseReq, iRequiredMagesty;
+	char cItemName[21];
+	short * sp;
+	uint16_t * wp;
+	int * ip;
+	uint32_t * dwp;
+	if (this->m_bIsInitComplete == false) return;
+	if (game_._iGetItemSpaceLeft(this->id_) == 0) {
+		game_.SendItemNotifyMsg(this->id_, DEF_NOTIFY_CANNOTCARRYMOREITEM, nullptr, 0);
+		return;
+	}
+	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
+	std::memset(cTmpName, 0, sizeof (cTmpName));
+	strcpy(cTmpName, cp);
+	cp += 20;
+	ip = (int *) cp;
+	iAngel = (int) *ip;
+	cp += 2;
+	wsprintf(G_cTxt, "PC(%s) obtained an Angel (%d).   %s(%d %d)", this->m_cCharName, iAngel, this->m_cMapName, this->m_sX, this->m_sY);
+	PutLogList(G_cTxt);
+	switch (iAngel) {
+		case 1:
+			wsprintf(cItemName, "AngelicPandent(STR)");
+			iRequiredMagesty = 5;
+			break;
+		case 2:
+			wsprintf(cItemName, "AngelicPandent(DEX)");
+			iRequiredMagesty = 5;
+			break;
+		case 3:
+			wsprintf(cItemName, "AngelicPandent(INT)");
+			iRequiredMagesty = 5;
+			break;
+		case 4:
+			wsprintf(cItemName, "AngelicPandent(MAG)");
+			iRequiredMagesty = 5;
+			break;
+		default:
+			PutLogList("Gail asked to create a wrong item!");
+			break;
+	}
+	CItem *pItem = new class CItem;
+	if (pItem == nullptr) return;
+	if (game_._bInitItemAttr(*pItem, cItemName) == true) {
+		pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+		pItem->m_sTouchEffectValue1 = this->m_sCharIDnum1;
+		pItem->m_sTouchEffectValue2 = this->m_sCharIDnum2;
+		pItem->m_sTouchEffectValue3 = this->m_sCharIDnum3;
+		if (game_._bAddClientItemList(this->id_, pItem, &iEraseReq)) {
+			this->m_iGizonItemUpgradeLeft -= iRequiredMagesty;
+			this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+			std::memset(cData, 0, sizeof (cData));
+			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+			*dwp = MSGID_NOTIFY;
+			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_NOTIFY_ITEMOBTAINED;
+			cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
+			*cp = 1;
+			cp++;
+			memcpy(cp, pItem->m_cName, 20);
+			cp += 20;
+			dwp = (uint32_t *) cp;
+			*dwp = pItem->m_dwCount;
+			cp += 4;
+			*cp = pItem->m_cItemType;
+			cp++;
+			*cp = pItem->m_cEquipPos;
+			cp++;
+			*cp = (char) 0;
+			cp++;
+			sp = (short *) cp;
+			*sp = pItem->m_sLevelLimit;
+			cp += 2;
+			*cp = pItem->m_cGenderLimit;
+			cp++;
+			wp = (uint16_t *) cp;
+			*wp = pItem->m_wCurLifeSpan;
+			cp += 2;
+			wp = (uint16_t *) cp;
+			*wp = pItem->m_wWeight;
+			cp += 2;
+			sp = (short *) cp;
+			*sp = pItem->m_sSprite;
+			cp += 2;
+			sp = (short *) cp;
+			*sp = pItem->m_sSpriteFrame;
+			cp += 2;
+			*cp = pItem->m_cItemColor;
+			cp++;
+			*cp = (char) pItem->m_sItemSpecEffectValue2;
+			cp++;
+			dwp = (uint32_t *) cp;
+			*dwp = pItem->m_dwAttribute;
+			cp += 4;
+			if (iEraseReq == 1) delete pItem;
+			iRet = this->m_pXSock->iSendMsg(cData, 53);
+			switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+					game_.DeleteClient(this->id_, true, true);
+					return;
+					break;
+			}
+		} else {
+			game_.m_pMapList[this->m_cMapIndex]->bSetItem(this->m_sX, this->m_sY, pItem);
+			game_.SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, this->m_cMapIndex, this->m_sX, this->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
+			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+			*dwp = MSGID_NOTIFY;
+			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_NOTIFY_CANNOTCARRYMOREITEM;
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+					game_.DeleteClient(this->id_, true, true);
+					break;
+			}
+		}
+	} else {
+		delete pItem;
+		pItem = nullptr;
+	}
+}
+
+void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, char cKey) {
+	switch (msgId) {
+		case DEF_REQUEST_RESURRECTPLAYER_YES:
+			RequestResurrectPlayer(true);
+			break;
+		case DEF_REQUEST_RESURRECTPLAYER_NO:
+			RequestResurrectPlayer(false);
+			break;
+		case DEF_REQUEST_CRITICALSADD:
+			game_.PlayerOrder_GetCrits(*this);
+			break;
+		case DEF_REQUEST_SHOWBALLPOINTS:
+			this->SendNotifyMsg(0, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, nullptr);
+			break;
+		case DEF_REQUEST_ANGEL:
+			this->GetAngelHandler(pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_SELLITEMLIST:
+			game_.RequestSellItemListHandler(*this, pData);
+			break;
+		case MSGID_REQUEST_RESTART:
+			game_.RequestRestartHandler(*this);
+			this->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+			break;
+		case MSGID_REQUEST_PANNING:
+			game_.iRequestPanningMapDataRequest(*this, pData);
+			break;
+		case MSGID_REQUEST_NOTICEMENT:
+			game_.RequestNoticementHandler(*this, pData);
+			break;
+		case MSGID_BWM_COMMAND_SHUTUP:
+			game_._BWM_Command_Shutup(pData);
+			break;
+		case MSGID_BWM_INIT:
+			game_._BWM_Init(*this, pData);
+			break;
+		case MSGID_REQUEST_SETITEMPOS:
+			game_._SetItemPos(*this, pData);
+			break;
+		case MSGID_REQUEST_FULLOBJECTDATA:
+			game_.RequestFullObjectData(*this, pData);
+			break;
+		case MSGID_REQUEST_RETRIEVEITEM:
+			game_.RequestRetrieveItemHandler(*this, pData);
+			break;
+		case MSGID_REQUEST_CIVILRIGHT:
+			game_.RequestCivilRightHandler(*this, pData);
+			break;
+		case MSGID_REQUEST_TELEPORT:
+			this->RequestTeleportHandler("1");
+			break;
+		case MSGID_REQUEST_INITPLAYER:
+			game_.RequestInitPlayerHandler(*this, pData, cKey);
+			this->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
+			break;
+		case MSGID_REQUEST_INITDATA:
+		{
+			uint32_t dwTime = timeGetTime();
+			// Anti Bump
+			if (this->m_bIsClientConnected == true) {
+				if (game_.m_pClientList[id_] == nullptr) break;
+				wsprintf(G_cTxt, "(!!!) Client (%s) connection closed!. Sniffer suspect!.", this->m_cCharName);
+				PutLogList(G_cTxt);
+				game_.m_pMapList[this->m_cMapIndex]->ClearOwner(2, id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
+				game_.delayEvents_.remove(id_, DEF_OWNERTYPE_PLAYER, 0);
+				game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, false);
+				if ((dwTime - game_.m_dwGameTime2) > 3000) {
+					this->m_bIsClientConnected = false;
+					game_.m_iTotalClients--;
+					delete game_.m_pClientList[id_];
+					game_.m_pClientList[id_] = nullptr;
+				}
+				break;
+			} else {
+				this->m_bIsClientConnected = true;
+				game_.RequestInitDataHandler(id_, pData, cKey);
+			}
+		}
+			break;
+		case MSGID_COMMAND_COMMON:
+			game_.ClientCommonHandler(*this, pData);
+			break;
+		case MSGID_COMMAND_MOTION:
+			game_.ClientMotionHandler(*this, pData);
+			break;
+		case MSGID_COMMAND_CHECKCONNECTION:
+			game_.CheckConnectionHandler(id_, pData);
+			break;
+		case MSGID_COMMAND_CHATMSG:
+			game_.ChatMsgHandler(*this, pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_CREATENEWGUILD:
+			game_.RequestCreateNewGuildHandler(id_, pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_DISBANDGUILD:
+			game_.RequestDisbandGuildHandler(id_, pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_FIGHTZONE_RESERVE:
+			game_.FightzoneReserveHandler(id_, pData, dwMsgSize);
+			break;
+		case MSGID_LEVELUPSETTINGS:
+			game_.LevelUpSettingsHandler(id_, pData, dwMsgSize);
+			break;
+		case MSGID_STATECHANGEPOINT:
+			game_.StateChangeHandler(id_, pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_HELDENIANTELEPORT:
+			game_.RequestHeldenianTeleport(id_, pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_NPCSPEAKTELEPORT:
+			game_.RequestNpcSpeakTeleport(id_, pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_HELDENIAN_SCROLL:
+			game_.RequestHeldenianScroll(id_, pData, dwMsgSize);
+			break;
+		case MSGID_REQUEST_CITYHALLTELEPORT:
+			if (memcmp(this->m_cLocation, "aresden", 7) == 0) {
+				RequestTeleportHandler("2   ", "elvine", 205, 63);
+			} else if (memcmp(this->m_cLocation, "elvine", 6) == 0) {
+				RequestTeleportHandler("2   ", "aresden", 49, 49);
+			}
+			break;
+		default:
+		{
+			char m_msgBuff[1000];
+			wsprintf(m_msgBuff, "Unknown message received! (0x%.8X) Delete Client", msgId);
+			PutLogList(m_msgBuff);
+			game_.DeleteClient(this->id_, true, true); // v1.4
+		}
+			break;
+	}
+}
+
+void CClient::RequestResurrectPlayer(bool bResurrect) {
+	if (bResurrect == false) {
+		this->m_bIsBeingResurrected = false;
+		return;
+	}
+	char buff[100];
+	if (this->m_bIsBeingResurrected == false) {
+		wsprintf(buff, "(!!!) Player(%s) Tried To Use Resurrection Hack", this->m_cCharName);
+		PutHackLogFileList(buff);
+		game_.DeleteClient(this->id_, true, true, true, true);
+		return;
+	}
+	wsprintf(buff, "(*) Resurrect Player! %s", this->m_cCharName);
+	PutLogList(buff);
+	this->m_bIsKilled = false;
+	// Player's HP becomes half of the Max HP.
+	this->m_iHP = this->iGetMaxHP() / 2;
+	// Player's MP
+	this->m_iMP = ((this->m_iMag * 2)+(this->m_iLevel / 2)) + this->m_iInt / 2;
+	// Player's SP
+	this->m_iSP = (this->m_iStr * 2)+(this->m_iLevel / 2);
+	// Player's Hunger
+	this->m_iHungerStatus = 100;
+	this->m_bIsBeingResurrected = false;
+	this->RequestTeleportHandler("2   ", this->m_cMapName, this->m_sX, this->m_sY);
+}
+
+void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, int dX, int dY) {
+	char * pBuffer, cTempMapName[21];
+	uint32_t * dwp;
+	uint16_t * wp;
+	char * cp, cDestMapName[11], cDir, cMapIndex, cQuestRemain;
+	short * sp, sX, sY, sSummonPoints;
+	int * ip, i, iRet, iSize, iDestX, iDestY, iExH, iMapSide;
+	bool bRet, bIsLockedMapNotify;
+	SYSTEMTIME SysTime;
+	this->m_dwLastActionTime = this->m_dwAFKCheckTime = timeGetTime();
+	if (this->m_bIsInitComplete == false) return;
+	if (this->m_bIsKilled == true) return;
+	if (this->m_bIsOnWaitingProcess == true) return;
+	if ((game_.m_pMapList[this->m_cMapIndex]->m_bIsRecallImpossible == true) && (this->m_iAdminUserLevel == 0) &&
+			  (this->m_bIsKilled == false) && (this->m_iHP > 0)) {
+		this->SendNotifyMsg(0, DEF_NOTIFY_NORECALL, 0, 0, 0, nullptr);
+		return;
+	}
+	if ((memcmp(this->m_cLocation, "elvine", 6) == 0)
+			  && (this->m_iTimeLeft_ForceRecall > 0)
+			  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0)
+			  && ((pData[0] == '1'))
+			  && (this->m_iAdminUserLevel == 0)
+			  && (game_.m_bIsCrusadeMode == false)) return;
+	if ((memcmp(this->m_cLocation, "aresden", 7) == 0)
+			  && (this->m_iTimeLeft_ForceRecall > 0)
+			  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0)
+			  && ((pData[0] == '1'))
+			  && (this->m_iAdminUserLevel == 0)
+			  && (game_.m_bIsCrusadeMode == false)) return;
+	bIsLockedMapNotify = false;
+	if (this->m_bIsExchangeMode == true) {
+		iExH = this->m_iExchangeH;
+		game_._ClearExchangeStatus(iExH);
+		game_._ClearExchangeStatus(id_);
+	}
+	if ((memcmp(this->m_cLocation, "NONE", 4) == 0) && (pData[0] == '1'))
+		return;
+	game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
+	game_.m_pMapList[this->m_cMapIndex]->ClearOwner(13, id_, DEF_OWNERTYPE_PLAYER,
+			  this->m_sX,
+			  this->m_sY);
+	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
+	sX = this->m_sX;
+	sY = this->m_sY;
+	std::memset(cDestMapName, 0, sizeof (cDestMapName));
+	bRet = game_.m_pMapList[this->m_cMapIndex]->bSearchTeleportDest(sX, sY, cDestMapName, &iDestX, &iDestY, &cDir);
+	// Crusade
+	if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+		iMapSide = game_.iGetMapLocationSide(cDestMapName);
+		if (iMapSide > 3) iMapSide -= 2; // New 18/05/2004
+		if ((iMapSide != 0) && (this->m_cSide == iMapSide)) {
+		} else {
+			iDestX = -1;
+			iDestY = -1;
+			bIsLockedMapNotify = true;
+			std::memset(cDestMapName, 0, sizeof (cDestMapName));
+			strcpy(cDestMapName, this->m_cLockedMapName);
+		}
+	}
+	if ((bRet == true) && (cMapName == nullptr)) {
+		for (i = 0; i < DEF_MAXMAPS; i++)
+			if (game_.m_pMapList[i] != nullptr) {
+				if (memcmp(game_.m_pMapList[i]->m_cName, cDestMapName, 10) == 0) {
+					if (pData[0] == '3' && this->m_iAdminUserLevel == 0 && (this->m_iTimeLeft_ForceRecall > 0)) {
+						std::vector<std::string> whitelist;
+						if ((memcmp(this->m_cLocation, "elvine", 6) == 0)
+								  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0)) {
+							// Elv in ares
+							whitelist = {"middleland", "huntzone2", "aresdend1", "arefarm"};
+						}
+						if ((memcmp(this->m_cLocation, "aresden", 7) == 0)
+								  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0)) {
+							// Ares in elv
+							whitelist = {"middleland", "huntzone1", "elvined1", "elvfarm"};
+						}
+						if (!whitelist.empty()) {
+							std::string target = cDestMapName;
+							if (std::find(whitelist.begin(), whitelist.end(), target) == whitelist.end()) {
+								return;
+							}
+						}
+					}
+					this->m_sX = iDestX;
+					this->m_sY = iDestY;
+					this->m_cDir = cDir;
+					this->m_cMapIndex = i;
+					std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+					memcpy(this->m_cMapName, game_.m_pMapList[i]->m_cName, 10);
+					goto RTH_NEXTSTEP;
+				}
+			}
+		this->m_sX = iDestX;
+		this->m_sY = iDestY;
+		this->m_cDir = cDir;
+		std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+		memcpy(this->m_cMapName, cDestMapName, 10);
+		// New 18/05/2004
+		this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
+				  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
+		game_.SetSlateFlag(id_, DEF_NOTIFY_SLATECLEAR, false);
+		game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, id_, false);
+		// !!!!
+		this->m_bIsOnServerChange = true;
+		this->m_bIsOnWaitingProcess = true;
+		return;
+	} else {
+		switch (pData[0]) {
+			case '0':
+				// Forced Recall.
+				std::memset(cTempMapName, 0, sizeof (cTempMapName));
+				if (memcmp(this->m_cLocation, "NONE", 4) == 0) {
+					strcpy(cTempMapName, "default");
+				} else if (memcmp(this->m_cLocation, "arehunter", 9) == 0) {
+					strcpy(cTempMapName, "arefarm");
+				} else if (memcmp(this->m_cLocation, "elvhunter", 9) == 0) {
+					strcpy(cTempMapName, "elvfarm");
+				} else strcpy(cTempMapName, this->m_cLocation);
+				// Crusade
+				if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+					bIsLockedMapNotify = true;
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
+					strcpy(cTempMapName, this->m_cLockedMapName);
+				}
+				for (i = 0; i < DEF_MAXMAPS; i++)
+					if (game_.m_pMapList[i] != nullptr) {
+						if (memcmp(game_.m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
+							game_.GetMapInitialPoint(i, &this->m_sX, &this->m_sY, this->m_cLocation);
+							this->m_cMapIndex = i;
+							std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+							memcpy(this->m_cMapName, cTempMapName, 10);
+							goto RTH_NEXTSTEP;
+						}
+					}
+				this->m_sX = -1;
+				this->m_sY = -1;
+				std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+				memcpy(this->m_cMapName, cTempMapName, 10);
+				// New 18/05/2004
+				this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
+						  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
+				game_.SetSlateFlag(id_, DEF_NOTIFY_SLATECLEAR, false);
+				game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, id_, false);
+				this->m_bIsOnServerChange = true;
+				this->m_bIsOnWaitingProcess = true;
+				return;
+			case '1':
+				// if (memcmp(m_pMapList[ this->m_cMapIndex ]->m_cName, "resurr", 6) == 0) return;
+				std::memset(cTempMapName, 0, sizeof (cTempMapName));
+				if (memcmp(this->m_cLocation, "NONE", 4) == 0) {
+					strcpy(cTempMapName, "default");
+				} else {
+					if (this->m_iLevel > 80)
+						if (memcmp(this->m_cLocation, "are", 3) == 0)
+							strcpy(cTempMapName, "aresden");
+						else strcpy(cTempMapName, "elvine");
+					else {
+						if (memcmp(this->m_cLocation, "are", 3) == 0)
+							strcpy(cTempMapName, "aresden");
+						else strcpy(cTempMapName, "elvine");
+					}
+				}
+				// Crusade
+				if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+					bIsLockedMapNotify = true;
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
+					strcpy(cTempMapName, this->m_cLockedMapName);
+				}
+				for (i = 0; i < DEF_MAXMAPS; i++)
+					if (game_.m_pMapList[i] != nullptr) {
+						if (memcmp(game_.m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
+							game_.GetMapInitialPoint(i, &this->m_sX, &this->m_sY, this->m_cLocation);
+							this->m_cMapIndex = i;
+							std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+							memcpy(this->m_cMapName, game_.m_pMapList[i]->m_cName, 10);
+							goto RTH_NEXTSTEP;
+						}
+					}
+				this->m_sX = -1;
+				this->m_sY = -1;
+				std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+				memcpy(this->m_cMapName, cTempMapName, 10);
+				// New 18/05/2004
+				this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
+						  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
+				game_.SetSlateFlag(id_, DEF_NOTIFY_SLATECLEAR, false);
+				game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, id_, false);
+				// !!!
+				this->m_bIsOnServerChange = true;
+				this->m_bIsOnWaitingProcess = true;
+				return;
+			case '2':
+				// Crusade
+				if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+					dX = -1;
+					dY = -1;
+					bIsLockedMapNotify = true;
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
+					strcpy(cTempMapName, this->m_cLockedMapName);
+				} else {
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
+					strcpy(cTempMapName, cMapName);
+				}
+				cMapIndex = game_.iGetMapIndex(cTempMapName);
+				if (cMapIndex == -1) {
+					this->m_sX = dX;
+					this->m_sY = dY;
+					std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+					memcpy(this->m_cMapName, cTempMapName, 10);
+					// New 18/05/2004
+					this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
+							  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
+					game_.SetSlateFlag(id_, DEF_NOTIFY_SLATECLEAR, false);
+					game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, id_, false);
+					// !!!
+					this->m_bIsOnServerChange = true;
+					this->m_bIsOnWaitingProcess = true;
+					return;
+				}
+				this->m_sX = dX;
+				this->m_sY = dY;
+				this->m_cMapIndex = cMapIndex;
+				std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+				memcpy(this->m_cMapName, game_.m_pMapList[cMapIndex]->m_cName, 10);
+				break;
+		}
+	}
+RTH_NEXTSTEP:
+	;
+	// New 17/05/2004
+	game_.SetPlayingStatus(id_);
+	int iTemp, iTemp2;
+	iTemp = this->m_iStatus;
+	iTemp = 0x0FFFFFFF & iTemp;
+	iTemp2 = game_.iGetPlayerABSStatus(id_);
+	iTemp = iTemp | (iTemp2 << 28);
+	this->m_iStatus = iTemp;
+	// Crusade
+	if (bIsLockedMapNotify == true) this->SendNotifyMsg(0, DEF_NOTIFY_LOCKEDMAP, this->m_iLockedMapTime, 0, 0, this->m_cLockedMapName);
+	pBuffer = new char [DEF_MSGBUFFERSIZE + 1];
+	ZeroMemory(pBuffer, DEF_MSGBUFFERSIZE + 1);
+	dwp = (uint32_t *) (pBuffer + DEF_INDEX4_MSGID);
+	*dwp = MSGID_RESPONSE_INITDATA;
+	wp = (uint16_t *) (pBuffer + DEF_INDEX2_MSGTYPE);
+	*wp = DEF_MSGTYPE_CONFIRM;
+	cp = (char *) (pBuffer + DEF_INDEX2_MSGTYPE + 2);
+	if (this->m_bIsObserverMode == false)
+		game_.bGetEmptyPosition(&this->m_sX, &this->m_sY, this->m_cMapIndex);
+	else game_.GetMapInitialPoint(this->m_cMapIndex, &this->m_sX, &this->m_sY);
+	sp = (short *) cp;
+	*sp = id_; // Player ObjectID
+	cp += 2;
+	sp = (short *) cp;
+	*sp = this->m_sX - 14 - 5;
+	cp += 2;
+	sp = (short *) cp;
+	*sp = this->m_sY - 12 - 5;
+	cp += 2;
+	sp = (short *) cp;
+	*sp = this->m_sType;
+	cp += 2;
+	sp = (short *) cp;
+	*sp = this->m_sAppr1;
+	cp += 2;
+	sp = (short *) cp;
+	*sp = this->m_sAppr2;
+	cp += 2;
+	sp = (short *) cp;
+	*sp = this->m_sAppr3;
+	cp += 2;
+	sp = (short *) cp;
+	*sp = this->m_sAppr4;
+	cp += 2;
+	// v1.4 ApprColor
+	ip = (int *) cp;
+	*ip = this->m_iApprColor;
+	cp += 4;
+	ip = (int *) cp;
+	*ip = this->m_iStatus;
+	cp += 4; //Original 2
+	memcpy(cp, this->m_cMapName, 10);
+	cp += 10;
+	memcpy(cp, game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, 10);
+	cp += 10;
+	if (game_.m_pMapList[this->m_cMapIndex]->m_bIsFixedDayMode == true)
+		*cp = 1;
+	else *cp = game_.m_cDayOrNight;
+	cp++;
+	if (game_.m_pMapList[this->m_cMapIndex]->m_bIsFixedDayMode == true)
+		*cp = 0;
+	else *cp = game_.m_pMapList[this->m_cMapIndex]->m_cWhetherStatus;
+	cp++;
+	// v1.4 Contribution
+	ip = (int *) cp;
+	*ip = this->m_iContribution;
+	cp += 4;
+	if (this->m_bIsObserverMode == false) {
+		game_.m_pMapList[this->m_cMapIndex]->SetOwner(id_,
+				  DEF_OWNERTYPE_PLAYER,
+				  this->m_sX,
+				  this->m_sY);
+	}
+	// v1.41
+	*cp = (char) this->m_bIsObserverMode;
+	cp++;
+	// v1.41
+	ip = (int *) cp;
+	*ip = this->m_iRating;
+	cp += 4;
+	// v1.44
+	ip = (int *) cp;
+	*ip = this->m_iHP;
+	cp += 4;
+	//Unknown variable
+	*cp = 0;
+	cp++;
+	iSize = game_.iComposeInitMapData(this->m_sX - 10, this->m_sY - 7, id_, cp);
+	iRet = this->m_pXSock->iSendMsg(pBuffer, 46 + iSize + 4 + 4 + 1 + 4 + 4 + 3); //Zabuza fix
+	//iRet = this->m_pXSock->iSendMsg(pBuffer, 46 + iSize +4 +4 +1 +4 +4); // v1.41
+	switch (iRet) {
+		case DEF_XSOCKEVENT_QUENEFULL:
+		case DEF_XSOCKEVENT_SOCKETERROR:
+		case DEF_XSOCKEVENT_CRITICALERROR:
+		case DEF_XSOCKEVENT_SOCKETCLOSED:
+			game_.DeleteClient(id_, true, true);
+			if (pBuffer != nullptr) delete pBuffer;
+			return;
+	}
+	if (pBuffer != nullptr) delete pBuffer;
+	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
+	if ((memcmp(this->m_cLocation, "are", 3) == 0) &&
+			  (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0) &&
+			  (this->m_iAdminUserLevel == 0)) {
+		this->m_dwWarBeginTime = timeGetTime();
+		this->m_bIsWarLocation = true;
+		// New 17/05/2004
+		game_.CheckForceRecallTime(id_);
+	} else if ((memcmp(this->m_cLocation, "elv", 3) == 0) &&
+			  (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0) &&
+			  (this->m_iAdminUserLevel == 0)) {
+		this->m_dwWarBeginTime = timeGetTime();
+		this->m_bIsWarLocation = true;
+		// New 17/05/2004
+		game_.CheckForceRecallTime(id_);
+	} else if (game_.m_pMapList[this->m_cMapIndex]->m_bIsFightZone == true) {
+		this->m_dwWarBeginTime = timeGetTime();
+		this->m_bIsWarLocation = true;
+		game_.SetForceRecallTime(id_);
+		GetLocalTime(&SysTime);
+		this->m_iTimeLeft_ForceRecall = 2 * 20 * 60 - ((SysTime.wHour % 2)*20 * 60 + SysTime.wMinute * 20) - 2 * 20;
+	} else {
+		this->m_bIsWarLocation = false;
+		this->m_iTimeLeft_ForceRecall = 0;
+		game_.SetForceRecallTime(id_);
+	}
+	// No entering enemy shops
+	int iMapside, iMapside2;
+	iMapside = game_.iGetMapLocationSide(game_.m_pMapList[this->m_cMapIndex]->m_cName);
+	if (iMapside > 3) iMapside2 = iMapside - 2;
+	else iMapside2 = iMapside;
+	this->m_bIsInsideOwnTown = false;
+	if ((this->m_cSide != iMapside2) && (iMapside != 0)) {
+		if ((iMapside <= 2) && (this->m_iAdminUserLevel < 1)) {
+			if (this->m_cSide != 0) {
+				this->m_dwWarBeginTime = timeGetTime();
+				this->m_bIsWarLocation = true;
+				this->m_iTimeLeft_ForceRecall = 1;
+				this->m_bIsInsideOwnTown = true;
+			}
+		}
+	} else {
+		if (game_.m_pMapList[ this->m_cMapIndex ]->m_bIsFightZone == true &&
+				  game_.m_iFightzoneNoForceRecall == false &&
+				  this->m_iAdminUserLevel == 0) {
+			this->m_dwWarBeginTime = timeGetTime();
+			this->m_bIsWarLocation = true;
+			GetLocalTime(&SysTime);
+			this->m_iTimeLeft_ForceRecall = 2 * 60 * 20 - ((SysTime.wHour % 2)*20 * 60 + SysTime.wMinute * 20) - 2 * 20;
+		} else {
+			if (memcmp(game_.m_pMapList[ this->m_cMapIndex ]->m_cLocationName, "arejail", 7) == 0 ||
+					  memcmp(game_.m_pMapList[ this->m_cMapIndex ]->m_cLocationName, "elvjail", 7) == 0) {
+				if (this->m_iAdminUserLevel == 0) {
+					this->m_bIsWarLocation = true;
+					this->m_dwWarBeginTime = timeGetTime();
+					if (this->m_iTimeLeft_ForceRecall == 0)
+						this->m_iTimeLeft_ForceRecall = 100;
+					else if (this->m_iTimeLeft_ForceRecall > 100)
+						this->m_iTimeLeft_ForceRecall = 100;
+				}
+			}
+		}
+	}
+	this->SendNotifyMsg(0, DEF_NOTIFY_SAFEATTACKMODE, 0, 0, 0, nullptr);
+	// v1.3
+	this->SendNotifyMsg(0, DEF_NOTIFY_DOWNSKILLINDEXSET, this->m_iDownSkillIndex, 0, 0, nullptr);
+	// V1.3
+	this->SendNotifyMsg(0, DEF_NOTIFY_ITEMPOSLIST, 0, 0, 0, nullptr);
+	// v1.4
+	game_._SendQuestContents(id_);
+	game_._CheckQuestEnvironment(id_);
+	// v1.432
+	if (this->m_iSpecialAbilityTime == 0)
+		this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYENABLED, 0, 0, 0, nullptr);
+	if (game_.m_bIsCrusadeMode == true) {
+		if (this->m_dwCrusadeGUID == 0) {
+			this->m_iCrusadeDuty = 0;
+			this->m_iConstructionPoint = 0;
+			this->m_dwCrusadeGUID = m_dwCrusadeGUID;
+		} else if (this->m_dwCrusadeGUID != m_dwCrusadeGUID) {
+			this->m_iCrusadeDuty = 0;
+			this->m_iConstructionPoint = 0;
+			this->m_iWarContribution = 0;
+			this->m_dwCrusadeGUID = m_dwCrusadeGUID;
+			this->SendNotifyMsg(0, DEF_NOTIFY_CRUSADE, (uint32_t) game_.m_bIsCrusadeMode, 0, 0, nullptr, -1);
+		}
+		this->m_cVar = 1;
+		this->SendNotifyMsg(0, DEF_NOTIFY_CRUSADE, (uint32_t) game_.m_bIsCrusadeMode, this->m_iCrusadeDuty, 0, nullptr);
+	} else if (game_.m_bIsHeldenianMode == true) {
+		sSummonPoints = this->m_iCharisma * 300;
+		if (sSummonPoints > DEF_MAXSUMMONPOINTS) sSummonPoints = DEF_MAXSUMMONPOINTS;
+		if (this->m_dwHeldenianGUID == 0) {
+			this->m_dwHeldenianGUID = m_dwHeldenianGUID;
+			this->m_iConstructionPoint = sSummonPoints;
+		} else if (this->m_dwHeldenianGUID != m_dwHeldenianGUID) {
+			this->m_iConstructionPoint = sSummonPoints;
+			this->m_iWarContribution = 0;
+			this->m_dwHeldenianGUID = m_dwHeldenianGUID;
+		}
+		this->m_cVar = 2;
+		if (game_.m_bIsHeldenianMode == true) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_HELDENIANTELEPORT, 0, 0, 0, nullptr);
+		}
+		if (game_.m_bHeldenianInitiated == true) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_HELDENIANSTART, 0, 0, 0, nullptr);
+		}
+		this->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, this->m_iConstructionPoint, this->m_iWarContribution, 0, nullptr);
+		game_.UpdateHeldenianStatus();
+	} else if ((this->m_cVar == 1) && (this->m_dwCrusadeGUID == m_dwCrusadeGUID)) {
+		this->m_iCrusadeDuty = 0;
+		this->m_iConstructionPoint = 0;
+	} else {
+		if (this->m_dwCrusadeGUID == m_dwCrusadeGUID) {
+			if (this->m_cVar == 1) {
+				this->SendNotifyMsg(0, DEF_NOTIFY_CRUSADE, (uint32_t) game_.m_bIsCrusadeMode, 0, 0, nullptr, -1);
+			}
+		} else {
+			this->m_dwCrusadeGUID = 0;
+			this->m_iWarContribution = 0;
+			this->m_dwCrusadeGUID = 0;
+		}
+	}
+	// v1.42
+	if (memcmp(this->m_cMapName, "fight", 5) == 0) {
+		wsprintf(G_cTxt, "Char(%s)-Enter(%s) Observer(%d)", this->m_cCharName, this->m_cMapName, this->m_bIsObserverMode);
+		PutLogEventFileList(G_cTxt);
+	}
+	// Crusade
+	this->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, this->m_iConstructionPoint, this->m_iWarContribution, 1, nullptr);
+	// v2.15
+	this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+	if (game_.m_bIsHeldenianMode == true) {
+		this->SendNotifyMsg(0, DEF_NOTIFY_HELDENIANTELEPORT, 0, 0, 0, nullptr);
+		if (game_.m_bHeldenianInitiated == true) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_HELDENIANSTART, 0, 0, 0, nullptr);
+		} else {
+			game_.UpdateHeldenianStatus();
+		}
+	}
+	if (this->m_iQuest != 0) {
+		cQuestRemain = (game_.m_pQuestConfigList[this->m_iQuest]->m_iMaxCount - this->m_iCurQuestCount);
+		this->SendNotifyMsg(0, DEF_NOTIFY_QUESTCOUNTER, cQuestRemain, 0, 0, nullptr);
+		game_._bCheckIsQuestCompleted(id_);
 	}
 }

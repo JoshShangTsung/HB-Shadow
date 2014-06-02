@@ -1,5 +1,4 @@
 #pragma once
-#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "XSocket.h"
@@ -283,6 +282,10 @@ public:
 	int iGetMaxMP();
 	int iGetMaxSP();
 	void AdminOrder_GetFightzoneTicket();
+	void GetAngelHandler(char * pData, uint32_t dwMsgSize);
+	void processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, char cKey);
+	void RequestResurrectPlayer(bool bResurrect);
+	void RequestTeleportHandler(const char * pData, const char * cMapName = nullptr, int dX = -1, int dY = -1);
 };
 #define DEF_MAXCLIENTS				2000
 

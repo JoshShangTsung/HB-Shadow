@@ -1,4 +1,5 @@
 #include "Fish.h"
+#include "item.h"
 
 CFish::CFish(char cMapIndex, short sX, short sY, short sType, class CItem * pItem, int iDifficulty) {
 	m_cMapIndex = cMapIndex;

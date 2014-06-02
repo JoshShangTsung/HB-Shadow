@@ -159,8 +159,6 @@ int iDice(int iThrow, int iRange);
 class CGame {
 public:
 	int HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide);
-
-	void GetAngelHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void SetAngelFlag(short sOwnerH, char cOwnerType, int iStatus, int iTemp);
 	void ReadMajesticSettings();
 	void ReqCreateCraftingHandler(int iClientH, char *pData);
@@ -514,7 +512,6 @@ public:
 	bool _bDecodeMagicConfigFileContents(char * pData, uint32_t dwMsgSize);
 	void ReleaseFollowMode(short sOwnerH, char cOwnerType);
 	bool bSetNpcFollowMode(char * pName, char * pFollowName, char cFollowOwnerType);
-	void RequestTeleportHandler(int iClientH, const char * pData, const char * cMapName = nullptr, int dX = -1, int dY = -1);
 	void PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool bItemEffect = false, int iV1 = 0);
 	int iClientMotion_Magic_Handler(int iClientH, short sX, short sY, char cDir);
 	void ToggleCombatModeHandler(int iClientH);
@@ -546,7 +543,6 @@ public:
 	void DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * pItemName, bool bByPlayer = true);
 	void ClientCommonHandler(CClient &client, char * pData);
 	bool __fastcall bGetMsgQuene(char * pFrom, char * pData, uint32_t * pMsgSize, int * pIndex, char * pKey);
-	void processClientMsg(CClient &client, uint32_t msgId, char *pData, uint32_t dwMsgSize, char cKey);
 	void MsgProcess();
 	bool __fastcall bPutMsgQuene(char cFrom, char * pData, uint32_t dwMsgSize, int iIndex, char cKey);
 	void NpcBehavior_Flee(int iNpcH);
@@ -919,7 +915,6 @@ public:
 	void ForceChangePlayMode(int iClientH, bool bNotify);
 	void ShowVersion(int iClientH);
 	void ShowClientMsg(int iClientH, const char* pMsg);
-	void RequestResurrectPlayer(CClient &client, bool bResurrect);
 	void GetDkSet(int iClientH);
 	void AdminOrder_BanIP(int iClientH, char *pData, uint32_t dwMsgSize);
 	void PlayerOrder_ShowDamage(int iClientH);
