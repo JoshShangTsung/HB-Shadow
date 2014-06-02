@@ -2191,3 +2191,1105 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 	}
 }
 
+int CClient::iUpgradeHeroCapeRequirements(int iItemIndex) {
+	int iAfterItemID, iRequiredEnemyKills, iRequiredContribution, iStoneNumber, i;
+	int iBeforeItemID;
+
+	iAfterItemID = 0;
+	iRequiredEnemyKills = 10000;
+	iRequiredContribution = 10000;
+	iStoneNumber = 0;
+	i = 0;
+	iBeforeItemID = this->m_pItemList[iItemIndex]->m_sIDnum;
+	if (iBeforeItemID == 400) {
+		game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, id_, (int) &*this->m_pItemList[iItemIndex], nullptr);
+		iAfterItemID = 427;
+		iRequiredEnemyKills = 30;
+		iRequiredContribution = 50;
+		iStoneNumber = 657;
+	} else if (iBeforeItemID == 401) {
+		game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, id_, (int) &*this->m_pItemList[iItemIndex], nullptr);
+		iAfterItemID = 428;
+		iRequiredEnemyKills = 30;
+		iRequiredContribution = 50;
+		iStoneNumber = 657;
+	} else {
+		return -1;
+	}
+	if ((iRequiredEnemyKills > this->m_iEnemyKillCount) || (iRequiredEnemyKills == 10000)) return 0;
+	if ((iRequiredContribution > this->m_iContribution) || (iRequiredContribution == 10000)) return 0;
+	for (i = 0; i < DEF_MAXITEMS; i++) {
+		if ((this->m_pItemList[i] != nullptr) && (this->m_pItemList[i]->m_sIDnum == iStoneNumber)) break;
+	}
+	if ((i == 50) || (iStoneNumber == 0)) return 0;
+	if (game_._bInitItemAttr(*this->m_pItemList[iItemIndex], iAfterItemID) == false) return -1;
+	this->m_iEnemyKillCount -= iRequiredEnemyKills;
+	this->m_iContribution -= iRequiredContribution;
+	if (this->m_pItemList[i] != nullptr) {
+		this->ItemDepleteHandler(i, false, true);
+		return 1;
+	}
+	return -1;
+}
+
+void CClient::RequestItemUpgradeHandler(int iItemIndex) {
+	int i, iItemX, iItemY, iSoM, iSoX, iSomH, iSoxH, iCheckHeroCape; // v2.172
+	uint32_t dwTemp, dwSWEType, iValue;
+	double dV1, dV2, dV3;
+	short sItemUpgrade = 2;
+	if ((iItemIndex < 0) || (iItemIndex >= DEF_MAXITEMS)) return;
+	auto &itemPtr = m_pItemList[iItemIndex];
+	if (!itemPtr) return;
+	auto &item = *itemPtr;
+	if (game_.HeroItemChecker(item.m_sIDnum, 0, 0, 0) != 0) {
+		if ((item.m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
+				  (item.m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
+				  (item.m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
+			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+			return;
+		}
+		iCheckHeroCape = this->iUpgradeHeroCapeRequirements(iItemIndex);
+		if (iCheckHeroCape > 0) {
+			this->SendNotifyMsg(0,DEF_NOTIFY_UPGRADEHEROCAPE, iItemIndex,
+					  item.m_cItemType,
+					  item.m_wCurLifeSpan,
+					  item.m_cName,
+					  item.m_sSprite,
+					  item.m_sSpriteFrame,
+					  item.m_cItemColor,
+					  item.m_sItemSpecEffectValue2,
+					  item.m_dwAttribute);
+			game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, -1, &item, false);
+		} else {
+			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+			game_._bItemLog(DEF_ITEMLOG_UPGRADEFAIL, this->id_, -1, &item, false);
+		}
+		return;
+	}
+	iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
+	if (iValue >= 15 || iValue < 0) {
+		this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
+		return;
+	}
+	if ((item.m_sIDnum == 717) && (iValue >= 7) && (iValue < 0)) {
+		this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
+		return;
+	}
+	switch (item.m_cCategory) {
+
+		case 46: // Pendants are category 46
+			if (item.m_cItemType != 1) {
+				this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+				return; // Pendants are type 1
+			}
+			if (item.m_cEquipPos < 11) {
+				this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+				return; // Pendants are left finger or more
+			}
+			if (item.m_sItemEffectType != 14) {
+				this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+				return; // Pendants are EffectType 14
+			}
+			switch (item.m_sItemEffectValue1) {
+				default: // Other items are not upgradable
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					return; // Pendants are EffectType 14
+
+				case 16: // AngelicPandent(STR)
+				case 17: // AngelicPandent(DEX)
+				case 18: // AngelicPandent(INT)
+				case 19: // AngelicPandent(MAG)
+					if (this->m_iGizonItemUpgradeLeft <= 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					if (iValue >= 10) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					switch (iValue) {
+						case 0: sItemUpgrade = 10;
+							break;
+						case 1: sItemUpgrade = 11;
+							break;
+						case 2: sItemUpgrade = 13;
+							break;
+						case 3: sItemUpgrade = 16;
+							break;
+						case 4: sItemUpgrade = 20;
+							break;
+						case 5: sItemUpgrade = 25;
+							break;
+						case 6: sItemUpgrade = 31;
+							break;
+						case 7: sItemUpgrade = 38;
+							break;
+						case 8: sItemUpgrade = 46;
+							break;
+						case 9: sItemUpgrade = 55;
+							break;
+						default:
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+							return;
+							break;
+					}
+					/*if (   (item.m_sTouchEffectValue1 != this->m_sCharIDnum1)
+					 || (item.m_sTouchEffectValue2 != this->m_sCharIDnum2)
+					 || (item.m_sTouchEffectValue3 != this->m_sCharIDnum3))
+					{ this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					 return;
+					}*/
+					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					int iDicePTA = iDice(1, 100);
+					if (iDicePTA <= 70) {
+						this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+						iValue++;
+						if (iValue > 10) iValue = 10;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+					} else {
+						this->m_iGizonItemUpgradeLeft--;
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+					}
+					return;
+					break;
+			}
+			break;
+
+		case 1:
+			switch (item.m_sIDnum) {
+				case 703: // SangAhFlameberge
+				case 709: // DarkKnightFlameberge
+				case 718: // DarkKnightGreatSword
+				case 727: // DarkKnightFlamebergW
+				case 736: // SangAhGiantSword
+				case 737: // DarkKnightGiantSword
+				case 745: // BlackKnightTemple
+				case 2000://BlackKnightHammer
+				case 2001://BlackKnightBHammer
+				case 2002://BlackKnightBarHammer
+					if (this->m_iGizonItemUpgradeLeft <= 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					sItemUpgrade = (iValue * (iValue + 6) / 8) + 2;
+					/*	if (item.m_sTouchEffectType != 0) {
+							if ((item.m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
+								(item.m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
+								(item.m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
+								this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+								return;
+							}
+						}*/
+					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
+					this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+					if ((iValue == 0) && (item.m_sIDnum == 703)) { // SangAhFlameberge
+						iItemX = this->m_ItemPosList[iItemIndex].x;
+						iItemY = this->m_ItemPosList[iItemIndex].y;
+						item = CItem();
+						this->m_ItemPosList[iItemIndex].x = iItemX;
+						this->m_ItemPosList[iItemIndex].y = iItemY;
+						if (game_._bInitItemAttr(item, 736) == false) { // SangAhGiantSword
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							return;
+						}
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+						break;
+					} else if ((iValue == 0) && ((item.m_sIDnum == 709) || (item.m_sIDnum == 727))) { // DarkKnightFlameberge DarkKnightFlamebergW
+						iItemX = this->m_ItemPosList[iItemIndex].x;
+						iItemY = this->m_ItemPosList[iItemIndex].y;
+						item = CItem();
+						this->m_ItemPosList[iItemIndex].x = iItemX;
+						this->m_ItemPosList[iItemIndex].y = iItemY;
+						if (game_._bInitItemAttr(item, 737) == false) { // DarkKnightGiantSword
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							return;
+						}
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+								  item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+						break;
+					} else if ((iValue >= 6) && (item.m_sIDnum == 737)) { // DarkKnightGiantSword
+						iItemX = this->m_ItemPosList[iItemIndex].x;
+						iItemY = this->m_ItemPosList[iItemIndex].y;
+						item = CItem();
+						this->m_ItemPosList[iItemIndex].x = iItemX;
+						this->m_ItemPosList[iItemIndex].y = iItemY;
+						if (game_._bInitItemAttr(item, 745) == false) { // BlackKnightTemple
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							return;
+						}
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+								  item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+					} else if ((iValue >= 12) && (item.m_sIDnum == 745)) { // BlackKnightTemple
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						if (iValue == 15) item.m_cItemColor = 9;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+								  item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+					}//50Cent - New DKHammer Upgrade
+					else if ((iValue == 0) && ((item.m_sIDnum == 2000))) { // BlackKnightHammer
+						iItemX = this->m_ItemPosList[iItemIndex].x;
+						iItemY = this->m_ItemPosList[iItemIndex].y;
+						item = CItem();
+						this->m_ItemPosList[iItemIndex].x = iItemX;
+						this->m_ItemPosList[iItemIndex].y = iItemY;
+						if (game_._bInitItemAttr(item, 2001) == false) { // BlackKnightBHammer
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							return;
+						}
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+								  item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+						break;
+					} else if ((iValue >= 6) && (item.m_sIDnum == 2001)) { // BlackKnightBHammer
+						iItemX = this->m_ItemPosList[iItemIndex].x;
+						iItemY = this->m_ItemPosList[iItemIndex].y;
+						item = CItem();
+						this->m_ItemPosList[iItemIndex].x = iItemX;
+						this->m_ItemPosList[iItemIndex].y = iItemY;
+						if (game_._bInitItemAttr(item, 2002) == false) { // BlackKnightBarHammer
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							return;
+						}
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+								  item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+					} else if ((iValue >= 12) && (item.m_sIDnum == 2002)) { // BlackKnightBarHammer
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						if (iValue == 15) item.m_cItemColor = 9;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+								  item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+					} else {
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+					}
+					break;
+
+				case 717: // DarkKnightRapier
+					if (this->m_iGizonItemUpgradeLeft <= 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					sItemUpgrade = (iValue * (iValue + 6) / 8) + 2;
+					if ((item.m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
+							  (item.m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
+							  (item.m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+						return;
+					}
+					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
+					this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+					iValue++;
+					if (iValue > 7) iValue = 7;
+					dwTemp = item.m_dwAttribute;
+					dwTemp = dwTemp & 0x0FFFFFFF;
+					item.m_dwAttribute = dwTemp | (iValue << 28);
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+					break;
+
+				default:
+					if ((item.m_dwAttribute & 0x00F00000) != 0) {
+						dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
+						if (dwSWEType == 9) {
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+							return;
+						}
+					}
+					iSoX = iSoM = 0;
+					for (i = 0; i < DEF_MAXITEMS; i++)
+						if (this->m_pItemList[i] != nullptr) {
+							switch (this->m_pItemList[i]->m_sIDnum) {
+								case 656: iSoX++;
+									iSoxH = i;
+									break;
+								case 657: iSoM++;
+									iSomH = i;
+									break;
+							}
+						}
+					if (iSoX > 0) {
+						if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSoxH) == false) {
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
+							if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
+							this->ItemDepleteHandler(iSoxH, false, true);
+							return;
+						}
+						if ((item.m_dwAttribute & 0x00000001) != 0) {
+							iValue++;
+							if (iValue > 10) {
+								iValue = 10;
+							} else {
+								dwTemp = item.m_dwAttribute;
+								dwTemp = dwTemp & 0x0FFFFFFF;
+								item.m_dwAttribute = dwTemp | (iValue << 28);
+								this->ItemDepleteHandler(iSoxH, false, true);
+							}
+						} else {
+							iValue++;
+							if (iValue > 7) {
+								iValue = 7;
+							} else {
+								dwTemp = item.m_dwAttribute;
+								dwTemp = dwTemp & 0x0FFFFFFF;
+								item.m_dwAttribute = dwTemp | (iValue << 28);
+								this->ItemDepleteHandler(iSoxH, false, true);
+							}
+						}
+					}
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					break;
+			}
+			return;
+
+		case 3:
+			if ((item.m_dwAttribute & 0x00F00000) != 0) {
+				dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
+				if (dwSWEType == 9) {
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					return;
+				}
+			}
+			iSoX = iSoM = 0;
+			for (i = 0; i < DEF_MAXITEMS; i++)
+				if (this->m_pItemList[i] != nullptr) {
+					switch (this->m_pItemList[i]->m_sIDnum) {
+						case 656: iSoX++;
+							iSoxH = i;
+							break;
+						case 657: iSoM++;
+							iSomH = i;
+							break;
+					}
+				}
+			if (iSoX > 0) {
+				if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSoxH) == false) {
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
+					if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
+					this->ItemDepleteHandler(iSoxH, false, true);
+					return;
+				}
+				if ((item.m_dwAttribute & 0x00000001) != 0) {
+					iValue++;
+					if (iValue > 10) {
+						iValue = 10;
+					} else {
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->ItemDepleteHandler(iSoxH, false, true);
+					}
+				} else {
+					iValue++;
+					if (iValue > 7) {
+						iValue = 7;
+					} else {
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->ItemDepleteHandler(iSoxH, false, true);
+					}
+				}
+			}
+			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+			return;
+
+		case 5:
+			if ((item.m_dwAttribute & 0x00F00000) != 0) {
+				dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
+				if (dwSWEType == 8) {
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					return;
+				}
+			}
+			switch (item.m_sIDnum) {
+				case 623:
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					return;
+				default:
+					break;
+			}
+			iSoX = iSoM = 0;
+			for (i = 0; i < DEF_MAXITEMS; i++)
+				if (this->m_pItemList[i] != nullptr) {
+					switch (this->m_pItemList[i]->m_sIDnum) {
+						case 656: iSoX++;
+							iSoxH = i;
+							break;
+						case 657: iSoM++;
+							iSomH = i;
+							break;
+					}
+				}
+			if (iSoM > 0) {
+				if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSomH, true) == false) {
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+					iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
+					if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
+					this->ItemDepleteHandler(iSomH, false, true);
+					return;
+				}
+				iValue++;
+				if (iValue > 10) {
+					iValue = 10;
+				} else {
+					dwTemp = item.m_dwAttribute;
+					dwTemp = dwTemp & 0x0FFFFFFF;
+					item.m_dwAttribute = dwTemp | (iValue << 28);
+					if ((item.m_dwAttribute & 0x00000001) != 0) {
+						dV1 = (double) item.m_wMaxLifeSpan;
+						dV2 = 0.2f * dV1;
+						dV3 = dV1 + dV2;
+					} else {
+						dV1 = (double) item.m_wMaxLifeSpan;
+						dV2 = 0.15f * dV1;
+						dV3 = dV1 + dV2;
+					}
+					item.m_sItemSpecEffectValue1 = (short) dV3;
+					if (item.m_sItemSpecEffectValue1 < 0) item.m_sItemSpecEffectValue1 = item.m_wMaxLifeSpan;
+					item.m_wMaxLifeSpan = item.m_sItemSpecEffectValue1;
+					item.m_wCurLifeSpan += dV2;
+					this->ItemDepleteHandler(iSomH, false, true);
+				}
+			}
+			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, item.m_sItemSpecEffectValue1, nullptr, item.m_sItemSpecEffectValue2);
+			return;
+
+		case 6:
+		case 15:
+			switch (item.m_sIDnum) {
+				case 621: // MerienPlateMailM
+				case 622: // MerienPlateMailW
+				case 700: // SangAhHauberk
+				case 701: // SangAhFullHel
+				case 702: // SangAhLeggings
+				case 704: // SangAhPlateMail
+				case 706: // DarkKnightHauberk
+				case 707: // DarkKnightFullHelm
+				case 708: // DarkKnightLeggings
+				case 710: // DarkKnightPlateMail
+				case 711: // DarkMageHauberk
+				case 712: // DarkMageChainMail
+				case 713: // DarkMageLeggings
+				case 716: // DarkMageLedderArmor
+				case 719: // DarkMageScaleMail
+				case 724: // DarkKnightHauberkW
+				case 725: // DarkKnightFullHelmW
+				case 726: // DarkKnightLeggingsW
+				case 728: // DarkKnightPlateMailW
+				case 729: // DarkMageHauberkW
+				case 730: // DarkMageChainMailW
+				case 731: // DarkMageLeggingsW
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+					return;
+
+				default:
+					if ((item.m_dwAttribute & 0x00F00000) != 0) {
+						dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
+						if (dwSWEType == 8) {
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+							return;
+						}
+					}
+					iSoX = iSoM = 0;
+					for (i = 0; i < DEF_MAXITEMS; i++)
+						if (this->m_pItemList[i] != nullptr) {
+							switch (this->m_pItemList[i]->m_sIDnum) {
+								case 656: iSoX++;
+									iSoxH = i;
+									break;
+								case 657: iSoM++;
+									iSomH = i;
+									break;
+							}
+						}
+					if (iSoM > 0) {
+						if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSomH, true) == false) {
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
+							if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
+							this->ItemDepleteHandler(iSomH, false, true);
+							return;
+						}
+						iValue++;
+						if (iValue > 10) {
+							iValue = 10;
+						} else {
+							dwTemp = item.m_dwAttribute;
+							dwTemp = dwTemp & 0x0FFFFFFF;
+							item.m_dwAttribute = dwTemp | (iValue << 28);
+							if ((item.m_dwAttribute & 0x00000001) != 0) {
+								dV1 = (double) item.m_wMaxLifeSpan;
+								dV2 = 0.2f * dV1;
+								dV3 = dV1 + dV2;
+							} else {
+								dV1 = (double) item.m_wMaxLifeSpan;
+								dV2 = 0.15f * dV1;
+								dV3 = dV1 + dV2;
+							}
+							item.m_sItemSpecEffectValue1 = (short) dV3;
+							if (item.m_sItemSpecEffectValue1 < 0) item.m_sItemSpecEffectValue1 = item.m_wMaxLifeSpan;
+							item.m_wMaxLifeSpan = item.m_sItemSpecEffectValue1;
+							item.m_wCurLifeSpan += dV2;
+							this->ItemDepleteHandler(iSomH, false, true);
+						}
+					}
+			}
+			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, item.m_sItemSpecEffectValue1, nullptr, item.m_sItemSpecEffectValue2);
+			return;
+
+		case 8:
+			switch (item.m_sIDnum) {
+				case 291: // MagicWand(MS30-LLF) 
+				case 714: // DarkMageMagicStaff 
+				case 732: // DarkMageMagicStaffW 
+				case 738: // DarkMageMagicWand
+				case 746: // BlackMageTemple
+					/*if ((item.m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
+						(item.m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
+						(item.m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
+						return; 
+					}*/
+					if (this->m_iGizonItemUpgradeLeft <= 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					sItemUpgrade = (iValue * (iValue + 6) / 8) + 2;
+					if ((this->m_iGizonItemUpgradeLeft - sItemUpgrade) < 0) {
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
+						return;
+					}
+					this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
+					this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
+					if (iValue == 0) {
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+					}
+					if ((iValue >= 4) && ((item.m_sIDnum == 714) || (item.m_sIDnum == 732))) {
+						iItemX = this->m_ItemPosList[iItemIndex].x;
+						iItemY = this->m_ItemPosList[iItemIndex].y;
+						item = CItem();
+						this->m_ItemPosList[iItemIndex].x = iItemX;
+						this->m_ItemPosList[iItemIndex].y = iItemY;
+						if (game_._bInitItemAttr(item, 738) == false) { // DarkMageMagicWand
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							return;
+						}
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+								  item.m_wCurLifeSpan, item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+						break;
+					}
+					if ((iValue >= 6) && (item.m_sIDnum == 738)) {
+						iItemX = this->m_ItemPosList[iItemIndex].x;
+						iItemY = this->m_ItemPosList[iItemIndex].y;
+						item = CItem();
+						this->m_ItemPosList[iItemIndex].x = iItemX;
+						this->m_ItemPosList[iItemIndex].y = iItemY;
+						if (game_._bInitItemAttr(item, 746) == false) { // BlackMageTemple 
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							return;
+						}
+						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
+						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
+						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+								  item.m_wCurLifeSpan, item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+						break;
+					}
+					if ((iValue >= 12) && (item.m_sIDnum == 746)) {
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						if (iValue == 15) item.m_cItemColor = 9;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						this->SendNotifyMsg(0,DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+								  item.m_cItemType,
+								  item.m_wCurLifeSpan,
+								  item.m_cName,
+								  item.m_sSprite,
+								  item.m_sSpriteFrame,
+								  item.m_cItemColor,
+								  item.m_sItemSpecEffectValue2,
+								  item.m_dwAttribute);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+						break;
+					} else {
+						iValue += 2;
+						if (iValue > 15) iValue = 15;
+						dwTemp = item.m_dwAttribute;
+						dwTemp = dwTemp & 0x0FFFFFFF;
+						item.m_dwAttribute = dwTemp | (iValue << 28);
+						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+						game_._bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, this->id_, (int) - 1, &item);
+						break;
+					}
+
+				default:
+
+
+					iSoX = iSoM = 0;
+					for (i = 0; i < DEF_MAXITEMS; i++)
+						if (this->m_pItemList[i] != nullptr) {
+							switch (this->m_pItemList[i]->m_sIDnum) {
+								case 656: iSoX++;
+									iSoxH = i;
+									break;
+								case 657: iSoM++;
+									iSomH = i;
+									break;
+							}
+						}
+
+					if (iSoX > 0) {
+
+						if (game_.bCheckIsItemUpgradeSuccess(this->id_, iItemIndex, iSoxH) == false) {
+
+							this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+							iValue = (item.m_dwAttribute & 0xF0000000) >> 28; // v2.172
+							if (iValue >= 1) this->ItemDepleteHandler(iItemIndex, false, true);
+
+							this->ItemDepleteHandler(iSoxH, false, true);
+							return;
+						}
+
+						iValue++;
+						if (iValue > 7)
+							iValue = 7;
+						else {
+
+							dwTemp = item.m_dwAttribute;
+							dwTemp = dwTemp & 0x0FFFFFFF;
+							item.m_dwAttribute = dwTemp | (iValue << 28);
+
+							this->ItemDepleteHandler(iSoxH, false, true);
+						}
+					}
+
+					this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+
+					break;
+			}
+			break;
+
+		default:
+			this->SendNotifyMsg(0,DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
+			break;
+	}
+}
+
+void CClient::ItemDepleteHandler(short sItemIndex, bool bIsUseItemResult, bool bIsItemUsed) {
+	if (this->m_bIsInitComplete == false) return;
+	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return;
+	auto &itemPtr = this->m_pItemList[sItemIndex];
+	if (!itemPtr) return;
+	auto &item = *itemPtr;
+	if ((bIsItemUsed) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_CONSUME) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_EAT) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST) ||
+			  (item.m_cItemType == DEF_ITEMTYPE_MATERIAL) ||
+			  (item.m_sIDnum == 380) ||
+			  (item.m_sIDnum == 381) ||
+			  (item.m_sIDnum == 382)) {
+		game_._bItemLog(DEF_ITEMLOG_DEPLETE, id_, -1, &item, false);
+	} else if ((item.m_sIDnum == 247) ||
+			  (item.m_sIDnum == 248)) {
+		game_._bItemLog(DEF_ITEMLOG_DEPLETE, id_, -1, &item, false);
+	}
+	game_.ReleaseItemHandler(id_, sItemIndex, true);
+	this->SendNotifyMsg(0,DEF_NOTIFY_ITEMDEPLETED_ERASEITEM, sItemIndex, (int) bIsUseItemResult, 0, nullptr);
+	itemPtr.reset();
+	this->m_bIsItemEquipped[sItemIndex] = false;
+	this->m_cArrowIndex = game_._iGetArrowItemIndex(id_);
+	this->iCalcTotalWeight();
+}
+
+int CClient::iCalcTotalWeight() {
+	register int i, iWeight;
+	short sItemIndex;
+
+	this->m_iAlterItemDropIndex = -1;
+
+	for (sItemIndex = 0; sItemIndex < DEF_MAXITEMS; sItemIndex++)
+		if (this->m_pItemList[sItemIndex] != nullptr) {
+			switch (this->m_pItemList[sItemIndex]->m_sItemEffectType) {
+				case DEF_ITEMEFFECTTYPE_ALTERITEMDROP:
+					if (this->m_pItemList[sItemIndex]->m_wCurLifeSpan > 0) {
+
+						this->m_iAlterItemDropIndex = sItemIndex;
+					}
+					break;
+			}
+		}
+
+	iWeight = 0;
+	for (i = 0; i < DEF_MAXITEMS; i++)
+		if (this->m_pItemList[i] != nullptr) {
+
+			iWeight += game_.iGetItemWeight(*this->m_pItemList[i], this->m_pItemList[i]->m_dwCount);
+		}
+
+	this->m_iCurWeightLoad = iWeight;
+
+	return iWeight;
+}
+
+
+bool CClient::bSetItemToBankItem(short sItemIndex) {
+	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return false;
+	auto &itemPtr = this->m_pItemList[sItemIndex];
+	if (!itemPtr) return false;
+	auto &item = *itemPtr;
+	int index = 0;
+	for(auto &bankItemPtr: this->m_pItemInBankList) {
+		if (!bankItemPtr) {
+			std::swap(bankItemPtr, itemPtr);
+			this->iCalcTotalWeight();
+
+			char cData[100];
+			uint32_t * dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+			*dwp = MSGID_NOTIFY;
+			uint16_t * wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_NOTIFY_ITEMTOBANK;
+
+			char *cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
+
+			*cp = index;
+			cp++;
+
+			*cp = index;
+			cp++;
+
+			memcpy(cp, item.m_cName, 20);
+			cp += 20;
+
+			dwp = (uint32_t *) cp;
+			*dwp = item.m_dwCount;
+			cp += 4;
+
+			*cp = item.m_cItemType;
+			cp++;
+
+			*cp = item.m_cEquipPos;
+			cp++;
+
+			*cp = (char) 0;
+			cp++;
+
+			short *sp = (short *) cp;
+			*sp = item.m_sLevelLimit;
+			cp += 2;
+
+			*cp = item.m_cGenderLimit;
+			cp++;
+
+			wp = (uint16_t *) cp;
+			*wp = item.m_wCurLifeSpan;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = item.m_wWeight;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = item.m_sSprite;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = item.m_sSpriteFrame;
+			cp += 2;
+
+			*cp = item.m_cItemColor;
+			cp++;
+
+			// v1.432
+			sp = (short *) cp;
+			*sp = item.m_sItemEffectValue2;
+			cp += 2;
+
+			// v1.42
+			dwp = (uint32_t *) cp;
+			*dwp = item.m_dwAttribute;
+			cp += 4;
+
+
+			int iRet = this->m_pXSock->iSendMsg(cData, 55);
+			switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+
+					// DeleteClient(iClientH, true, true);
+					return true;
+			}
+
+			return true;
+		}
+		++index;
+	}
+
+	return false;
+}
+
+bool CClient::bSetItemToBankItem(class CItem * pItem) {
+	register int i, iRet;
+	uint32_t * dwp;
+	uint16_t * wp;
+	char * cp;
+	short * sp;
+	char cData[100];
+
+	if (pItem == nullptr) return false;
+
+	for (i = 0; i < DEF_MAXBANKITEMS; i++)
+		if (this->m_pItemInBankList[i] == nullptr) {
+
+			this->m_pItemInBankList[i].reset(pItem);
+
+			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+			*dwp = MSGID_NOTIFY;
+			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_NOTIFY_ITEMTOBANK;
+
+			cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
+
+			*cp = i;
+			cp++;
+
+			*cp = 1;
+			cp++;
+
+			memcpy(cp, pItem->m_cName, 20);
+			cp += 20;
+
+			dwp = (uint32_t *) cp;
+			*dwp = pItem->m_dwCount;
+			cp += 4;
+
+			*cp = pItem->m_cItemType;
+			cp++;
+
+			*cp = pItem->m_cEquipPos;
+			cp++;
+
+			*cp = (char) 0;
+			cp++;
+
+			sp = (short *) cp;
+			*sp = pItem->m_sLevelLimit;
+			cp += 2;
+
+			*cp = pItem->m_cGenderLimit;
+			cp++;
+
+			wp = (uint16_t *) cp;
+			*wp = pItem->m_wCurLifeSpan;
+			cp += 2;
+
+			wp = (uint16_t *) cp;
+			*wp = pItem->m_wWeight;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = pItem->m_sSprite;
+			cp += 2;
+
+			sp = (short *) cp;
+			*sp = pItem->m_sSpriteFrame;
+			cp += 2;
+
+			*cp = pItem->m_cItemColor;
+			cp++;
+
+			// v1.432
+			sp = (short *) cp;
+			*sp = pItem->m_sItemEffectValue2;
+			cp += 2;
+
+			// v1.42
+			dwp = (uint32_t *) cp;
+			*dwp = pItem->m_dwAttribute;
+			cp += 4;
+
+
+			iRet = this->m_pXSock->iSendMsg(cData, 55);
+			switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+
+					// DeleteClient(iClientH, true, true);
+					return true;
+			}
+
+			return true;
+		}
+	return false;
+}
+

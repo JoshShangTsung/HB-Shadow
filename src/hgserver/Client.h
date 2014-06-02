@@ -379,6 +379,12 @@ public:
 	int m_iDSCount;
 	void ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage);
 	void SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4 = 0, uint32_t sV5 = 0, uint32_t sV6 = 0, uint32_t sV7 = 0, uint32_t sV8 = 0, uint32_t sV9 = 0, char * pString2 = nullptr);
+	int iUpgradeHeroCapeRequirements(int iItemIndex);
+	void RequestItemUpgradeHandler(int iItemIndex);
+	void ItemDepleteHandler(short sItemIndex, bool bIsUseItemResult, bool bIsItemUsed);
+	int iCalcTotalWeight();
+	bool bSetItemToBankItem(class CItem * pItem);
+	bool bSetItemToBankItem(short sItemIndex);
 };
 
 #define DEF_MAXCLIENTS				2000

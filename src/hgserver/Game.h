@@ -192,7 +192,6 @@ constexpr char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 class CGame {
 public:
 
-	int iUpgradeHeroCapeRequirements(int iClientH, int iItemIndex);
 	int HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide);
 	void AdminOrder_GetFightzoneTicket(int iClientH);
 
@@ -526,7 +525,6 @@ public:
 	void SetPlayerProfile(int iClientH, char * pMsg, uint32_t dwMsgSize);
 	void ToggleWhisperPlayer(int iClientH, char * pMsg, uint32_t dwMsgSize);
 	void CheckAndNotifyPlayerConnection(int iClientH, char * pMsg, uint32_t dwSize);
-	int iCalcTotalWeight(int iClientH);
 	void ReqRepairItemCofirmHandler(int iClientH, char cItemID, char * pString);
 	void ReqRepairItemHandler(int iClientH, char cItemID, char cRepairWhom, char * pString);
 	void ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char * pString);
@@ -542,7 +540,6 @@ public:
 	void OnKeyUp(WPARAM wParam, LPARAM lParam);
 	void OnKeyDown(WPARAM wParam, LPARAM lParam);
 	bool bCheckTotalSkillMasteryPoints(int iClientH, int iSkill);
-	bool bSetItemToBankItem(int iClientH, class CItem * pItem);
 	void NpcMagicHandler(int iNpcH, short dX, short dY, short sType);
 	bool bCheckResistingIceSuccess(char cAttackerDir, short sTargetH, char cTargetType, int iHitRatio);
 	bool bCheckResistingMagicSuccess(char cAttackerDir, short sTargetH, char cTargetType, int iHitRatio);
@@ -553,7 +550,6 @@ public:
 	void Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
 	void UseItemHandler(CClient &client, short sItemIndex, short dX, short dY, short sDestItemID);
 	void NpcBehavior_Stop(int iNpcH);
-	void ItemDepleteHandler(int iClientH, short sItemIndex, bool bIsUseItemResult, bool bIsItemUsed);
 	int _iGetArrowItemIndex(int iClientH);
 	void RequestFullObjectData(CClient &client, char * pData);
 	void DeleteNpc(int iNpcH);
@@ -568,7 +564,6 @@ public:
 	void EnemyKillRewardHandler(int iAttackerH, int iClientH);
 	void PK_KillRewardHandler(short sAttackerH, short sVictumH);
 	void ApplyPKpenalty(short sAttackerH, short sVictumH);
-	bool bSetItemToBankItem(int iClientH, short sItemIndex);
 	void RequestRetrieveItemHandler(CClient &client, char *pData);
 	void RequestCivilRightHandler(CClient &client, char * pData);
 	bool bCheckLimitedUser(int iClientH);
@@ -679,7 +674,6 @@ public:
 	// New 06/05/2004
 	// Upgrades
 	bool bCheckIsItemUpgradeSuccess(int iClientH, int iItemIndex, int iSomH, bool bBonus = false);
-	void RequestItemUpgradeHandler(int iClientH, int iItemIndex);
 
 	// ArchAngle's Codes
 	void StormBringer(int iClientH, short dX, short dY);
