@@ -279,6 +279,7 @@ public:
 	int iGetMaxHP();
 	int iGetMaxMP();
 	int iGetMaxSP();
+	void AdminOrder_GetFightzoneTicket();
 };
 #define DEF_MAXCLIENTS				2000
 struct Clients {

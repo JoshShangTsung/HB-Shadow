@@ -2923,3 +2923,42 @@ int CClient::iGetMaxSP() {
 	int iRet = (2 * (this->m_iStr + this->m_iAngelicStr)) + (2 * this->m_iLevel);
 	return iRet;
 }
+
+void CClient::AdminOrder_GetFightzoneTicket() {
+	int iReserveTime, iFightzoneTN, iFightzoneN;
+	char cTemp[21];
+	SYSTEMTIME SysTime;
+	if (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cName, "fightzone", 9) == 0) {
+		iReserveTime = this->m_iReserveTime;
+		GetLocalTime(&SysTime);
+		this->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 3);
+		std::memset(cTemp, 0, sizeof (cTemp));
+		strcpy(cTemp, (game_.m_pMapList[this->m_cMapIndex]->m_cName + 9));
+		iFightzoneN = this->m_iFightzoneNumber;
+		iFightzoneTN = this->m_iFightZoneTicketNumber;
+		this->m_iFightZoneTicketNumber = 10;
+		this->m_iFightzoneNumber = atoi(cTemp);
+		game_.GetFightzoneTicketHandler(id_);
+		game_.GetFightzoneTicketHandler(id_);
+		game_.GetFightzoneTicketHandler(id_);
+		this->m_iFightzoneNumber = iFightzoneN;
+		this->m_iFightZoneTicketNumber = iFightzoneTN;
+		this->m_iReserveTime = iReserveTime;
+	} else {
+		iReserveTime = this->m_iReserveTime;
+		GetLocalTime(&SysTime);
+		this->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 2);
+		std::memset(cTemp, 0, sizeof (cTemp));
+		strcpy(cTemp, (game_.m_pMapList[this->m_cMapIndex]->m_cName + 9));
+		iFightzoneN = this->m_iFightzoneNumber;
+		iFightzoneTN = this->m_iFightZoneTicketNumber;
+		this->m_iFightZoneTicketNumber = 10;
+		this->m_iFightzoneNumber = 1;
+		game_.GetFightzoneTicketHandler(id_);
+		game_.GetFightzoneTicketHandler(id_);
+		game_.GetFightzoneTicketHandler(id_);
+		this->m_iFightzoneNumber = iFightzoneN;
+		this->m_iFightZoneTicketNumber = iFightzoneTN;
+		this->m_iReserveTime = iReserveTime;
+	}
+}

@@ -20185,45 +20185,6 @@ void CGame::AutomatedHeldenianTimer() {
 		}
 	}
 }
-void CGame::AdminOrder_GetFightzoneTicket(int iClientH) {
-	int iReserveTime, iFightzoneTN, iFightzoneN;
-	char cTemp[21];
-	SYSTEMTIME SysTime;
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "fightzone", 9) == 0) {
-		iReserveTime = m_pClientList[iClientH]->m_iReserveTime;
-		GetLocalTime(&SysTime);
-		m_pClientList[iClientH]->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 3);
-		std::memset(cTemp, 0, sizeof (cTemp));
-		strcpy(cTemp, (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName + 9));
-		iFightzoneN = m_pClientList[iClientH]->m_iFightzoneNumber;
-		iFightzoneTN = m_pClientList[iClientH]->m_iFightZoneTicketNumber;
-		m_pClientList[iClientH]->m_iFightZoneTicketNumber = 10;
-		m_pClientList[iClientH]->m_iFightzoneNumber = atoi(cTemp);
-		GetFightzoneTicketHandler(iClientH);
-		GetFightzoneTicketHandler(iClientH);
-		GetFightzoneTicketHandler(iClientH);
-		m_pClientList[iClientH]->m_iFightzoneNumber = iFightzoneN;
-		m_pClientList[iClientH]->m_iFightZoneTicketNumber = iFightzoneTN;
-		m_pClientList[iClientH]->m_iReserveTime = iReserveTime;
-	} else {
-		iReserveTime = m_pClientList[iClientH]->m_iReserveTime;
-		GetLocalTime(&SysTime);
-		m_pClientList[iClientH]->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 2);
-		std::memset(cTemp, 0, sizeof (cTemp));
-		strcpy(cTemp, (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName + 9));
-		iFightzoneN = m_pClientList[iClientH]->m_iFightzoneNumber;
-		iFightzoneTN = m_pClientList[iClientH]->m_iFightZoneTicketNumber;
-		m_pClientList[iClientH]->m_iFightZoneTicketNumber = 10;
-		m_pClientList[iClientH]->m_iFightzoneNumber = 1;
-		GetFightzoneTicketHandler(iClientH);
-		GetFightzoneTicketHandler(iClientH);
-		GetFightzoneTicketHandler(iClientH);
-		m_pClientList[iClientH]->m_iFightzoneNumber = iFightzoneN;
-		m_pClientList[iClientH]->m_iFightZoneTicketNumber = iFightzoneTN;
-		m_pClientList[iClientH]->m_iReserveTime = iReserveTime;
-	}
-}
 void CGame::CheckCrusadeResultCalculation(int iClientH) {
 	if (m_pClientList[iClientH] == nullptr) return;
 	if (m_pClientList[iClientH]->m_cVar == 1) return;

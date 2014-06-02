@@ -7542,7 +7542,7 @@ void CGame::ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize) {
 				return;
 			}
 			if ((memcmp(cp, "/getticket ", 11) == 0) && (client.m_iAdminUserLevel >= 2)) {
-				AdminOrder_GetFightzoneTicket(iClientH);
+				client.AdminOrder_GetFightzoneTicket();
 				return;
 			}
 			if (memcmp(cp, "/beginapocalypse", 16) == 0) {

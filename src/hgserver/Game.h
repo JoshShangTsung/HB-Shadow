@@ -158,7 +158,7 @@ constexpr char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 class CGame {
 public:
 	int HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide);
-	void AdminOrder_GetFightzoneTicket(int iClientH);
+	
 	void GetAngelHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void SetAngelFlag(short sOwnerH, char cOwnerType, int iStatus, int iTemp);
 	void ReadMajesticSettings();
