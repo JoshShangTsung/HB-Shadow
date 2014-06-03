@@ -39,7 +39,10 @@ private:
 
 typedef Collection<std::unique_ptr<CItem>, DEF_MAXITEMS> Inventory;
 typedef Collection<std::unique_ptr<CItem>, DEF_MAXBANKITEMS> BankInventory;
-class CClient {
+struct CClient;
+typedef std::shared_ptr<CClient> ClientPtr;
+typedef std::weak_ptr<CClient> ClientWPtr;
+class CClient: public std::enable_shared_from_this<CClient> {
 public:
 	CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket);
 	CGame &game_;
@@ -109,8 +112,11 @@ public:
 	int m_iLU_Pool;
 	char m_cAura;
 	int m_iGizonItemUpgradeLeft;
-	int m_iAddTransMana, m_iAddChargeCritical;
-	int m_iEnemyKillCount, m_iPKCount, m_iRewardGold;
+	int m_iAddTransMana;
+	int m_iAddChargeCritical;
+	int m_iEnemyKillCount;
+	int m_iPKCount;
+	int m_iRewardGold;
 	int m_iCurWeightLoad;
 	char m_cSide;
 	bool m_bInhibition;
@@ -133,7 +139,9 @@ public:
 	std::array<bool, DEF_MAXSKILLTYPE> m_bSkillUsingStatus;
 	std::array<int, DEF_MAXSKILLTYPE> m_iSkillUsingTimeID;
 	std::array<char, DEF_MAXMAGICEFFECTS> m_cMagicEffectStatus;
-	int m_iWhisperPlayerIndex;
+	ClientWPtr whisperedPlayer_;
+	//int m_iWhisperPlayerIndex;
+	//char m_cWhisperPlayerName[11];
 	char m_cProfile[256];
 	int m_iHungerStatus;
 	uint32_t m_dwWarBeginTime;
@@ -275,7 +283,6 @@ public:
 	Collection<PartyMember, DEF_MAXPARTYMEMBERS> m_stPartyMemberName;
 	uint32_t m_dwLastActionTime, m_dwLastDamageTime;
 	int m_iDeadPenaltyTime;
-	char m_cWhisperPlayerName[11];
 	bool m_bIsAdminOrderGoto;
 	bool m_bIsInsideWarehouse;
 	bool m_bIsInsideWizardTower;

@@ -7467,7 +7467,7 @@ void CGame::ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize) {
 		}
 	}
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 17);
-	if ((cSendMode == 0) && (client.m_iWhisperPlayerIndex != -1)) {
+	if ((cSendMode == 0) && (client.whisperedPlayer_.lock())) {
 		cSendMode = 20;
 		if (*cp == '#') cSendMode = 0;
 		if (client.m_iTimeLeft_ShutUp > 0) cSendMode = 0;
@@ -7540,32 +7540,32 @@ void CGame::ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize) {
 	} else {
 		// New 16/05/2004
 		iRet = client.m_pXSock->iSendMsg(pData, dwMsgSize);
-		if (m_pClientList[ client.m_iWhisperPlayerIndex ] != nullptr &&
-				  strcmp(client.m_cWhisperPlayerName, m_pClientList[ client.m_iWhisperPlayerIndex ]->m_cCharName) == 0) {
-			iRet = m_pClientList[client.m_iWhisperPlayerIndex]->m_pXSock->iSendMsg(pData, dwMsgSize);
+		auto whispered = client.whisperedPlayer_.lock();
+		if (whispered) {
+			iRet = whispered->m_pXSock->iSendMsg(pData, dwMsgSize);
 			switch (m_iLogChatOption) {
 				case 1:
-					if (m_pClientList[client.m_iWhisperPlayerIndex]->m_iAdminUserLevel == 0) {
+					if (whispered->m_iAdminUserLevel == 0) {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto Player(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
+						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto Player(%s)", client.m_cCharName, pData + 21, whispered->m_cCharName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;
 				case 2:
-					if (m_pClientList[client.m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
+					if (whispered->m_iAdminUserLevel > 0) {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
+						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", client.m_cCharName, pData + 21, whispered->m_cCharName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;
 				case 3:
-					if (m_pClientList[client.m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
+					if (whispered->m_iAdminUserLevel > 0) {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
+						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", client.m_cCharName, pData + 21, whispered->m_cCharName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					} else {
 						std::memset(cTemp, 0, sizeof (cTemp));
-						wsprintf(cTemp, "Player Whisper   (%s):\"%s\"\tto Player(%s)", client.m_cCharName, pData + 21, client.m_cWhisperPlayerName);
+						wsprintf(cTemp, "Player Whisper   (%s):\"%s\"\tto Player(%s)", client.m_cCharName, pData + 21, whispered->m_cCharName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;

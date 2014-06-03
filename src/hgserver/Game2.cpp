@@ -2132,48 +2132,38 @@ void CGame::CheckAndNotifyPlayerConnection(int iClientH, char * pMsg, uint32_t d
 void CGame::ToggleWhisperPlayer(int iClientH, char * pMsg, uint32_t dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cName[11], cBuff[256];
-	class CStrTok * pStrTok;
 	register int i;
 	if (m_pClientList[iClientH] == nullptr) return;
 	if (dwMsgSize <= 0) return;
 	std::memset(cName, 0, sizeof (cName));
 	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pMsg, dwMsgSize);
-	pStrTok = new class CStrTok(cBuff, seps);
-	token = pStrTok->pGet();
-	token = pStrTok->pGet();
+	CStrTok pStrTok(cBuff, seps);
+	token = pStrTok.pGet();
+	token = pStrTok.pGet();
 	if (token == nullptr) {
-		m_pClientList[iClientH]->m_iWhisperPlayerIndex = -1;
-		std::memset(m_pClientList[iClientH]->m_cWhisperPlayerName, 0, sizeof (m_pClientList[iClientH]->m_cWhisperPlayerName));
-		// Whisper mode enabled
+		m_pClientList[iClientH]->whisperedPlayer_.reset();
 		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEOFF, 0, 0, 0, cName);
 	} else {
 		if (strlen(token) > 10)
 			memcpy(cName, token, 10);
 		else memcpy(cName, token, strlen(token));
-		m_pClientList[iClientH]->m_iWhisperPlayerIndex = -1;
-		for (i = 1; i < DEF_MAXCLIENTS; i++)
-			if ((m_pClientList[i] != nullptr) && (memcmp(m_pClientList[i]->m_cCharName, cName, 10) == 0)) {
-				if (i == iClientH) {
-					delete pStrTok;
-					// Whisper self XenX
+		m_pClientList[iClientH]->whisperedPlayer_.reset();
+		for(auto &iterClient: m_pClientList) {
+			if (memcmp(iterClient.m_cCharName, cName, 10) == 0) {
+				if (iterClient.id_ == iClientH) {
 					m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, "You shouldnt talk to yourself!");
 					return;
 				}
-				m_pClientList[iClientH]->m_iWhisperPlayerIndex = i;
-				std::memset(m_pClientList[iClientH]->m_cWhisperPlayerName, 0, sizeof (m_pClientList[iClientH]->m_cWhisperPlayerName));
-				strcpy(m_pClientList[iClientH]->m_cWhisperPlayerName, cName);
+				m_pClientList[iClientH]->whisperedPlayer_ = iterClient.shared_from_this();
+				m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEON, 0, 0, 0, iterClient.m_cCharName);
 				break;
 			}
-		if (m_pClientList[iClientH]->m_iWhisperPlayerIndex == -1) {
-			//player not online XenX
+		}
+		if (!m_pClientList[iClientH]->whisperedPlayer_.lock()) {
 			m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, "This player is not online!");
-		} else {
-			m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEON, 0, 0, 0, m_pClientList[iClientH]->m_cWhisperPlayerName);
-			return;
 		}
 	}
-	delete pStrTok;
 }
 
 void CGame::SetPlayerProfile(int iClientH, char * pMsg, uint32_t dwMsgSize) {

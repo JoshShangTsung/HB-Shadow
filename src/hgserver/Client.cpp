@@ -91,8 +91,6 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket) : ga
 	m_bIsKilled = false;
 	for (int i = 0; i < DEF_MAXMAGICEFFECTS; i++)
 		m_cMagicEffectStatus[i] = 0;
-	m_iWhisperPlayerIndex = -1;
-	std::memset(m_cWhisperPlayerName, 0, sizeof (m_cWhisperPlayerName));
 	m_iHungerStatus = 100;
 	m_bIsWarLocation = false;
 	m_dwAFKCheckTime = 0;
@@ -244,7 +242,7 @@ bool CClient::bCreateNewParty() {
 void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage) {
 	char cAttackerName[21], cEKMsg[1000];
 	short sAttackerWeapon;
-	int i, iExH;
+	int iExH;
 	bool bIsSAattacked = false;
 	if (this->m_bIsInitComplete == false) return;
 	if (this->m_bIsKilled == true) return;
@@ -4948,8 +4946,9 @@ void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bFo
 			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 		game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
 		for(auto &iterClient: game_.m_pClientList) {
-			if((iterClient.m_iWhisperPlayerIndex == id_)) {
-				iterClient.m_iWhisperPlayerIndex = -1;
+			auto whisperedPlayer = iterClient.whisperedPlayer_.lock();
+			if(whisperedPlayer && whisperedPlayer->id_ == id_) {
+				iterClient.whisperedPlayer_.reset();
 				iterClient.SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEOFF, 0, 0, 0, this->m_cCharName);
 			}
 		}
