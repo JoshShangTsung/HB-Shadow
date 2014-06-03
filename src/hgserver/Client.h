@@ -266,7 +266,8 @@ public:
 	bool m_bIsSendingMapStatus;
 	int m_iConstructionPoint;
 	char m_cConstructMapName[11];
-	int m_iConstructLocX, m_iConstructLocY;
+	int m_iConstructLocX;
+	int m_iConstructLocY;
 	bool m_bIsPlayerCivil;
 	bool m_bIsAttackModeChange;
 	int m_iPartyID;
@@ -282,7 +283,8 @@ public:
 		char cName[11];
 	};
 	Collection<PartyMember, DEF_MAXPARTYMEMBERS> m_stPartyMemberName;
-	uint32_t m_dwLastActionTime, m_dwLastDamageTime;
+	uint32_t m_dwLastActionTime;
+	uint32_t m_dwLastDamageTime;
 	int m_iDeadPenaltyTime;
 	bool m_bIsAdminOrderGoto;
 	bool m_bIsInsideWarehouse;
@@ -324,6 +326,8 @@ public:
 	void ClientCommonHandler(char * pData);
 	void ReqCreateSlateHandler(char* pData);
 	void DeleteClient(bool bSave, bool bNotify, bool bCountLogout = true, bool bForceCloseConn = false);
+	void ArmorLifeDecrement(int iTargetH, char cOwnerType, int iValue);
+	void ReleaseItemHandler(short sItemIndex, bool bNotice);
 };
 #define DEF_MAXCLIENTS				2000
 

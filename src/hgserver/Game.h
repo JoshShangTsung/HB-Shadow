@@ -519,7 +519,6 @@ public:
 	void OnStartGameSignal();
 	bool _bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, char cSA);
 	bool _bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize);
-	void ReleaseItemHandler(int iClientH, short sItemIndex, bool bNotice);
 	int SetItemCount(int iClientH, const char * pItemName, uint32_t dwCount);
 	int SetItemCount(int iClientH, int iItemIndex, uint32_t dwCount);
 	uint32_t dwGetItemCount(int iClientH, const char * pName);
@@ -614,8 +613,6 @@ public:
 	bool _bItemLog(int iAction, int iClientH, char * cName, class CItem * pItem);
 	bool _bItemLog(int iAction, int iGiveH, int iRecvH, class CItem * pItem, bool bForceItemLog = false);
 	bool _bCheckGoodItem(class CItem * pItem);
-	bool bCheckAndConvertPlusWeaponItem(int iClientH, int iItemIndex);
-	void ArmorLifeDecrement(int iAttackerH, int iTargetH, char cOwnerType, int iValue);
 	// MultiDrops
 	bool bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY,
 			  int iItemSpreadType, int iSpreadRange,

@@ -6180,7 +6180,7 @@ void CGame::CheckUniqueItemEquipment(int iClientH) {
 						  (m_pClientList[iClientH]->m_pItemList[i]->m_sTouchEffectValue3 == m_pClientList[iClientH]->m_sCharIDnum3)) {
 				} else {
 					m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iClientH]->m_pItemList[i]->m_cEquipPos, i, 0, nullptr);
-					ReleaseItemHandler(iClientH, i, true);
+					m_pClientList[iClientH]->ReleaseItemHandler(i, true);
 					iDamage = iDice(10, 10);
 					m_pClientList[iClientH]->m_iHP -= iDamage;
 					if (m_pClientList[iClientH]->m_iHP <= 0) {
@@ -6455,7 +6455,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 							// with->m_pItemList[with->m_cExchangeItemIndex]->m_cName, iAmountLeft);
 							//
 						} else {
-							ReleaseItemHandler(with->id_, with->m_cExchangeItemIndex[i], true);
+							with->ReleaseItemHandler(with->m_cExchangeItemIndex[i], true);
 							with->SendNotifyMsg(0, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, with->m_cExchangeItemIndex[i], with->m_iExchangeItemAmount[i], 0, m_pClientList[iClientH]->m_cCharName);
 							with->m_pItemList[with->m_cExchangeItemIndex[i]] = nullptr;
 						}
@@ -6475,7 +6475,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 							// m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex]->m_cName, iAmountLeft);
 							//
 						} else {
-							ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_cExchangeItemIndex[i], true);
+							m_pClientList[iClientH]->ReleaseItemHandler(m_pClientList[iClientH]->m_cExchangeItemIndex[i], true);
 							m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, m_pClientList[iClientH]->m_cExchangeItemIndex[i], m_pClientList[iClientH]->m_iExchangeItemAmount[i], 0, with->m_cCharName);
 							m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]] = nullptr;
 						}
@@ -11804,408 +11804,6 @@ void CGame::GetExp(int iClientH, int iExp, bool bIsAttackerOwn)
 	else m_pClientList[iClientH]->m_iExpStock += iExp;
 #endif
 }*/
-bool CGame::bCheckAndConvertPlusWeaponItem(int iClientH, int iItemIndex) {
-	if (m_pClientList[iClientH] == nullptr) return false;
-	if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == nullptr) return false;
-	switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
-		case 4: // Dagger +1
-		case 9: // Short Sword +1
-		case 13: // Main Gauge +1
-		case 16: // Gradius +1
-		case 18: // Long Sword +1
-		case 19: // Long Sword +2
-		case 21: // Excaliber +1
-		case 24: // Sabre +1
-		case 26: // Scimitar +1
-		case 27: // Scimitar +2
-		case 29: // Falchoin +1
-		case 30: // Falchion +2
-		case 32: // Esterk +1
-		case 33: // Esterk +2
-		case 35: // Rapier +1
-		case 36: // Rapier +2
-		case 39: // Broad Sword +1
-		case 40: // Broad Sword +2
-		case 43: // Bastad Sword +1
-		case 44: // Bastad Sword +2
-		case 47: // Claymore +1
-		case 48: // Claymore +2
-		case 51: // Great Sword +1
-		case 52: // Great Sword +2
-		case 55: // Flameberge +1
-		case 56: // Flameberge +2
-		case 60: // Light Axe +1
-		case 61: // Light Axe +2
-		case 63: // Tomahoc +1
-		case 64: // Tomohoc +2
-		case 66: // Sexon Axe +1
-		case 67: // Sexon Axe +2
-		case 69: // Double Axe +1
-		case 70: // Double Axe +2
-		case 72: // War Axe +1
-		case 73: // War Axe +2
-		case 580: // Battle Axe +1
-		case 581: // Battle Axe +2
-		case 582: // Sabre +2
-			return true;
-			break;
-	}
-	return false;
-}
-
-void CGame::ArmorLifeDecrement(int iAttackerH, int iTargetH, char cOwnerType, int /*iValue*/) {
-	int iTemp;
-	if (m_pClientList[iAttackerH] == nullptr) return;
-	switch (cOwnerType) {
-		case DEF_OWNERTYPE_PLAYER:
-			if (m_pClientList[iTargetH] == nullptr) return;
-			break;
-		case DEF_OWNERTYPE_NPC: return;
-		default: return;
-	}
-	if (m_pClientList[iAttackerH]->m_cSide == m_pClientList[iTargetH]->m_cSide) return;
-	if (m_pClientList[iTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] != 0) return;
-	switch (iDice(1, 13)) {
-		case 1:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 380) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 50) m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 2:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 3:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 4:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 5:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 6:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 7:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 8:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 9:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 10:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 11:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 12:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-		case 13:
-		{
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			iTemp = m_pClientList[iTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
-			if ((iTemp != -1) && (m_pClientList[iTargetH]->m_pItemList[iTemp] != nullptr)) {
-				if ((m_pClientList[iTargetH]->m_cSide != 0) && (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0)) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan -= 50;
-					if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 250) {
-						ReleaseItemHandler(iTargetH, iTemp, true);
-						m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					}
-				}
-				if (m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan <= 0) {
-					m_pClientList[iTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan = 0;
-					m_pClientList[iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[iTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-					ReleaseItemHandler(iTargetH, iTemp, true);
-				}
-			}
-			break;
-		}
-	}
-}
-
 void CGame::AdminOrder_GoTo(int iClientH, char* pData, uint32_t dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cBuff[256], cPlayerName[11], cMapName[32];
@@ -12745,8 +12343,8 @@ void CGame::OnTimer(char /*cType*/) {
 	int q; //added for "advertiser"
 	char cAdvert[1000]; //holds the text for the "advert"
 	std::memset(cAdvert, 0, sizeof (cAdvert));
-	for(int i=1;i<DEF_MAXCLIENTS;++i) {
-		if(m_pClientList[i] && m_pClientList[i]->m_bMarkedForDeletion) {
+	for (int i = 1; i < DEF_MAXCLIENTS; ++i) {
+		if (m_pClientList[i] && m_pClientList[i]->m_bMarkedForDeletion) {
 			m_pClientList[i].reset();
 			RemoveClientShortCut(i);
 			--m_iTotalClients;
@@ -17168,7 +16766,7 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 	if ((m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan <= 0) || (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan > 64000)) {
 		m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan = 0;
 		m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_cEquipPos, iArmorType, 0, nullptr);
-		ReleaseItemHandler(sTargetH, iArmorType, true);
+		m_pClientList[sTargetH]->ReleaseItemHandler(iArmorType, true);
 		return;
 	}
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != nullptr) {
@@ -17210,7 +16808,7 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 				if (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan < iHammerChance) {
 					wsprintf(G_cTxt, "(iHammerChance (%d), target armor endurance (%d)!", iHammerChance, m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan);
 					PutLogList(G_cTxt);
-					ReleaseItemHandler(sTargetH, iArmorType, true);
+					m_pClientList[sTargetH]->ReleaseItemHandler(iArmorType, true);
 					m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_cEquipPos, iArmorType, 0, nullptr);
 					return;
 				}
@@ -17890,7 +17488,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 									m_pClientList[sTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan--;
 								if (m_pClientList[sTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan == 0) {
 									m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[sTargetH]->m_pItemList[iTemp]->m_cEquipPos, iTemp, 0, nullptr);
-									ReleaseItemHandler(sTargetH, iTemp, true);
+									m_pClientList[sTargetH]->ReleaseItemHandler(iTemp, true);
 								}
 							}
 						}
@@ -18397,7 +17995,7 @@ CAE_SKIPDAMAGEMOVE2:
 					}
 					if (m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex]->m_wCurLifeSpan == 0) {
 						m_pClientList[sAttackerH]->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex]->m_cEquipPos, sWeaponIndex, 0, nullptr);
-						ReleaseItemHandler(sAttackerH, sWeaponIndex, true);
+						m_pClientList[sAttackerH]->ReleaseItemHandler(sWeaponIndex, true);
 					}
 				}
 			} else {

@@ -2492,7 +2492,7 @@ void CClient::ItemDepleteHandler(short sItemIndex, bool bIsUseItemResult, bool b
 			  (item.m_sIDnum == 248)) {
 		game_._bItemLog(DEF_ITEMLOG_DEPLETE, id_, -1, &item, false);
 	}
-	game_.ReleaseItemHandler(id_, sItemIndex, true);
+	this->ReleaseItemHandler(sItemIndex, true);
 	this->SendNotifyMsg(0, DEF_NOTIFY_ITEMDEPLETED_ERASEITEM, sItemIndex, (int) bIsUseItemResult, 0, nullptr);
 	itemPtr.reset();
 	this->m_bIsItemEquipped[sItemIndex] = false;
@@ -4702,7 +4702,7 @@ void CClient::ClientCommonHandler(char * pData) {
 			break;
 		case DEF_COMMONTYPE_RELEASEITEM:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_RELEASEITEM");
-			game_.ReleaseItemHandler(id_, iV1, true);
+			this->ReleaseItemHandler(iV1, true);
 			break;
 		case DEF_COMMONTYPE_TOGGLECOMBATMODE:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_TOGGLECOMBATMODE");
@@ -5086,3 +5086,176 @@ DC_LOOPBREAK1:
 	this->m_bMarkedForDeletion = true;
 }
 
+void CClient::ArmorLifeDecrement(int iTargetH, char cOwnerType, int /*iValue*/) {
+	switch (cOwnerType) {
+		case DEF_OWNERTYPE_PLAYER:
+			if (game_.m_pClientList[iTargetH] == nullptr) return;
+			break;
+		case DEF_OWNERTYPE_NPC: return;
+		default: return;
+	}
+	auto &target = *game_.m_pClientList[iTargetH];
+	if (this->m_cSide == target.m_cSide) return;
+	if (target.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] != 0) return;
+	
+	struct Damage {
+		std::size_t position_;
+		std::size_t minEndurance_;
+	};
+	std::vector<Damage> damages[] = {
+		{{DEF_EQUIPPOS_BODY, 380}},
+		{{DEF_EQUIPPOS_PANTS, 250}},
+		{{DEF_EQUIPPOS_LEGGINGS, 250}},
+		{{DEF_EQUIPPOS_ARMS, 250}},
+		{{DEF_EQUIPPOS_HEAD, 250}},
+		{{DEF_EQUIPPOS_HEAD, 250}, {DEF_EQUIPPOS_LEGGINGS, 250}},
+		{{DEF_EQUIPPOS_LEGGINGS, 250}, {DEF_EQUIPPOS_PANTS, 250}},
+		{{DEF_EQUIPPOS_PANTS, 250}, {DEF_EQUIPPOS_ARMS, 250}},
+		{{DEF_EQUIPPOS_ARMS, 250}},
+		{{DEF_EQUIPPOS_ARMS, 250}, {DEF_EQUIPPOS_BODY, 250}},
+		{{DEF_EQUIPPOS_BODY, 250}, {DEF_EQUIPPOS_LEGGINGS, 250}},
+		{{DEF_EQUIPPOS_BODY, 250}},
+		{{DEF_EQUIPPOS_BODY, 250}, {DEF_EQUIPPOS_PANTS, 250}}
+	};
+	constexpr size_t numItems = sizeof(damages) / sizeof(damages[0]);
+	const int index = iDice(1, numItems) - 1;
+	for(const Damage &dmg: damages[index]) {
+		int itemIndex = target.m_sItemEquipmentStatus[dmg.position_];
+		if ((itemIndex != -1) && (target.m_pItemList[itemIndex] != nullptr)) {
+			auto &item = *target.m_pItemList[itemIndex];
+			if ((target.m_cSide != 0) && (item.m_wCurLifeSpan > 0)) {
+				item.m_wCurLifeSpan -= 50;
+				if (item.m_wCurLifeSpan <= dmg.minEndurance_) {
+					target.ReleaseItemHandler(itemIndex, true);
+					target.SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, item.m_cEquipPos, itemIndex, 0, nullptr);
+				}
+			}
+			if (item.m_wCurLifeSpan <= 0) {
+				item.m_wCurLifeSpan = 0;
+				target.SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, item.m_cEquipPos, itemIndex, 0, nullptr);
+				target.ReleaseItemHandler(itemIndex, true);
+			}
+		}
+	}
+}
+
+void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
+	short sTemp;
+	int iTemp;
+	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return;
+	auto &itemPtr = this->m_pItemList[sItemIndex];
+	if (itemPtr == nullptr) return;
+	auto &item = *itemPtr;
+	if (item.m_cItemType != DEF_ITEMTYPE_EQUIP) return;
+	if (this->m_bIsItemEquipped[sItemIndex] == false) return;
+	char cHeroArmorType = game_._cCheckHeroItemEquipped(id_);
+	if (cHeroArmorType != 0x0FFFFFFFF) this->m_cHeroArmourBonus = 0;
+	char cEquipPos = item.m_cEquipPos;
+	if (cEquipPos == DEF_EQUIPPOS_RHAND) {
+		if (this->m_pItemList[sItemIndex] != nullptr) {
+			if ((item.m_sIDnum == 865) || (item.m_sIDnum == 866)) {
+				this->m_cMagicMastery[94] = false;
+				this->SendNotifyMsg(0, DEF_NOTIFY_STATECHANGE_SUCCESS, 0, 0, 0, nullptr);
+			}
+		}
+	}
+	switch (cEquipPos) {
+		case DEF_EQUIPPOS_RHAND:
+			sTemp = this->m_sAppr2;
+			sTemp = sTemp & 0xF00F;
+			this->m_sAppr2 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0x0FFFFFFF;
+			this->m_iApprColor = iTemp;
+			iTemp = this->m_iStatus;
+			iTemp = iTemp & 0xFFFFFFF0;
+			this->m_iStatus = iTemp;
+			break;
+		case DEF_EQUIPPOS_LHAND:
+			sTemp = this->m_sAppr2;
+			sTemp = sTemp & 0xFFF0;
+			this->m_sAppr2 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xF0FFFFFF;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_TWOHAND:
+			sTemp = this->m_sAppr2;
+			sTemp = sTemp & 0xF00F;
+			this->m_sAppr2 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0x0FFFFFFF;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_BODY:
+			sTemp = this->m_sAppr3;
+			sTemp = sTemp & 0x0FFF;
+			this->m_sAppr3 = sTemp;
+			sTemp = this->m_sAppr4;
+			sTemp = sTemp & 0xFF7F;
+			this->m_sAppr4 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xFF0FFFFF;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_BACK:
+			sTemp = this->m_sAppr4;
+			sTemp = sTemp & 0xF0FF;
+			this->m_sAppr4 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xFFF0FFFF;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_ARMS:
+			sTemp = this->m_sAppr3;
+			sTemp = sTemp & 0xFFF0;
+			this->m_sAppr3 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xFFFF0FFF;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_PANTS:
+			sTemp = this->m_sAppr3;
+			sTemp = sTemp & 0xF0FF;
+			this->m_sAppr3 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xFFFFF0FF;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_LEGGINGS:
+			sTemp = this->m_sAppr4;
+			sTemp = sTemp & 0x0FFF;
+			this->m_sAppr4 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xFFFFFF0F;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_HEAD:
+			sTemp = this->m_sAppr3;
+			sTemp = sTemp & 0xFF0F;
+			this->m_sAppr3 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xFFFFFFF0;
+			this->m_iApprColor = iTemp;
+			break;
+		case DEF_EQUIPPOS_RELEASEALL:
+			sTemp = this->m_sAppr3;
+			sTemp = sTemp & 0x0FFF;
+			this->m_sAppr3 = sTemp;
+			iTemp = this->m_iApprColor;
+			iTemp = iTemp & 0xFFF0FFFF;
+			this->m_iApprColor = iTemp;
+			break;
+	}
+	if (item.m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) {
+		this->m_sAppr4 = this->m_sAppr4 & 0xFFF3;
+	}
+	if (item.m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY) {
+		this->m_sAppr4 = this->m_sAppr4 & 0xFFFC;
+	}
+	this->m_bIsItemEquipped[sItemIndex] = false;
+	this->m_sItemEquipmentStatus[cEquipPos] = -1;
+	if (bNotice == true)
+		game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	this->CalcTotalItemEffect(sItemIndex, true);
+}
