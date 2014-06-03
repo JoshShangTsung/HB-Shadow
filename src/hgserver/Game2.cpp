@@ -3044,8 +3044,10 @@ void CGame::AdminOrder_Kill(int iClientH, char * pData, uint32_t dwMsgSize) {
 				//if (iGetMaxHP(i) < m_pClientList[i]->m_iHP) m_pClientList[i]->m_iHP = iGetMaxHP(i);
 				m_pClientList[i]->m_bIsKilled = true;
 				if (m_pClientList[i]->m_bIsExchangeMode == true) {
-					iExH = m_pClientList[i]->m_iExchangeH;
-					_ClearExchangeStatus(iExH);
+					auto with = m_pClientList[i]->exchangingWith_.lock();
+					if(with) {
+						_ClearExchangeStatus(with->id_);
+					}
 					_ClearExchangeStatus(i);
 				}
 				RemoveFromTarget(i, DEF_OWNERTYPE_PLAYER);
@@ -6245,9 +6247,7 @@ void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, sho
 				_ClearExchangeStatus(iClientH);
 			} else {
 				m_pClientList[iClientH]->m_bIsExchangeMode = true;
-				m_pClientList[iClientH]->m_iExchangeH = sOwnerH;
-				std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof (m_pClientList[iClientH]->m_cExchangeName));
-				strcpy(m_pClientList[iClientH]->m_cExchangeName, m_pClientList[sOwnerH]->m_cCharName);
+				m_pClientList[iClientH]->exchangingWith_ = m_pClientList[sOwnerH]->shared_from_this();
 				//Clear items in the list
 				m_pClientList[iClientH]->iExchangeCount = 0;
 				m_pClientList[sOwnerH]->iExchangeCount = 0;
@@ -6266,9 +6266,7 @@ void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, sho
 				//std::memset(m_pClientList[iClientH]->m_cExchangeItemName, 0, sizeof(m_pClientList[iClientH]->m_cExchangeItemName));
 				memcpy(m_pClientList[iClientH]->m_cExchangeItemName[m_pClientList[iClientH]->iExchangeCount], m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName, 20);
 				m_pClientList[sOwnerH]->m_bIsExchangeMode = true;
-				m_pClientList[sOwnerH]->m_iExchangeH = iClientH;
-				std::memset(m_pClientList[sOwnerH]->m_cExchangeName, 0, sizeof (m_pClientList[sOwnerH]->m_cExchangeName));
-				strcpy(m_pClientList[sOwnerH]->m_cExchangeName, m_pClientList[iClientH]->m_cCharName);
+				m_pClientList[sOwnerH]->exchangingWith_ = m_pClientList[iClientH]->shared_from_this();
 				m_pClientList[iClientH]->iExchangeCount++;
 				m_pClientList[iClientH]->SendNotifyMsg(iClientH, DEF_NOTIFY_OPENEXCHANGEWINDOW, sItemIndex + 1000, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
 						  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName, iAmount, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemColor,
@@ -6296,20 +6294,22 @@ void CGame::SetExchangeItem(int iClientH, int iItemIndex, int iAmount) {
 	if (m_pClientList[iClientH]->iExchangeCount > 4) return; //only 4 items trade
 	//no admin trade
 	if ((m_bAdminSecurity == true) && (m_pClientList[iClientH]->m_iAdminUserLevel > 0)) {
-		_ClearExchangeStatus(m_pClientList[iClientH]->m_iExchangeH);
+		auto with = m_pClientList[iClientH]->exchangingWith_.lock();
+		if(with) {
+			_ClearExchangeStatus(with->id_);
+		}
 		_ClearExchangeStatus(iClientH);
 	}
-	if ((m_pClientList[iClientH]->m_bIsExchangeMode == true) && (m_pClientList[iClientH]->m_iExchangeH != 0)) {
-		iExH = m_pClientList[iClientH]->m_iExchangeH;
-		if ((m_pClientList[iExH] == nullptr) || (memcmp(m_pClientList[iClientH]->m_cExchangeName, m_pClientList[iExH]->m_cCharName, 10) != 0)) {
-		} else {
+	if ((m_pClientList[iClientH]->m_bIsExchangeMode == true)) {
+		auto with = m_pClientList[iClientH]->exchangingWith_.lock();
+		if(with) {			
 			if ((iItemIndex < 0) || (iItemIndex >= DEF_MAXITEMS)) return;
 			if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == nullptr) return;
 			if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwCount < iAmount) return;
 			//No Duplicate items
 			for (int i = 0; i < m_pClientList[iClientH]->iExchangeCount; i++) {
 				if (m_pClientList[iClientH]->m_cExchangeItemIndex[i] == (char) iItemIndex) {
-					_ClearExchangeStatus(iExH);
+					_ClearExchangeStatus(with->id_);
 					_ClearExchangeStatus(iClientH);
 					return;
 				}
@@ -6329,56 +6329,52 @@ void CGame::SetExchangeItem(int iClientH, int iItemIndex, int iAmount) {
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wMaxLifeSpan,
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2 + 100,
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
-			m_pClientList[iExH]->SendNotifyMsg(iClientH, DEF_NOTIFY_SETEXCHANGEITEM, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
+			with->SendNotifyMsg(iClientH, DEF_NOTIFY_SETEXCHANGEITEM, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName, iAmount, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wMaxLifeSpan,
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2 + 100,
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 		}
-	} else {
 	}
 }
 
 void CGame::ConfirmExchangeItem(int iClientH) {
-	int iExH;
 	int iItemWeightA, iItemWeightB, iWeightLeftA, iWeightLeftB, iAmountLeft;
 	class CItem * pItemA[4], * pItemB[4], * pItemAcopy[4], * pItemBcopy[4];
 	if (m_pClientList[iClientH] == nullptr) return;
 	if (m_pClientList[iClientH]->m_bIsOnServerChange == true) return;
 	if ((m_bAdminSecurity == true) && (m_pClientList[iClientH]->m_iAdminUserLevel > 0)) return;
-	if ((m_pClientList[iClientH]->m_bIsExchangeMode == true) && (m_pClientList[iClientH]->m_iExchangeH != 0)) {
-		iExH = m_pClientList[iClientH]->m_iExchangeH;
-		if (iClientH == iExH) return;
-		if (m_pClientList[iExH] != nullptr) {
-			if ((memcmp(m_pClientList[iClientH]->m_cExchangeName, m_pClientList[iExH]->m_cCharName, 10) != 0) ||
-					  (m_pClientList[iExH]->m_bIsExchangeMode != true) ||
-					  (memcmp(m_pClientList[iExH]->m_cExchangeName, m_pClientList[iClientH]->m_cCharName, 10) != 0)) {
+	if ((m_pClientList[iClientH]->m_bIsExchangeMode == true)) {
+		auto with = m_pClientList[iClientH]->exchangingWith_.lock();
+		if (with) {
+			if (iClientH == with->id_) return;
+			if ((with->m_bIsExchangeMode != true) || !with->exchangingWith_.lock() || with->exchangingWith_.lock()->id_ != iClientH) {
 				_ClearExchangeStatus(iClientH);
-				_ClearExchangeStatus(iExH);
+				_ClearExchangeStatus(with->id_);
 				return;
 			} else {
 				m_pClientList[iClientH]->m_bIsExchangeConfirm = true;
-				if (m_pClientList[iExH]->m_bIsExchangeConfirm == true) {
+				if (with->m_bIsExchangeConfirm == true) {
 					//Check all items
 					for (int i = 0; i < m_pClientList[iClientH]->iExchangeCount; i++) {
 						if ((m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]] == nullptr) ||
 								  (memcmp(m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_cName, m_pClientList[iClientH]->m_cExchangeItemName[i], 20) != 0)) {
 							_ClearExchangeStatus(iClientH);
-							_ClearExchangeStatus(iExH);
+							_ClearExchangeStatus(with->id_);
 							return;
 						}
 					}
-					for (int i = 0; i < m_pClientList[iExH]->iExchangeCount; i++) {
-						if ((m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]] == nullptr) ||
-								  (memcmp(m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cName, m_pClientList[iExH]->m_cExchangeItemName[i], 20) != 0)) {
+					for (int i = 0; i < with->iExchangeCount; i++) {
+						if ((with->m_pItemList[with->m_cExchangeItemIndex[i]] == nullptr) ||
+								  (memcmp(with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cName, with->m_cExchangeItemName[i], 20) != 0)) {
 							_ClearExchangeStatus(iClientH);
-							_ClearExchangeStatus(iExH);
+							_ClearExchangeStatus(with->id_);
 							return;
 						}
 					}
 					iWeightLeftA = m_pClientList[iClientH]->_iCalcMaxLoad() - m_pClientList[iClientH]->iCalcTotalWeight();
-					iWeightLeftB = m_pClientList[iExH]->_iCalcMaxLoad() - m_pClientList[iExH]->iCalcTotalWeight();
+					iWeightLeftB = with->_iCalcMaxLoad() - with->iCalcTotalWeight();
 					//Calculate weight for items
 					iItemWeightA = 0;
 					for (int i = 0; i < m_pClientList[iClientH]->iExchangeCount; i++) {
@@ -6386,14 +6382,14 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 								  m_pClientList[iClientH]->m_iExchangeItemAmount[i]);
 					}
 					iItemWeightB = 0;
-					for (int i = 0; i < m_pClientList[iExH]->iExchangeCount; i++) {
-						iItemWeightB = iGetItemWeight(*m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]],
-								  m_pClientList[iExH]->m_iExchangeItemAmount[i]);
+					for (int i = 0; i < with->iExchangeCount; i++) {
+						iItemWeightB = iGetItemWeight(*with->m_pItemList[with->m_cExchangeItemIndex[i]],
+								  with->m_iExchangeItemAmount[i]);
 					}
 					//See if the other person can take the item weightload
 					if ((iWeightLeftA < iItemWeightB) || (iWeightLeftB < iItemWeightA)) {
 						_ClearExchangeStatus(iClientH);
-						_ClearExchangeStatus(iExH);
+						_ClearExchangeStatus(with->id_);
 						return;
 					}
 					for (int i = 0; i < m_pClientList[iClientH]->iExchangeCount; i++) {
@@ -6401,7 +6397,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 								  (m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 							if (m_pClientList[iClientH]->m_iExchangeItemAmount[i] > m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_dwCount) {
 								_ClearExchangeStatus(iClientH);
-								_ClearExchangeStatus(iExH);
+								_ClearExchangeStatus(with->id_);
 								return;
 							}
 							pItemA[i] = new class CItem;
@@ -6420,53 +6416,53 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 							pItemAcopy[i]->m_dwCount = m_pClientList[iClientH]->m_iExchangeItemAmount[i];
 						}
 					}
-					for (int i = 0; i < m_pClientList[iExH]->iExchangeCount; i++) {
-						if ((m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-								  (m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
-							if (m_pClientList[iExH]->m_iExchangeItemAmount[i] > m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_dwCount) {
+					for (int i = 0; i < with->iExchangeCount; i++) {
+						if ((with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
+								  (with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+							if (with->m_iExchangeItemAmount[i] > with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_dwCount) {
 								_ClearExchangeStatus(iClientH);
-								_ClearExchangeStatus(iExH);
+								_ClearExchangeStatus(with->id_);
 								return;
 							}
 							pItemB[i] = new class CItem;
-							_bInitItemAttr(*pItemB[i], m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cName);
-							pItemB[i]->m_dwCount = m_pClientList[iExH]->m_iExchangeItemAmount[i];
+							_bInitItemAttr(*pItemB[i], with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cName);
+							pItemB[i]->m_dwCount = with->m_iExchangeItemAmount[i];
 							pItemBcopy[i] = new class CItem;
-							_bInitItemAttr(*pItemBcopy[i], m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cName);
+							_bInitItemAttr(*pItemBcopy[i], with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cName);
 							bCopyItemContents(pItemBcopy[i], pItemB[i]);
-							pItemBcopy[i]->m_dwCount = m_pClientList[iExH]->m_iExchangeItemAmount[i];
+							pItemBcopy[i]->m_dwCount = with->m_iExchangeItemAmount[i];
 						} else {
-							pItemB[i] = (class CItem *)&*m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]];
-							pItemB[i]->m_dwCount = m_pClientList[iExH]->m_iExchangeItemAmount[i];
+							pItemB[i] = (class CItem *)&*with->m_pItemList[with->m_cExchangeItemIndex[i]];
+							pItemB[i]->m_dwCount = with->m_iExchangeItemAmount[i];
 							pItemBcopy[i] = new class CItem;
-							_bInitItemAttr(*pItemBcopy[i], m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cName);
+							_bInitItemAttr(*pItemBcopy[i], with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cName);
 							bCopyItemContents(pItemBcopy[i], pItemB[i]);
-							pItemBcopy[i]->m_dwCount = m_pClientList[iExH]->m_iExchangeItemAmount[i];
+							pItemBcopy[i]->m_dwCount = with->m_iExchangeItemAmount[i];
 						}
 					}
-					for (int i = 0; i < m_pClientList[iExH]->iExchangeCount; i++) {
+					for (int i = 0; i < with->iExchangeCount; i++) {
 						bAddItem(iClientH, pItemB[i], 0);
-						_bItemLog(DEF_ITEMLOG_EXCHANGE, iExH, iClientH, pItemBcopy[i]);
+						_bItemLog(DEF_ITEMLOG_EXCHANGE, with->id_, iClientH, pItemBcopy[i]);
 						delete pItemBcopy[i];
 						pItemBcopy[i] = nullptr;
-						if ((m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-								  (m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+						if ((with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
+								  (with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 							//
-							iAmountLeft = (int) m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_dwCount - m_pClientList[iExH]->m_iExchangeItemAmount[i];
+							iAmountLeft = (int) with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_dwCount - with->m_iExchangeItemAmount[i];
 							if (iAmountLeft < 0) iAmountLeft = 0;
 							// v1.41 !!!
-							SetItemCount(iExH, m_pClientList[iExH]->m_cExchangeItemIndex[i], iAmountLeft);
-							// m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex]->m_cName, iAmountLeft);
+							SetItemCount(with->id_, with->m_cExchangeItemIndex[i], iAmountLeft);
+							// with->m_pItemList[with->m_cExchangeItemIndex]->m_cName, iAmountLeft);
 							//
 						} else {
-							ReleaseItemHandler(iExH, m_pClientList[iExH]->m_cExchangeItemIndex[i], true);
-							m_pClientList[iExH]->SendNotifyMsg(0, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, m_pClientList[iExH]->m_cExchangeItemIndex[i], m_pClientList[iExH]->m_iExchangeItemAmount[i], 0, m_pClientList[iClientH]->m_cCharName);
-							m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]] = nullptr;
+							ReleaseItemHandler(with->id_, with->m_cExchangeItemIndex[i], true);
+							with->SendNotifyMsg(0, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, with->m_cExchangeItemIndex[i], with->m_iExchangeItemAmount[i], 0, m_pClientList[iClientH]->m_cCharName);
+							with->m_pItemList[with->m_cExchangeItemIndex[i]] = nullptr;
 						}
 					}
 					for (int i = 0; i < m_pClientList[iClientH]->iExchangeCount; i++) {
-						bAddItem(iExH, pItemA[i], 0);
-						_bItemLog(DEF_ITEMLOG_EXCHANGE, iClientH, iExH, pItemAcopy[i]);
+						bAddItem(with->id_, pItemA[i], 0);
+						_bItemLog(DEF_ITEMLOG_EXCHANGE, iClientH, with->id_, pItemAcopy[i]);
 						delete pItemAcopy[i];
 						pItemAcopy[i] = nullptr;
 						if ((m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
@@ -6480,34 +6476,29 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 							//
 						} else {
 							ReleaseItemHandler(iClientH, m_pClientList[iClientH]->m_cExchangeItemIndex[i], true);
-							m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, m_pClientList[iClientH]->m_cExchangeItemIndex[i], m_pClientList[iClientH]->m_iExchangeItemAmount[i], 0, m_pClientList[iExH]->m_cCharName);
+							m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, m_pClientList[iClientH]->m_cExchangeItemIndex[i], m_pClientList[iClientH]->m_iExchangeItemAmount[i], 0, with->m_cCharName);
 							m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]] = nullptr;
 						}
 					}
 					m_pClientList[iClientH]->m_bIsExchangeMode = false;
 					m_pClientList[iClientH]->m_bIsExchangeConfirm = false;
-					std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof (m_pClientList[iClientH]->m_cExchangeName));
-					m_pClientList[iClientH]->m_iExchangeH = 0;
+					m_pClientList[iClientH]->exchangingWith_.reset();
 					m_pClientList[iClientH]->iExchangeCount = 0;
-					m_pClientList[iExH]->m_bIsExchangeMode = false;
-					m_pClientList[iExH]->m_bIsExchangeConfirm = false;
-					std::memset(m_pClientList[iExH]->m_cExchangeName, 0, sizeof (m_pClientList[iExH]->m_cExchangeName));
-					m_pClientList[iExH]->m_iExchangeH = 0;
-					m_pClientList[iExH]->iExchangeCount = 0;
+					with->m_bIsExchangeMode = false;
+					with->m_bIsExchangeConfirm = false;
+					with->exchangingWith_.reset();
+					with->iExchangeCount = 0;
 					for (int i = 0; i < 4; i++) {
 						m_pClientList[iClientH]->m_cExchangeItemIndex[i] = -1;
-						m_pClientList[iExH]->m_cExchangeItemIndex[i] = -1;
+						with->m_cExchangeItemIndex[i] = -1;
 					}
 					m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_EXCHANGEITEMCOMPLETE, 0, 0, 0, nullptr);
-					m_pClientList[iExH]->SendNotifyMsg(0, DEF_NOTIFY_EXCHANGEITEMCOMPLETE, 0, 0, 0, nullptr);
+					with->SendNotifyMsg(0, DEF_NOTIFY_EXCHANGEITEMCOMPLETE, 0, 0, 0, nullptr);
 					m_pClientList[iClientH]->iCalcTotalWeight();
-					m_pClientList[iExH]->iCalcTotalWeight();
+					with->iCalcTotalWeight();
 					return;
 				}
 			}
-		} else {
-			_ClearExchangeStatus(iClientH);
-			return;
 		}
 	}
 }
@@ -13292,23 +13283,24 @@ MSH_SKIP_STRIKE:
 }
 
 void CGame::CancelExchangeItem(int iClientH) {
-	int iExH;
-	iExH = m_pClientList[iClientH]->m_iExchangeH;
-	_ClearExchangeStatus(iExH);
+	auto with = m_pClientList[iClientH]->exchangingWith_.lock();
+	if(with) {
+		_ClearExchangeStatus(with->id_);
+	}
 	_ClearExchangeStatus(iClientH);
 }
 
 void CGame::_ClearExchangeStatus(int iClientH) {
 	if ((iClientH <= 0) || (iClientH >= DEF_MAXCLIENTS)) return;
 	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_cExchangeName != false)
+	if (m_pClientList[iClientH]->exchangingWith_.lock()) {
 		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CANCELEXCHANGEITEM, 0, 0, 0, nullptr, 0, 0, 0, 0, 0, 0, nullptr);
+	}
 	m_pClientList[iClientH]->m_dwInitCCTime = false;
 	m_pClientList[iClientH]->m_iAlterItemDropIndex = 0;
-	m_pClientList[iClientH]->m_iExchangeH = 0;
+	m_pClientList[iClientH]->exchangingWith_.reset();
 	m_pClientList[iClientH]->m_bIsExchangeMode = false;
 	m_pClientList[iClientH]->m_bIsExchangeConfirm = false;
-	std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof (m_pClientList[iClientH]->m_cExchangeName));
 }
 
 void CGame::SetForceRecallTime(int iClientH) {

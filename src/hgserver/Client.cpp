@@ -146,8 +146,6 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket) : ga
 	m_bIsExchangeMode = false;
 	m_iFightZoneTicketNumber = m_iFightzoneNumber = m_iReserveTime = 0;
 	m_iPenaltyBlockYear = m_iPenaltyBlockMonth = m_iPenaltyBlockDay = 0;
-	m_iExchangeH = 0;
-	std::memset(m_cExchangeName, 0, sizeof (m_cExchangeName));
 	std::memset(m_cExchangeItemName, 0, sizeof (m_cExchangeItemName));
 	for (int i = 0; i < 4; i++) {
 		m_cExchangeItemIndex[i] = -1;
@@ -242,7 +240,6 @@ bool CClient::bCreateNewParty() {
 void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage) {
 	char cAttackerName[21], cEKMsg[1000];
 	short sAttackerWeapon;
-	int iExH;
 	bool bIsSAattacked = false;
 	if (this->m_bIsInitComplete == false) return;
 	if (this->m_bIsKilled == true) return;
@@ -258,8 +255,10 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	this->m_iHP = 0;
 	
 	if (this->m_bIsExchangeMode == true) {
-		iExH = this->m_iExchangeH;
-		game_._ClearExchangeStatus(iExH);
+		auto with = this->exchangingWith_.lock();
+		if(with) {
+			game_._ClearExchangeStatus(with->id_);
+		}
 		game_._ClearExchangeStatus(id_);
 	}
 	game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
@@ -3225,7 +3224,7 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 	uint16_t * wp;
 	char * cp, cDestMapName[11], cDir, cMapIndex, cQuestRemain;
 	short * sp, sX, sY, sSummonPoints;
-	int * ip, i, iRet, iSize, iDestX, iDestY, iExH, iMapSide;
+	int * ip, i, iRet, iSize, iDestX, iDestY, iMapSide;
 	bool bRet, bIsLockedMapNotify;
 	SYSTEMTIME SysTime;
 	this->m_dwLastActionTime = this->m_dwAFKCheckTime = timeGetTime();
@@ -3251,8 +3250,10 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 			  && (game_.m_bIsCrusadeMode == false)) return;
 	bIsLockedMapNotify = false;
 	if (this->m_bIsExchangeMode == true) {
-		iExH = this->m_iExchangeH;
-		game_._ClearExchangeStatus(iExH);
+		auto with = this->exchangingWith_.lock();
+		if(with) {
+			game_._ClearExchangeStatus(with->id_);
+		}
 		game_._ClearExchangeStatus(id_);
 	}
 	if ((memcmp(this->m_cLocation, "NONE", 4) == 0) && (pData[0] == '1'))
@@ -4928,7 +4929,7 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 }
 
 void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bForceCloseConn) {
-	int i, iExH;
+	int i;
 	char cTmpMap[30];
 	if (this->m_bIsInitComplete == true) {
 		if (memcmp(this->m_cMapName, "fight", 5) == 0) {
@@ -4936,8 +4937,10 @@ void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bFo
 			PutLogEventFileList(G_cTxt);
 		}
 		if (this->m_bIsExchangeMode == true) {
-			iExH = this->m_iExchangeH;
-			game_._ClearExchangeStatus(iExH);
+			auto with = this->exchangingWith_.lock();
+			if(with) {
+				game_._ClearExchangeStatus(with->id_);
+			}
 			game_._ClearExchangeStatus(id_);
 		}
 		if ((this->m_iAllocatedFish != 0) && (game_.m_pFish[this->m_iAllocatedFish] != nullptr))

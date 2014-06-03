@@ -140,8 +140,6 @@ public:
 	std::array<int, DEF_MAXSKILLTYPE> m_iSkillUsingTimeID;
 	std::array<char, DEF_MAXMAGICEFFECTS> m_cMagicEffectStatus;
 	ClientWPtr whisperedPlayer_;
-	//int m_iWhisperPlayerIndex;
-	//char m_cWhisperPlayerName[11];
 	char m_cProfile[256];
 	int m_iHungerStatus;
 	uint32_t m_dwWarBeginTime;
@@ -149,8 +147,12 @@ public:
 	bool m_bIsPoisoned;
 	int m_iPoisonLevel;
 	uint32_t m_dwPoisonTime;
-	int m_iPenaltyBlockYear, m_iPenaltyBlockMonth, m_iPenaltyBlockDay;
-	int m_iFightzoneNumber, m_iReserveTime, m_iFightZoneTicketNumber;
+	int m_iPenaltyBlockYear;
+	int m_iPenaltyBlockMonth;
+	int m_iPenaltyBlockDay;
+	int m_iFightzoneNumber;
+	int m_iReserveTime;
+	int m_iFightZoneTicketNumber;
 	std::unique_ptr<XSocket> m_pXSock;
 	int m_iAdminUserLevel;
 	int m_iRating;
@@ -189,8 +191,7 @@ public:
 	//int   m_iExchangeItemAmount; 
 	//bool  m_bIsExchangeConfirm;  
 	bool m_bIsExchangeMode; // Is In Exchange Mode? 
-	int m_iExchangeH; // Client ID to Exchanging with 
-	char m_cExchangeName[11]; // Name of Client to Exchanging with 
+	ClientWPtr exchangingWith_;
 	char m_cExchangeItemName[4][21]; // Name of Item to exchange 
 	char m_cExchangeItemIndex[4]; // ItemID to Exchange
 	int m_iExchangeItemAmount[4]; // Ammount to exchange with
