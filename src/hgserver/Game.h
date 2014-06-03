@@ -57,28 +57,28 @@
 #define DEF_AUTOSAVETIME			600000
 #define DEF_AFKTIME                    150000 // Five Minutes
 #define MAX_HELDENIANTOWER			200
-#define DEF_EXPSTOCKTIME		1000*10		// ExpStock�� ����ϴ� �ð� ���� 
-#define DEF_MSGQUENESIZE		100000		// �޽��� ť ������ 10���� 
+#define DEF_EXPSTOCKTIME		1000*10		
+#define DEF_MSGQUENESIZE		100000		
 #define DEF_AUTOEXPTIME			1000*60*6	
-#define DEF_TOTALLEVELUPPOINT	3			// �������� �Ҵ��ϴ� �� ����Ʈ �� 
+#define DEF_TOTALLEVELUPPOINT	3			
 #define DEF_MAXDYNAMICOBJECTS	60000
 #define DEF_GUILDSTARTRANK		12
-#define DEF_SSN_LIMIT_MULTIPLY_VALUE	2	// SSN-limit ���ϴ� �� 
-#define DEF_MAXNOTIFYMSGS		300			// �ִ� �������� �޽��� 
-#define DEF_MAXSKILLPOINTS		700			// ��ų ����Ʈ�� ���� 
+#define DEF_SSN_LIMIT_MULTIPLY_VALUE	2	
+#define DEF_MAXNOTIFYMSGS		300			
+#define DEF_MAXSKILLPOINTS		700			
 #define DEF_NIGHTTIME			40
-#define DEF_CHARPOINTLIMIT		1000		// ������ Ư��ġ�� �ִ밪 
-#define DEF_RAGPROTECTIONTIME	7000		// �� �� �̻� ������ ������ ���� ��ȣ�� �޴��� 
-#define DEF_MAXREWARDGOLD		99999999	// ����� �ִ�ġ 
-#define DEF_ATTACKAI_NORMAL				1	// ������ ��� 
-#define DEF_ATTACKAI_EXCHANGEATTACK		2	// ��ȯ ��� - ���� 
-#define DEF_ATTACKAI_TWOBYONEATTACK		3	// 2-1 ���, ���� 
+#define DEF_CHARPOINTLIMIT		1000		
+#define DEF_RAGPROTECTIONTIME	7000		
+#define DEF_MAXREWARDGOLD		99999999	
+#define DEF_ATTACKAI_NORMAL				1	
+#define DEF_ATTACKAI_EXCHANGEATTACK		2	
+#define DEF_ATTACKAI_TWOBYONEATTACK		3	
 #define DEF_MAXFISHS					200
 #define DEF_MAXMINERALS					200
 #define	DEF_MAXCROPS					200
-#define DEF_MAXENGAGINGFISH				30  // �� ����⿡ ���ø� �õ��� �� �ִ� �ִ� �ο� 
-#define DEF_MAXPORTIONTYPES				500 // �ִ� ���� ���� ���� 
-#define DEF_SPECIALEVENTTIME			300000 //600000 // 10��
+#define DEF_MAXENGAGINGFISH				30  
+#define DEF_MAXPORTIONTYPES				500 
+#define DEF_SPECIALEVENTTIME			300000 
 #define DEF_MAXQUESTTYPE				200
 #define DEF_DEF_MAXHELDENIANDOOR			10
 #define DEF_MAXSUBLOGSOCK				10
@@ -102,8 +102,8 @@
 #define DEF_ITEMLOG_MAGICLEARN			16
 #define DEF_ITEMLOG_USE					32
 #define DEF_MAXDUPITEMID				100
-#define DEF_MAXGUILDS					1000 // ���ÿ� ������ �� �ִ� ���� 
-#define DEF_MAXONESERVERUSERS			800	// 800 // �� �������� ����� �� �ִ� �ִ� ����ڼ�. �ʰ�� ��� ��Ȱ�� Ȥ�� �?�� ����, ������� �������.
+#define DEF_MAXGUILDS					1000 
+#define DEF_MAXONESERVERUSERS			800	
 #define DEF_MAXCONSTRUCTNUM				10
 #define DEF_MAXSCHEDULE					10
 #define DEF_MAXHELDENIAN				10
@@ -115,31 +115,30 @@
 #define DEF_CRITICALSGM                2000
 #define DEF_MAXCRITICALS            5000
 //FIN Criticals Config
-//v1.4311-3  �������� �ִ� ����
+
 #define DEF_MAXFIGHTZONE 10 
-//============================
 #define DEF_LEVELLIMIT		20				
 //============================
 //============================
-#define DEF_MINIMUMHITRATIO 15				// ���� ���� Ȯ�� 
+#define DEF_MINIMUMHITRATIO 15				
 //============================		
 //============================
-#define DEF_MAXIMUMHITRATIO	99				// �ִ� ���� Ȯ��
+#define DEF_MAXIMUMHITRATIO	99				
 //============================
 //============================
 #define DEF_PLAYERMAXLEVEL	180				
 //============================
 //============================
 // New Changed 12/05/2004
-#define DEF_GMGMANACONSUMEUNIT	15			// Grand Magic Generator ���� ��� ����.
+#define DEF_GMGMANACONSUMEUNIT	15			
 //============================
-#define DEF_MAXCONSTRUCTIONPOINT 30000		// �ִ� ��ȯ ����Ʈ 
+#define DEF_MAXCONSTRUCTIONPOINT 30000		
 #define DEF_MAXSUMMONPOINTS		 30000
 #define DEF_MAXWARCONTRIBUTION	 200000
 // MOG Definitions - 3.51
 // Level up MSG
 #define MSGID_LEVELUPSETTINGS				0x11A01000
-// 2003-04-14 ���� ����Ʈ�� ���� ������ ���� �ִ�...
+
 // Stat Point Change MSG
 #define MSGID_STATECHANGEPOINT				0x11A01001
 #define DEF_STR 0x01 //Correct
@@ -429,7 +428,7 @@ public:
 	bool bDeleteFish(int iHandle, int iDelMode);
 	int iCreateFish(char cMapIndex, short sX, short sY, short sDifficulty, class CItem * pItem, int iDifficulty, uint32_t dwLastTime);
 	void UserCommand_DissmissGuild(int iClientH, char * pData, uint32_t dwMsgSize);
-	// v1.4311-3 ���� �Լ� ����  Expire -> Ban ���� 
+	
 	void UserCommand_BanGuildsman(int iClientH, char * pData, uint32_t dwMsgSize);
 
 	int iGetExpLevel(int iExp);
@@ -494,7 +493,7 @@ public:
 	void RequestCivilRightHandler(CClient &client, char * pData);
 	bool bCheckLimitedUser(int iClientH);
 	void LevelUpSettingsHandler(int iClientH, char * pData, uint32_t dwMsgSize);
-	// v1.4311-3 ���� �Լ�  ������ ���� �Լ� ���� FightzoneReserveHandler
+	
 	void FightzoneReserveHandler(int iClientH, char * pData, uint32_t dwMsgSize);
 	bool bCheckLevelUp(int iClientH);
 	int iGetLevelExp(int iLevel);
@@ -588,9 +587,9 @@ public:
 	bool bInit();
 	void OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	bool bAccept(class XSocket * pXSock);
-	// v1.4311-3 �Լ� ���� ����� �޴� �Լ� .. void GetFightzoneTicketHandler(int iClientH);
+	
 	void GetFightzoneTicketHandler(int iClientH);
-	// v1.4311-3 2 �ð����� ������ ������ �ʱ�ȭ ��Ų��.
+	
 	void FightzoneReserveProcessor();
 	// New 06/05/2004
 	// Upgrades
@@ -684,7 +683,7 @@ public:
 	// Crusade Schedule
 	bool m_bIsCrusadeWarStarter;
 	int m_iLatestCrusadeDayOfWeek;
-	char m_cDayOrNight; // 1�̸� �ְ�, 2�� �߰� 
+	char m_cDayOrNight; 
 	int m_iSkillSSNpoint[102];
 	class CMsg * m_pNoticeMsgList[DEF_MAXNOTIFYMSGS];
 	int m_iTotalNoticeMsg, m_iPrevSendNoticeMsg;
@@ -697,19 +696,19 @@ public:
 	bool m_bIsServerShutdowned;
 	char m_cShutDownCode;
 	class CMineral * m_pMineral[DEF_MAXMINERALS];
-	int m_iMiddlelandMapIndex; // �������� �̵鷣�� �� �ε���: �� ���� -1�̸� �̵鷣�� ���� ������ �ǹ� 
-	int m_iAresdenMapIndex; // �Ʒ����� �� �ε��� 
-	int m_iElvineMapIndex; // ������ �� �ε���
+	int m_iMiddlelandMapIndex; 
+	int m_iAresdenMapIndex; 
+	int m_iElvineMapIndex; 
 	int m_iBTFieldMapIndex;
 	int m_iGodHMapIndex;
 	int m_iAresdenOccupyTiles;
 	int m_iElvineOccupyTiles;
 	int m_iCurMsgs, m_iMaxMsgs;
-	// v1.4311-3 ���� ����  ����� �ð��� ������ ���� uint32_t m_dwCanFightzoneReserveTime 
+	
 	uint32_t m_dwCanFightzoneReserveTime;
-	// v1.4311-3 ���� ���� �� �������� ���� ���θ� ���� int  m_iFightZoneReserve[DEF_MAXFIGHTZONE];
+	
 	int m_iFightZoneReserve[DEF_MAXFIGHTZONE];
-	// v1.4311-3 ���� ���� �����忡 ������ ��� ��ɾ�� ���� �ʵǰ� ��.
+	
 	int m_iFightzoneNoForceRecall;
 
 	struct {
@@ -724,16 +723,16 @@ public:
 	int m_iCurSubLogSockIndex;
 	int m_iSubLogSockFailCount;
 	int m_iSubLogSockActiveCount;
-	int m_iAutoRebootingCount; // v1.5 �ڵ� ����� �� Ƚ�� 
+	int m_iAutoRebootingCount; 
 	class CBuildItem * m_pBuildItemList[DEF_MAXBUILDITEMS];
 	class CItem * m_pDupItemIDList[DEF_MAXDUPITEMID];
 	char * m_pNoticementData;
 	uint32_t m_dwNoticementDataSize;
 	uint32_t m_dwMapSectorInfoTime;
 	int m_iMapSectorInfoUpdateCount;
-	// Crusade ó����
-	int m_iCrusadeCount; // 0�̸� ����� ������. 1�̸� ī��Ʈ �ٿ� ����. 
-	bool m_bIsCrusadeMode; // ũ�缼�̵� ���
+	
+	int m_iCrusadeCount; 
+	bool m_bIsCrusadeMode; 
 	// Apocalypse
 	bool m_bIsApocalypseMode;
 	uint32_t m_dwApocalypseGUID;
@@ -741,9 +740,9 @@ public:
 	int m_iLogChatOption;
 
 	struct {
-		char cMapName[11]; // ��ġ�Ǵ� �� ��ġ
-		char cType; // ���๰ ����. ��� NPC ������.
-		int dX, dY; // ��ġ�Ǵ� �ʻ��� ��ġ
+		char cMapName[11]; 
+		char cType; 
+		int dX, dY; 
 	} m_stCrusadeStructures[DEF_MAXCRUSADESTRUCTURES];
 	int m_iCollectedMana[3];
 	int m_iAresdenMana, m_iElvineMana;
@@ -758,13 +757,13 @@ public:
 	} m_stMeteorStrikeResult;
 
 	struct {
-		char cType; // �̰� nullptr�̸� ���ǵ��� �������� �ǹ�.
-		char cSide; // ���̵�
-		short sX, sY; // ��ġ�� ��ġ 
+		char cType; 
+		char cSide; 
+		short sX, sY; 
 	} m_stMiddleCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 
 	struct {
-		char m_cBannedIPaddress[21]; // Ŭ���̾�Ʈ�� IP address
+		char m_cBannedIPaddress[21]; 
 	} m_stBannedList[DEF_MAXBANNED];
 
 	struct {
@@ -786,7 +785,7 @@ public:
 		int EndiMinute;
 	} m_stHeldenianSchedule[DEF_MAXHELDENIAN];
 	int m_iTotalMiddleCrusadeStructures;
-	// �� ���� �ȿ��� ���� ������ Ŭ���̾�Ʈ�� �ε����� ������ ����Ǿ� �ִ�. 0�� ������ ����Ʈ�� ���̶�� �ǹ�
+	
 	int m_iClientShortCut[DEF_MAXCLIENTS + 1];
 	int m_iNpcConstructionPoint[DEF_MAXNPCTYPES];
 	uint32_t m_dwCrusadeGUID;

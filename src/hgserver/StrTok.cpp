@@ -24,12 +24,12 @@ char * CStrTok::pGet() {
 		else cNextData = 0;
 
 		if (_bIsSeperator(m_pData[m_iCurLoc], cNextData) == false) {
-			// separator�� �ƴϸ� ��ū�� �ۼ�  
+			
 			m_cToken[i] = m_pData[m_iCurLoc];
 			i++;
 			m_iCurLoc++;
 		} else {
-			// ���� ��ū���� �����͸� �̵���Ų�� ��ū�� ��ȯ�Ѵ�.
+			
 			bFlag = false;
 			while (bFlag == false) {
 				if (m_iCurLoc <= (m_iDataLength - 2))

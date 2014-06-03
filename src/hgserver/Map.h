@@ -100,16 +100,16 @@ public:
 	int m_iTotalAliveObject;
 	int m_iMaximumObject;
 
-	char m_cType; // ���� ���. 0�̸� ����. 1�̸� ��������� ���˰� �ƴϴ�.
+	char m_cType; 
 
-	bool m_bIsFixedDayMode; // �׻� �ְ��������: �ǹ� ���� �� 
+	bool m_bIsFixedDayMode; 
 
 	struct {
 		bool bDefined;
 		char cType; // 1:RANDOMAREA   2:RANDOMWAYPOINT
 
-		char cWaypoint[10]; // RANDOMWAYPOINT ��
-		RECT rcRect; // RANDOMAREA�߻��� ��� 
+		char cWaypoint[10]; 
+		RECT rcRect; 
 
 		int iTotalActiveMob;
 		int iMobType;
@@ -141,11 +141,11 @@ public:
 	POINT m_MineralPointList[DEF_MAXMINERALPOINT];
 	int m_iTotalMineralPoint, m_iMaxMineral, m_iCurMineral;
 
-	char m_cWhetherStatus; // ��� ����. 0�̸� ����. 1~3 �� 4~6 �� 7~9 ��ǳ 
-	uint32_t m_dwWhetherLastTime, m_dwWhetherStartTime; // ���� ����, ���� �ð� 
+	char m_cWhetherStatus; 
+	uint32_t m_dwWhetherLastTime, m_dwWhetherStartTime; 
 
 	int m_iLevelLimit;
-	int m_iUpperLevelLimit; // ���� �� ���� 
+	int m_iUpperLevelLimit; 
 
 	class COccupyFlag * m_pOccupyFlag[DEF_MAXOCCUPYFLAG];
 	int m_iTotalOccupyFlags;
@@ -180,7 +180,7 @@ public:
 		int m_iDynamicGateY;
 	} m_stDynamicGateCoords[DEF_MAXDYNAMICGATES];
 
-	// ���� �ʿ����� �÷��̾���� Ȱ�� ������ �ľ��ϴ� ���̺�.
+	
 
 	struct {
 		int iPlayerActivity;
@@ -229,13 +229,13 @@ public:
 	} m_stStrikePoint[DEF_MAXSTRIKEPOINTS];
 	int m_iTotalStrikePoints;
 
-	bool m_bIsDisabled; // ������� ����� ����� ��� 
+	bool m_bIsDisabled; 
 	int m_iTotalAgriculture;
 
 	struct {
-		char cType; // �̰� nullptr�̸� ���ǵ��� �������� �ǹ�.
-		char cSide; // ���̵�
-		short sX, sY; // ��ġ�� ��ġ 
+		char cType; 
+		char cSide; 
+		short sX, sY; 
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 	int m_iTotalCrusadeStructures;
 	bool m_bIsEnergySphereAutoCreation;

@@ -51,6 +51,6 @@ public:
 	short m_sIntLimit;
 	int m_iGoldCost;
 
-	char m_cCategory; // ��a� �l�u: RDa� ��a� 0, �r�ݸ�a� 1, acl� ��a� 2 
-	int m_iAttribute; // ��a� L�Ls:  �A 1 �D�A 2 sN 3 a� 4  
+	char m_cCategory; 
+	int m_iAttribute; 
 };

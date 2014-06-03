@@ -25,9 +25,9 @@ public:
 
 	bool m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
 
-	// ������ ǥ�ÿ� 
-	int m_iOccupyStatus; // Aresden�̸� -������, Elvine�̸� +�� �������. �� ���� �� ������ ���⼺ 
-	int m_iOccupyFlagIndex; // �� Ÿ�� ���� �� �ִ� ���ɱ���� �ε��� 
+	
+	int m_iOccupyStatus; 
+	int m_iOccupyFlagIndex; 
 
 	// Crusade
 	int m_iAttribute;

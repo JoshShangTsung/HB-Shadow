@@ -248,17 +248,17 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	bool bIsSAattacked = false;
 	if (this->m_bIsInitComplete == false) return;
 	if (this->m_bIsKilled == true) return;
-	// �������� ��� �ð��� �Է��Ѵ�.
-	// 2002-7-4 �������� ������ �ø� �� �ֵ���
+	
+	
 	if (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cName, "fight", 5) == 0) {
 		this->m_dwFightzoneDeadTime = timeGetTime();
 		wsprintf(G_cTxt, "Fightzone Dead Time: %d", this->m_dwFightzoneDeadTime);
 		PutLogList(G_cTxt);
 	}
 	this->m_bIsKilled = true;
-	// HP�� 0�̴�.
+	
 	this->m_iHP = 0;
-	// ���� ��ȯ ����� ��ȯ�� ����Ѵ�.
+	
 	if (this->m_bIsExchangeMode == true) {
 		iExH = this->m_iExchangeH;
 		game_._ClearExchangeStatus(iExH);
@@ -274,7 +274,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 			break;
 		case DEF_OWNERTYPE_NPC:
 			if (game_.m_pNpcList[iAttackerH] != nullptr)
-#ifdef DEF_LOCALNPCNAME     // v2.14 NPC �̸� �߹�ȭ�� ���� ����
+#ifdef DEF_LOCALNPCNAME     
 				wsprintf(cAttackerName, "NPCNPCNPC@%d", m_pNpcList[iAttackerH]->m_sType);
 #else
 				memcpy(cAttackerName, game_.m_pNpcList[iAttackerH]->m_cNpcName, 20);
@@ -284,7 +284,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 			break;
 	}
 	this->SendNotifyMsg(0, DEF_NOTIFY_KILLED, 0, 0, 0, cAttackerName);
-	// �ٸ� Ŭ���̾�Ʈ���� �״� ���� ���.
+	
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		sAttackerWeapon = ((game_.m_pClientList[iAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
 	} else sAttackerWeapon = 1;
@@ -304,7 +304,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	}
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		// v1.432
-		// Ư�� �ɷ��� �ִ� ����� ����� ���ߴ�.
+		
 		switch (game_.m_pClientList[iAttackerH]->m_iSpecialAbilityType) {
 			case 1:
 			case 2:
@@ -314,59 +314,59 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 				bIsSAattacked = true;
 				break;
 		}
-		if (iAttackerH == id_) return; // �����̴�.
+		if (iAttackerH == id_) return; 
 		if (memcmp(this->m_cLocation, "NONE", 4) == 0) {
-			// ����ڰ� �������̴�.
+			
 			if (this->m_iPKCount == 0) {
 				game_.ApplyPKpenalty(iAttackerH, id_);
 			} else {
 				game_.PK_KillRewardHandler(iAttackerH, id_);
 			}
 		} else {
-			// ����ڰ� �����ڰ� �ƴ϶� �� ���� �Ҽ��̴�.
+			
 			if (this->m_iGuildRank == -1) {
 				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
-					// ����ڰ� �������̴�.
+					
 					if (this->m_iPKCount == 0) {
 						game_.ApplyPKpenalty(iAttackerH, id_);
 					} else {
-						// �����ڴ� PK�� ��Ƶ� ������ ���� ���Ѵ�.
+						
 					}
 				} else {
 					if (memcmp(this->m_cLocation, game_.m_pClientList[iAttackerH]->m_cLocation, 10) == 0) {
 						if (this->m_iPKCount == 0) {
-							// ����ڰ� ������ ����. PK�̴�.
+							
 							game_.ApplyPKpenalty(iAttackerH, id_);
 						} else {
-							// �����ڸ� ��Ҵ�.
+							
 							game_.PK_KillRewardHandler(iAttackerH, id_);
 						}
 					} else {
-						// ����ڰ� �ٸ� ���� �Ҽ�. ������ �������
+						
 						game_.EnemyKillRewardHandler(iAttackerH, id_);
 					}
 				}
 			} else {
-				// ����ڴ� �����̴�.
+				
 				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
-					// ����ڰ� �������̴�.
+					
 					if (this->m_iPKCount == 0) {
-						// ������ ������ �����ڰ� �׿���. �����ڴ� PK�� �ȴ�.
+						
 						game_.ApplyPKpenalty(iAttackerH, id_);
 					} else {
-						// �����ڴ� PK�� ��Ƶ� ������ ���� ���Ѵ�.
+						
 					}
 				} else {
 					if (memcmp(this->m_cLocation, game_.m_pClientList[iAttackerH]->m_cLocation, 10) == 0) {
 						if (this->m_iPKCount == 0) {
-							// ����ڰ� ������ ����. PK�̴�.
+							
 							game_.ApplyPKpenalty(iAttackerH, id_);
 						} else {
-							// �����ڸ� ��Ҵ�.
+							
 							game_.PK_KillRewardHandler(iAttackerH, id_);
 						}
 					} else {
-						// ����ڰ� �ٸ� ���� �Ҽ�. ������ �������
+						
 						game_.EnemyKillRewardHandler(iAttackerH, id_);
 					}
 				}
@@ -375,7 +375,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 		if (this->m_iPKCount == 0) {
 			// Innocent
 			if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
-				//�����ڿ��� ��ݹ޾� �׾��.
+				
 				//this->m_iExp -= iDice(1, 100);
 				//if (this->m_iExp < 0) this->m_iExp = 0;
 				//this->SendNotifyMsg(nullptr,DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
@@ -413,11 +413,11 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 			// Slaughterer
 			game_.ApplyCombatKilledPenalty(id_, 12, bIsSAattacked);
 		}
-		// ���� ����� NPC�� ����� ����Ʈ��� ���ְ�� �Ǽ� ����Ʈ �ΰ�
+		
 		if (game_.m_pNpcList[iAttackerH]->m_iGuildGUID != 0) {
 			if (game_.m_pNpcList[iAttackerH]->m_cSide != this->m_cSide) {
-				// ����� ������ Ȥ�� ����Ʈ�� �� �÷��̾ �׿���. �ٷ� �뺸�Ѵ�.
-				// ���� ������ ���ְ��� �ִٸ� ��ٷ� �뺸. ������ �ٸ� ������ �˷���.
+				
+				
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if ((game_.m_pClientList[i] != nullptr) && (game_.m_pClientList[i]->m_iGuildGUID == game_.m_pNpcList[iAttackerH]->m_iGuildGUID) &&
 							  (game_.m_pClientList[i]->m_iCrusadeDuty == 3)) {
@@ -427,7 +427,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 						//testcode
 						wsprintf(G_cTxt, "Enemy Player Killed by Npc! Construction +%d", (this->m_iLevel / 2));
 						PutLogList(G_cTxt);
-						// ���ְ�� �ٷ� �뺸.
+						
 						game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, game_.m_pClientList[i]->m_iConstructionPoint, game_.m_pClientList[i]->m_iWarContribution, 0, nullptr);
 						return;
 					}
@@ -435,7 +435,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 		}
 	} else if (cAttackerType == DEF_OWNERTYPE_PLAYER_INDIRECT) {
 		game_._bPKLog(DEF_PKLOG_BYOTHER, id_, 0, nullptr);
-		// �÷��̾ �׾����� ����ڰ� �������̴�. �ƹ��� ������ ���.
+		
 		// this->m_iExp -= iDice(1, 50);
 		// if (this->m_iExp < 0) this->m_iExp = 0;
 		// this->SendNotifyMsg(nullptr,DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
@@ -832,16 +832,10 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			iRet = this->m_pXSock->iSendMsg(cData, 18);
 			break;
 		case DEF_NOTIFY_BUILDITEMSUCCESS:
-		case DEF_NOTIFY_BUILDITEMFAIL:
-			if (sV1 >= 0) {
+		case DEF_NOTIFY_BUILDITEMFAIL: 
 				sp = (short *) cp;
 				*sp = (short) sV1;
 				cp += 2;
-			} else {
-				sp = (short *) cp;
-				*sp = (short) sV1 + 10000;
-				cp += 2;
-			}
 			sp = (short *) cp;
 			*sp = (short) sV2;
 			cp += 2;
@@ -1781,11 +1775,11 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 		return;
 	}
 	iValue = (item.m_dwAttribute & 0xF0000000) >> 28;
-	if (iValue >= 15 || iValue < 0) {
+	if (iValue >= 15) {
 		this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
 		return;
 	}
-	if ((item.m_sIDnum == 717) && (iValue >= 7) && (iValue < 0)) {
+	if ((item.m_sIDnum == 717) && (iValue >= 7)) {
 		this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, nullptr);
 		return;
 	}
@@ -2787,7 +2781,7 @@ void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 				break;
 			case 2: // Farming
 			case 12: // Alchemy
-			case 15: // ����óġ
+			case 15: 
 			case 19: // Pretend-Corpse
 				if (this->m_cSkillMastery[sSkillIndex] > ((this->m_iInt + this->m_iAngelicInt) * 2)) {
 					this->m_cSkillMastery[sSkillIndex]--;
@@ -2806,24 +2800,24 @@ void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 		}
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
 			if (this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ] != -1) {
-				// ��չ��Ⱑ ����Ǿ� �־��.
+				
 				iWeaponIndex = this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
-					// Ȱ���� ��뿡 ���� ��ų�� ����̾��. ���߷��� 1 �ø���.
+					
 					this->m_iHitRatio++;
 				}
 			}
 			if (this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_RHAND ] != -1) {
-				// ���Ⱑ ����Ǿ� �־��.
+				
 				iWeaponIndex = this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_RHAND ];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
-					// ���̳� Mace���� ��뿡 ���� ��ų�� ����̾��. ���߷��� 1 �ø���.
+					
 					this->m_iHitRatio++;
 				}
 			}
 		}
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
-			// SKill�� ������ 600�� ������ �ٸ� ��ų�� �ϳ��� 1 ������.
+			
 			game_.bCheckTotalSkillMasteryPoints(id_, sSkillIndex);
 			this->SendNotifyMsg(0, DEF_NOTIFY_SKILL, sSkillIndex, this->m_cSkillMastery[sSkillIndex], 0, nullptr);
 		}

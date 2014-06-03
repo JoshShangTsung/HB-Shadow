@@ -314,7 +314,7 @@ void CMap::ClearOwner(int /*iDebugCode*/, short sOwnerH, char cOwnerType, short 
 
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
 
-	// �� ��ġ�� �ڵ��� ��ġ�ϸ� ��� Ŭ�����Ѵ�. 
+	
 	if ((pTile->m_sOwner == sOwnerH) && (pTile->m_cOwnerClass == cOwnerType)) {
 		pTile->m_sOwner = 0;
 		pTile->m_cOwnerClass = 0;
@@ -373,7 +373,7 @@ bool CMap::bSetItem(short sX, short sY, class CItem * pItem) {
 
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
 
-	// v1.4 ������ Ÿ�Ͽ� �������� �ִٸ� ������Ű�� �̵��Ѵ�. 
+	
 	if (pTile->m_pItem[DEF_TILE_PER_ITEMS - 1] != nullptr)
 		delete pTile->m_pItem[DEF_TILE_PER_ITEMS - 1];
 	else pTile->m_cTotalItem++;
@@ -436,7 +436,7 @@ bool CMap::bIsValidLoc(short sX, short sY) {
 
 bool CMap::bInit(char * pName) {
 	int i;
-	// �������� �ε��Ѵ�.
+	
 	std::memset(m_cName, 0, sizeof (m_cName));
 	strcpy(m_cName, pName);
 
@@ -474,9 +474,9 @@ bool CMap::_bDecodeMapDataFileContents() {
 	DWORD nRead;
 	ReadFile(hFile, (char *) cHeader, 256, &nRead, nullptr);
 
-	// ��������� �м��Ѵ�.
+	
 
-	// ���� �ι��ڸ� ��ش�.
+	
 	for (i = 0; i < 256; i++)
 		if (cHeader[i] == 0) cHeader[i] = ' ';
 
@@ -515,18 +515,18 @@ bool CMap::_bDecodeMapDataFileContents() {
 
 	m_pTile = (class CTile *)new class CTile[m_sSizeX * m_sSizeY];
 
-	// Ÿ���� ������ �о���δ�.
+	
 	for (iy = 0; iy < m_sSizeY; iy++)
 		for (ix = 0; ix < m_sSizeX; ix++) {
 			ReadFile(hFile, (char *) cTemp, m_sTileDataSize, &nRead, nullptr);
 			pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);
 			if ((cTemp[8] & 0x80) != 0) {
-				// ������� �Ӽ��� ��Ʈ�Ǿ� �ִ�.
+				
 				pTile->m_bIsMoveAllowed = false;
 			} else pTile->m_bIsMoveAllowed = true;
 
 			if ((cTemp[8] & 0x40) != 0) {
-				// �ڷ���Ʈ �Ӽ��� ��Ʈ�Ǿ� �ִ�.
+				
 				pTile->m_bIsTeleport = true;
 			} else pTile->m_bIsTeleport = false;
 
@@ -536,7 +536,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 
 			sp = (short *) &cTemp[0];
 			if (*sp == 19) {
-				// �� Ÿ���̴�. 
+				
 				pTile->m_bIsWater = true;
 			} else pTile->m_bIsWater = false;
 
@@ -622,7 +622,7 @@ bool CMap::bGetIsWater(short dX, short dY) {
 	return true;
 }
 
-//v2.19 2002-12-16 ��� ��ų ���
+
 
 bool CMap::bRemoveCropsTotalSum() {
 	if (m_iTotalAgriculture < DEF_MAXAGRICULTURE) {
@@ -635,7 +635,7 @@ bool CMap::bRemoveCropsTotalSum() {
 	return false;
 }
 
-//v2.19 2002-12-16 ��� ��ų ���
+
 
 bool CMap::bAddCropsTotalSum() {
 	if (m_iTotalAgriculture < DEF_MAXAGRICULTURE) {
@@ -673,7 +673,7 @@ int CMap::iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI) {
 
 	for (i = 1; i < DEF_MAXOCCUPYFLAG; i++)
 		if (m_pOccupyFlag[i] == nullptr) {
-			// ���� �Ҵ��ϰ� ��ȯ.
+			
 			m_pOccupyFlag[i] = new class COccupyFlag(dX, dY, iSide, iEKNum, iDOI);
 			if (m_pOccupyFlag == nullptr) return -1;
 			else return i;
@@ -714,14 +714,14 @@ void CMap::_SetupNoAttackArea() {
 
 	for (i = 0; i < DEF_MAXNMR; i++) {
 		if ((m_rcNoAttackRect[i].top > 0)) {
-			// No-Magic-Area�� ���ǵǾ� �ִ�.
+			
 			for (ix = m_rcNoAttackRect[i].left; ix <= m_rcNoAttackRect[i].right; ix++)
 				for (iy = m_rcNoAttackRect[i].top; iy <= m_rcNoAttackRect[i].bottom; iy++) {
 					pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);
 					pTile->m_iAttribute = pTile->m_iAttribute | 0x00000004;
 				}
 		} else if (m_rcNoAttackRect[i].top == -10) {
-			// �� ���� ��� ������.	
+			
 			for (ix = 0; ix < m_sSizeX; ix++)
 				for (iy = 0; iy < m_sSizeY; iy++) {
 					pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);

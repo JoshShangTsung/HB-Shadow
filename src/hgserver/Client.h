@@ -152,13 +152,13 @@ public:
 	short m_sCharIDnum1, m_sCharIDnum2, m_sCharIDnum3;
 	int m_iAbuseCount;
 	bool m_bIsBWMonitor;
-	//bool  m_bIsExchangeMode;		// ���� ������ ��ȯ ����ΰ�? 
-	//int   m_iExchangeH;				// ��ȯ�� ����� �ε��� 
-	//char  m_cExchangeName[11];		// ��ȯ�� ����� �̸� 
-	//char  m_cExchangeItemName[21];	// ��ȯ�ϰ��� �ϴ� ������ �̸� 
-	//char  m_cExchangeItemIndex;  // ��ȯ�� ������ �ε��� 
-	//int   m_iExchangeItemAmount; // ��ȯ�� ������ ���� 
-	//bool  m_bIsExchangeConfirm;  // ��ȯ Ȯ�� 
+	//bool  m_bIsExchangeMode;		
+	//int   m_iExchangeH;				
+	//char  m_cExchangeName[11];		
+	//char  m_cExchangeItemName[21];	
+	//char  m_cExchangeItemIndex;  
+	//int   m_iExchangeItemAmount; 
+	//bool  m_bIsExchangeConfirm;  
 	bool m_bIsExchangeMode; // Is In Exchange Mode? 
 	int m_iExchangeH; // Client ID to Exchanging with 
 	char m_cExchangeName[11]; // Name of Client to Exchanging with 
