@@ -48,6 +48,9 @@ struct Clients;
 class CMap : public std::enable_shared_from_this<CMap> {
 public:
 
+	CMap(int id, class CGame * pGame);
+	virtual ~CMap();
+	
 	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);
 	bool bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner);
 	bool bGetIsFarm(short tX, short tY);
@@ -84,8 +87,6 @@ public:
 	bool bAddCropsTotalSum();
 	void SetBigOwner(short sOwner, char cOwnerClass, short sX, short sY, char cArea);
 
-	CMap(int id, class CGame * pGame);
-	virtual ~CMap();
 	const int id_;
 	Clients &m_pClientList;
 	class CTile * m_pTile;
@@ -270,6 +271,8 @@ public:
 	bool __bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH, bool bAdminFlag);
 	int iCreateMineral(int tX, int tY, char cLevel);
 	void _CheckStrategicPointOccupyStatus();
+	void DoAbaddonThunderDamageHandler();
+	void MineralGenerator();
 };
 
 #define DEF_MAXMAPS					100

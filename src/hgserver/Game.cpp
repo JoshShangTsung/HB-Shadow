@@ -6486,7 +6486,7 @@ bool CGame::_bInitItemAttr(class CItem &item, const char * pItemName) {
 	return false;
 }
 
-bool CGame::_bGetIsStringIsNumber(char * pStr) {
+bool _bGetIsStringIsNumber(char * pStr) {
 	int i;
 	for (i = 0; i < (int) strlen(pStr); i++)
 		if ((pStr[i] != '-') && ((pStr[i] < (char) '0') || (pStr[i] > (char) '9'))) return false;

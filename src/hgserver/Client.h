@@ -328,6 +328,7 @@ public:
 	void DeleteClient(bool bSave, bool bNotify, bool bCountLogout = true, bool bForceCloseConn = false);
 	void ArmorLifeDecrement(int iTargetH, char cOwnerType, int iValue);
 	void ReleaseItemHandler(short sItemIndex, bool bNotice);
+	void RequestRestartHandler();
 };
 #define DEF_MAXCLIENTS				2000
 

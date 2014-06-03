@@ -1,4 +1,5 @@
 #pragma once
+#include "Map.h"
 
 class CMineral {
 public:

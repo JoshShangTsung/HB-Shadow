@@ -154,6 +154,7 @@
 constexpr char _tmp_cTmpDirX[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
 constexpr char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 int iDice(int iThrow, int iRange);
+bool _bGetIsStringIsNumber(char * pStr);
 
 class CGame {
 public:
@@ -219,7 +220,6 @@ public:
 	void _CreateApocalypseGUID(uint32_t dwApocalypseGUID);
 	bool bReadApocalypseGUIDFile(const char * cFn);
 	void SendThunder(int iClient, short sX, short sY, short sV3, short sV4);
-	void DoAbaddonThunderDamageHandler(char cMapIndex);
 	void GSM_SetGuildTeleportLoc(int iGuildGUID, int dX, int dY, char * pMapName);
 	void SyncMiddlelandMapInfo();
 	void RemoveCrusadeStructures();
@@ -334,7 +334,6 @@ public:
 	void JoinPartyHandler(int iClientH, int iV1, char *pMemberName);
 	void CreateNewPartyHandler(int iClientH);
 	void RequestSellItemListHandler(CClient &client, char * pData);
-	void RequestRestartHandler(CClient &client);
 	int iRequestPanningMapDataRequest(CClient &client, char * pData);
 	void GetMagicAbilityHandler(int iClientH);
 	void Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
@@ -416,7 +415,7 @@ public:
 	bool bDeleteFish(int iHandle, int iDelMode);
 	int iCreateFish(MapPtr map, short sX, short sY, short sDifficulty, class CItem * pItem, int iDifficulty, uint32_t dwLastTime);
 	void UserCommand_DissmissGuild(int iClientH, char * pData, uint32_t dwMsgSize);
-	
+
 	void UserCommand_BanGuildsman(int iClientH, char * pData, uint32_t dwMsgSize);
 
 	int iGetExpLevel(int iExp);
@@ -479,7 +478,7 @@ public:
 	void RequestCivilRightHandler(CClient &client, char * pData);
 	bool bCheckLimitedUser(int iClientH);
 	void LevelUpSettingsHandler(int iClientH, char * pData, uint32_t dwMsgSize);
-	
+
 	void FightzoneReserveHandler(int iClientH, char * pData, uint32_t dwMsgSize);
 	bool bCheckLevelUp(int iClientH);
 	int iGetLevelExp(int iLevel);
@@ -542,8 +541,7 @@ public:
 	void NpcProcess();
 	int bCreateNewNpc(const char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
 	//bool bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sX, short sY);
-	
-	bool _bGetIsStringIsNumber(char * pStr);
+
 	bool _bInitItemAttr(class CItem &pItem, const char * pItemName);
 	bool bReadProgramConfigFile(const char * cFn);
 	void GameProcess();
@@ -566,9 +564,9 @@ public:
 	bool bInit();
 	void OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	bool bAccept(class XSocket * pXSock);
-	
+
 	void GetFightzoneTicketHandler(int iClientH);
-	
+
 	void FightzoneReserveProcessor();
 	// New 06/05/2004
 	// Upgrades
@@ -660,7 +658,7 @@ public:
 	// Crusade Schedule
 	bool m_bIsCrusadeWarStarter;
 	int m_iLatestCrusadeDayOfWeek;
-	char m_cDayOrNight; 
+	char m_cDayOrNight;
 	int m_iSkillSSNpoint[102];
 	class CMsg * m_pNoticeMsgList[DEF_MAXNOTIFYMSGS];
 	int m_iTotalNoticeMsg, m_iPrevSendNoticeMsg;
@@ -673,19 +671,19 @@ public:
 	bool m_bIsServerShutdowned;
 	char m_cShutDownCode;
 	class CMineral * m_pMineral[DEF_MAXMINERALS];
-	MapWPtr middlelandMap_; 
-	int m_iAresdenMapIndex; 
-	int m_iElvineMapIndex; 
+	MapWPtr middlelandMap_;
+	int m_iAresdenMapIndex;
+	int m_iElvineMapIndex;
 	int m_iBTFieldMapIndex;
 	int m_iGodHMapIndex;
 	int m_iAresdenOccupyTiles;
 	int m_iElvineOccupyTiles;
 	int m_iCurMsgs, m_iMaxMsgs;
-	
+
 	uint32_t m_dwCanFightzoneReserveTime;
-	
+
 	int m_iFightZoneReserve[DEF_MAXFIGHTZONE];
-	
+
 	int m_iFightzoneNoForceRecall;
 
 	struct {
@@ -700,16 +698,16 @@ public:
 	int m_iCurSubLogSockIndex;
 	int m_iSubLogSockFailCount;
 	int m_iSubLogSockActiveCount;
-	int m_iAutoRebootingCount; 
+	int m_iAutoRebootingCount;
 	class CBuildItem * m_pBuildItemList[DEF_MAXBUILDITEMS];
 	class CItem * m_pDupItemIDList[DEF_MAXDUPITEMID];
 	char * m_pNoticementData;
 	uint32_t m_dwNoticementDataSize;
 	uint32_t m_dwMapSectorInfoTime;
 	int m_iMapSectorInfoUpdateCount;
-	
-	int m_iCrusadeCount; 
-	bool m_bIsCrusadeMode; 
+
+	int m_iCrusadeCount;
+	bool m_bIsCrusadeMode;
 	// Apocalypse
 	bool m_bIsApocalypseMode;
 	uint32_t m_dwApocalypseGUID;
@@ -717,9 +715,9 @@ public:
 	int m_iLogChatOption;
 
 	struct {
-		char cMapName[11]; 
-		char cType; 
-		int dX, dY; 
+		char cMapName[11];
+		char cType;
+		int dX, dY;
 	} m_stCrusadeStructures[DEF_MAXCRUSADESTRUCTURES];
 	int m_iCollectedMana[3];
 	int m_iAresdenMana, m_iElvineMana;
@@ -734,13 +732,13 @@ public:
 	} m_stMeteorStrikeResult;
 
 	struct {
-		char cType; 
-		char cSide; 
-		short sX, sY; 
+		char cType;
+		char cSide;
+		short sX, sY;
 	} m_stMiddleCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 
 	struct {
-		char m_cBannedIPaddress[21]; 
+		char m_cBannedIPaddress[21];
 	} m_stBannedList[DEF_MAXBANNED];
 
 	struct {
@@ -762,7 +760,7 @@ public:
 		int EndiMinute;
 	} m_stHeldenianSchedule[DEF_MAXHELDENIAN];
 	int m_iTotalMiddleCrusadeStructures;
-	
+
 	int m_iClientShortCut[DEF_MAXCLIENTS + 1];
 	int m_iNpcConstructionPoint[DEF_MAXNPCTYPES];
 	uint32_t m_dwCrusadeGUID;

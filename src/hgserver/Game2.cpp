@@ -5548,7 +5548,7 @@ bool CGame::_bDecodeOccupyFlagSaveFileContents(char * pData, uint32_t dwMsgSize)
 							cReadModeA = 0;
 							cReadModeB = 0;
 						}
-						break;
+							break;
 					}
 				default:
 					break;
@@ -8561,63 +8561,6 @@ void CGame::AdminOrder_SetObserverMode(int iClientH) {
 	}
 }
 
-void CGame::RequestRestartHandler(CClient &client) {
-	char cTmpMap[32];
-	if (client.m_bIsKilled == true) {
-		strcpy(cTmpMap, client.map_->m_cName);
-		std::memset(client.map_->m_cName, 0, sizeof (client.map_->m_cName));
-		if (strcmp(client.m_cLocation, "NONE") == 0) {
-			strcpy(client.map_->m_cName, "default");
-		} else {
-			if (strcmp(client.m_cLocation, "aresden") == 0) {
-				if (m_bIsCrusadeMode == true) {
-					if (client.m_iDeadPenaltyTime > 0) {
-						client.lockedMap_ = m_pMapList.byName("aresden");
-						client.m_iLockedMapTime = 60 * 5;
-						client.m_iDeadPenaltyTime = 60 * 10;
-					} else {
-						client.lockedMap_ = m_pMapList.byName("resurr1");
-						client.m_iDeadPenaltyTime = 60 * 10;
-					}
-				}
-				if (strcmp(cTmpMap, "elvine") == 0) {
-					client.map_ = client.lockedMap_ = m_pMapList.byName("elvjail");
-					client.m_iLockedMapTime = 10 * 2;
-				} else if (client.m_iLevel > 80) {
-					client.map_ = m_pMapList.byName("resurr1");
-				} else {
-					client.map_ = m_pMapList.byName("aresden");
-				}
-			} else {
-				if (m_bIsCrusadeMode == true) {
-					if (client.m_iDeadPenaltyTime > 0) {
-						std::memset(client.m_cLockedMapName, 0, sizeof (client.m_cLockedMapName));
-						strcpy(client.m_cLockedMapName, "elvine");
-						client.m_iLockedMapTime = 60 * 5;
-						client.m_iDeadPenaltyTime = 60 * 10;
-					} else {
-						memcpy(client.map_->m_cName, "resurr2", 7);
-						client.m_iDeadPenaltyTime = 60 * 10;
-					}
-				}
-				if (strcmp(cTmpMap, "aresden") == 0) {
-					memcpy(client.map_->m_cName, "arejail", 7);
-					strcpy(client.m_cLockedMapName, "arejail");
-					client.m_iLockedMapTime = 10 * 2;
-				} else if (client.m_iLevel > 80)
-					memcpy(client.map_->m_cName, "resurr2", 7);
-				else memcpy(client.map_->m_cName, "elvine", 7);
-			}
-		}
-		client.m_bIsKilled = false;
-		client.m_iHP = (3 * client.m_iVit) + (2 * client.m_iLevel) + (client.m_iStr / 2);
-		client.m_iHungerStatus = 100;
-		std::memset(cTmpMap, 0, sizeof (cTmpMap));
-		strcpy(cTmpMap, client.map_->m_cName);
-		client.RequestTeleportHandler("2   ", cTmpMap, -1, -1);
-	}
-}
-
 void CGame::AdminOrder_EnableAdminCommand(int iClientH, char *pData, uint32_t dwMsgSize) {
 	char * token, cBuff[256], len;
 	char seps[] = "= \t\n";
@@ -8942,19 +8885,19 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 }
 
 bool CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAttackerType) {
-	int i, sX, sY, dX, dY, iGoalMapIndex;
+	int i, sX, sY, dX, dY;
 	char cResult;
 	if (m_pNpcList[iNpcH] == nullptr) return false;
 	if (m_pNpcList[iNpcH]->map_->m_iCurEnergySphereGoalPointIndex == -1) return false;
-	if (m_pNpcList[iNpcH]->m_cMapIndex != m_iMiddlelandMapIndex) {
-		iGoalMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
+	if (m_pNpcList[iNpcH]->map_ != middlelandMap_.lock()) {
+		MapPtr goalMap = m_pNpcList[iNpcH]->map_;
 		sX = m_pNpcList[iNpcH]->m_sX;
 		sY = m_pNpcList[iNpcH]->m_sY;
-		cResult = m_pMapList[iGoalMapIndex]->m_stEnergySphereGoalList[m_pMapList[iGoalMapIndex]->m_iCurEnergySphereGoalPointIndex].cResult;
-		dX = m_pMapList[iGoalMapIndex]->m_stEnergySphereGoalList[m_pMapList[iGoalMapIndex]->m_iCurEnergySphereGoalPointIndex].aresdenX;
-		dY = m_pMapList[iGoalMapIndex]->m_stEnergySphereGoalList[m_pMapList[iGoalMapIndex]->m_iCurEnergySphereGoalPointIndex].aresdenY;
+		cResult = goalMap->m_stEnergySphereGoalList[goalMap->m_iCurEnergySphereGoalPointIndex].cResult;
+		dX = goalMap->m_stEnergySphereGoalList[goalMap->m_iCurEnergySphereGoalPointIndex].aresdenX;
+		dY = goalMap->m_stEnergySphereGoalList[goalMap->m_iCurEnergySphereGoalPointIndex].aresdenY;
 		if ((sX >= dX - 2) && (sX <= dX + 2) && (sY >= dY - 2) && (sY <= dY + 2)) {
-			m_pMapList[iGoalMapIndex]->m_iCurEnergySphereGoalPointIndex = -1;
+			goalMap->m_iCurEnergySphereGoalPointIndex = -1;
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != nullptr)) {
 				if (m_pClientList[sAttackerH]->m_cSide == 1) { // Aresden (Side:1)
 					m_pClientList[sAttackerH]->m_iContribution += 5;
@@ -8970,10 +8913,10 @@ bool CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 			}
 			return true;
 		}
-		dX = m_pMapList[iGoalMapIndex]->m_stEnergySphereGoalList[m_pMapList[iGoalMapIndex]->m_iCurEnergySphereGoalPointIndex].elvineX;
-		dY = m_pMapList[iGoalMapIndex]->m_stEnergySphereGoalList[m_pMapList[iGoalMapIndex]->m_iCurEnergySphereGoalPointIndex].elvineY;
+		dX = goalMap->m_stEnergySphereGoalList[goalMap->m_iCurEnergySphereGoalPointIndex].elvineX;
+		dY = goalMap->m_stEnergySphereGoalList[goalMap->m_iCurEnergySphereGoalPointIndex].elvineY;
 		if ((sX >= dX - 2) && (sX <= dX + 2) && (sY >= dY - 2) && (sY <= dY + 2)) {
-			m_pMapList[iGoalMapIndex]->m_iCurEnergySphereGoalPointIndex = -1;
+			goalMap->m_iCurEnergySphereGoalPointIndex = -1;
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != nullptr)) {
 				if (m_pClientList[sAttackerH]->m_cSide == 2) { // Elvine (Side:2)
 					m_pClientList[sAttackerH]->m_iContribution += 5;
@@ -8993,11 +8936,12 @@ bool CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 	} else {
 		sX = m_pNpcList[iNpcH]->m_sX;
 		sY = m_pNpcList[iNpcH]->m_sY;
-		cResult = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereGoalList[m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex].cResult;
-		dX = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereGoalList[m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex].aresdenX;
-		dY = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereGoalList[m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex].aresdenY;
+		auto ml = middlelandMap_.lock();
+		cResult = ml->m_stEnergySphereGoalList[ml->m_iCurEnergySphereGoalPointIndex].cResult;
+		dX = ml->m_stEnergySphereGoalList[ml->m_iCurEnergySphereGoalPointIndex].aresdenX;
+		dY = ml->m_stEnergySphereGoalList[ml->m_iCurEnergySphereGoalPointIndex].aresdenY;
 		if ((sX >= dX - 4) && (sX <= dX + 4) && (sY >= dY - 4) && (sY <= dY + 4)) {
-			m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex = -1;
+			ml->m_iCurEnergySphereGoalPointIndex = -1;
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != nullptr)) {
 				if (m_pClientList[sAttackerH]->m_cSide == 1) { // Aresden (Side:1)
 					m_pClientList[sAttackerH]->m_iContribution += 5;
@@ -9013,10 +8957,10 @@ bool CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 			}
 			return true;
 		}
-		dX = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereGoalList[m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex].elvineX;
-		dY = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereGoalList[m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex].elvineY;
+		dX = ml->m_stEnergySphereGoalList[ml->m_iCurEnergySphereGoalPointIndex].elvineX;
+		dY = ml->m_stEnergySphereGoalList[ml->m_iCurEnergySphereGoalPointIndex].elvineY;
 		if ((sX >= dX - 4) && (sX <= dX + 4) && (sY >= dY - 4) && (sY <= dY + 4)) {
-			m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex = -1;
+			ml->m_iCurEnergySphereGoalPointIndex = -1;
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != nullptr)) {
 				if (m_pClientList[sAttackerH]->m_cSide == 2) { // Elvine (Side:2)
 					m_pClientList[sAttackerH]->m_iContribution += 5;
@@ -9040,33 +8984,33 @@ bool CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 	int i, iNamingValue, iCIndex, iTemp, pX, pY;
 	char cSA, cName_Internal[31], cWaypoint[31];
+	auto ml = middlelandMap_.lock();
 	if (bIsAdminCreate != true) {
-		if (m_iMiddlelandMapIndex < 0) return;
-		if (m_pMapList[m_iMiddlelandMapIndex] == nullptr) return;
+		if (ml == nullptr) return;
 		if (iDice(1, 2000) != 123) return;
 		if (m_iTotalClients < 500) return;
-		if (m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex >= 0) return;
-		iCIndex = iDice(1, m_pMapList[m_iMiddlelandMapIndex]->m_iTotalEnergySphereCreationPoint);
-		if (m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereCreationList[iCIndex].cType == 0) return;
+		if (ml->m_iCurEnergySphereGoalPointIndex >= 0) return;
+		iCIndex = iDice(1, ml->m_iTotalEnergySphereCreationPoint);
+		if (ml->m_stEnergySphereCreationList[iCIndex].cType == 0) return;
 		cSA = 0;
-		pX = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereCreationList[iCIndex].sX;
-		pY = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereCreationList[iCIndex].sY;
+		pX = ml->m_stEnergySphereCreationList[iCIndex].sX;
+		pY = ml->m_stEnergySphereCreationList[iCIndex].sY;
 		std::memset(cWaypoint, 0, sizeof (cWaypoint));
-		iNamingValue = m_pMapList[m_iMiddlelandMapIndex]->iGetEmptyNamingValue();
+		iNamingValue = ml->iGetEmptyNamingValue();
 		if (iNamingValue != -1) {
 			//
 			std::memset(cName_Internal, 0, sizeof (cName_Internal));
 			wsprintf(cName_Internal, "XX%d", iNamingValue);
 			cName_Internal[0] = '_';
-			cName_Internal[1] = m_iMiddlelandMapIndex + 65;
-			if ((bCreateNewNpc("Energy-Sphere", cName_Internal, m_pMapList[m_iMiddlelandMapIndex]->m_cName, (rand() % 5), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, false)) == false) {
-				m_pMapList[m_iMiddlelandMapIndex]->SetNamingValueEmpty(iNamingValue);
+			cName_Internal[1] = ml->id_ + 65;
+			if ((bCreateNewNpc("Energy-Sphere", cName_Internal, ml->m_cName, (rand() % 5), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, false)) == false) {
+				ml->SetNamingValueEmpty(iNamingValue);
 				return;
 			}
 		}
-		iTemp = iDice(1, m_pMapList[m_iMiddlelandMapIndex]->m_iTotalEnergySphereGoalPoint);
-		if (m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereGoalList[iTemp].cResult == 0) return;
-		m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex = iTemp;
+		iTemp = iDice(1, ml->m_iTotalEnergySphereGoalPoint);
+		if (ml->m_stEnergySphereGoalList[iTemp].cResult == 0) return;
+		ml->m_iCurEnergySphereGoalPointIndex = iTemp;
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_bIsInitComplete == true)) {
 				m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_ENERGYSPHERECREATED, pX, pY, 0, nullptr);
@@ -9089,7 +9033,7 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 			std::memset(cName_Internal, 0, sizeof (cName_Internal));
 			wsprintf(cName_Internal, "XX%d", iNamingValue);
 			cName_Internal[0] = '_';
-			cName_Internal[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+			cName_Internal[1] = m_pClientList[iClientH]->map_->id_ + 65;
 			if ((bCreateNewNpc("Energy-Sphere", cName_Internal, m_pClientList[iClientH]->map_->m_cName, (rand() % 5), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, false)) == false) {
 				m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
 				return;
@@ -9267,7 +9211,7 @@ bool CGame::__bSetConstructionKit(int dX, int dY, int iType, int /*iTimeCost*/, 
 		std::memset(cName, 0, sizeof (cName));
 		wsprintf(cName, "XX%d", iNamingValue);
 		cName[0] = '_';
-		cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+		cName[1] = m_pClientList[iClientH]->map_->id_ + 65;
 		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) dX;
 		tY = (int) dY;
@@ -9330,8 +9274,6 @@ void CGame::LocalEndCrusadeMode(int iWinnerSide) {
 		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, false, false, "Aresden Win!");
 	} else {
 		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, false, false, "Drawn!");
-	}
-	if (m_iMiddlelandMapIndex != -1) {
 	}
 }
 
@@ -9489,7 +9431,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 			std::memset(cName, 0, sizeof (cName));
 			wsprintf(cName, "XX%d", iNamingValue);
 			cName[0] = '_';
-			cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+			cName[1] = m_pClientList[iClientH]->map_->id_ + 65;
 			switch (cType) {
 				case 43:
 					switch (m_pClientList[iClientH]->m_cSide) {
@@ -9889,19 +9831,20 @@ void CGame::RequestHelpHandler(int iClientH) {
 
 void CGame::SyncMiddlelandMapInfo() {
 	int i;
-	if (m_iMiddlelandMapIndex != -1) {
+	auto ml = middlelandMap_.lock();
+	if (ml) {
 		for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
 			m_stMiddleCrusadeStructureInfo[i].cType = 0;
 			m_stMiddleCrusadeStructureInfo[i].cSide = 0;
 			m_stMiddleCrusadeStructureInfo[i].sX = 0;
 			m_stMiddleCrusadeStructureInfo[i].sY = 0;
 		}
-		m_iTotalMiddleCrusadeStructures = m_pMapList[m_iMiddlelandMapIndex]->m_iTotalCrusadeStructures;
+		m_iTotalMiddleCrusadeStructures = ml->m_iTotalCrusadeStructures;
 		for (i = 0; i < m_iTotalMiddleCrusadeStructures; i++) {
-			m_stMiddleCrusadeStructureInfo[i].cType = m_pMapList[m_iMiddlelandMapIndex]->m_stCrusadeStructureInfo[i].cType;
-			m_stMiddleCrusadeStructureInfo[i].cSide = m_pMapList[m_iMiddlelandMapIndex]->m_stCrusadeStructureInfo[i].cSide;
-			m_stMiddleCrusadeStructureInfo[i].sX = m_pMapList[m_iMiddlelandMapIndex]->m_stCrusadeStructureInfo[i].sX;
-			m_stMiddleCrusadeStructureInfo[i].sY = m_pMapList[m_iMiddlelandMapIndex]->m_stCrusadeStructureInfo[i].sY;
+			m_stMiddleCrusadeStructureInfo[i].cType = ml->m_stCrusadeStructureInfo[i].cType;
+			m_stMiddleCrusadeStructureInfo[i].cSide = ml->m_stCrusadeStructureInfo[i].cSide;
+			m_stMiddleCrusadeStructureInfo[i].sX = ml->m_stCrusadeStructureInfo[i].sX;
+			m_stMiddleCrusadeStructureInfo[i].sY = ml->m_stCrusadeStructureInfo[i].sY;
 		}
 	}
 }
@@ -10252,7 +10195,7 @@ void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize
 						Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
 					}
 					//Show effects
-					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex,
+					m_pClientList[iClientH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, 
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, randX, randY, (sType + 100), m_pClientList[iClientH]->m_sType);
 					break;
 				case DEF_MAGICTYPE_DAMAGE_LINEAR:
@@ -10336,7 +10279,7 @@ void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr); // v1.41 false
 					}
 					//Show effects
-					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex,
+					m_pClientList[iClientH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, randX, randY, (sType + 100), m_pClientList[iClientH]->m_sType);
 					break;
 				case DEF_MAGICTYPE_DAMAGE_AREA:
@@ -10362,7 +10305,7 @@ void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize
 							}
 						}
 					//Show effects
-					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[iClientH]->m_cMapIndex,
+					m_pClientList[iClientH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, randX, randY, (sType + 100), m_pClientList[iClientH]->m_sType);
 					break;
 				default:
@@ -10428,7 +10371,7 @@ void CGame::AdminOrder_Weather(int iClientH, char * pData, uint32_t dwMsgSize) {
 			}
 			if (cPrevMode != m_pMapList[i]->m_cWhetherStatus) {
 				for (j = 1; j < DEF_MAXCLIENTS; j++)
-					if ((m_pClientList[j] != nullptr) && (m_pClientList[j]->m_bIsInitComplete == true) && (m_pClientList[j]->m_cMapIndex == i))
+					if ((m_pClientList[j] != nullptr) && (m_pClientList[j]->m_bIsInitComplete == true) && (m_pClientList[j]->map_ == m_pMapList[i]))
 						m_pClientList[j]->SendNotifyMsg(0, DEF_NOTIFY_WHETHERCHANGE, m_pMapList[i]->m_cWhetherStatus, 0, 0, nullptr);
 			}
 		}
@@ -11134,12 +11077,8 @@ void CGame::GetExp(int iClientH, int iExp, bool /*bIsAttackerOwn*/) {
 				if ((m_pClientList[iH] != nullptr) && (m_pClientList[iH]->m_iHP > 0)) {
 					//Newly added, Only players on same map get exp :}
 					//if(m_pClientList[iH]->m_cMapIndex == m_pClientList[iClientH]->m_cMapIndex)
-					if ((strlen(m_pMapList[m_pClientList[iH]->m_cMapIndex]->m_cName)) == (strlen(m_pClientList[iClientH]->map_->m_cName))) {
-						if (memcmp(m_pMapList[m_pClientList[iH]->m_cMapIndex]->m_cName,
-								  m_pClientList[iClientH]->map_->m_cName,
-								  strlen(m_pClientList[iClientH]->map_->m_cName)) == 0) {
+					if(m_pClientList[iH]->map_ == m_pClientList[iClientH]->map_) {
 							iTotalPartyMembers++;
-						}
 					}
 				}
 			}
@@ -11919,7 +11858,7 @@ void CGame::OnTimer(char /*cType*/) {
 		m_dwGameTime4 = dwTime;
 	}
 	if ((dwTime - m_dwGameTime5) > 1000 * 60 * 3) {
-		if (m_iMiddlelandMapIndex >= 0) {
+		if (middlelandMap_.lock()) {
 			// Crusade
 			SaveOccupyFlagData();
 			//bSendMsgToLS(MSGID_REQUEST_SAVEARESDENOCCUPYFLAGDATA, nullptr, nullptr);
@@ -12129,7 +12068,7 @@ void CGame::RequestGuildTeleportHandler(int iClientH) {
 	char cMapName[11];
 	if (m_pClientList[iClientH] == nullptr) return;
 	if (m_pClientList[iClientH]->m_iLockedMapTime != 0) {
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_LOCKEDMAP, m_pClientList[iClientH]->m_iLockedMapTime, 0, 0, m_pClientList[iClientH]->m_cLockedMapName);
+		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_LOCKEDMAP, m_pClientList[iClientH]->m_iLockedMapTime, 0, 0, m_pClientList[iClientH]->lockedMap_->m_cName);
 		return;
 	}
 	if (!m_bIsCrusadeMode) {
@@ -12144,7 +12083,7 @@ void CGame::RequestGuildTeleportHandler(int iClientH) {
 		m_pClientList[iClientH]->DeleteClient(true, true);
 		return;
 	}
-	if ((m_pClientList[iClientH]->m_cMapIndex == m_iMiddlelandMapIndex) && m_iMiddlelandMapIndex != -1) return;
+	if (m_pClientList[iClientH]->map_ == middlelandMap_.lock()) return;
 	for (i = 0; i < DEF_MAXGUILDS; i++)
 		if (m_pGuildTeleportLoc[i].m_iV1 == m_pClientList[iClientH]->m_iGuildGUID) {
 			std::memset(cMapName, 0, sizeof (cMapName));
@@ -13454,7 +13393,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		m_pNpcList[iNpcH]->map_->bSetItem(m_pNpcList[iNpcH]->m_sX,
 				  m_pNpcList[iNpcH]->m_sY,
 				  pItem);
-		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pNpcList[iNpcH]->m_cMapIndex,
+		m_pNpcList[iNpcH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, 
 				  m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY,
 				  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
 		_bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, 0, pItem);
@@ -13960,9 +13899,7 @@ void CGame::AdminOrder_Time(int iClientH, char * pData, uint32_t dwMsgSize) {
 		}
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_bIsInitComplete == true)) {
-				if ((m_pClientList[i]->m_cMapIndex >= 0) &&
-						  (m_pClientList[i]->map_ != nullptr) &&
-						  (m_pClientList[i]->map_->m_bIsFixedDayMode == false))
+				if ((m_pClientList[i]->map_ != nullptr) && (m_pClientList[i]->map_->m_bIsFixedDayMode == false))
 					m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_TIMECHANGE, m_cDayOrNight, 0, 0, nullptr);
 			}
 	}
@@ -14286,7 +14223,7 @@ bool CGame::_bRegisterMap(char * pName) {
 		}
 	for (i = 0; i < DEF_MAXMAPS; i++)
 		if (m_pMapList[i] == nullptr) {
-			m_pMapList[i] = std::make_shared<CMap>(this);
+			m_pMapList[i] = std::make_shared<CMap>(i, this);
 			wsprintf(cTxt, "(*) Add map (%s)   - Loading map info files...", pName);
 			PutLogList(cTxt);
 			if (m_pMapList[i]->bInit(pName) == false) {
@@ -14295,7 +14232,7 @@ bool CGame::_bRegisterMap(char * pName) {
 				return false;
 			};
 			PutLogList("(*) Data file loading success.");
-			if ((m_iMiddlelandMapIndex == -1) && (strcmp("middleland", pName) == 0)) m_iMiddlelandMapIndex = i;
+			if (!middlelandMap_.lock() && (strcmp("middleland", pName) == 0)) middlelandMap_ = m_pMapList[i];
 			if ((m_iAresdenMapIndex == -1) && (strcmp("aresden", pName) == 0)) m_iAresdenMapIndex = i;
 			if ((m_iElvineMapIndex == -1) && (strcmp("elvine", pName) == 0)) m_iElvineMapIndex = i;
 			if ((m_iBTFieldMapIndex == -1) && (strcmp("BtField", pName) == 0)) m_iBTFieldMapIndex = i; // new
@@ -14705,7 +14642,7 @@ void CGame::Command_RedBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize*
 			std::memset(cName, 0, sizeof (cName));
 			wsprintf(cName, "XX%d", iNamingValue);
 			cName[0] = '_';
-			cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+			cName[1] = m_pClientList[iClientH]->map_->id_ + 65;
 			std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 			tX = (int) m_pClientList[iClientH]->m_sX;
 			tY = (int) m_pClientList[iClientH]->m_sY;
@@ -14879,7 +14816,7 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 				std::memset(cName_Master, 0, sizeof (cName_Master));
 				wsprintf(cName_Master, "XX%d", iNamingValue);
 				cName_Master[0] = '_';
-				cName_Master[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+				cName_Master[1] = m_pClientList[iClientH]->map_->id_ + 65;
 				if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pClientList[iClientH]->map_->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, false, true)) == false) {
 					m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
 				}
@@ -14891,7 +14828,7 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 					std::memset(cName_Slave, 0, sizeof (cName_Slave));
 					wsprintf(cName_Slave, "XX%d", iNamingValue);
 					cName_Slave[0] = '_';
-					cName_Slave[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
+					cName_Slave[1] = m_pClientList[iClientH]->map_->id_ + 65;
 					if (bCreateNewNpc(cNpcName, cName_Slave, m_pClientList[iClientH]->map_->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, false) == false) {
 						m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
 					} else {
@@ -15956,7 +15893,7 @@ bool CGame::bPlantSeedBag(int dX, int dY, int iItemEffectValue1, int iItemEffect
 			tY = dY;
 			bRet = bCreateNewNpc(cNpcName, cName, m_pClientList[iClientH]->map_->m_cName, 0, 0, DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypointIndex, nullptr, 0, 0, false, true);
 			if (bRet == false) {
-				map->SetNamingValueEmpty(iNamingValue);
+				m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
 			} else {
 				m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, tX, tY);
 				if (m_pNpcList[sOwnerH] == nullptr) return 0;
@@ -16076,12 +16013,12 @@ void CGame::_CheckFarmingAction(short sAttackerH, short sTargetH, bool bType) {
 	}
 	if (bType == 0) {
 		m_pClientList[sAttackerH]->map_->bSetItem(m_pClientList[sAttackerH]->m_sX, m_pClientList[sAttackerH]->m_sY, pItem);
-		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[sAttackerH]->m_cMapIndex,
+		m_pClientList[sAttackerH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, 
 				  m_pClientList[sAttackerH]->m_sX, m_pClientList[sAttackerH]->m_sY, pItem->m_sSprite,
 				  pItem->m_sSpriteFrame, pItem->m_cItemColor, false);
 	} else if (bType == 1) {
 		m_pNpcList[sTargetH]->map_->bSetItem(m_pNpcList[sTargetH]->m_sX, m_pNpcList[sTargetH]->m_sY, pItem);
-		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pNpcList[sTargetH]->m_cMapIndex,
+		m_pNpcList[sTargetH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, 
 				  m_pNpcList[sTargetH]->m_sX, m_pNpcList[sTargetH]->m_sY, pItem->m_sSprite,
 				  pItem->m_sSpriteFrame, pItem->m_cItemColor, false);
 	}
@@ -16433,7 +16370,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			break;
 		case DEF_OWNERTYPE_NPC:
 			if (m_pNpcList[sAttackerH] == nullptr) return 0;
-			if (m_pMapList[m_pNpcList[sAttackerH]->m_cMapIndex]->m_bIsAttackEnabled == false) return 0;
+			if (m_pNpcList[sAttackerH]->map_->m_bIsAttackEnabled == false) return 0;
 			if ((m_pNpcList[sAttackerH]->m_iStatus & 0x10) != 0) {
 				SetInvisibilityFlag(sAttackerH, DEF_OWNERTYPE_NPC, false);
 				delayEvents_.remove(sAttackerH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_INVISIBILITY);
@@ -17444,7 +17381,7 @@ void CGame::MeteorStrikeMsgHandler(char cAttackerSide) {
 							m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_METEORSTRIKECOMING, 2, 0, 0, nullptr);
 						}
 					}
-				delayEvents_.add(DelayEventType::METEORSTRIKE, 0, dwTime + 5000, 0, 0, m_iElvineMapIndex, 0, 0, 0, 0, 0);
+				delayEvents_.add(DelayEventType::METEORSTRIKE, 0, dwTime + 5000, 0, 0, m_pMapList[m_iElvineMapIndex], 0, 0, 0, 0, 0);
 			} else {
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if (m_pClientList[i] != nullptr) {
@@ -17462,7 +17399,7 @@ void CGame::MeteorStrikeMsgHandler(char cAttackerSide) {
 							m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_METEORSTRIKECOMING, 4, 0, 0, nullptr);
 						}
 					}
-				delayEvents_.add(DelayEventType::METEORSTRIKE, 0, dwTime + 1000 * 5, 0, 0, m_iAresdenMapIndex, 0, 0, 0, 0, 0);
+				delayEvents_.add(DelayEventType::METEORSTRIKE, 0, dwTime + 1000 * 5, 0, 0, m_pMapList[m_iAresdenMapIndex], 0, 0, 0, 0, 0);
 			} else {
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if (m_pClientList[i] != nullptr) {
@@ -18108,8 +18045,8 @@ void CGame::StormBringer(int iClientH, short dX, short dY) {
 								m_pClientList[sOwner]->m_iLastDamage = iDamage;
 								m_pClientList[sOwner]->SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 								SendEventToNearClient_TypeA(sOwner, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDYING, iDamage, sAttackerWeapon, 0);
-								m_pMapList[m_pClientList[sOwner]->m_cMapIndex]->ClearOwner(14, sOwner, DEF_OWNERTYPE_PLAYER, m_pClientList[sOwner]->m_sX, m_pClientList[sOwner]->m_sY);
-								m_pMapList[m_pClientList[sOwner]->m_cMapIndex]->SetDeadOwner(sOwner, DEF_OWNERTYPE_PLAYER, m_pClientList[sOwner]->m_sX, m_pClientList[sOwner]->m_sY);
+								m_pClientList[sOwner]->map_->ClearOwner(14, sOwner, DEF_OWNERTYPE_PLAYER, m_pClientList[sOwner]->m_sX, m_pClientList[sOwner]->m_sY);
+								m_pClientList[sOwner]->map_->SetDeadOwner(sOwner, DEF_OWNERTYPE_PLAYER, m_pClientList[sOwner]->m_sX, m_pClientList[sOwner]->m_sY);
 							} else {
 								m_pClientList[sOwner]->SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
 								SendEventToNearClient_TypeA(sOwner, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
@@ -18229,13 +18166,13 @@ void CGame::LocalEndHeldenianMode() {
 				if (m_pMapList[i]->m_bIsHeldenianMap == true) {
 					for (x = 0; x < DEF_MAXNPCS; x++) {
 						if (m_pNpcList[x] != nullptr) {
-							if (m_pMapList[m_pNpcList[x]->m_cMapIndex] != nullptr) {
+							if (m_pNpcList[x]->map_ != nullptr) {
 								m_pNpcList[x]->m_bIsSummoned = true;
 								RemoveEventNpc(x);
 							}
 						}
 					}
-					RemoveOccupyFlags(i);
+					m_pMapList[i]->RemoveOccupyFlags();
 				}
 			}
 		}
@@ -18319,10 +18256,10 @@ bool CGame::bCheckHeldenianMap(int sAttackerH, int iMapIndex, char cType) {
 				}
 			}
 		} else if (cType == DEF_OWNERTYPE_NPC) {
-			if ((m_pMapList[m_pNpcList[sAttackerH]->m_cMapIndex] != nullptr) && (iMapIndex != -1) && (m_pNpcList[sAttackerH]->m_cSide > 0)) {
+			if ((m_pNpcList[sAttackerH]->map_ != nullptr) && (iMapIndex != -1) && (m_pNpcList[sAttackerH]->m_cSide > 0)) {
 				tX = m_pNpcList[sAttackerH]->m_sX;
 				tY = m_pNpcList[sAttackerH]->m_sY;
-				pTile = (class CTile *)(m_pMapList[m_pNpcList[sAttackerH]->m_cMapIndex]->m_pTile + tX + tY * m_pMapList[m_pNpcList[sAttackerH]->m_cMapIndex]->m_sSizeY);
+				pTile = (class CTile *)(m_pNpcList[sAttackerH]->map_->m_pTile + tX + tY * m_pNpcList[sAttackerH]->map_->m_sSizeY);
 				if (pTile == nullptr) return 0;
 				if (pTile->m_iOccupyStatus != 0) {
 					if (pTile->m_iOccupyStatus < 0) {
@@ -18528,7 +18465,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 					if ((m_pClientList[i] != nullptr) &&
 							  (m_pClientList[i]->m_bIsInitComplete == true) &&
 							  (m_pClientList[i]->m_iAdminUserLevel < 1) &&
-							  (x == m_pClientList[i]->m_cMapIndex)) {
+							  (m_pMapList[x] == m_pClientList[i]->map_)) {
 						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_0BE8, 0, 0, 0, nullptr);
 						m_pClientList[i]->RequestTeleportHandler("1   ", nullptr, -1, -1);
 					}
@@ -18536,7 +18473,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 				for (i = 0; i < DEF_MAXNPCS; i++) {
 					if ((m_pNpcList[i] != nullptr) &&
 							  (m_pNpcList[i]->m_bIsKilled == false) &&
-							  (x == m_pNpcList[i]->m_cMapIndex)) {
+							  (m_pMapList[x] == m_pNpcList[i]->map_)) {
 						m_pNpcList[i]->m_bIsSummoned = true;
 						RemoveEventNpc(i);
 					}
@@ -18691,7 +18628,7 @@ void CGame::AutomatedHeldenianTimer() {
 			for (i = 0; i < DEF_MAXCLIENTS; i++) {
 				if (m_pClientList[i] != nullptr) {
 					if (m_pClientList[i]->m_bIsInitComplete != true) return;
-					if (m_pClientList[i]->m_cMapIndex == x) {
+					if (m_pClientList[i]->map_ == m_pMapList[x]) {
 						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_HELDENIANSTART, 0, 0, 0, nullptr);
 					}
 				}
@@ -18708,7 +18645,7 @@ void CGame::AutomatedHeldenianTimer() {
 			for (i = 0; i < DEF_MAXCLIENTS; i++) {
 				if (m_pClientList[i] != nullptr) {
 					if (m_pClientList[i]->m_bIsInitComplete != true) return;
-					if (m_pClientList[i]->m_cMapIndex == x) {
+					if (m_pClientList[i]->map_ == m_pMapList[x]) {
 						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_0BE8, 0, 0, 0, nullptr);
 						m_pClientList[i]->RequestTeleportHandler("1   ", nullptr, -1, -1);
 					}
@@ -18809,7 +18746,7 @@ void CGame::NotifyStartHeldenianFightMode() {
 				for (x = 0; x < DEF_MAXCLIENTS; x++) {
 					if (m_pClientList[x] != nullptr) {
 						if (m_pClientList[x]->m_bIsInitComplete == true) {
-							if (m_pClientList[x]->m_cMapIndex == i) {
+							if (m_pClientList[x]->map_ == m_pMapList[i]) {
 								m_pClientList[x]->SendNotifyMsg(0, DEF_NOTIFY_HELDENIANSTART, 0, 0, 0, nullptr);
 							}
 						}
@@ -18861,7 +18798,7 @@ void CGame::HeldenianWinner() {
 	for (x = 0; x < DEF_MAXMAPS; x++) {
 		if (m_pMapList[x] != nullptr) {
 			for (i = 0; i < DEF_MAXCLIENTS; i++) {
-				if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_bIsInitComplete == 1) && (m_pClientList[i]->m_cMapIndex = x)) {
+				if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_bIsInitComplete == 1) && (m_pClientList[i]->map_ = m_pMapList[x])) {
 					m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_0BEB, m_sLastHeldenianWinner, 0, 0, nullptr);
 				}
 			}
@@ -18922,63 +18859,6 @@ void CGame::SendThunder(int iClient, short sX, short sY, short sV3, short sV4) {
 	*sp = sV4;
 	cp += 2;
 	m_pClientList[iClient]->m_pXSock->iSendMsg(cData, 18);
-}
-
-void CGame::DoAbaddonThunderDamageHandler(char cMapIndex) {
-	int iResult;
-	register int i;
-	//if (m_bIsApocalypseMode != true) return;
-	if (iDice(1, 15) != 13) return;
-	uint32_t dwTime = timeGetTime();
-	for (i = 0; i < DEF_MAXCLIENTS; i++) {
-		if (m_pClientList[i] != nullptr) { //if (m_pClientList[i]->m_iAdminUserLevel > 0) return;
-			if ((memcmp(m_pClientList[i]->map_->m_cName, "abaddon", 7) == 0)
-					  || (m_pClientList[i]->m_cMapIndex == cMapIndex)) {
-				switch (iDice(1, 4)) {
-					case 1:
-						SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 203, m_pClientList[i]->m_sType);
-						SendThunder(i, m_pClientList[i]->m_sX - iDice(1, 7), m_pClientList[i]->m_sY + iDice(1, 5), 161, m_pClientList[i]->m_sType);
-						break;
-					case 2:
-						SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 202, m_pClientList[i]->m_sType);
-						SendThunder(i, m_pClientList[i]->m_sX + iDice(1, 7), m_pClientList[i]->m_sY - iDice(1, 5), 161, m_pClientList[i]->m_sType);
-						break;
-					case 3:
-						SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 201, m_pClientList[i]->m_sType);
-						SendThunder(i, m_pClientList[i]->m_sX + iDice(1, 7), m_pClientList[i]->m_sY + 5 - iDice(1, 9), 161, m_pClientList[i]->m_sType);
-						break;
-					case 4:
-						SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 200, m_pClientList[i]->m_sType);
-						SendThunder(i, m_pClientList[i]->m_sX + 5 - iDice(1, 9), m_pClientList[i]->m_sY + 7 - iDice(1, 4), 161, m_pClientList[i]->m_sType);
-						break;
-				}
-				if (m_pClientList[i]->m_iAdminUserLevel > 0) continue;
-				iResult = iDice(1, 20) + 100;
-				if ((m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
-						  || (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5)) {
-					iResult /= 2;
-				}
-				// Not for v3.51: m_pClientList[i]->SendNotifyMsg(0,DEF_NOTIFY_0BE5, 0, 0, 0, nullptr);
-				m_pClientList[i]->m_iHP -= iResult;
-				if (m_pClientList[i]->m_iHP <= 0) {
-					m_pClientList[i]->ClientKilledHandler(0, 0, iResult);
-				} else if (iResult > 0) {
-					m_pClientList[i]->m_dwLastDamageTime = dwTime;
-					m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-					SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, 0, 0);
-					if (m_pClientList[i]->m_bSkillUsingStatus[19] != true) {
-						m_pClientList[i]->map_->ClearOwner(0, i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
-						m_pClientList[i]->map_->SetOwner(i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
-					}
-					if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, 2, 0, nullptr);
-						delayEvents_.remove(i, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
-						m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-					}
-				}
-			}
-		}
-	}
 }
 
 /*********************************************************************************************************************
@@ -19137,7 +19017,7 @@ void CGame::RequestHeldenianScroll(int iClientH, char * pData, uint32_t /*dwMsgS
 			m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, m_pClientList[iClientH]->m_iConstructionPoint, m_pClientList[iClientH]->m_iWarContribution, 0, nullptr);
 		} else {
 			m_pClientList[iClientH]->map_->bSetItem(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem);
-			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
+			m_pClientList[iClientH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -19344,8 +19224,8 @@ void CGame::AFKChecker() {
 				if (m_pClientList[i]->m_bSkillUsingStatus[19] == true)
 					sY = m_pClientList[i]->m_sY + 1;
 				else sY = m_pClientList[i]->m_sY;
-				SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pClientList[i]->m_cMapIndex
-						  , sX, sY, sX, sY, 247, m_pClientList[i]->m_sType);
+				m_pClientList[i]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, 
+						  sX, sY, sX, sY, 247, m_pClientList[i]->m_sType);
 			}
 		}
 	}

@@ -3077,7 +3077,7 @@ void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, 
 			game_.RequestSellItemListHandler(*this, pData);
 			break;
 		case MSGID_REQUEST_RESTART:
-			game_.RequestRestartHandler(*this);
+			this->RequestRestartHandler();
 			this->SendNotifyMsg(0, DEF_NOTIFY_PARTYMEMBERSTATUS, 0, 0, 0, nullptr);
 			break;
 		case MSGID_REQUEST_PANNING:
@@ -5239,4 +5239,59 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 	if (bNotice == true)
 		game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 	this->CalcTotalItemEffect(sItemIndex, true);
+}
+
+void CClient::RequestRestartHandler() {
+	char cTmpMap[32];
+	if (this->m_bIsKilled == true) {
+		strcpy(cTmpMap, this->map_->m_cName);
+		std::memset(this->map_->m_cName, 0, sizeof (this->map_->m_cName));
+		if (strcmp(this->m_cLocation, "NONE") == 0) {
+			strcpy(this->map_->m_cName, "default");
+		} else {
+			if (strcmp(this->m_cLocation, "aresden") == 0) {
+				if (game_.m_bIsCrusadeMode == true) {
+					if (this->m_iDeadPenaltyTime > 0) {
+						this->lockedMap_ = game_.m_pMapList.byName("aresden");
+						this->m_iLockedMapTime = 60 * 5;
+						this->m_iDeadPenaltyTime = 60 * 10;
+					} else {
+						this->lockedMap_ = game_.m_pMapList.byName("resurr1");
+						this->m_iDeadPenaltyTime = 60 * 10;
+					}
+				}
+				if (strcmp(cTmpMap, "elvine") == 0) {
+					this->map_ = this->lockedMap_ = game_.m_pMapList.byName("elvjail");
+					this->m_iLockedMapTime = 10 * 2;
+				} else if (this->m_iLevel > 80) {
+					this->map_ = game_.m_pMapList.byName("resurr1");
+				} else {
+					this->map_ = game_.m_pMapList.byName("aresden");
+				}
+			} else {
+				if (game_.m_bIsCrusadeMode == true) {
+					if (this->m_iDeadPenaltyTime > 0) {
+						this->lockedMap_ = game_.m_pMapList.byName("elvine");
+						this->m_iLockedMapTime = 60 * 5;
+						this->m_iDeadPenaltyTime = 60 * 10;
+					} else {
+						this->map_ = game_.m_pMapList.byName("resurr2");
+						this->m_iDeadPenaltyTime = 60 * 10;
+					}
+				}
+				if (strcmp(cTmpMap, "aresden") == 0) {
+					this->map_ = this->lockedMap_ = game_.m_pMapList.byName("arejail");
+					this->m_iLockedMapTime = 10 * 2;
+				} else if (this->m_iLevel > 80) {
+					this->map_ = game_.m_pMapList.byName("resurr2");
+				} else {
+					this->map_ = game_.m_pMapList.byName("elvine");
+				}
+			}
+		}
+		this->m_bIsKilled = false;
+		this->m_iHP = (3 * this->m_iVit) + (2 * this->m_iLevel) + (this->m_iStr / 2);
+		this->m_iHungerStatus = 100;
+		this->RequestTeleportHandler("2   ", this->map_->m_cName, -1, -1);
+	}
 }
