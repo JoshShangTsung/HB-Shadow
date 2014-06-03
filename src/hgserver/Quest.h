@@ -47,7 +47,7 @@ public:
 	int m_iContribution; 
 	int m_iContributionLimit; 
 
-	int m_iResponseMode; // ���� ���: 0(ok) 1(Accept/Decline) 2(Next)
+	int m_iResponseMode;
 
 	char m_cTargetName[21]; 
 	int m_sX, m_sY, m_iRange; 

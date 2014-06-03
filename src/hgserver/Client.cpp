@@ -2557,16 +2557,19 @@ int CClient::iCalcTotalWeight() {
 	register int i, iWeight;
 	short sItemIndex;
 	this->m_iAlterItemDropIndex = -1;
-	for (sItemIndex = 0; sItemIndex < DEF_MAXITEMS; sItemIndex++)
-		if (this->m_pItemList[sItemIndex] != nullptr) {
-			switch (this->m_pItemList[sItemIndex]->m_sItemEffectType) {
+	for (sItemIndex = 0; sItemIndex < DEF_MAXITEMS; sItemIndex++) {
+		auto &itemPtr = this->m_pItemList[sItemIndex];
+		if (itemPtr != nullptr) {
+			auto &item = *itemPtr;
+			switch (item.m_sItemEffectType) {
 				case DEF_ITEMEFFECTTYPE_ALTERITEMDROP:
-					if (this->m_pItemList[sItemIndex]->m_wCurLifeSpan > 0) {
+					if (item.m_wCurLifeSpan > 0) {
 						this->m_iAlterItemDropIndex = sItemIndex;
 					}
 					break;
 			}
 		}
+	}
 	iWeight = 0;
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (this->m_pItemList[i] != nullptr) {
@@ -3743,3 +3746,486 @@ RTH_NEXTSTEP:
 		game_._bCheckIsQuestCompleted(id_);
 	}
 }
+
+void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
+	int i, iTemp;
+	char cEquipPos;
+	double dV1, dV2, dV3;
+	uint32_t dwSWEType, dwSWEValue;
+	short sTemp;
+	if ((this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) &&
+			  (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)) {
+		if (this->m_pItemList[this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]] != nullptr) {
+			this->m_bIsItemEquipped[this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]] = false;
+			this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] = -1;
+		}
+	}
+	this->m_iAngelicStr = 0;
+	this->m_iAngelicInt = 0;
+	this->m_iAngelicDex = 0;
+	this->m_iAngelicMag = 0;
+	game_.SetAngelFlag(id_, DEF_OWNERTYPE_PLAYER, 0, 0);
+	this->m_cAttackDiceThrow_SM = 0;
+	this->m_cAttackDiceRange_SM = 0;
+	this->m_cAttackBonus_SM = 0;
+	this->m_cAttackDiceThrow_L = 0;
+	this->m_cAttackDiceRange_L = 0;
+	this->m_cAttackBonus_L = 0;
+	this->m_iHitRatio = 0;
+	this->m_iDefenseRatio = this->m_iDex * 2;
+	this->m_iDamageAbsorption_Shield = 0;
+	for (i = 0; i < DEF_MAXITEMEQUIPPOS; i++) {
+		this->m_iDamageAbsorption_Armor[i] = 0;
+	}
+	this->m_iManaSaveRatio = 0;
+	this->m_iAddResistMagic = 0;
+	this->m_iAddPhysicalDamage = 0;
+	this->m_iAddMagicalDamage = 0;
+	this->m_bIsLuckyEffect = false;
+	this->m_iMagicDamageSaveItemIndex = -1;
+	this->m_iSideEffect_MaxHPdown = 0;
+	this->m_iAddAbsAir = 0;
+	this->m_iAddAbsEarth = 0;
+	this->m_iAddAbsFire = 0;
+	this->m_iAddAbsWater = 0;
+	this->m_iCustomItemValue_Attack = 0;
+	this->m_iCustomItemValue_Defense = 0;
+	this->m_iMinAP_SM = 0;
+	this->m_iMinAP_L = 0;
+	this->m_iMaxAP_SM = 0;
+	this->m_iMaxAP_L = 0;
+	this->m_iSpecialWeaponEffectType = 0;
+	this->m_iSpecialWeaponEffectValue = 0;
+	this->m_iAddHP = this->m_iAddSP = this->m_iAddMP = 0;
+	this->m_iAddAR = this->m_iAddPR = this->m_iAddDR = 0;
+	this->m_iAddMR = this->m_iAddAbsPD = this->m_iAddAbsMD = 0;
+	this->m_iAddCD = this->m_iAddExp = this->m_iAddGold = 0;
+	int iPrevSAType = this->m_iSpecialAbilityType;
+	this->m_iSpecialAbilityType = 0;
+	this->m_iSpecialAbilityLastSec = 0;
+	this->m_iSpecialAbilityEquipPos = 0;
+	this->m_iAddTransMana = 0;
+	this->m_iAddChargeCritical = 0;
+	this->m_iAlterItemDropIndex = -1;
+	for (short sItemIndex = 0; sItemIndex < DEF_MAXITEMS; sItemIndex++) {
+		auto &itemPtr = this->m_pItemList[sItemIndex];
+		if (this->m_pItemList[sItemIndex] != nullptr) {
+			auto &item = *itemPtr;
+			switch (item.m_sItemEffectType) {
+				case DEF_ITEMEFFECTTYPE_ALTERITEMDROP:
+					if (item.m_wCurLifeSpan > 0) {
+						this->m_iAlterItemDropIndex = sItemIndex;
+					}
+					break;
+			}
+		}
+	}
+	for (short sItemIndex = 0; sItemIndex < DEF_MAXITEMS; sItemIndex++) {
+		auto &itemPtr = this->m_pItemList[sItemIndex];
+		if ((itemPtr != nullptr) &&
+				  (this->m_bIsItemEquipped[sItemIndex] == true)) {
+			auto &item = *itemPtr;
+			cEquipPos = item.m_cEquipPos;
+			switch (item.m_sItemEffectType) {
+				case DEF_ITEMEFFECTTYPE_MAGICDAMAGESAVE:
+					this->m_iMagicDamageSaveItemIndex = sItemIndex;
+					break;
+				case DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY:
+				case DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE:
+				case DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE:
+				case DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN:
+				case DEF_ITEMEFFECTTYPE_ATTACK:
+					this->m_cAttackDiceThrow_SM = item.m_sItemEffectValue1;
+					this->m_cAttackDiceRange_SM = item.m_sItemEffectValue2;
+					this->m_cAttackBonus_SM = item.m_sItemEffectValue3;
+					this->m_cAttackDiceThrow_L = item.m_sItemEffectValue4;
+					this->m_cAttackDiceRange_L = item.m_sItemEffectValue5;
+					this->m_cAttackBonus_L = item.m_sItemEffectValue6;
+					iTemp = (item.m_dwAttribute & 0xF0000000) >> 28;
+					//testcode
+					//wsprintf(G_cTxt, "Add Damage: %d", iTemp);
+					//PutLogList(G_cTxt);
+					this->m_iAddPhysicalDamage += iTemp;
+					this->m_iAddMagicalDamage += iTemp;
+					this->m_iHitRatio += this->m_cSkillMastery[item.m_sRelatedSkill];
+					//this->m_iHitRatio_ItemEffect_SM += item.m_sSM_HitRatio;
+					//this->m_iHitRatio_ItemEffect_L  += item.m_sL_HitRatio;
+					this->m_sUsingWeaponSkill = item.m_sRelatedSkill;
+					if ((item.m_dwAttribute & 0x00000001) != 0) {
+						this->m_iCustomItemValue_Attack += item.m_sItemSpecEffectValue2;
+						if (this->m_iCustomItemValue_Attack > 100)
+							this->m_iCustomItemValue_Attack = 100;
+						if (this->m_iCustomItemValue_Attack < -100)
+							this->m_iCustomItemValue_Attack = -100;
+						if (this->m_iCustomItemValue_Attack > 0) {
+							dV2 = (double) this->m_iCustomItemValue_Attack;
+							dV1 = (dV2 / 100.0f)*(5.0f);
+							this->m_iMinAP_SM = this->m_cAttackDiceThrow_SM +
+									  this->m_cAttackBonus_SM + (int) dV1;
+							this->m_iMinAP_L = this->m_cAttackDiceThrow_L +
+									  this->m_cAttackBonus_L + (int) dV1;
+							if (this->m_iMinAP_SM < 1) this->m_iMinAP_SM = 1;
+							if (this->m_iMinAP_L < 1) this->m_iMinAP_L = 1;
+							if (this->m_iMinAP_SM > (this->m_cAttackDiceThrow_SM * this->m_cAttackDiceRange_SM + this->m_cAttackBonus_SM))
+								this->m_iMinAP_SM = (this->m_cAttackDiceThrow_SM * this->m_cAttackDiceRange_SM + this->m_cAttackBonus_SM);
+							if (this->m_iMinAP_L > (this->m_cAttackDiceThrow_L * this->m_cAttackDiceRange_L + this->m_cAttackBonus_L))
+								this->m_iMinAP_L = (this->m_cAttackDiceThrow_L * this->m_cAttackDiceRange_L + this->m_cAttackBonus_L);
+							//testcode
+							//wsprintf(G_cTxt, "MinAP: %d %d +(%d)", this->m_iMinAP_SM, this->m_iMinAP_L, (int)dV1);
+							//PutLogList(G_cTxt);
+						} else if (this->m_iCustomItemValue_Attack < 0) {
+							dV2 = (double) this->m_iCustomItemValue_Attack;
+							dV1 = (dV2 / 100.0f)*(5.0f);
+							this->m_iMaxAP_SM = this->m_cAttackDiceThrow_SM * this->m_cAttackDiceRange_SM
+									  + this->m_cAttackBonus_SM + (int) dV1;
+							this->m_iMaxAP_L = this->m_cAttackDiceThrow_L * this->m_cAttackDiceRange_L
+									  + this->m_cAttackBonus_L + (int) dV1;
+							if (this->m_iMaxAP_SM < 1) this->m_iMaxAP_SM = 1;
+							if (this->m_iMaxAP_L < 1) this->m_iMaxAP_L = 1;
+							if (this->m_iMaxAP_SM < (this->m_cAttackDiceThrow_SM * this->m_cAttackDiceRange_SM + this->m_cAttackBonus_SM))
+								this->m_iMaxAP_SM = (this->m_cAttackDiceThrow_SM * this->m_cAttackDiceRange_SM + this->m_cAttackBonus_SM);
+							if (this->m_iMaxAP_L < (this->m_cAttackDiceThrow_L * this->m_cAttackDiceRange_L + this->m_cAttackBonus_L))
+								this->m_iMaxAP_L = (this->m_cAttackDiceThrow_L * this->m_cAttackDiceRange_L + this->m_cAttackBonus_L);
+							//testcode
+							//wsprintf(G_cTxt, "MaxAP: %d %d +(%d)", this->m_iMaxAP_SM, this->m_iMaxAP_L, (int)dV1);
+							//PutLogList(G_cTxt);
+						}
+					}
+					if ((item.m_dwAttribute & 0x00F00000) != 0) {
+						dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
+						dwSWEValue = (item.m_dwAttribute & 0x000F0000) >> 16;
+						this->m_iSpecialWeaponEffectType = (int) dwSWEType;
+						this->m_iSpecialWeaponEffectValue = (int) dwSWEValue;
+						switch (dwSWEType) {
+							case 7:
+								this->m_cAttackDiceRange_SM++;
+								this->m_cAttackDiceRange_L++;
+								break;
+							case 9:
+								this->m_cAttackDiceRange_SM += 2;
+								this->m_cAttackDiceRange_L += 2;
+								break;
+						}
+					}
+					if ((item.m_dwAttribute & 0x0000F000) != 0) {
+						dwSWEType = (item.m_dwAttribute & 0x0000F000) >> 12;
+						dwSWEValue = (item.m_dwAttribute & 0x00000F00) >> 8;
+						switch (dwSWEType) {
+							case 0: break;
+							case 1: this->m_iAddPR += (int) dwSWEValue * 7;
+								break;
+							case 2: this->m_iAddAR += (int) dwSWEValue * 7;
+								break;
+							case 3: this->m_iAddDR += (int) dwSWEValue * 7;
+								break;
+							case 4: this->m_iAddHP += (int) dwSWEValue * 7;
+								break;
+							case 5: this->m_iAddSP += (int) dwSWEValue * 7;
+								break;
+							case 6: this->m_iAddMP += (int) dwSWEValue * 7;
+								break;
+							case 7: this->m_iAddMR += (int) dwSWEValue * 7;
+								break;
+								//case 8: this->m_iDamageAbsorption_Armor[item.m_cEquipPos] += (int)dwSWEValue*3; break;
+								// PA Fixed by KahBur.
+							case 8: this->m_iAddAbsPD += (int) dwSWEValue * 3;
+								break;
+							case 9: this->m_iAddAbsMD += (int) dwSWEValue * 3;
+								break;
+							case 10: this->m_iAddCD += (int) dwSWEValue;
+								break;
+							case 11: this->m_iAddExp += (int) dwSWEValue * 10;
+								break;
+							case 12: this->m_iAddGold += (int) dwSWEValue * 10;
+								break;
+						}
+						switch (dwSWEType) {
+								// PA Fixed by KahBur.
+							case 8: if (this->m_iAddAbsPD > 80) this->m_iAddAbsPD = 80;
+								break;
+							case 9: if (this->m_iAddAbsMD > 80) this->m_iAddAbsMD = 80;
+								break;
+						}
+						switch (dwSWEType) {
+							case 9: if (this->m_iAddAbsMD > 80) this->m_iAddAbsMD = 80;
+								break;
+						}
+					}
+					switch (item.m_sItemEffectType) {
+						case DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN:
+							this->m_iSideEffect_MaxHPdown = item.m_sSpecialEffect;
+							break;
+						case DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE:
+							this->m_iManaSaveRatio += item.m_sItemEffectValue4;
+							if (this->m_iManaSaveRatio > 80) this->m_iManaSaveRatio = 80;
+							break;
+						case DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE:
+							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_BODY] += item.m_sSpecialEffect;
+							break;
+						case DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY:
+							this->m_iSpecialAbilityType = item.m_sSpecialEffect;
+							this->m_iSpecialAbilityLastSec = item.m_sSpecialEffectValue1;
+							this->m_iSpecialAbilityEquipPos = (int) cEquipPos;
+							if ((bNotify == true) && (iEquipItemID == (int) sItemIndex))
+								this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 2, this->m_iSpecialAbilityType, this->m_iSpecialAbilityTime, nullptr);
+							break;
+					}
+					break;
+				case DEF_ITEMEFFECTTYPE_ADDEFFECT:
+					switch (item.m_sItemEffectValue1) {
+						case 1:
+							this->m_iAddResistMagic += item.m_sItemEffectValue2;
+							break;
+						case 2:
+							this->m_iManaSaveRatio += item.m_sItemEffectValue2;
+							if (this->m_iManaSaveRatio > 80) this->m_iManaSaveRatio = 80;
+							break;
+						case 3:
+							this->m_iAddPhysicalDamage += item.m_sItemEffectValue2;
+							break;
+						case 4:
+							this->m_iDefenseRatio += item.m_sItemEffectValue2;
+							break;
+						case 5:
+							if (item.m_sItemEffectValue2 != 0)
+								this->m_bIsLuckyEffect = true;
+							else this->m_bIsLuckyEffect = false;
+							break;
+						case 6:
+							this->m_iAddMagicalDamage += item.m_sItemEffectValue2;
+							break;
+						case 7:
+							this->m_iAddAbsAir += item.m_sItemEffectValue2;
+							break;
+						case 8:
+							this->m_iAddAbsEarth += item.m_sItemEffectValue2;
+							break;
+						case 9:
+							this->m_iAddAbsFire += item.m_sItemEffectValue2;
+							break;
+						case 10:
+							this->m_iAddAbsWater += item.m_sItemEffectValue2;
+							break;
+						case 11:
+							this->m_iAddPR += item.m_sItemEffectValue2;
+							break;
+						case 12: // Adds To Hit Bonus (Xelima Neck)
+							this->m_iHitRatio += item.m_sItemEffectValue2;
+							break;
+						case 13: // Magin Ruby		Characters Hp recovery rate(% applied) added by the purity formula.
+							this->m_iAddHP += (item.m_sItemSpecEffectValue2 / 5);
+							break;
+						case 14: // Magin Diamond	Attack probability(physical&magic) added by the purity formula.
+							this->m_iAddAR += (item.m_sItemSpecEffectValue2 / 5);
+							break;
+						case 15: // Magin Emerald	Magical damage decreased(% applied) by the purity formula.
+							this->m_iAddAbsMD += (item.m_sItemSpecEffectValue2 / 10);
+							if (this->m_iAddAbsMD > 80) this->m_iAddAbsMD = 80;
+							break;
+						case 30: // Magin Sapphire	Phisical damage decreased(% applied) by the purity formula.
+							iTemp = (item.m_sItemSpecEffectValue2 / 10);
+							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_HEAD] += iTemp;
+							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_BODY] += iTemp;
+							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_ARMS] += iTemp;
+							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_PANTS] += iTemp;
+							break;
+							/*Functions rates confirm.
+							Magic Diamond: Completion rate / 5 = Functions rate. ? Maximum 20. (not%)
+							Magic Ruby: Completion rate / 5 = Functions rate.(%) ? Maximum 20%.
+							Magic Emerald: Completion rate / 10 = Functions rate.(%) ? Maximum 10%.
+							Magic Sapphire: Completion rate / 10 = Functions rate.(%) ? Maximum 10%.*/
+							// ******* Angel Code - Begin ******* //
+						case 16: // Angel STR//AngelicPandent(STR)
+							iTemp = (item.m_dwAttribute & 0xF0000000) >> 28;
+							this->m_iAngelicStr = iTemp;
+							game_.SetAngelFlag(id_, DEF_OWNERTYPE_PLAYER, 1, iTemp);
+							this->SendNotifyMsg(0, DEF_NOTIFY_SETTING_SUCCESS, 0, 0, 0, nullptr);
+							break;
+						case 17: // Angel DEX //AngelicPandent(DEX)
+							iTemp = (item.m_dwAttribute & 0xF0000000) >> 28;
+							this->m_iAngelicDex = iTemp;
+							game_.SetAngelFlag(id_, DEF_OWNERTYPE_PLAYER, 2, iTemp);
+							this->SendNotifyMsg(0, DEF_NOTIFY_SETTING_SUCCESS, 0, 0, 0, nullptr);
+							break;
+						case 18: // Angel INT//AngelicPandent(INT)
+							iTemp = (item.m_dwAttribute & 0xF0000000) >> 28;
+							this->m_iAngelicInt = iTemp;
+							game_.SetAngelFlag(id_, DEF_OWNERTYPE_PLAYER, 3, iTemp);
+							this->SendNotifyMsg(0, DEF_NOTIFY_SETTING_SUCCESS, 0, 0, 0, nullptr);
+							break;
+						case 19: // Angel MAG//AngelicPandent(MAG)
+							iTemp = (item.m_dwAttribute & 0xF0000000) >> 28;
+							this->m_iAngelicMag = iTemp;
+							game_.SetAngelFlag(id_, DEF_OWNERTYPE_PLAYER, 4, iTemp);
+							this->SendNotifyMsg(0, DEF_NOTIFY_SETTING_SUCCESS, 0, 0, 0, nullptr);
+							break;
+					}
+					break;
+				case DEF_ITEMEFFECTTYPE_ATTACK_ARROW:
+					if ((this->m_cArrowIndex != -1) &&
+							  (this->m_pItemList[this->m_cArrowIndex] == nullptr)) {
+						this->m_cArrowIndex = game_._iGetArrowItemIndex(id_);
+					} else if (this->m_cArrowIndex == -1)
+						this->m_cArrowIndex = game_._iGetArrowItemIndex(id_);
+					if (this->m_cArrowIndex == -1) {
+						this->m_cAttackDiceThrow_SM = 0;
+						this->m_cAttackDiceRange_SM = 0;
+						this->m_cAttackBonus_SM = 0;
+						this->m_cAttackDiceThrow_L = 0;
+						this->m_cAttackDiceRange_L = 0;
+						this->m_cAttackBonus_L = 0;
+					} else {
+						/*
+						this->m_cAttackDiceThrow_SM = this->m_pItemList[iArrowIndex]->m_sItemEffectValue1;
+						this->m_cAttackDiceRange_SM = this->m_pItemList[iArrowIndex]->m_sItemEffectValue2;
+						this->m_cAttackBonus_SM     = this->m_pItemList[iArrowIndex]->m_sItemEffectValue3;
+						this->m_cAttackDiceThrow_L  = this->m_pItemList[iArrowIndex]->m_sItemEffectValue4;
+						this->m_cAttackDiceRange_L  = this->m_pItemList[iArrowIndex]->m_sItemEffectValue5;
+						this->m_cAttackBonus_L      = this->m_pItemList[iArrowIndex]->m_sItemEffectValue6;
+						 */
+						this->m_cAttackDiceThrow_SM = item.m_sItemEffectValue1;
+						this->m_cAttackDiceRange_SM = item.m_sItemEffectValue2;
+						this->m_cAttackBonus_SM = item.m_sItemEffectValue3;
+						this->m_cAttackDiceThrow_L = item.m_sItemEffectValue4;
+						this->m_cAttackDiceRange_L = item.m_sItemEffectValue5;
+						this->m_cAttackBonus_L = item.m_sItemEffectValue6;
+					}
+					this->m_iHitRatio += this->m_cSkillMastery[item.m_sRelatedSkill];
+					// this->m_iHitRatio_ItemEffect_SM += item.m_sSM_HitRatio;
+					// this->m_iHitRatio_ItemEffect_L  += item.m_sL_HitRatio;
+					break;
+				case DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY:
+				case DEF_ITEMEFFECTTYPE_DEFENSE:
+					this->m_iDefenseRatio += item.m_sItemEffectValue1;
+					//this->m_iHitRatio_ItemEffect_SM += item.m_sSM_HitRatio;
+					//this->m_iHitRatio_ItemEffect_L  += item.m_sL_HitRatio;
+					if ((item.m_dwAttribute & 0x00000001) != 0) {
+						this->m_iCustomItemValue_Defense += item.m_sItemSpecEffectValue2;
+						dV2 = (double) item.m_sItemSpecEffectValue2;
+						dV3 = (double) item.m_sItemEffectValue1;
+						dV1 = (double) (dV2 / 100.0f) * dV3;
+						dV1 = dV1 / 2.0f;
+						this->m_iDefenseRatio += (int) dV1;
+						if (this->m_iDefenseRatio <= 0) this->m_iDefenseRatio = 1;
+						//testcode
+						//wsprintf(G_cTxt, "Custom-Defense: %d", (int)dV1);
+						//PutLogList(G_cTxt);
+					}
+					if ((item.m_dwAttribute & 0x00F00000) != 0) {
+						dwSWEType = (item.m_dwAttribute & 0x00F00000) >> 20;
+						dwSWEValue = (item.m_dwAttribute & 0x000F0000) >> 16;
+						switch (dwSWEType) {
+							case 7:
+								this->m_cAttackDiceRange_SM++;
+								this->m_cAttackDiceRange_L++;
+								break;
+							case 9:
+								this->m_cAttackDiceRange_SM += 2;
+								this->m_cAttackDiceRange_L += 2;
+								break;
+								// v2.04
+							case 11:
+								this->m_iAddTransMana += dwSWEValue;
+								if (this->m_iAddTransMana > 13) this->m_iAddTransMana = 13;
+								break;
+							case 12:
+								this->m_iAddChargeCritical += dwSWEValue;
+								if (this->m_iAddChargeCritical > 20) this->m_iAddChargeCritical = 20;
+								break;
+						}
+					}
+					if ((item.m_dwAttribute & 0x0000F000) != 0) {
+						dwSWEType = (item.m_dwAttribute & 0x0000F000) >> 12;
+						dwSWEValue = (item.m_dwAttribute & 0x00000F00) >> 8;
+						switch (dwSWEType) {
+							case 0: break;
+							case 1: this->m_iAddPR += (int) dwSWEValue * 7;
+								break;
+							case 2: this->m_iAddAR += (int) dwSWEValue * 7;
+								break;
+							case 3: this->m_iAddDR += (int) dwSWEValue * 7;
+								break;
+							case 4: this->m_iAddHP += (int) dwSWEValue * 7;
+								break;
+							case 5: this->m_iAddSP += (int) dwSWEValue * 7;
+								break;
+							case 6: this->m_iAddMP += (int) dwSWEValue * 7;
+								break;
+							case 7: this->m_iAddMR += (int) dwSWEValue * 7;
+								break;
+								//case 8: this->m_iDamageAbsorption_Armor[item.m_cEquipPos] += (int)dwSWEValue*3; break;
+								// PA Fixed by KahBur.
+							case 8: this->m_iAddAbsPD += (int) dwSWEValue * 3;
+								break;
+							case 9: this->m_iAddAbsMD += (int) dwSWEValue * 3;
+								break;
+							case 10: this->m_iAddCD += (int) dwSWEValue;
+								break;
+							case 11: this->m_iAddExp += (int) dwSWEValue * 10;
+								break;
+							case 12: this->m_iAddGold += (int) dwSWEValue * 10;
+								break;
+						}
+						switch (dwSWEType) {
+								// PA Fixed by KahBur.
+							case 8: if (this->m_iAddAbsPD > 80) this->m_iAddAbsPD = 80;
+								break;
+							case 9: if (this->m_iAddAbsMD > 80) this->m_iAddAbsMD = 80;
+								break;
+						}
+						switch (dwSWEType) {
+							case 9: if (this->m_iAddAbsMD > 80) this->m_iAddAbsMD = 80;
+								break;
+						}
+					}
+					switch (cEquipPos) {
+						case DEF_EQUIPPOS_LHAND:
+							this->m_iDamageAbsorption_Shield = (item.m_sItemEffectValue1) - (item.m_sItemEffectValue1) / 3;
+							break;
+						default:
+							this->m_iDamageAbsorption_Armor[item.m_cEquipPos] += (item.m_sItemEffectValue2);
+							break;
+					}
+					switch (item.m_sItemEffectType) {
+						case DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY:
+							this->m_iSpecialAbilityType = item.m_sSpecialEffect;
+							this->m_iSpecialAbilityLastSec = item.m_sSpecialEffectValue1;
+							this->m_iSpecialAbilityEquipPos = (int) cEquipPos;
+							if ((bNotify == true) && (iEquipItemID == (int) sItemIndex))
+								this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 2, this->m_iSpecialAbilityType, this->m_iSpecialAbilityTime, nullptr);
+							break;
+					}
+					break;
+			}
+		}
+	}
+	//v1.432
+	if ((iPrevSAType != 0) && (this->m_iSpecialAbilityType == 0) && (bNotify == true)) {
+		this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 4, 0, 0, nullptr);
+		if (this->m_bIsSpecialAbilityEnabled == true) {
+			this->m_bIsSpecialAbilityEnabled = false;
+			this->m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
+			sTemp = this->m_sAppr4;
+			sTemp = sTemp & 0xFF0F;
+			this->m_sAppr4 = sTemp;
+			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+		}
+	}
+	if ((iPrevSAType != 0) && (this->m_iSpecialAbilityType != 0) &&
+			  (iPrevSAType != this->m_iSpecialAbilityType) && (bNotify == true)) {
+		if (this->m_bIsSpecialAbilityEnabled == true) {
+			game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 3, 0, 0, nullptr);
+			this->m_bIsSpecialAbilityEnabled = false;
+			this->m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
+			sTemp = this->m_sAppr4;
+			sTemp = sTemp & 0xFF0F;
+			this->m_sAppr4 = sTemp;
+			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+		}
+	}
+	this->m_iDefenseRatio += this->m_iAngelicDex * 2;
+	if (this->m_iHP > this->iGetMaxHP()) this->m_iHP = this->iGetMaxHP();
+	if (this->m_iMP > this->iGetMaxMP()) this->m_iMP = this->iGetMaxMP();
+	if (this->m_iSP > this->iGetMaxSP()) this->m_iSP = this->iGetMaxSP();
+}
+

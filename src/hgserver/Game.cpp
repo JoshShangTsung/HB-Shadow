@@ -3511,7 +3511,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, uint32_t dwSize) {
 		if (m_pClientList[iClientH]->m_bIsPlayerCivil == true)
 			ForceChangePlayMode(iClientH, false);
 	m_pClientList[iClientH]->m_iNextLevelExp = m_iLevelExpTable[m_pClientList[iClientH]->m_iLevel + 1]; //iGetLevelExp(m_pClientList[iClientH]->m_iLevel + 1);
-	CalcTotalItemEffect(iClientH, -1, true); //false
+	m_pClientList[iClientH]->CalcTotalItemEffect(-1, true); //false
 	m_pClientList[iClientH]->iCalcTotalWeight();
 	// New 23/05/2004
 	//GM Invi comes here
@@ -10172,7 +10172,7 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify) {
 	cHeroArmorType = _cCheckHeroItemEquipped(iClientH);
 	if (cHeroArmorType != 0x0FFFFFFFF) m_pClientList[iClientH]->m_cHeroArmourBonus = cHeroArmorType;
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
-	CalcTotalItemEffect(iClientH, sItemIndex, bNotify);
+	m_pClientList[iClientH]->CalcTotalItemEffect(sItemIndex, bNotify);
 	return true;
 }
 
@@ -11258,7 +11258,7 @@ void CGame::ReleaseItemHandler(int iClientH, short sItemIndex, bool bNotice) {
 	m_pClientList[iClientH]->m_sItemEquipmentStatus[cEquipPos] = -1;
 	if (bNotice == true)
 		SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
-	CalcTotalItemEffect(iClientH, sItemIndex, true);
+	m_pClientList[iClientH]->CalcTotalItemEffect(sItemIndex, true);
 }
 
 bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
@@ -16909,7 +16909,7 @@ bool CGame::bCheckLevelUp(int iClientH) // Sobrepaso de lvl fix.
 			if (m_pClientList[iClientH]->m_iCharisma > DEF_CHARPOINTLIMIT) m_pClientList[iClientH]->m_iCharisma = DEF_CHARPOINTLIMIT;
 			m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_LEVELUP, 0, 0, 0, nullptr);
 			m_pClientList[iClientH]->m_iNextLevelExp = m_iLevelExpTable[m_pClientList[iClientH]->m_iLevel + 1]; //iGetLevelExp(m_pClientList[iClientH]->m_iLevel + 1);
-			CalcTotalItemEffect(iClientH, -1, false);
+			m_pClientList[iClientH]->CalcTotalItemEffect(-1, false);
 			if (m_pClientList[iClientH]->m_iLevel >= DEF_PLAYERMAXLEVEL) {
 				wsprintf(G_cTxt, "(!) Character (%s) is over max level", m_pClientList[iClientH]->m_cCharName);
 				PutLogFileList(G_cTxt);

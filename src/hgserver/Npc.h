@@ -105,12 +105,6 @@ public:
 	int m_iAILevel; 
 
 	int m_iAttackRange; 
-	/*
-		AI-Level 
-			1: ���� �ൿ 
-			2: �������� ���� ���� ��ǥ���� ���� 
-			3: ���� ��ȣ���� ��ǥ�� ���� ��ݴ�󿡼� ���� 
-	 */
 	int m_iAttackCount; 
 	bool m_bIsKilled;
 	bool m_bIsUnsummoned;
@@ -135,8 +129,6 @@ public:
 	case 6:  "Extremely Poisonous"
 	case 7:  "Explosive"
 	case 8:  "Hi-Explosive" 
-
-	���� �� ���� 60���� ũ�� NPC�� ȿ��ʹ� �����ϹǷ� �����Ѵ�.
 	 */
 
 	int m_iBuildCount; 

@@ -19,6 +19,26 @@
 #define DEF_SPECABLTYTIMESEC	1200
 struct CGame;
 
+template<typename ValType, size_t S> struct Collection {
+	constexpr static size_t SLOTS = S;
+	typedef ValType value_type;
+	typedef value_type& ref_type;
+	typedef value_type* iterator;
+	ref_type operator[](size_t index) {
+		return m_pItemList[index];
+	}
+	iterator begin() {
+		return m_pItemList.begin();
+	}
+	iterator end() {
+		return m_pItemList.end();
+	}
+private:
+	std::array<value_type, S> m_pItemList;
+};
+
+typedef Collection<std::unique_ptr<CItem>, DEF_MAXITEMS> Inventory;
+typedef Collection<std::unique_ptr<CItem>, DEF_MAXBANKITEMS> BankInventory;
 class CClient {
 public:
 	CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket);
@@ -100,9 +120,10 @@ public:
 	char m_cAttackDiceRange_L;
 	char m_cAttackBonus_SM;
 	char m_cAttackBonus_L;
-	std::array<std::unique_ptr<CItem>, DEF_MAXITEMS> m_pItemList;
+
+	Inventory m_pItemList;
 	std::array<POINT, DEF_MAXITEMS> m_ItemPosList;
-	std::array<std::unique_ptr<CItem>, DEF_MAXBANKITEMS> m_pItemInBankList;
+	BankInventory m_pItemInBankList;
 	std::array<bool, DEF_MAXITEMS> m_bIsItemEquipped;
 	std::array<short, DEF_MAXITEMEQUIPPOS> m_sItemEquipmentStatus;
 	char m_cArrowIndex;
@@ -199,7 +220,10 @@ public:
 	int m_iAddAbsFire;
 	int m_iAddAbsWater;
 	int m_iLastDamage;
-	int m_iMoveMsgRecvCount, m_iAttackMsgRecvCount, m_iRunMsgRecvCount, m_iSkillMsgRecvCount;
+	int m_iMoveMsgRecvCount;
+	int m_iAttackMsgRecvCount;
+	int m_iRunMsgRecvCount;
+	int m_iSkillMsgRecvCount;
 	uint32_t m_dwMoveLAT, m_dwRunLAT, m_dwAttackLAT;
 	int m_iSpecialAbilityTime;
 	bool m_bIsSpecialAbilityEnabled;
@@ -227,7 +251,7 @@ public:
 		char cSide;
 		short sX, sY;
 	};
-	std::array<CrusadeStructureInfo, DEF_MAXCRUSADESTRUCTURES> m_stCrusadeStructureInfo;
+	Collection<CrusadeStructureInfo, DEF_MAXCRUSADESTRUCTURES> m_stCrusadeStructureInfo;
 	int m_iCSIsendPoint;
 	char m_cSendingMapName[11];
 	bool m_bIsSendingMapStatus;
@@ -248,7 +272,7 @@ public:
 		int iIndex;
 		char cName[11];
 	};
-	std::array<PartyMember, DEF_MAXPARTYMEMBERS> m_stPartyMemberName;
+	Collection<PartyMember, DEF_MAXPARTYMEMBERS> m_stPartyMemberName;
 	uint32_t m_dwLastActionTime, m_dwLastDamageTime;
 	int m_iDeadPenaltyTime;
 	char m_cWhisperPlayerName[11];
@@ -286,6 +310,7 @@ public:
 	void processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, char cKey);
 	void RequestResurrectPlayer(bool bResurrect);
 	void RequestTeleportHandler(const char * pData, const char * cMapName = nullptr, int dX = -1, int dY = -1);
+	void CalcTotalItemEffect(int iEquipItemID, bool bNotify = true);
 };
 #define DEF_MAXCLIENTS				2000
 

@@ -447,7 +447,6 @@ public:
 	bool _bGetIsPlayerHostile(int iClientH, int sOwnerH);
 	bool bAnalyzeCriminalAction(int iClientH, short dX, short dY, bool bIsCheck = false);
 	int _iGetPlayerNumberOnSpot(short dX, short dY, char cMapIndex, char cRange);
-	void CalcTotalItemEffect(int iClientH, int iEquipItemID, bool bNotify = true);
 	void ___RestorePlayerCharacteristics(int iClientH);
 	void GetPlayerProfile(int iClientH, char * pMsg, uint32_t dwMsgSize);
 	void SetPlayerProfile(int iClientH, char * pMsg, uint32_t dwMsgSize);
