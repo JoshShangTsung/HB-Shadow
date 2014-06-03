@@ -220,7 +220,7 @@ bool CGame::bAccept(class XSocket * pXSock) {
 			std::unique_ptr<XSocket> socket(new class XSocket(m_hWnd, DEF_CLIENTSOCKETBLOCKLIMIT));
 			socket->bInitBufferSize(DEF_MSGBUFFERSIZE);
 			pXSock->bAccept(socket.get(), WM_ONCLIENTSOCKETEVENT + i);
-			m_pClientList[i].reset(new class CClient(*this, i, std::move(socket)));
+			m_pClientList[i] = std::make_shared<CClient>(*this, i, std::move(socket));
 			CClient &client = *m_pClientList[i];
 			bAddClientShortCut(i);
 			client.m_dwSPTime = client.m_dwMPTime =
@@ -11361,10 +11361,9 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
  **	return value		:: int																						**
  **********************************************************************************************************************/
 int iDice(int iThrow, int iRange) {
-	register int i, iRet;
 	if (iRange <= 0) return 0;
-	iRet = 0;
-	for (i = 1; i <= iThrow; i++) {
+	int iRet = 0;
+	for (register int i = 1; i <= iThrow; i++) {
 		iRet += (rand() % iRange) + 1;
 	}
 	return iRet;

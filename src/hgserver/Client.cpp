@@ -416,93 +416,43 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 		
 		if (game_.m_pNpcList[iAttackerH]->m_iGuildGUID != 0) {
 			if (game_.m_pNpcList[iAttackerH]->m_cSide != this->m_cSide) {
-				
-				
-				for (i = 1; i < DEF_MAXCLIENTS; i++)
-					if ((game_.m_pClientList[i] != nullptr) && (game_.m_pClientList[i]->m_iGuildGUID == game_.m_pNpcList[iAttackerH]->m_iGuildGUID) &&
-							  (game_.m_pClientList[i]->m_iCrusadeDuty == 3)) {
-						game_.m_pClientList[i]->m_iConstructionPoint += (this->m_iLevel / 2);
-						if (game_.m_pClientList[i]->m_iConstructionPoint > DEF_MAXCONSTRUCTIONPOINT)
-							game_.m_pClientList[i]->m_iConstructionPoint = DEF_MAXCONSTRUCTIONPOINT;
+				for(auto &iterClient: game_.m_pClientList) {
+					if ((iterClient.m_iGuildGUID == game_.m_pNpcList[iAttackerH]->m_iGuildGUID) && (iterClient.m_iCrusadeDuty == 3)) {
+						iterClient.m_iConstructionPoint += (this->m_iLevel / 2);
+						if (iterClient.m_iConstructionPoint > DEF_MAXCONSTRUCTIONPOINT)
+							iterClient.m_iConstructionPoint = DEF_MAXCONSTRUCTIONPOINT;
 						//testcode
 						wsprintf(G_cTxt, "Enemy Player Killed by Npc! Construction +%d", (this->m_iLevel / 2));
 						PutLogList(G_cTxt);
 						
-						game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, game_.m_pClientList[i]->m_iConstructionPoint, game_.m_pClientList[i]->m_iWarContribution, 0, nullptr);
+						iterClient.SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, iterClient.m_iConstructionPoint, iterClient.m_iWarContribution, 0, nullptr);
 						return;
 					}
+				}
 			}
 		}
 	} else if (cAttackerType == DEF_OWNERTYPE_PLAYER_INDIRECT) {
 		game_._bPKLog(DEF_PKLOG_BYOTHER, id_, 0, nullptr);
-		
-		// this->m_iExp -= iDice(1, 50);
-		// if (this->m_iExp < 0) this->m_iExp = 0;
-		// this->SendNotifyMsg(nullptr,DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
 	}
-	//----------------------------EK Announcer-------------------------
-	//---- Function: CGame::ClientKilledHandler                    ----
-	//---- Description: Announces a message to alert all connected ----
-	//---- this-> an EK has taken place                           ----
-	//---- Version: HBX 2.03 Build                                 ----
-	//---- Date: November 07 2005                                  ----
-	//---- By: Daxation                                            ----
-	//---- Notes: Add char cEKMsg[1000]                            ----
-	//-----------------------------------------------------------------
 	std::memset(cEKMsg, 0, sizeof (cEKMsg));
-	//Multiple EK Messages
-	//Note - Remove section '01' and replace with alternative code for a single message
-	//Alternative code: wsprintf(cEKMsg, "%s killed %s", cAttackerName, this->m_cCharName);
-	// 01
-	switch (iDice(1, 10))
-		//You can add extra messages by creating a new case.
-		//Remember to increase iDice
-	{
-		case 1: // To reverse the order the names appear in the message reverse the last 2 parameters
-			wsprintf(cEKMsg, "%s whooped %s's ass!", cAttackerName, this->m_cCharName);
-			break;
-		case 2:
-			wsprintf(cEKMsg, "%s smashed %s's face into the ground!", cAttackerName, this->m_cCharName);
-			break;
-		case 3:
-			wsprintf(cEKMsg, "%s was sliced to pieces by %s", this->m_cCharName, cAttackerName);
-			break;
-		case 4:
-			wsprintf(cEKMsg, "%s says LAG LAG!! but gets PWNED by %s", this->m_cCharName, cAttackerName);
-			break;
-		case 5:
-			wsprintf(cEKMsg, "%s sent %s off too pie heaven!", cAttackerName, this->m_cCharName);
-			break;
-		case 6:
-			wsprintf(cEKMsg, "%s got beat by %s's ugly stick!", cAttackerName, this->m_cCharName);
-			break;
-		case 7:
-			wsprintf(cEKMsg, "%s OwneD! %s", cAttackerName, this->m_cCharName);
-			break;
-		case 8:
-			wsprintf(cEKMsg, "%s Sended %s To Revival Zone! Too Bad ;(", cAttackerName, this->m_cCharName);
-			break;
-		case 9:
-			wsprintf(cEKMsg, "%s says: I CAN OWN YOU! But gets OWNED by %s", this->m_cCharName, cAttackerName);
-			break;
-		case 10:
-			wsprintf(cEKMsg, "%s KilleD %s", cAttackerName, this->m_cCharName);
-			break;
+	constexpr const char *msgs[] = {
+		"%s whooped %s's ass!",
+		"%s smashed %s's face into the ground!",
+		"%s was sliced to pieces by %s",
+		"%s says LAG LAG!! but gets PWNED by %s",
+		"%s sent %s off too pie heaven!",
+		"%s got beat by %s's ugly stick!",
+		"%s OwneD! %s",
+		"%s Sended %s To Revival Zone! Too Bad ;(",
+		"%s says: I CAN OWN YOU! But gets OWNED by %s",
+		"%s KilleD %s"
+	};
+	wsprintf(cEKMsg, msgs[iDice(1, 10)-1], cAttackerName, this->m_cCharName);
+	for(auto &iterClient: game_.m_pClientList) {
+		iterClient.SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg);
 	}
-	// 01
-	for (i = 1; i < DEF_MAXCLIENTS; i++) // Check all this->
-	{
-		if ((game_.m_pClientList[i] != nullptr)) // Check if this->is avtice
-		{
-			game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg); // Send message to *this
-			// Log EK
-			wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName); // Log message
-			PutLogFileList(G_cTxt); // Enter into logs
-		}
-	}
-	//-----------------------------------------------------------------
-	//----                   End EK Announcer Code                 ----
-	//-----------------------------------------------------------------
+	wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName); 
+	PutLogFileList(G_cTxt);
 }
 
 void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4, uint32_t sV5, uint32_t sV6, uint32_t sV7, uint32_t sV8, uint32_t sV9, char * pString2) {
@@ -4213,7 +4163,7 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 	if ((iPrevSAType != 0) && (this->m_iSpecialAbilityType != 0) &&
 			  (iPrevSAType != this->m_iSpecialAbilityType) && (bNotify == true)) {
 		if (this->m_bIsSpecialAbilityEnabled == true) {
-			game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 3, 0, 0, nullptr);
+			this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 3, 0, 0, nullptr);
 			this->m_bIsSpecialAbilityEnabled = false;
 			this->m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
 			sTemp = this->m_sAppr4;
@@ -4997,10 +4947,10 @@ void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bFo
 		if (bNotify == true)
 			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 		game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
-		for (i = 1; i < DEF_MAXCLIENTS; i++) {
-			if ((game_.m_pClientList[i] != nullptr) && (game_.m_pClientList[i]->m_iWhisperPlayerIndex == id_)) {
-				game_.m_pClientList[i]->m_iWhisperPlayerIndex = -1;
-				game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEOFF, 0, 0, 0, this->m_cCharName);
+		for(auto &iterClient: game_.m_pClientList) {
+			if((iterClient.m_iWhisperPlayerIndex == id_)) {
+				iterClient.m_iWhisperPlayerIndex = -1;
+				iterClient.SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEOFF, 0, 0, 0, this->m_cCharName);
 			}
 		}
 		game_.m_pMapList[this->m_cMapIndex]->ClearOwner(2, id_, DEF_OWNERTYPE_PLAYER,

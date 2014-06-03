@@ -320,7 +320,7 @@ public:
 #define DEF_MAXCLIENTS				2000
 
 struct Clients {
-	typedef std::unique_ptr<CClient> value_type;
+	typedef std::shared_ptr<CClient> value_type;
 	typedef value_type &ref_type;
 	void clear() {
 		m_pClientList = Arr();
@@ -330,8 +330,8 @@ struct Clients {
 	}
 	struct Iter {
 		Iter(Clients &clients, size_t index): clients_(clients), index_(index){}
-		ref_type operator*() {
-			return clients_[index_];
+		CClient &operator*() {
+			return *clients_[index_];
 		}
 		void operator++() {
 			do {
@@ -346,7 +346,9 @@ struct Clients {
 		size_t index_;
 	};
 	Iter begin() {
-		return Iter(*this, 1);
+		Iter ret(*this, 0);
+		++ret;
+		return ret;
 	}
 	Iter end() {
 		return Iter(*this, DEF_MAXCLIENTS);
