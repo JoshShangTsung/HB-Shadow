@@ -311,6 +311,9 @@ public:
 	void RequestResurrectPlayer(bool bResurrect);
 	void RequestTeleportHandler(const char * pData, const char * cMapName = nullptr, int dX = -1, int dY = -1);
 	void CalcTotalItemEffect(int iEquipItemID, bool bNotify = true);
+	void ReqCreateCraftingHandler(char *pData);
+	void ClientCommonHandler(char * pData);
+	void ReqCreateSlateHandler(char* pData);
 };
 #define DEF_MAXCLIENTS				2000
 

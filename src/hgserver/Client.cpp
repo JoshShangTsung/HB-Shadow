@@ -3192,7 +3192,7 @@ void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, 
 		}
 			break;
 		case MSGID_COMMAND_COMMON:
-			game_.ClientCommonHandler(*this, pData);
+			ClientCommonHandler(pData);
 			break;
 		case MSGID_COMMAND_MOTION:
 			game_.ClientMotionHandler(*this, pData);
@@ -4229,3 +4229,753 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 	if (this->m_iSP > this->iGetMaxSP()) this->m_iSP = this->iGetMaxSP();
 }
 
+void CClient::ReqCreateCraftingHandler(char *pData) {
+	uint32_t * dwp;
+	uint16_t * wp;
+	char * cp, cI[6], cCraftingName[21], cData[120];
+	int iRet, i, j, iEraseReq, iRiskLevel, iDifficulty, iNeededContrib = 0;
+	short * sp, sTemp;
+	short sItemIndex[6], sItemPurity[6], sItemNumber[6], sItemArray[12];
+	bool bDup, bFlag, bNeedLog;
+	class CItem * pItem;
+	this->m_iSkillMsgRecvCount++;
+	for (i = 0; i < 6; i++) {
+		cI[i] = -1;
+		sItemIndex[i] = -1;
+		sItemNumber[i] = 0;
+		sItemPurity[i] = -1;
+	}
+	cp = (char *) (pData + 11);
+	cp += 20;
+	cI[0] = *cp;
+	cp++;
+	cI[1] = *cp;
+	cp++;
+	cI[2] = *cp;
+	cp++;
+	cI[3] = *cp;
+	cp++;
+	cI[4] = *cp;
+	cp++;
+	cI[5] = *cp;
+	cp++;
+	for (i = 0; i < 6; i++) {
+		if (cI[i] >= DEF_MAXITEMS) return;
+		if ((cI[i] >= 0) && (this->m_pItemList[cI[i]] == nullptr)) return;
+	}
+	for (i = 0; i < 6; i++)
+		if (cI[i] >= 0) {
+			bDup = false;
+			for (j = 0; j < 6; j++)
+				if (sItemIndex[j] == cI[i]) {
+					sItemNumber[j]++;
+					bDup = true;
+				}
+			if (bDup == false) {
+				for (j = 0; j < 6; j++)
+					if (sItemIndex[j] == -1) {
+						sItemIndex[j] = cI[i];
+						sItemNumber[j]++;
+						goto RCPH_LOOPBREAK;
+					}
+RCPH_LOOPBREAK:
+				;
+			}
+		}
+	for (i = 0; i < 6; i++)
+		if (sItemIndex[i] != -1) {
+			if (sItemIndex[i] < 0) return;
+			if ((sItemIndex[i] >= 0) && (sItemIndex[i] >= DEF_MAXITEMS)) return;
+			if (this->m_pItemList[sItemIndex[i]] == nullptr) return;
+			if (this->m_pItemList[sItemIndex[i]]->m_dwCount < sItemNumber[i]) return;
+			sItemPurity[i] = this->m_pItemList[sItemIndex[i]]->m_sItemSpecEffectValue2;
+			if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_NONE)
+					  && (this->m_pItemList[sItemIndex[i]]->m_sSprite == 6)
+					  && (this->m_pItemList[sItemIndex[i]]->m_sSpriteFrame == 129)) {
+				sItemPurity[i] = 100; // Merien stones considered 100% purity.
+			}
+			if (this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) {
+				sItemPurity[i] = -1; // Diamonds / Emeralds.etc.. never have purity
+			}
+			if (sItemNumber[i] > 1) // No purity for stacked items
+			{
+				sItemPurity[i] = -1;
+			}
+			/*wsprintf(G_cTxt, "Crafting: %d x %s (%d)"
+				, sItemNumber[i]
+				, this->m_pItemList[sItemIndex[i]]->m_cName
+				, this->m_pItemList[sItemIndex[i]]->m_sIDnum);
+			PutLogList(G_cTxt);*/
+			if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_EQUIP)
+					  && (this->m_pItemList[sItemIndex[i]]->m_cEquipPos == DEF_EQUIPPOS_NECK)) {
+				iNeededContrib = 10; // Necks Crafting requires 10 contrib
+			}
+		}
+	// Bubble Sort
+	bFlag = true;
+	while (bFlag == true) {
+		bFlag = false;
+		for (i = 0; i < 5; i++)
+			if ((sItemIndex[i] != -1) && (sItemIndex[i + 1] != -1)) {
+				if ((this->m_pItemList[sItemIndex[i]]->m_sIDnum) < (this->m_pItemList[sItemIndex[i + 1]]->m_sIDnum)) {
+					sTemp = sItemIndex[i + 1];
+					sItemIndex[i + 1] = sItemIndex[i];
+					sItemIndex[i] = sTemp;
+					sTemp = sItemPurity[i + 1];
+					sItemPurity[i + 1] = sItemPurity[i];
+					sItemPurity[i] = sTemp;
+					sTemp = sItemNumber[i + 1];
+					sItemNumber[i + 1] = sItemNumber[i];
+					sItemNumber[i] = sTemp;
+					bFlag = true;
+				}
+			}
+	}
+	j = 0;
+	for (i = 0; i < 6; i++) {
+		if (sItemIndex[i] != -1)
+			sItemArray[j] = this->m_pItemList[sItemIndex[i]]->m_sIDnum;
+		else sItemArray[j] = sItemIndex[i];
+		sItemArray[j + 1] = sItemNumber[i];
+		j += 2;
+	}
+	// Search Crafting you wanna build
+	std::memset(cCraftingName, 0, sizeof (cCraftingName));
+	for (i = 0; i < DEF_MAXPORTIONTYPES; i++)
+		if (game_.m_pCraftingConfigList[i] != nullptr) {
+			bFlag = false;
+			for (j = 0; j < 12; j++) {
+				if (game_.m_pCraftingConfigList[i]->m_sArray[j] != sItemArray[j]) bFlag = true; // one item mismatch
+			}
+			if (bFlag == false) // good Crafting receipe
+			{
+				std::memset(cCraftingName, 0, sizeof (cCraftingName));
+				memcpy(cCraftingName, game_.m_pCraftingConfigList[i]->m_cName, 20);
+				iRiskLevel = game_.m_pCraftingConfigList[i]->m_iSkillLimit; // % to loose item if crafting fails
+				iDifficulty = game_.m_pCraftingConfigList[i]->m_iDifficulty;
+			}
+		}
+	// Check if recipe is OK
+	if (strlen(cCraftingName) == 0) {
+		this->SendNotifyMsg(0, DEF_NOTIFY_CRAFTING_FAIL, 1, 0, 0, nullptr); // "There is not enough material"
+		return;
+	}
+	// Check for Contribution
+	if (this->m_iContribution < iNeededContrib) {
+		this->SendNotifyMsg(0, DEF_NOTIFY_CRAFTING_FAIL, 2, 0, 0, nullptr); // "There is not enough Contribution Point"
+		return;
+	}
+	// Check possible Failure
+	if (iDice(1, 100) > iDifficulty) {
+		this->SendNotifyMsg(0, DEF_NOTIFY_CRAFTING_FAIL, 3, 0, 0, nullptr); // "Crafting failed"
+		// Remove parts...
+		pItem = nullptr;
+		pItem = new class CItem;
+		if (pItem == nullptr) return;
+		for (i = 0; i < 6; i++)
+			if (sItemIndex[i] != -1) { // Deplete any Merien Stone
+				if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_NONE)
+						  && (this->m_pItemList[sItemIndex[i]]->m_sSprite == 6)
+						  && (this->m_pItemList[sItemIndex[i]]->m_sSpriteFrame == 129)) {
+					this->ItemDepleteHandler(sItemIndex[i], false, false);
+				} else
+					// Risk to deplete any other items (not stackable ones) // DEF_ITEMTYPE_CONSUME
+					if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_EQUIP)
+						  || (this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_MATERIAL)) {
+					if (iDice(1, 100) < iRiskLevel) {
+						this->ItemDepleteHandler(sItemIndex[i], false, false);
+					}
+				}
+			}
+		return;
+	}
+	// Purity
+	int iPurity, iTot = 0, iCount = 0;
+	for (i = 0; i < 6; i++) {
+		if (sItemIndex[i] != -1) {
+			if (sItemPurity[i] != -1) {
+				iTot += sItemPurity[i];
+				iCount++;
+			}
+		}
+	}
+	if (iCount == 0) {
+		iPurity = 20 + iDice(1, 80); // Wares have random purity (20%..100%)
+		bNeedLog = false;
+	} else {
+		iPurity = iTot / iCount;
+		iTot = (iPurity * 4) / 5;
+		iCount = iPurity - iTot;
+		iPurity = iTot + iDice(1, iCount); // Jewel completion depends off Wares purity
+		bNeedLog = true;
+	}
+	if (iNeededContrib != 0) {
+		iPurity = 0; // Necks require contribution but no purity/completion
+		bNeedLog = true;
+	}
+	//this->CalculateSSN_SkillIndex(12, 1);
+	if (strlen(cCraftingName) != 0) {
+		pItem = nullptr;
+		pItem = new class CItem;
+		if (pItem == nullptr) return;
+		for (i = 0; i < 6; i++) {
+			if (sItemIndex[i] != -1) {
+				if (this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) {
+					game_.SetItemCount(id_, sItemIndex[i],
+							  this->m_pItemList[sItemIndex[i]]->m_dwCount - sItemNumber[i]);
+				} else // So if item is not Type 5 (stackable items), you deplete item
+				{
+					this->ItemDepleteHandler(sItemIndex[i], false, false);
+				}
+			}
+		}
+		if (iNeededContrib != 0) {
+			this->m_iContribution -= iNeededContrib;
+			// No known msg to send info to client, so client will compute shown Contrib himself.
+		}
+		this->SendNotifyMsg(0, DEF_NOTIFY_CRAFTING_SUCCESS, 0, 0, 0, nullptr);
+		this->m_iExpStock += iDice(2, 100);
+		if ((game_._bInitItemAttr(*pItem, cCraftingName) == true)) { // // Snoopy: Added Purity to Oils/Elixirs
+			if (iPurity != 0) {
+				pItem->m_sItemSpecEffectValue2 = iPurity;
+				pItem->m_dwAttribute = 1;
+			}
+			pItem->m_sTouchEffectType = DEF_ITET_ID;
+			pItem->m_sTouchEffectValue1 = iDice(1, 100000);
+			pItem->m_sTouchEffectValue2 = iDice(1, 100000);
+			// pItem->m_sTouchEffectValue3 = timeGetTime();
+			SYSTEMTIME SysTime;
+			char cTemp[256];
+			GetLocalTime(&SysTime);
+			std::memset(cTemp, 0, sizeof (cTemp));
+			wsprintf(cTemp, "%d%2d", (short) SysTime.wMonth, (short) SysTime.wDay);
+			pItem->m_sTouchEffectValue3 = atoi(cTemp);
+			// SNOOPY log anything above WAREs
+			if (bNeedLog) {
+				wsprintf(G_cTxt, "PC(%s) Crafting (%s) Purity(%d)"
+						  , this->m_cCharName
+						  , pItem->m_cName
+						  , pItem->m_sItemSpecEffectValue2);
+				//	PutSkillLogFileList(G_cTxt);
+			}
+			if (game_._bAddClientItemList(id_, pItem, &iEraseReq) == true) {
+				std::memset(cData, 0, sizeof (cData));
+				dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+				*dwp = MSGID_NOTIFY;
+				wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+				*wp = DEF_NOTIFY_ITEMOBTAINED;
+				cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
+				*cp = 1;
+				cp++;
+				memcpy(cp, pItem->m_cName, 20);
+				cp += 20;
+				dwp = (uint32_t *) cp;
+				*dwp = pItem->m_dwCount;
+				cp += 4;
+				*cp = pItem->m_cItemType;
+				cp++;
+				*cp = pItem->m_cEquipPos;
+				cp++;
+				*cp = (char) 0;
+				cp++;
+				sp = (short *) cp;
+				*sp = pItem->m_sLevelLimit;
+				cp += 2;
+				*cp = pItem->m_cGenderLimit;
+				cp++;
+				wp = (uint16_t *) cp;
+				*wp = pItem->m_wCurLifeSpan;
+				cp += 2;
+				wp = (uint16_t *) cp;
+				*wp = pItem->m_wWeight;
+				cp += 2;
+				sp = (short *) cp;
+				*sp = pItem->m_sSprite;
+				cp += 2;
+				sp = (short *) cp;
+				*sp = pItem->m_sSpriteFrame;
+				cp += 2;
+				*cp = pItem->m_cItemColor;
+				cp++;
+				*cp = (char) pItem->m_sItemSpecEffectValue2; // v1.41
+				cp++;
+				dwp = (uint32_t *) cp;
+				*dwp = pItem->m_dwAttribute;
+				cp += 4;
+				/*	*cp = (char)(pItem->m_dwAttribute & 0x00000001); // Custom-Item
+				cp++;	*/
+				if (iEraseReq == 1) delete pItem;
+				iRet = this->m_pXSock->iSendMsg(cData, 53);
+				switch (iRet) {
+					case DEF_XSOCKEVENT_QUENEFULL:
+					case DEF_XSOCKEVENT_SOCKETERROR:
+					case DEF_XSOCKEVENT_CRITICALERROR:
+					case DEF_XSOCKEVENT_SOCKETCLOSED:
+						game_.DeleteClient(id_, true, true);
+						break;
+				}
+				//if ((pItem->m_wPrice * pItem->m_dwCount) > 1000)
+				//	SendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, id_);
+			} else {
+				game_.m_pMapList[this->m_cMapIndex]->bSetItem(this->m_sX,
+						  this->m_sY, pItem);
+				game_.SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, this->m_cMapIndex,
+						  this->m_sX, this->m_sY,
+						  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
+				dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+				*dwp = MSGID_NOTIFY;
+				wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+				*wp = DEF_NOTIFY_CANNOTCARRYMOREITEM;
+				iRet = this->m_pXSock->iSendMsg(cData, 6);
+				switch (iRet) {
+					case DEF_XSOCKEVENT_QUENEFULL:
+					case DEF_XSOCKEVENT_SOCKETERROR:
+					case DEF_XSOCKEVENT_CRITICALERROR:
+					case DEF_XSOCKEVENT_SOCKETCLOSED:
+						game_.DeleteClient(id_, true, true);
+						break;
+				}
+			}
+		} else {
+			delete pItem;
+			pItem = nullptr;
+		}
+	}
+}
+
+void CClient::ClientCommonHandler(char * pData) {
+	uint16_t * wp, wCommand;
+	short * sp, sX, sY;
+	int * ip, iV1, iV2, iV3, iV4;
+	char * cp, cDir, * pString;
+	if (this->m_bIsInitComplete == false) return;
+	if (this->m_bIsKilled == true) return;
+	wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
+	wCommand = *wp;
+	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
+	sp = (short *) cp;
+	sX = *sp;
+	cp += 2;
+	sp = (short *) cp;
+	sY = *sp;
+	cp += 2;
+	cDir = *cp;
+	cp++;
+	ip = (int *) cp;
+	iV1 = *ip;
+	cp += 4;
+	ip = (int *) cp;
+	iV2 = *ip;
+	cp += 4;
+	ip = (int *) cp;
+	iV3 = *ip;
+	cp += 4;
+	pString = cp;
+	cp += 30;
+	ip = (int *) cp;
+	iV4 = *ip;
+	cp += 4;
+	switch (wCommand) {
+			// New 15/05/2004
+		case DEF_COMMONTYPE_REQ_CREATESLATE:
+			this->ReqCreateSlateHandler(pData);
+			break;
+			// 2.06 - by KLKS
+		case DEF_COMMONTYPE_REQ_CHANGEPLAYMODE:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> MSGID_REQUEST_CIVILRIGHT");
+			game_.RequestChangePlayMode(id_);
+			break;
+			//
+		case DEF_COMMONTYPE_SETGUILDTELEPORTLOC:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SETGUILDTELEPORTLOC");
+			game_.RequestSetGuildTeleportLocHandler(id_, iV1, iV2, this->m_iGuildGUID, "middleland");
+			break;
+		case DEF_COMMONTYPE_SETGUILDCONSTRUCTLOC:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SETGUILDCONSTRUCTLOC");
+			game_.RequestSetGuildConstructLocHandler(id_, iV1, iV2, this->m_iGuildGUID, pString);
+			break;
+		case DEF_COMMONTYPE_GUILDTELEPORT:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_GUILDTELEPORT");
+			game_.RequestGuildTeleportHandler(id_);
+			break;
+		case DEF_COMMONTYPE_SUMMONWARUNIT:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SUMMONWARUNIT");
+			game_.RequestSummonWarUnitHandler(id_, sX, sY, iV1, iV2, iV3);
+			break;
+		case DEF_COMMONTYPE_REQUEST_HELP:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_HELP");
+			game_.RequestHelpHandler(id_);
+			break;
+		case DEF_COMMONTYPE_REQUEST_MAPSTATUS:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_MAPSTATUS");
+			game_.MapStatusHandler(id_, iV1, pString);
+			break;
+		case DEF_COMMONTYPE_REQUEST_SELECTCRUSADEDUTY:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_SELECTCRUSADEDUTY");
+			game_.SelectCrusadeDutyHandler(id_, iV1);
+			break;
+		case DEF_COMMONTYPE_REQUEST_CANCELQUEST:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_CANCELQUEST");
+			game_.CancelQuestHandler(id_);
+			break;
+		case DEF_COMMONTYPE_REQUEST_ACTIVATESPECABLTY:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_ACTIVATESPECABLTY");
+			game_.ActivateSpecialAbilityHandler(id_);
+			break;
+		case DEF_COMMONTYPE_REQUEST_JOINPARTY:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_JOINPARTY");
+			game_.JoinPartyHandler(id_, iV1, pString);
+			break;
+		case DEF_COMMONTYPE_GETMAGICABILITY:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_GETMAGICABILITY");
+			game_.GetMagicAbilityHandler(id_);
+			break;
+		case DEF_COMMONTYPE_BUILDITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_BUILDITEM");
+			game_.BuildItemHandler(id_, pData);
+			break;
+		case DEF_COMMONTYPE_QUESTACCEPTED:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_QUESTACCEPTED");
+			game_.QuestAcceptedHandler(id_);
+			break;
+		case DEF_COMMONTYPE_CANCELEXCHANGEITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_CANCELEXCHANGEITEM");
+			game_.CancelExchangeItem(id_);
+			break;
+		case DEF_COMMONTYPE_CONFIRMEXCHANGEITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_CONFIRMEXCHANGEITEM");
+			game_.ConfirmExchangeItem(id_);
+			break;
+		case DEF_COMMONTYPE_SETEXCHANGEITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SETEXCHANGEITEM");
+			game_.SetExchangeItem(id_, iV1, iV2);
+			break;
+		case DEF_COMMONTYPE_REQ_GETHEROMANTLE:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_GETHEROMANTLE");
+			game_.GetHeroMantleHandler(id_, iV1, pString);
+			break;
+		case DEF_COMMONTYPE_REQ_GETTRADEEK: // By Luqah
+			game_.GetTradeEKMantleHandler(id_, iV1, pString);
+			break;
+		case DEF_COMMONTYPE_REQ_GETOCCUPYFLAG:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_GETOCCUPYFLAG");
+			game_.GetOccupyFlagHandler(id_);
+			break;
+		case DEF_COMMONTYPE_REQ_SETDOWNSKILLINDEX:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_SETDOWNSKILLINDEX");
+			game_.SetDownSkillIndexHandler(id_, iV1);
+			break;
+		case DEF_COMMONTYPE_TALKTONPC:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_TALKTONPC");
+			// works for client, but for npc it returns middleland
+			// if ((m_pMapList[m_pNpcList[iV1]->m_cMapIndex]->m_cName) != (m_pMapList[this->m_cMapIndex]->m_cName)) break;
+			game_.NpcTalkHandler(id_, iV1);
+			break;
+		case DEF_COMMONTYPE_REQ_CREATEPORTION:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_CREATEPORTION");
+			game_.ReqCreatePortionHandler(id_, pData);
+			break;
+		case DEF_COMMONTYPE_REQ_GETFISHTHISTIME:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_GETFISHTHISTIME");
+			game_.ReqGetFishThisTimeHandler(id_);
+			break;
+		case DEF_COMMONTYPE_REQ_REPAIRITEMCONFIRM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_REPAIRITEMCONFIRM");
+			game_.ReqRepairItemCofirmHandler(id_, iV1, pString);
+			break;
+		case DEF_COMMONTYPE_REQ_REPAIRITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_REPAIRITEM");
+			game_.ReqRepairItemHandler(id_, iV1, iV2, pString);
+			break;
+		case DEF_COMMONTYPE_REQ_SELLITEMCONFIRM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_SELLITEMCONFIRM");
+			game_.ReqSellItemConfirmHandler(id_, iV1, iV2, pString);
+			break;
+		case DEF_COMMONTYPE_REQ_SELLITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_SELLITEM");
+			game_.ReqSellItemHandler(id_, iV1, iV2, iV3, pString);
+			break;
+		case DEF_COMMONTYPE_REQ_USESKILL:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_USESKILL");
+			game_.UseSkillHandler(id_, iV1, iV2, iV3);
+			break;
+		case DEF_COMMONTYPE_REQ_USEITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_USEITEM");
+			game_.UseItemHandler(*this, iV1, iV2, iV3, iV4);
+			break;
+		case DEF_COMMONTYPE_REQ_GETREWARDMONEY:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_GETREWARDMONEY");
+			game_.GetRewardMoneyHandler(id_);
+			break;
+		case DEF_COMMONTYPE_ITEMDROP:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_ITEMDROP");
+			game_.DropItemHandler(id_, iV1, iV2, pString, true);
+			break;
+		case DEF_COMMONTYPE_EQUIPITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_EQUIPITEM");
+			game_.bEquipItemHandler(id_, iV1);
+			// .....
+			break;
+		case DEF_COMMONTYPE_REQ_PURCHASEITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_PURCHASEITEM");
+			game_.RequestPurchaseItemHandler(id_, pString, iV1);
+			break;
+		case DEF_COMMONTYPE_REQ_STUDYMAGIC:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_STUDYMAGIC");
+			game_.RequestStudyMagicHandler(id_, pString);
+			break;
+		case DEF_COMMONTYPE_REQ_TRAINSKILL:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_TRAINSKILL");
+			//RequestTrainSkillHandler(id_, pString);
+			break;
+		case DEF_COMMONTYPE_GIVEITEMTOCHAR:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_GIVEITEMTOCHAR");
+			game_.GiveItemHandler(id_, cDir, iV1, iV2, iV3, iV4, pString);
+			break;
+		case DEF_COMMONTYPE_EXCHANGEITEMTOCHAR:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_EXCHANGEITEMTOCHAR");
+			game_.ExchangeItemHandler(id_, cDir, iV1, iV2, iV3, iV4, pString);
+			break;
+		case DEF_COMMONTYPE_JOINGUILDAPPROVE:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_JOINGUILDAPPROVE");
+			game_.JoinGuildApproveHandler(id_, pString);
+			break;
+		case DEF_COMMONTYPE_JOINGUILDREJECT:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_JOINGUILDREJECT");
+			game_.JoinGuildRejectHandler(id_, pString);
+			break;
+		case DEF_COMMONTYPE_DISMISSGUILDAPPROVE:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_DISMISSGUILDAPPROVE");
+			game_.DismissGuildApproveHandler(id_, pString);
+			break;
+		case DEF_COMMONTYPE_DISMISSGUILDREJECT:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_DISMISSGUILDREJECT");
+			game_.DismissGuildRejectHandler(id_, pString);
+			break;
+		case DEF_COMMONTYPE_RELEASEITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_RELEASEITEM");
+			game_.ReleaseItemHandler(id_, iV1, true);
+			break;
+		case DEF_COMMONTYPE_TOGGLECOMBATMODE:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_TOGGLECOMBATMODE");
+			game_.ToggleCombatModeHandler(id_);
+			break;
+		case DEF_COMMONTYPE_MAGIC:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_MAGIC");
+			game_.PlayerMagicHandler(id_, iV1, iV2, (iV3 - 100));
+			break;
+		case DEF_COMMONTYPE_TOGGLESAFEATTACKMODE:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_TOGGLESAFEATTACKMODE");
+			game_.ToggleSafeAttackModeHandler(id_);
+			break;
+		case DEF_COMMONTYPE_REQ_GETOCCUPYFIGHTZONETICKET:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_GETOCCUPYFIGHTZONETICKET");
+			game_.GetFightzoneTicketHandler(id_);
+			break;
+			// Upgrade Item
+		case DEF_COMMONTYPE_UPGRADEITEM:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_UPGRADEITEM");
+			this->RequestItemUpgradeHandler(iV1);
+			break;
+		case DEF_COMMONTYPE_REQGUILDNAME:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQGUILDNAME");
+			game_.RequestGuildNameHandler(id_, iV1, iV2);
+			break;
+		case DEF_COMMONTYPE_REQRANGO: // MORLA 2.2 - Llama al rango del pj
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQGUILDNAME");
+			game_.RequestRango(id_, iV1);
+			break;
+		case DEF_COMMONTYPE_REQUEST_ACCEPTJOINPARTY:
+			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_ACCEPTJOINPARTY");
+			game_.RequestAcceptJoinPartyHandler(id_, iV1);
+			break;
+			// Crafting
+		case DEF_COMMONTYPE_CRAFTITEM:
+			this->ReqCreateCraftingHandler(pData);
+			break;
+		default:
+			wsprintf(G_cTxt, "Unknown message received! (0x%.8X)", wCommand);
+			PutLogList(G_cTxt);
+			break;
+	}
+}
+
+void CClient::ReqCreateSlateHandler(char* pData) {
+	int i, iRet;
+	short *sp;
+	char cItemID[4], ctr[4];
+	char *cp, cSlateColour, cData[120];
+	bool bIsSlatePresent = false;
+	CItem * pItem;
+	int iSlateType, iEraseReq;
+	uint32_t *dwp;
+	uint16_t *wp;
+	if (this->m_bIsOnServerChange == true) return;
+	for (i = 0; i < 4; i++) {
+		cItemID[i] = 0;
+		ctr[i] = 0;
+	}
+	cp = (char *) pData;
+	cp += 11;
+	// 14% chance of creating slates
+	if (iDice(1, 100) < game_.m_sSlateSuccessRate) bIsSlatePresent = true;
+	try {
+		// make sure slates really exist
+		for (i = 0; i < 4; i++) {
+			cItemID[i] = *cp;
+			cp++;
+			if (this->m_pItemList[cItemID[i]] == nullptr || cItemID[i] > DEF_MAXITEMS) {
+				bIsSlatePresent = false;
+				this->SendNotifyMsg(0, DEF_NOTIFY_SLATE_CREATEFAIL, 0, 0, 0, nullptr);
+				return;
+			}
+			//No duping
+			if (this->m_pItemList[cItemID[i]]->m_sIDnum == 868) // LU
+				ctr[0] = 1;
+			else if (this->m_pItemList[cItemID[i]]->m_sIDnum == 869) // LD
+				ctr[1] = 1;
+			else if (this->m_pItemList[cItemID[i]]->m_sIDnum == 870) // RU
+				ctr[2] = 1;
+			else if (this->m_pItemList[cItemID[i]]->m_sIDnum == 871) // RD
+				ctr[3] = 1;
+		}
+	} catch (...) {
+		//Crash Hacker Caught
+		bIsSlatePresent = false;
+		this->SendNotifyMsg(0, DEF_NOTIFY_SLATE_CREATEFAIL, 0, 0, 0, nullptr);
+		wsprintf(G_cTxt, "TSearch Slate Hack: (%s) Player: (%s) - creating slates without correct item!", this->m_cIPaddress, this->m_cCharName);
+		PutHackLogFileList(G_cTxt);
+		game_.DeleteClient(id_, true, true);
+		return;
+	}
+	// Are all 4 slates present ??
+	if (ctr[0] != 1 || ctr[1] != 1 || ctr[2] != 1 || ctr[3] != 1) {
+		bIsSlatePresent = false;
+		return;
+	}
+	if (this->m_iAdminUserLevel > 3) bIsSlatePresent = true;
+	// if we failed, kill everything
+	if (!bIsSlatePresent) {
+		for (i = 0; i < 4; i++) {
+			if (this->m_pItemList[cItemID[i]] != nullptr) {
+				this->ItemDepleteHandler(cItemID[i], false, false);
+			}
+		}
+		this->SendNotifyMsg(0, DEF_NOTIFY_SLATE_CREATEFAIL, 0, 0, 0, nullptr);
+		return;
+	}
+	// make the slates
+	for (i = 0; i < 4; i++) {
+		if (this->m_pItemList[cItemID[i]] != nullptr) {
+			this->ItemDepleteHandler(cItemID[i], false, false);
+		}
+	}
+	pItem = new class CItem;
+	i = iDice(1, 1000);
+	if (i < 50) { // Hp slate
+		iSlateType = 1;
+		cSlateColour = 32;
+	} else if (i < 250) { // Bezerk slate
+		iSlateType = 2;
+		cSlateColour = 3;
+	} else if (i < 750) { // Exp slate
+		iSlateType = 4;
+		cSlateColour = 7;
+	} else if (i < 950) { // Mana slate
+		iSlateType = 3;
+		cSlateColour = 37;
+	} else if (i < 1001) { // Hp slate
+		iSlateType = 1;
+		cSlateColour = 32;
+	}
+	// Notify client
+	this->SendNotifyMsg(0, DEF_NOTIFY_SLATE_CREATESUCCESS, iSlateType, 0, 0, nullptr);
+	std::memset(cData, 0, sizeof (cData));
+	// Create slates
+	if (game_._bInitItemAttr(*pItem, 867) == false) {
+		delete pItem;
+		return;
+	} else {
+		pItem->m_sTouchEffectType = DEF_ITET_ID;
+		pItem->m_sTouchEffectValue1 = iDice(1, 100000);
+		pItem->m_sTouchEffectValue2 = iDice(1, 100000);
+		pItem->m_sTouchEffectValue3 = (short) timeGetTime();
+		game_._bItemLog(DEF_ITEMLOG_GET, id_, -1, pItem);
+		pItem->m_sItemSpecEffectValue2 = iSlateType;
+		pItem->m_cItemColor = cSlateColour;
+		if (game_._bAddClientItemList(id_, pItem, &iEraseReq) == true) {
+			std::memset(cData, 0, sizeof (cData));
+			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+			*dwp = MSGID_NOTIFY;
+			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_NOTIFY_ITEMOBTAINED;
+			cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
+			*cp = 1;
+			cp++;
+			memcpy(cp, pItem->m_cName, 20);
+			cp += 20;
+			dwp = (uint32_t *) cp;
+			*dwp = pItem->m_dwCount;
+			cp += 4;
+			*cp = pItem->m_cItemType;
+			cp++;
+			*cp = pItem->m_cEquipPos;
+			cp++;
+			*cp = (char) 0;
+			cp++;
+			sp = (short *) cp;
+			*sp = pItem->m_sLevelLimit;
+			cp += 2;
+			*cp = pItem->m_cGenderLimit;
+			cp++;
+			wp = (uint16_t *) cp;
+			*wp = pItem->m_wCurLifeSpan;
+			cp += 2;
+			wp = (uint16_t *) cp;
+			*wp = pItem->m_wWeight;
+			cp += 2;
+			sp = (short *) cp;
+			*sp = pItem->m_sSprite;
+			cp += 2;
+			sp = (short *) cp;
+			*sp = pItem->m_sSpriteFrame;
+			cp += 2;
+			*cp = pItem->m_cItemColor;
+			cp++;
+			*cp = (char) pItem->m_sItemSpecEffectValue2;
+			cp++;
+			dwp = (uint32_t *) cp;
+			*dwp = pItem->m_dwAttribute;
+			cp += 4;
+			if (iEraseReq == 1) delete pItem;
+			iRet = this->m_pXSock->iSendMsg(cData, 53);
+			switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+					game_.DeleteClient(id_, true, true);
+					return;
+			}
+		} else {
+			game_.m_pMapList[this->m_cMapIndex]->bSetItem(this->m_sX, this->m_sY, pItem);
+			game_.SendEventToNearClient_TypeB(MSGID_MAGICCONFIGURATIONCONTENTS, DEF_COMMONTYPE_ITEMDROP, this->m_cMapIndex,
+					  this->m_sX, this->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame,
+					  pItem->m_cItemColor);
+			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
+			*dwp = MSGID_NOTIFY;
+			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_NOTIFY_CANNOTCARRYMOREITEM;
+			iRet = this->m_pXSock->iSendMsg(cData, 6);
+			switch (iRet) {
+				case DEF_XSOCKEVENT_QUENEFULL:
+				case DEF_XSOCKEVENT_SOCKETERROR:
+				case DEF_XSOCKEVENT_CRITICALERROR:
+				case DEF_XSOCKEVENT_SOCKETCLOSED:
+					game_.DeleteClient(id_, true, true);
+					break;
+			}
+		}
+	}
+	return;
+}

@@ -160,7 +160,6 @@ public:
 	int HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide);
 	void SetAngelFlag(short sOwnerH, char cOwnerType, int iStatus, int iTemp);
 	void ReadMajesticSettings();
-	void ReqCreateCraftingHandler(int iClientH, char *pData);
 	//Heldenian 3.00 Source Code
 	void HeldenianWinner();
 	void RequestHeldenianScroll(int iClientH, char * pData, uint32_t dwMsgSize);
@@ -539,7 +538,6 @@ public:
 	bool _bAddClientItemList(int iClientH, class CItem * pItem, int * pDelReq);
 	int iClientMotion_GetItem_Handler(int iClientH, short sX, short sY, char cDir);
 	void DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * pItemName, bool bByPlayer = true);
-	void ClientCommonHandler(CClient &client, char * pData);
 	bool __fastcall bGetMsgQuene(char * pFrom, char * pData, uint32_t * pMsgSize, int * pIndex, char * pKey);
 	void MsgProcess();
 	bool __fastcall bPutMsgQuene(char cFrom, char * pData, uint32_t dwMsgSize, int iIndex, char cKey);
@@ -906,7 +904,6 @@ public:
 	bool _bCrusadeLog(int iAction, int iClientH, int iData, const char * cName);
 	int iGetPlayerABSStatus(int iClientH);
 	bool _bInitItemAttr(class CItem &pItem, int iItemID);
-	void ReqCreateSlateHandler(int iClientH, char* pData);
 	void SetSlateFlag(int iClientH, short sType, bool bFlag);
 	void CheckForceRecallTime(int iClientH);
 	void SetPlayingStatus(int iClientH);
