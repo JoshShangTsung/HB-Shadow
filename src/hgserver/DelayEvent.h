@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <set>
 #include <functional>
+#include "Map.h"
 
 enum class DelayEventType {
 	DAMAGEOBJECT,
@@ -17,7 +18,7 @@ struct DelayEvent {
 	DelayEventType delayType_;
 	int effectType_;
 
-	char mapIndex_;
+	MapPtr map_;
 	int x_;
 	int y_;
 
@@ -35,7 +36,7 @@ bool operator<(const DelayEvent &a, const DelayEvent &b);
 struct DelayEvents {
 	bool remove(int iH, char cType, int iEffectType);
 	void process(const std::function<void(const DelayEvent&) > &f);
-	bool add(DelayEventType iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3);
+	bool add(DelayEventType iDelayType, int iEffectType, uint32_t dwLastTime, int iTargetH, char cTargetType, MapPtr map, int dX, int dY, int iV1, int iV2, int iV3);
 	void clear();
 private:
 	std::multiset<DelayEvent> events_;

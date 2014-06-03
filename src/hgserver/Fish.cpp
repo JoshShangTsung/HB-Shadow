@@ -1,8 +1,8 @@
 #include "Fish.h"
 #include "item.h"
 
-CFish::CFish(char cMapIndex, short sX, short sY, short sType, class CItem * pItem, int iDifficulty) {
-	m_cMapIndex = cMapIndex;
+CFish::CFish(MapPtr map, short sX, short sY, short sType, class CItem * pItem, int iDifficulty) {
+	map_ = map;
 	m_sX = sX;
 	m_sY = sY;
 	m_sType = sType;

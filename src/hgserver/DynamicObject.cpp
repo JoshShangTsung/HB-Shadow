@@ -4,12 +4,12 @@
 #include "Game.h"
 #include "DynamicObjectID.h"
 
-CDynamicObject::CDynamicObject(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, uint32_t dwRegisterTime, uint32_t dwLastTime, int iV1) {
+CDynamicObject::CDynamicObject(short sOwner, char cOwnerType, short sType, MapPtr map, short sX, short sY, uint32_t dwRegisterTime, uint32_t dwLastTime, int iV1) {
 	m_sOwner = sOwner;
 	m_cOwnerType = cOwnerType;
 
 	m_sType = sType;
-	m_cMapIndex = cMapIndex;
+	map_ = map;
 	m_sX = sX;
 	m_sY = sY;
 
@@ -40,7 +40,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 					for (ix = m_pDynamicObjectList[i]->m_sX - 1; ix <= m_pDynamicObjectList[i]->m_sX + 1; ix++)
 						for (iy = m_pDynamicObjectList[i]->m_sY - 1; iy <= m_pDynamicObjectList[i]->m_sY + 1; iy++) {
 
-							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+							m_pDynamicObjectList[i]->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if (sOwnerH != 0) {
 
 								switch (cOwnerType) {
@@ -149,7 +149,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 					for (ix = m_pDynamicObjectList[i]->m_sX - 2; ix <= m_pDynamicObjectList[i]->m_sX + 2; ix++)
 						for (iy = m_pDynamicObjectList[i]->m_sY - 2; iy <= m_pDynamicObjectList[i]->m_sY + 2; iy++) {
 
-							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+							m_pDynamicObjectList[i]->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if (sOwnerH != 0) {
 								switch (cOwnerType) {
 									case DEF_OWNERTYPE_PLAYER:
@@ -247,7 +247,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 							}
 
 
-							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
+							m_pDynamicObjectList[i]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 									  (m_pClientList[sOwnerH]->m_iHP > 0)) {
 
@@ -266,7 +266,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 							}
 
 
-							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->bGetDynamicObject(ix, iy, &sType, &dwRegisterTime, &iIndex);
+							m_pDynamicObjectList[i]->map_->bGetDynamicObject(ix, iy, &sType, &dwRegisterTime, &iIndex);
 							if (((sType == DEF_DYNAMICOBJECT_FIRE) || (sType == DEF_DYNAMICOBJECT_FIRE3)) && (m_pDynamicObjectList[iIndex] != nullptr))
 								m_pDynamicObjectList[iIndex]->m_dwLastTime = m_pDynamicObjectList[iIndex]->m_dwLastTime - (m_pDynamicObjectList[iIndex]->m_dwLastTime / 10);
 						}
@@ -277,7 +277,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 
 					if (m_pDynamicObjectList[i]->m_iCount == 1) {
 
-						game_.CheckFireBluring(m_pDynamicObjectList[i]->m_cMapIndex, m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY);
+						m_pDynamicObjectList[i]->map_->CheckFireBluring(m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY);
 					}
 					m_pDynamicObjectList[i]->m_iCount++;
 					if (m_pDynamicObjectList[i]->m_iCount > 10) m_pDynamicObjectList[i]->m_iCount = 10;
@@ -286,7 +286,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 					for (ix = m_pDynamicObjectList[i]->m_sX; ix <= m_pDynamicObjectList[i]->m_sX; ix++)
 						for (iy = m_pDynamicObjectList[i]->m_sY; iy <= m_pDynamicObjectList[i]->m_sY; iy++) {
 
-							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+							m_pDynamicObjectList[i]->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if (sOwnerH != 0) {
 
 								switch (cOwnerType) {
@@ -371,7 +371,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 							}
 
 
-							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
+							m_pDynamicObjectList[i]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 									  (m_pClientList[sOwnerH]->m_iHP > 0)) {
 
@@ -390,7 +390,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 							}
 
 
-							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->bGetDynamicObject(ix, iy, &sType, &dwRegisterTime, &iIndex);
+							m_pDynamicObjectList[i]->map_->bGetDynamicObject(ix, iy, &sType, &dwRegisterTime, &iIndex);
 							if ((sType == DEF_DYNAMICOBJECT_ICESTORM) && (m_pDynamicObjectList[iIndex] != nullptr))
 								m_pDynamicObjectList[iIndex]->m_dwLastTime = m_pDynamicObjectList[iIndex]->m_dwLastTime - (m_pDynamicObjectList[iIndex]->m_dwLastTime / 10);
 						}
@@ -412,14 +412,14 @@ void DynamicObjects::CheckDynamicObjectList() {
 				case DEF_DYNAMICOBJECT_FIRE3:
 				case DEF_DYNAMICOBJECT_FIRE:
 
-					switch (m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->m_cWhetherStatus) {
+					switch (m_pDynamicObjectList[i]->map_->m_cWhetherStatus) {
 						case 0: break;
 						case 1:
 						case 2:
 						case 3:
 
 							m_pDynamicObjectList[i]->m_dwLastTime = m_pDynamicObjectList[i]->m_dwLastTime -
-									  (m_pDynamicObjectList[i]->m_dwLastTime / 10) * m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->m_cWhetherStatus;
+									  (m_pDynamicObjectList[i]->m_dwLastTime / 10) * m_pDynamicObjectList[i]->map_->m_cWhetherStatus;
 							break;
 					}
 					break;
@@ -433,13 +433,13 @@ void DynamicObjects::CheckDynamicObjectList() {
 				  ((dwTime - m_pDynamicObjectList[i]->m_dwRegisterTime) >= m_pDynamicObjectList[i]->m_dwLastTime)) {
 
 
-			m_pMapList[ m_pDynamicObjectList[i]->m_cMapIndex ]->bGetDynamicObject(m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY, &sType, &dwRegisterTime);
+			m_pDynamicObjectList[i]->map_->bGetDynamicObject(m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY, &sType, &dwRegisterTime);
 
 
 			if (dwRegisterTime == m_pDynamicObjectList[i]->m_dwRegisterTime) {
-				game_.SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, m_pDynamicObjectList[i]->m_cMapIndex, m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY, m_pDynamicObjectList[i]->m_sType, i, 0);
+				m_pDynamicObjectList[i]->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY, m_pDynamicObjectList[i]->m_sType, i, 0);
 
-				m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->SetDynamicObject(0, 0, m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY, dwTime);
+				m_pDynamicObjectList[i]->map_->SetDynamicObject(0, 0, m_pDynamicObjectList[i]->m_sX, m_pDynamicObjectList[i]->m_sY, dwTime);
 			}
 
 			switch (sType) {
@@ -456,21 +456,21 @@ void DynamicObjects::CheckDynamicObjectList() {
 	}
 }
 
-int DynamicObjects::iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, uint32_t dwLastTime, int iV1) {
+int DynamicObjects::iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, MapPtr map, short sX, short sY, uint32_t dwLastTime, int iV1) {
 	register int i;
 	short sPreType;
 	uint32_t dwTime, dwRegisterTime;
 
-	m_pMapList[cMapIndex]->bGetDynamicObject(sX, sY, &sPreType, &dwRegisterTime);
+	map->bGetDynamicObject(sX, sY, &sPreType, &dwRegisterTime);
 	if (sPreType != 0) return 0;
 
 	switch (sType) {
 		case DEF_DYNAMICOBJECT_FIRE3:
 		case DEF_DYNAMICOBJECT_FIRE:
-			if (m_pMapList[cMapIndex]->bGetIsMoveAllowedTile(sX, sY) == false)
+			if (map->bGetIsMoveAllowedTile(sX, sY) == false)
 				return 0;
 			if (dwLastTime != 0) {
-				switch (m_pMapList[cMapIndex]->m_cWhetherStatus) {
+				switch (map->m_cWhetherStatus) {
 					case 1: dwLastTime = dwLastTime - (dwLastTime / 2);
 						break;
 					case 2: dwLastTime = (dwLastTime / 2) - (dwLastTime / 3);
@@ -485,7 +485,7 @@ int DynamicObjects::iAddDynamicObjectList(short sOwner, char cOwnerType, short s
 
 		case DEF_DYNAMICOBJECT_FISHOBJECT:
 		case DEF_DYNAMICOBJECT_FISH:
-			if (m_pMapList[cMapIndex]->bGetIsWater(sX, sY) == false)
+			if (map->bGetIsWater(sX, sY) == false)
 				return 0;
 			break;
 
@@ -493,9 +493,9 @@ int DynamicObjects::iAddDynamicObjectList(short sOwner, char cOwnerType, short s
 		case DEF_DYNAMICOBJECT_ELVINEFLAG1:
 		case DEF_DYNAMICOBJECT_MINERAL1:
 		case DEF_DYNAMICOBJECT_MINERAL2:
-			if (m_pMapList[cMapIndex]->bGetMoveable(sX, sY) == false)
+			if (map->bGetMoveable(sX, sY) == false)
 				return 0;
-			m_pMapList[cMapIndex]->SetTempMoveAllowedFlag(sX, sY, false);
+			map->SetTempMoveAllowedFlag(sX, sY, false);
 			break;
 
 	}
@@ -507,10 +507,9 @@ int DynamicObjects::iAddDynamicObjectList(short sOwner, char cOwnerType, short s
 			if (dwLastTime != 0)
 				dwLastTime += (iDice(1, 4)*1000);
 
-			m_pDynamicObjectList[i].reset(new class CDynamicObject(sOwner, cOwnerType, sType, cMapIndex, sX, sY, dwTime, dwLastTime, iV1));
-			m_pMapList[cMapIndex]->SetDynamicObject(i, sType, sX, sY, dwTime);
-			game_.SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_CONFIRM, cMapIndex, sX, sY, sType, i, 0);
-
+			m_pDynamicObjectList[i].reset(new class CDynamicObject(sOwner, cOwnerType, sType, map, sX, sY, dwTime, dwLastTime, iV1));
+			map->SetDynamicObject(i, sType, sX, sY, dwTime);
+			map->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_CONFIRM, sX, sY, sType, i, 0);
 			return i;
 		}
 	}

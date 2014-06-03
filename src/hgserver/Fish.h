@@ -1,11 +1,12 @@
 #pragma once
+#include "Map.h"
 struct CItem;
 class CFish {
 public:
-	CFish(char cMapIndex, short sX, short sY, short sType, class CItem * pItem, int iDifficulty);
+	CFish(MapPtr map, short sX, short sY, short sType, class CItem * pItem, int iDifficulty);
 	virtual ~CFish();
 
-	char m_cMapIndex;
+	MapPtr map_;
 	short m_sX, m_sY;
 
 	short m_sType;

@@ -1,8 +1,8 @@
 #include "Mineral.h"
 
-CMineral::CMineral(char cType, char cMapIndex, int sX, int sY, int iRemain) {
+CMineral::CMineral(char cType, MapPtr map, int sX, int sY, int iRemain) {
 	m_cType = cType;
-	m_cMapIndex = cMapIndex;
+	map_ = map;
 	m_sX = sX;
 	m_sY = sY;
 

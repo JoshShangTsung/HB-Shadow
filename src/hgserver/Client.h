@@ -6,6 +6,7 @@
 #include "GuildsMan.h"
 #include "Magic.h"
 #include "GlobalDef.h"
+#include "Map.h"
 #include <memory>
 #include <array>
 #define DEF_CLIENTSOCKETBLOCKLIMIT	15
@@ -70,8 +71,7 @@ public:
 	char m_cAccountPassword[11];
 	bool m_bIsInitComplete;
 	bool m_bIsMsgSendAvailable;
-	char m_cMapName[11];
-	char m_cMapIndex;
+	MapPtr map_;
 	short m_sX, m_sY;
 	char m_cGuildName[21];
 	char m_cLocation[11];
@@ -248,7 +248,7 @@ public:
 	uint32_t m_dwLogoutHackCheck;
 	uint32_t m_dwInitCCTimeRcv;
 	uint32_t m_dwInitCCTime;
-	char m_cLockedMapName[11];
+	MapPtr lockedMap_;
 	int m_iLockedMapTime;
 	int m_iCrusadeDuty;
 	uint32_t m_dwCrusadeGUID;

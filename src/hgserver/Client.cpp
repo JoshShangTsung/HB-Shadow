@@ -59,7 +59,6 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket) : ga
 	m_iAngelicInt = 0;
 	m_iAngelicDex = 0;
 	m_iAngelicMag = 0;
-	m_cMapIndex = -1;
 	m_sX = -1;
 	m_sY = -1;
 	m_cDir = 5;
@@ -187,8 +186,6 @@ CClient::CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket) : ga
 	m_dwMoveLAT = m_dwRunLAT = m_dwAttackLAT = 0;
 	m_dwInitCCTimeRcv = 0;
 	m_dwInitCCTime = 0;
-	std::memset(m_cLockedMapName, 0, sizeof (m_cLockedMapName));
-	strcpy(m_cLockedMapName, "NONE");
 	m_iLockedMapTime = 0;
 	m_iCrusadeDuty = 0;
 	m_dwCrusadeGUID = 0;
@@ -243,20 +240,20 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	bool bIsSAattacked = false;
 	if (this->m_bIsInitComplete == false) return;
 	if (this->m_bIsKilled == true) return;
-	
-	
-	if (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cName, "fight", 5) == 0) {
+
+
+	if (memcmp(map_->m_cName, "fight", 5) == 0) {
 		this->m_dwFightzoneDeadTime = timeGetTime();
 		wsprintf(G_cTxt, "Fightzone Dead Time: %d", this->m_dwFightzoneDeadTime);
 		PutLogList(G_cTxt);
 	}
 	this->m_bIsKilled = true;
-	
+
 	this->m_iHP = 0;
-	
+
 	if (this->m_bIsExchangeMode == true) {
 		auto with = this->exchangingWith_.lock();
-		if(with) {
+		if (with) {
 			game_._ClearExchangeStatus(with->id_);
 		}
 		game_._ClearExchangeStatus(id_);
@@ -281,17 +278,17 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 			break;
 	}
 	this->SendNotifyMsg(0, DEF_NOTIFY_KILLED, 0, 0, 0, cAttackerName);
-	
+
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		sAttackerWeapon = ((game_.m_pClientList[iAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
 	} else sAttackerWeapon = 1;
 	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDYING, sDamage, sAttackerWeapon, 0);
-	game_.m_pMapList[this->m_cMapIndex]->ClearOwner(12, id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
-	game_.m_pMapList[this->m_cMapIndex]->SetDeadOwner(id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
-	if (game_.m_pMapList[this->m_cMapIndex]->m_cType == DEF_MAPTYPE_NOPENALTY_NOREWARD) return;
-	if ((game_.m_pMapList[this->m_cMapIndex] != nullptr) &&
+	this->map_->ClearOwner(12, id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
+	this->map_->SetDeadOwner(id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
+	if (this->map_->m_cType == DEF_MAPTYPE_NOPENALTY_NOREWARD) return;
+	if ((this->map_ != nullptr) &&
 			  (game_.m_bIsHeldenianMode == true) &&
-			  (game_.m_pMapList[this->m_cMapIndex]->m_bIsHeldenianMap == true)) {
+			  (this->map_->m_bIsHeldenianMap == true)) {
 		if (this->m_cSide == 1) {
 			game_.m_iHeldenianAresdenDead++;
 		} else if (this->m_cSide == 2) {
@@ -301,7 +298,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	}
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		// v1.432
-		
+
 		switch (game_.m_pClientList[iAttackerH]->m_iSpecialAbilityType) {
 			case 1:
 			case 2:
@@ -311,59 +308,59 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 				bIsSAattacked = true;
 				break;
 		}
-		if (iAttackerH == id_) return; 
+		if (iAttackerH == id_) return;
 		if (memcmp(this->m_cLocation, "NONE", 4) == 0) {
-			
+
 			if (this->m_iPKCount == 0) {
 				game_.ApplyPKpenalty(iAttackerH, id_);
 			} else {
 				game_.PK_KillRewardHandler(iAttackerH, id_);
 			}
 		} else {
-			
+
 			if (this->m_iGuildRank == -1) {
 				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
-					
+
 					if (this->m_iPKCount == 0) {
 						game_.ApplyPKpenalty(iAttackerH, id_);
 					} else {
-						
+
 					}
 				} else {
 					if (memcmp(this->m_cLocation, game_.m_pClientList[iAttackerH]->m_cLocation, 10) == 0) {
 						if (this->m_iPKCount == 0) {
-							
+
 							game_.ApplyPKpenalty(iAttackerH, id_);
 						} else {
-							
+
 							game_.PK_KillRewardHandler(iAttackerH, id_);
 						}
 					} else {
-						
+
 						game_.EnemyKillRewardHandler(iAttackerH, id_);
 					}
 				}
 			} else {
-				
+
 				if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
-					
+
 					if (this->m_iPKCount == 0) {
-						
+
 						game_.ApplyPKpenalty(iAttackerH, id_);
 					} else {
-						
+
 					}
 				} else {
 					if (memcmp(this->m_cLocation, game_.m_pClientList[iAttackerH]->m_cLocation, 10) == 0) {
 						if (this->m_iPKCount == 0) {
-							
+
 							game_.ApplyPKpenalty(iAttackerH, id_);
 						} else {
-							
+
 							game_.PK_KillRewardHandler(iAttackerH, id_);
 						}
 					} else {
-						
+
 						game_.EnemyKillRewardHandler(iAttackerH, id_);
 					}
 				}
@@ -372,7 +369,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 		if (this->m_iPKCount == 0) {
 			// Innocent
 			if (memcmp(game_.m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
-				
+
 				//this->m_iExp -= iDice(1, 100);
 				//if (this->m_iExp < 0) this->m_iExp = 0;
 				//this->SendNotifyMsg(nullptr,DEF_NOTIFY_EXP, nullptr, nullptr, nullptr, nullptr);
@@ -410,10 +407,10 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 			// Slaughterer
 			game_.ApplyCombatKilledPenalty(id_, 12, bIsSAattacked);
 		}
-		
+
 		if (game_.m_pNpcList[iAttackerH]->m_iGuildGUID != 0) {
 			if (game_.m_pNpcList[iAttackerH]->m_cSide != this->m_cSide) {
-				for(auto &iterClient: game_.m_pClientList) {
+				for (auto &iterClient : game_.m_pClientList) {
 					if ((iterClient.m_iGuildGUID == game_.m_pNpcList[iAttackerH]->m_iGuildGUID) && (iterClient.m_iCrusadeDuty == 3)) {
 						iterClient.m_iConstructionPoint += (this->m_iLevel / 2);
 						if (iterClient.m_iConstructionPoint > DEF_MAXCONSTRUCTIONPOINT)
@@ -421,7 +418,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 						//testcode
 						wsprintf(G_cTxt, "Enemy Player Killed by Npc! Construction +%d", (this->m_iLevel / 2));
 						PutLogList(G_cTxt);
-						
+
 						iterClient.SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, iterClient.m_iConstructionPoint, iterClient.m_iWarContribution, 0, nullptr);
 						return;
 					}
@@ -444,11 +441,11 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 		"%s says: I CAN OWN YOU! But gets OWNED by %s",
 		"%s KilleD %s"
 	};
-	wsprintf(cEKMsg, msgs[iDice(1, 10)-1], cAttackerName, this->m_cCharName);
-	for(auto &iterClient: game_.m_pClientList) {
+	wsprintf(cEKMsg, msgs[iDice(1, 10) - 1], cAttackerName, this->m_cCharName);
+	for (auto &iterClient : game_.m_pClientList) {
 		iterClient.SendNotifyMsg(0, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cEKMsg);
 	}
-	wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName); 
+	wsprintf(G_cTxt, "%s killed %s", cAttackerName, this->m_cCharName);
 	PutLogFileList(G_cTxt);
 }
 
@@ -779,10 +776,10 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			iRet = this->m_pXSock->iSendMsg(cData, 18);
 			break;
 		case DEF_NOTIFY_BUILDITEMSUCCESS:
-		case DEF_NOTIFY_BUILDITEMFAIL: 
-				sp = (short *) cp;
-				*sp = (short) sV1;
-				cp += 2;
+		case DEF_NOTIFY_BUILDITEMFAIL:
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
 			sp = (short *) cp;
 			*sp = (short) sV2;
 			cp += 2;
@@ -1022,7 +1019,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 					cp += 4;
 					iRet = this->m_pXSock->iSendMsg(cData, 26 + 12);
 				}
-				break;
+					break;
 			}
 			break;
 		case DEF_NOTIFY_HELDENIANSTART:
@@ -1295,7 +1292,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			iRet = this->m_pXSock->iSendMsg(cData, 6);
 			break;
 		case DEF_NOTIFY_SERVERCHANGE:
-			memcpy(cp, this->m_cMapName, 10);
+			memcpy(cp, this->map_->m_cName, 10);
 			cp += 10;
 			if (game_.m_iGameServerMode == 1)
 				if (memcmp(game_.m_cLogServerAddr, game_.m_cGameServerAddr, 15) == 0)
@@ -1512,7 +1509,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			}
 			iRet = this->m_pXSock->iSendMsg(cData, 6 + partyInfo.iTotalMembers * 18);
 		}
-		break;
+			break;
 		case DEF_NOTIFY_MP:
 			dwp = (uint32_t *) cp;
 			*dwp = (uint32_t) this->m_iMP;
@@ -2731,7 +2728,7 @@ void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 				break;
 			case 2: // Farming
 			case 12: // Alchemy
-			case 15: 
+			case 15:
 			case 19: // Pretend-Corpse
 				if (this->m_cSkillMastery[sSkillIndex] > ((this->m_iInt + this->m_iAngelicInt) * 2)) {
 					this->m_cSkillMastery[sSkillIndex]--;
@@ -2750,24 +2747,24 @@ void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 		}
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
 			if (this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ] != -1) {
-				
+
 				iWeaponIndex = this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
-					
+
 					this->m_iHitRatio++;
 				}
 			}
 			if (this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_RHAND ] != -1) {
-				
+
 				iWeaponIndex = this->m_sItemEquipmentStatus[ DEF_EQUIPPOS_RHAND ];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
-					
+
 					this->m_iHitRatio++;
 				}
 			}
 		}
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
-			
+
 			game_.bCheckTotalSkillMasteryPoints(id_, sSkillIndex);
 			this->SendNotifyMsg(0, DEF_NOTIFY_SKILL, sSkillIndex, this->m_cSkillMastery[sSkillIndex], 0, nullptr);
 		}
@@ -2893,12 +2890,12 @@ void CClient::AdminOrder_GetFightzoneTicket() {
 	int iReserveTime, iFightzoneTN, iFightzoneN;
 	char cTemp[21];
 	SYSTEMTIME SysTime;
-	if (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cName, "fightzone", 9) == 0) {
+	if (memcmp(this->map_->m_cName, "fightzone", 9) == 0) {
 		iReserveTime = this->m_iReserveTime;
 		GetLocalTime(&SysTime);
 		this->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 3);
 		std::memset(cTemp, 0, sizeof (cTemp));
-		strcpy(cTemp, (game_.m_pMapList[this->m_cMapIndex]->m_cName + 9));
+		strcpy(cTemp, (this->map_->m_cName + 9));
 		iFightzoneN = this->m_iFightzoneNumber;
 		iFightzoneTN = this->m_iFightZoneTicketNumber;
 		this->m_iFightZoneTicketNumber = 10;
@@ -2914,7 +2911,7 @@ void CClient::AdminOrder_GetFightzoneTicket() {
 		GetLocalTime(&SysTime);
 		this->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 2);
 		std::memset(cTemp, 0, sizeof (cTemp));
-		strcpy(cTemp, (game_.m_pMapList[this->m_cMapIndex]->m_cName + 9));
+		strcpy(cTemp, (this->map_->m_cName + 9));
 		iFightzoneN = this->m_iFightzoneNumber;
 		iFightzoneTN = this->m_iFightZoneTicketNumber;
 		this->m_iFightZoneTicketNumber = 10;
@@ -2949,7 +2946,7 @@ void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
 	ip = (int *) cp;
 	iAngel = (int) *ip;
 	cp += 2;
-	wsprintf(G_cTxt, "PC(%s) obtained an Angel (%d).   %s(%d %d)", this->m_cCharName, iAngel, this->m_cMapName, this->m_sX, this->m_sY);
+	wsprintf(G_cTxt, "PC(%s) obtained an Angel (%d).   %s(%d %d)", this->m_cCharName, iAngel, this->map_->m_cName, this->m_sX, this->m_sY);
 	PutLogList(G_cTxt);
 	switch (iAngel) {
 		case 1:
@@ -3037,8 +3034,8 @@ void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
 					break;
 			}
 		} else {
-			game_.m_pMapList[this->m_cMapIndex]->bSetItem(this->m_sX, this->m_sY, pItem);
-			game_.SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, this->m_cMapIndex, this->m_sX, this->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
+			this->map_->bSetItem(this->m_sX, this->m_sY, pItem);
+			this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, this->m_sX, this->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -3122,7 +3119,7 @@ void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, 
 				if (game_.m_pClientList[id_] == nullptr) break;
 				wsprintf(G_cTxt, "(!!!) Client (%s) connection closed!. Sniffer suspect!.", this->m_cCharName);
 				PutLogList(G_cTxt);
-				game_.m_pMapList[this->m_cMapIndex]->ClearOwner(2, id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
+				this->map_->ClearOwner(2, id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
 				game_.delayEvents_.remove(id_, DEF_OWNERTYPE_PLAYER, 0);
 				game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, false);
 				if ((dwTime - game_.m_dwGameTime2) > 3000) {
@@ -3215,7 +3212,7 @@ void CClient::RequestResurrectPlayer(bool bResurrect) {
 	// Player's Hunger
 	this->m_iHungerStatus = 100;
 	this->m_bIsBeingResurrected = false;
-	this->RequestTeleportHandler("2   ", this->m_cMapName, this->m_sX, this->m_sY);
+	this->RequestTeleportHandler("2   ", this->map_->m_cName, this->m_sX, this->m_sY);
 }
 
 void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, int dX, int dY) {
@@ -3231,27 +3228,27 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 	if (this->m_bIsInitComplete == false) return;
 	if (this->m_bIsKilled == true) return;
 	if (this->m_bIsOnWaitingProcess == true) return;
-	if ((game_.m_pMapList[this->m_cMapIndex]->m_bIsRecallImpossible == true) && (this->m_iAdminUserLevel == 0) &&
+	if ((this->map_->m_bIsRecallImpossible == true) && (this->m_iAdminUserLevel == 0) &&
 			  (this->m_bIsKilled == false) && (this->m_iHP > 0)) {
 		this->SendNotifyMsg(0, DEF_NOTIFY_NORECALL, 0, 0, 0, nullptr);
 		return;
 	}
 	if ((memcmp(this->m_cLocation, "elvine", 6) == 0)
 			  && (this->m_iTimeLeft_ForceRecall > 0)
-			  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0)
+			  && (memcmp(this->map_->m_cLocationName, "aresden", 7) == 0)
 			  && ((pData[0] == '1'))
 			  && (this->m_iAdminUserLevel == 0)
 			  && (game_.m_bIsCrusadeMode == false)) return;
 	if ((memcmp(this->m_cLocation, "aresden", 7) == 0)
 			  && (this->m_iTimeLeft_ForceRecall > 0)
-			  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0)
+			  && (memcmp(this->map_->m_cLocationName, "elvine", 6) == 0)
 			  && ((pData[0] == '1'))
 			  && (this->m_iAdminUserLevel == 0)
 			  && (game_.m_bIsCrusadeMode == false)) return;
 	bIsLockedMapNotify = false;
 	if (this->m_bIsExchangeMode == true) {
 		auto with = this->exchangingWith_.lock();
-		if(with) {
+		if (with) {
 			game_._ClearExchangeStatus(with->id_);
 		}
 		game_._ClearExchangeStatus(id_);
@@ -3259,16 +3256,16 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 	if ((memcmp(this->m_cLocation, "NONE", 4) == 0) && (pData[0] == '1'))
 		return;
 	game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
-	game_.m_pMapList[this->m_cMapIndex]->ClearOwner(13, id_, DEF_OWNERTYPE_PLAYER,
+	this->map_->ClearOwner(13, id_, DEF_OWNERTYPE_PLAYER,
 			  this->m_sX,
 			  this->m_sY);
 	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 	sX = this->m_sX;
 	sY = this->m_sY;
 	std::memset(cDestMapName, 0, sizeof (cDestMapName));
-	bRet = game_.m_pMapList[this->m_cMapIndex]->bSearchTeleportDest(sX, sY, cDestMapName, &iDestX, &iDestY, &cDir);
+	bRet = this->map_->bSearchTeleportDest(sX, sY, cDestMapName, &iDestX, &iDestY, &cDir);
 	// Crusade
-	if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+	if ((this->lockedMap_) && (this->m_iLockedMapTime > 0)) {
 		iMapSide = game_.iGetMapLocationSide(cDestMapName);
 		if (iMapSide > 3) iMapSide -= 2; // New 18/05/2004
 		if ((iMapSide != 0) && (this->m_cSide == iMapSide)) {
@@ -3277,7 +3274,7 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 			iDestY = -1;
 			bIsLockedMapNotify = true;
 			std::memset(cDestMapName, 0, sizeof (cDestMapName));
-			strcpy(cDestMapName, this->m_cLockedMapName);
+			strcpy(cDestMapName, this->lockedMap_->m_cName);
 		}
 	}
 	if ((bRet == true) && (cMapName == nullptr)) {
@@ -3287,12 +3284,12 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 					if (pData[0] == '3' && this->m_iAdminUserLevel == 0 && (this->m_iTimeLeft_ForceRecall > 0)) {
 						std::vector<std::string> whitelist;
 						if ((memcmp(this->m_cLocation, "elvine", 6) == 0)
-								  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0)) {
+								  && (memcmp(this->map_->m_cLocationName, "aresden", 7) == 0)) {
 							// Elv in ares
 							whitelist = {"middleland", "huntzone2", "aresdend1", "arefarm"};
 						}
 						if ((memcmp(this->m_cLocation, "aresden", 7) == 0)
-								  && (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0)) {
+								  && (memcmp(this->map_->m_cLocationName, "elvine", 6) == 0)) {
 							// Ares in elv
 							whitelist = {"middleland", "huntzone1", "elvined1", "elvfarm"};
 						}
@@ -3306,17 +3303,14 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 					this->m_sX = iDestX;
 					this->m_sY = iDestY;
 					this->m_cDir = cDir;
-					this->m_cMapIndex = i;
-					std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-					memcpy(this->m_cMapName, game_.m_pMapList[i]->m_cName, 10);
+					this->map_ = game_.m_pMapList[i];
 					goto RTH_NEXTSTEP;
 				}
 			}
 		this->m_sX = iDestX;
 		this->m_sY = iDestY;
 		this->m_cDir = cDir;
-		std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-		memcpy(this->m_cMapName, cDestMapName, 10);
+		this->map_ = game_.m_pMapList.byName(cDestMapName);
 		// New 18/05/2004
 		this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
 				  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
@@ -3339,25 +3333,22 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 					strcpy(cTempMapName, "elvfarm");
 				} else strcpy(cTempMapName, this->m_cLocation);
 				// Crusade
-				if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+				if ((this->lockedMap_) && (this->m_iLockedMapTime > 0)) {
 					bIsLockedMapNotify = true;
 					std::memset(cTempMapName, 0, sizeof (cTempMapName));
-					strcpy(cTempMapName, this->m_cLockedMapName);
+					strcpy(cTempMapName, this->lockedMap_->m_cName);
 				}
 				for (i = 0; i < DEF_MAXMAPS; i++)
 					if (game_.m_pMapList[i] != nullptr) {
 						if (memcmp(game_.m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
-							game_.GetMapInitialPoint(i, &this->m_sX, &this->m_sY, this->m_cLocation);
-							this->m_cMapIndex = i;
-							std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-							memcpy(this->m_cMapName, cTempMapName, 10);
+							game_.m_pMapList[i]->GetMapInitialPoint(&this->m_sX, &this->m_sY, this->m_cLocation);
+							this->map_ = game_.m_pMapList[i];
 							goto RTH_NEXTSTEP;
 						}
 					}
 				this->m_sX = -1;
 				this->m_sY = -1;
-				std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-				memcpy(this->m_cMapName, cTempMapName, 10);
+				this->map_ = game_.m_pMapList.byName(cTempMapName);
 				// New 18/05/2004
 				this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
 						  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
@@ -3383,25 +3374,22 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 					}
 				}
 				// Crusade
-				if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+				if ((this->lockedMap_) && (this->m_iLockedMapTime > 0)) {
 					bIsLockedMapNotify = true;
 					std::memset(cTempMapName, 0, sizeof (cTempMapName));
-					strcpy(cTempMapName, this->m_cLockedMapName);
+					strcpy(cTempMapName, this->lockedMap_->m_cName);
 				}
 				for (i = 0; i < DEF_MAXMAPS; i++)
 					if (game_.m_pMapList[i] != nullptr) {
 						if (memcmp(game_.m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
-							game_.GetMapInitialPoint(i, &this->m_sX, &this->m_sY, this->m_cLocation);
-							this->m_cMapIndex = i;
-							std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-							memcpy(this->m_cMapName, game_.m_pMapList[i]->m_cName, 10);
+							game_.m_pMapList[i]->GetMapInitialPoint(&this->m_sX, &this->m_sY, this->m_cLocation);
+							this->map_ = game_.m_pMapList[i];
 							goto RTH_NEXTSTEP;
 						}
 					}
 				this->m_sX = -1;
 				this->m_sY = -1;
-				std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-				memcpy(this->m_cMapName, cTempMapName, 10);
+				this->map_ = game_.m_pMapList.byName(cTempMapName);
 				// New 18/05/2004
 				this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
 						  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
@@ -3413,12 +3401,12 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 				return;
 			case '2':
 				// Crusade
-				if ((strcmp(this->m_cLockedMapName, "NONE") != 0) && (this->m_iLockedMapTime > 0)) {
+				if ((this->lockedMap_) && (this->m_iLockedMapTime > 0)) {
 					dX = -1;
 					dY = -1;
 					bIsLockedMapNotify = true;
 					std::memset(cTempMapName, 0, sizeof (cTempMapName));
-					strcpy(cTempMapName, this->m_cLockedMapName);
+					strcpy(cTempMapName, this->lockedMap_->m_cName);
 				} else {
 					std::memset(cTempMapName, 0, sizeof (cTempMapName));
 					strcpy(cTempMapName, cMapName);
@@ -3427,8 +3415,7 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 				if (cMapIndex == -1) {
 					this->m_sX = dX;
 					this->m_sY = dY;
-					std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-					memcpy(this->m_cMapName, cTempMapName, 10);
+					this->map_ = game_.m_pMapList.byName(cTempMapName);
 					// New 18/05/2004
 					this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
 							  this->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], 0, nullptr);
@@ -3441,9 +3428,7 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 				}
 				this->m_sX = dX;
 				this->m_sY = dY;
-				this->m_cMapIndex = cMapIndex;
-				std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-				memcpy(this->m_cMapName, game_.m_pMapList[cMapIndex]->m_cName, 10);
+				this->map_ = game_.m_pMapList[cMapIndex];
 				break;
 		}
 	}
@@ -3458,17 +3443,17 @@ RTH_NEXTSTEP:
 	iTemp = iTemp | (iTemp2 << 28);
 	this->m_iStatus = iTemp;
 	// Crusade
-	if (bIsLockedMapNotify == true) this->SendNotifyMsg(0, DEF_NOTIFY_LOCKEDMAP, this->m_iLockedMapTime, 0, 0, this->m_cLockedMapName);
+	if (bIsLockedMapNotify == true) this->SendNotifyMsg(0, DEF_NOTIFY_LOCKEDMAP, this->m_iLockedMapTime, 0, 0, this->lockedMap_->m_cName);
 	pBuffer = new char [DEF_MSGBUFFERSIZE + 1];
-	ZeroMemory(pBuffer, DEF_MSGBUFFERSIZE + 1);
+	memset(pBuffer, 0, DEF_MSGBUFFERSIZE + 1);
 	dwp = (uint32_t *) (pBuffer + DEF_INDEX4_MSGID);
 	*dwp = MSGID_RESPONSE_INITDATA;
 	wp = (uint16_t *) (pBuffer + DEF_INDEX2_MSGTYPE);
 	*wp = DEF_MSGTYPE_CONFIRM;
 	cp = (char *) (pBuffer + DEF_INDEX2_MSGTYPE + 2);
 	if (this->m_bIsObserverMode == false)
-		game_.bGetEmptyPosition(&this->m_sX, &this->m_sY, this->m_cMapIndex);
-	else game_.GetMapInitialPoint(this->m_cMapIndex, &this->m_sX, &this->m_sY);
+		this->map_->bGetEmptyPosition(&this->m_sX, &this->m_sY);
+	else this->map_->GetMapInitialPoint(&this->m_sX, &this->m_sY);
 	sp = (short *) cp;
 	*sp = id_; // Player ObjectID
 	cp += 2;
@@ -3500,24 +3485,24 @@ RTH_NEXTSTEP:
 	ip = (int *) cp;
 	*ip = this->m_iStatus;
 	cp += 4; //Original 2
-	memcpy(cp, this->m_cMapName, 10);
+	memcpy(cp, this->map_->m_cName, 10);
 	cp += 10;
-	memcpy(cp, game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, 10);
+	memcpy(cp, this->map_->m_cLocationName, 10);
 	cp += 10;
-	if (game_.m_pMapList[this->m_cMapIndex]->m_bIsFixedDayMode == true)
+	if (this->map_->m_bIsFixedDayMode == true)
 		*cp = 1;
 	else *cp = game_.m_cDayOrNight;
 	cp++;
-	if (game_.m_pMapList[this->m_cMapIndex]->m_bIsFixedDayMode == true)
+	if (this->map_->m_bIsFixedDayMode == true)
 		*cp = 0;
-	else *cp = game_.m_pMapList[this->m_cMapIndex]->m_cWhetherStatus;
+	else *cp = this->map_->m_cWhetherStatus;
 	cp++;
 	// v1.4 Contribution
 	ip = (int *) cp;
 	*ip = this->m_iContribution;
 	cp += 4;
 	if (this->m_bIsObserverMode == false) {
-		game_.m_pMapList[this->m_cMapIndex]->SetOwner(id_,
+		this->map_->SetOwner(id_,
 				  DEF_OWNERTYPE_PLAYER,
 				  this->m_sX,
 				  this->m_sY);
@@ -3551,20 +3536,20 @@ RTH_NEXTSTEP:
 	if (pBuffer != nullptr) delete pBuffer;
 	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
 	if ((memcmp(this->m_cLocation, "are", 3) == 0) &&
-			  (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0) &&
+			  (memcmp(this->map_->m_cLocationName, "elvine", 6) == 0) &&
 			  (this->m_iAdminUserLevel == 0)) {
 		this->m_dwWarBeginTime = timeGetTime();
 		this->m_bIsWarLocation = true;
 		// New 17/05/2004
 		game_.CheckForceRecallTime(id_);
 	} else if ((memcmp(this->m_cLocation, "elv", 3) == 0) &&
-			  (memcmp(game_.m_pMapList[this->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0) &&
+			  (memcmp(this->map_->m_cLocationName, "aresden", 7) == 0) &&
 			  (this->m_iAdminUserLevel == 0)) {
 		this->m_dwWarBeginTime = timeGetTime();
 		this->m_bIsWarLocation = true;
 		// New 17/05/2004
 		game_.CheckForceRecallTime(id_);
-	} else if (game_.m_pMapList[this->m_cMapIndex]->m_bIsFightZone == true) {
+	} else if (this->map_->m_bIsFightZone == true) {
 		this->m_dwWarBeginTime = timeGetTime();
 		this->m_bIsWarLocation = true;
 		game_.SetForceRecallTime(id_);
@@ -3577,7 +3562,7 @@ RTH_NEXTSTEP:
 	}
 	// No entering enemy shops
 	int iMapside, iMapside2;
-	iMapside = game_.iGetMapLocationSide(game_.m_pMapList[this->m_cMapIndex]->m_cName);
+	iMapside = game_.iGetMapLocationSide(this->map_->m_cName);
 	if (iMapside > 3) iMapside2 = iMapside - 2;
 	else iMapside2 = iMapside;
 	this->m_bIsInsideOwnTown = false;
@@ -3591,7 +3576,7 @@ RTH_NEXTSTEP:
 			}
 		}
 	} else {
-		if (game_.m_pMapList[ this->m_cMapIndex ]->m_bIsFightZone == true &&
+		if (this->map_->m_bIsFightZone == true &&
 				  game_.m_iFightzoneNoForceRecall == false &&
 				  this->m_iAdminUserLevel == 0) {
 			this->m_dwWarBeginTime = timeGetTime();
@@ -3599,8 +3584,8 @@ RTH_NEXTSTEP:
 			GetLocalTime(&SysTime);
 			this->m_iTimeLeft_ForceRecall = 2 * 60 * 20 - ((SysTime.wHour % 2)*20 * 60 + SysTime.wMinute * 20) - 2 * 20;
 		} else {
-			if (memcmp(game_.m_pMapList[ this->m_cMapIndex ]->m_cLocationName, "arejail", 7) == 0 ||
-					  memcmp(game_.m_pMapList[ this->m_cMapIndex ]->m_cLocationName, "elvjail", 7) == 0) {
+			if (memcmp(this->map_->m_cLocationName, "arejail", 7) == 0 ||
+					  memcmp(this->map_->m_cLocationName, "elvjail", 7) == 0) {
 				if (this->m_iAdminUserLevel == 0) {
 					this->m_bIsWarLocation = true;
 					this->m_dwWarBeginTime = timeGetTime();
@@ -3672,8 +3657,8 @@ RTH_NEXTSTEP:
 		}
 	}
 	// v1.42
-	if (memcmp(this->m_cMapName, "fight", 5) == 0) {
-		wsprintf(G_cTxt, "Char(%s)-Enter(%s) Observer(%d)", this->m_cCharName, this->m_cMapName, this->m_bIsObserverMode);
+	if (memcmp(this->map_->m_cName, "fight", 5) == 0) {
+		wsprintf(G_cTxt, "Char(%s)-Enter(%s) Observer(%d)", this->m_cCharName, this->map_->m_cName, this->m_bIsObserverMode);
 		PutLogEventFileList(G_cTxt);
 	}
 	// Crusade
@@ -4465,9 +4450,9 @@ RCPH_LOOPBREAK:
 				//if ((pItem->m_wPrice * pItem->m_dwCount) > 1000)
 				//	SendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, id_);
 			} else {
-				game_.m_pMapList[this->m_cMapIndex]->bSetItem(this->m_sX,
+				this->map_->bSetItem(this->m_sX,
 						  this->m_sY, pItem);
-				game_.SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, this->m_cMapIndex,
+				this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
 						  this->m_sX, this->m_sY,
 						  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
 				dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
@@ -4906,8 +4891,8 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 					return;
 			}
 		} else {
-			game_.m_pMapList[this->m_cMapIndex]->bSetItem(this->m_sX, this->m_sY, pItem);
-			game_.SendEventToNearClient_TypeB(MSGID_MAGICCONFIGURATIONCONTENTS, DEF_COMMONTYPE_ITEMDROP, this->m_cMapIndex,
+			this->map_->bSetItem(this->m_sX, this->m_sY, pItem);
+			this->map_->SendEventToNearClient_TypeB(MSGID_MAGICCONFIGURATIONCONTENTS, DEF_COMMONTYPE_ITEMDROP,
 					  this->m_sX, this->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame,
 					  pItem->m_cItemColor);
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
@@ -4930,15 +4915,14 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 
 void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bForceCloseConn) {
 	int i;
-	char cTmpMap[30];
 	if (this->m_bIsInitComplete == true) {
-		if (memcmp(this->m_cMapName, "fight", 5) == 0) {
-			wsprintf(G_cTxt, "Char(%s)-Exit(%s)", this->m_cCharName, this->m_cMapName);
+		if (memcmp(this->map_->m_cName, "fight", 5) == 0) {
+			wsprintf(G_cTxt, "Char(%s)-Exit(%s)", this->m_cCharName, this->map_->m_cName);
 			PutLogEventFileList(G_cTxt);
 		}
 		if (this->m_bIsExchangeMode == true) {
 			auto with = this->exchangingWith_.lock();
-			if(with) {
+			if (with) {
 				game_._ClearExchangeStatus(with->id_);
 			}
 			game_._ClearExchangeStatus(id_);
@@ -4948,14 +4932,14 @@ void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bFo
 		if (bNotify == true)
 			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 		game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
-		for(auto &iterClient: game_.m_pClientList) {
+		for (auto &iterClient : game_.m_pClientList) {
 			auto whisperedPlayer = iterClient.whisperedPlayer_.lock();
-			if(whisperedPlayer && whisperedPlayer->id_ == id_) {
+			if (whisperedPlayer && whisperedPlayer->id_ == id_) {
 				iterClient.whisperedPlayer_.reset();
 				iterClient.SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEOFF, 0, 0, 0, this->m_cCharName);
 			}
 		}
-		game_.m_pMapList[this->m_cMapIndex]->ClearOwner(2, id_, DEF_OWNERTYPE_PLAYER,
+		this->map_->ClearOwner(2, id_, DEF_OWNERTYPE_PLAYER,
 				  this->m_sX,
 				  this->m_sY);
 		game_.delayEvents_.remove(id_, DEF_OWNERTYPE_PLAYER, 0);
@@ -4964,95 +4948,75 @@ void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bFo
 		if (this->m_bIsKilled == true) {
 			this->m_sX = -1;
 			this->m_sY = -1;
-			strcpy(cTmpMap, this->m_cMapName);
-			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+			auto tmpMap = this->map_;
+			this->map_ = nullptr;
 			if (this->m_cSide == 0) {
-				strcpy(this->m_cMapName, "default");
+				this->map_ = game_.m_pMapList.byName("default");
 			} else {
 				if (memcmp(this->m_cLocation, "are", 3) == 0) {
 					if (game_.m_bIsCrusadeMode == true) {
 						if (this->m_iDeadPenaltyTime > 0) {
-							std::memset(this->m_cLockedMapName, 0, sizeof (this->m_cLockedMapName));
-							strcpy(this->m_cLockedMapName, "aresden");
+							this->lockedMap_ = game_.m_pMapList.byName("aresden");
 							this->m_iLockedMapTime = 60 * 5;
 							this->m_iDeadPenaltyTime = 60 * 10;
 						} else {
 							this->m_iDeadPenaltyTime = 60 * 10;
 						}
 					}
-					if (strcmp(cTmpMap, "elvine") == 0) {
-						strcpy(this->m_cLockedMapName, "elvjail");
+					if (strcmp(tmpMap->m_cName, "elvine") == 0) {
+						this->map_ = this->lockedMap_ = game_.m_pMapList.byName("elvjail");
 						this->m_iLockedMapTime = 10 * 2;
-						memcpy(this->m_cMapName, "elvjail", 7);
 					} else if (this->m_iLevel > 80)
-						memcpy(this->m_cMapName, "resurr1", 7);
-					else memcpy(this->m_cMapName, "resurr1", 7);
+						this->map_ = game_.m_pMapList.byName("resurr1");
+					else this->map_ = game_.m_pMapList.byName("resurr1");
 				} else {
 					if (game_.m_bIsCrusadeMode == true) {
 						if (this->m_iDeadPenaltyTime > 0) {
-							std::memset(this->m_cLockedMapName, 0, sizeof (this->m_cLockedMapName));
-							strcpy(this->m_cLockedMapName, "elvine");
+							this->lockedMap_ = game_.m_pMapList.byName("elvine");
 							this->m_iLockedMapTime = 60 * 5;
 							this->m_iDeadPenaltyTime = 60 * 10;
 						} else {
 							this->m_iDeadPenaltyTime = 60 * 10;
 						}
 					}
-					if (strcmp(cTmpMap, "aresden") == 0) {
-						strcpy(this->m_cLockedMapName, "arejail");
+					if (strcmp(tmpMap->m_cName, "aresden") == 0) {
+						this->map_ = this->lockedMap_ = game_.m_pMapList.byName("arejail");
 						this->m_iLockedMapTime = 10 * 2;
-						memcpy(this->m_cMapName, "arejail", 7);
 					} else if (this->m_iLevel > 80)
-						memcpy(this->m_cMapName, "resurr2", 7);
-					else memcpy(this->m_cMapName, "resurr2", 7);
+						this->map_ = game_.m_pMapList.byName("resurr2");
+					else this->map_ = game_.m_pMapList.byName("resurr2");
 				}
 			}
 		} else if (bForceCloseConn == true) {
-			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-			memcpy(this->m_cMapName, "bisle", 5);
+			this->map_ = this->lockedMap_ = game_.m_pMapList.byName("bisle");
 			this->m_sX = -1;
 			this->m_sY = -1;
-			std::memset(this->m_cLockedMapName, 0, sizeof (this->m_cLockedMapName));
-			strcpy(this->m_cLockedMapName, "bisle");
 			this->m_iLockedMapTime = 10 * 60;
 		}
-		if (this->m_bIsObserverMode == true) {
-			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+		if (memcmp(this->map_->m_cName, "fight", 5) == 0 || this->m_bIsObserverMode == true) {
+			this->map_.reset();
 			if (this->m_cSide == 0) {
 				switch (iDice(1, 2)) {
 					case 1:
-						memcpy(this->m_cMapName, "aresden", 7);
+						this->map_ = game_.m_pMapList.byName("aresden");
 						break;
 					case 2:
-						memcpy(this->m_cMapName, "elvine", 6);
+						this->map_ = game_.m_pMapList.byName("elvine");
 						break;
 				}
 			} else {
-				memcpy(this->m_cMapName, this->m_cLocation, 10);
-			}
-			this->m_sX = -1;
-			this->m_sY = -1;
-		}
-		if (memcmp(this->m_cMapName, "fight", 5) == 0) {
-			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
-			if (this->m_cSide == 0) {
-				switch (iDice(1, 2)) {
-					case 1:
-						memcpy(this->m_cMapName, "aresden", 7);
-						break;
-					case 2:
-						memcpy(this->m_cMapName, "elvine", 6);
-						break;
-				}
-			} else {
-				memcpy(this->m_cMapName, this->m_cLocation, 10);
+				this->map_ = game_.m_pMapList.byName(this->m_cLocation);
 			}
 			this->m_sX = -1;
 			this->m_sY = -1;
 		}
 		if (this->m_bIsInitComplete == true) {
-			if (game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout) == false) game_.LocalSavePlayerData(id_);
-		} else game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout);
+			if (game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout) == false) {
+				game_.LocalSavePlayerData(id_);
+			}
+		} else {
+			game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout);
+		}
 	} else {
 		if (this->m_bIsOnServerChange == false) {
 			game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout);
@@ -5077,8 +5041,6 @@ DC_LOOPBREAK1:
 				game_.m_stPartyInfo[this->m_iPartyID].iIndex[i + 1] = 0;
 			}
 	}
-	game_.m_iTotalClients--;
-	//50Cent - Capture The Flag
 	if (game_.bCheckIfIsFlagCarrier(id_)) {
 		game_.SetFlagCarrierFlag(id_, false);
 		game_.SetIceFlag(id_, DEF_OWNERTYPE_PLAYER, false);
@@ -5097,29 +5059,48 @@ void CClient::ArmorLifeDecrement(int iTargetH, char cOwnerType, int /*iValue*/) 
 	auto &target = *game_.m_pClientList[iTargetH];
 	if (this->m_cSide == target.m_cSide) return;
 	if (target.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] != 0) return;
-	
+
 	struct Damage {
 		std::size_t position_;
 		std::size_t minEndurance_;
 	};
 	std::vector<Damage> damages[] = {
-		{{DEF_EQUIPPOS_BODY, 380}},
-		{{DEF_EQUIPPOS_PANTS, 250}},
-		{{DEF_EQUIPPOS_LEGGINGS, 250}},
-		{{DEF_EQUIPPOS_ARMS, 250}},
-		{{DEF_EQUIPPOS_HEAD, 250}},
-		{{DEF_EQUIPPOS_HEAD, 250}, {DEF_EQUIPPOS_LEGGINGS, 250}},
-		{{DEF_EQUIPPOS_LEGGINGS, 250}, {DEF_EQUIPPOS_PANTS, 250}},
-		{{DEF_EQUIPPOS_PANTS, 250}, {DEF_EQUIPPOS_ARMS, 250}},
-		{{DEF_EQUIPPOS_ARMS, 250}},
-		{{DEF_EQUIPPOS_ARMS, 250}, {DEF_EQUIPPOS_BODY, 250}},
-		{{DEF_EQUIPPOS_BODY, 250}, {DEF_EQUIPPOS_LEGGINGS, 250}},
-		{{DEF_EQUIPPOS_BODY, 250}},
-		{{DEF_EQUIPPOS_BODY, 250}, {DEF_EQUIPPOS_PANTS, 250}}
+		{
+			{DEF_EQUIPPOS_BODY, 380}},
+		{
+			{DEF_EQUIPPOS_PANTS, 250}},
+		{
+			{DEF_EQUIPPOS_LEGGINGS, 250}},
+		{
+			{DEF_EQUIPPOS_ARMS, 250}},
+		{
+			{DEF_EQUIPPOS_HEAD, 250}},
+		{
+			{DEF_EQUIPPOS_HEAD, 250},
+			{DEF_EQUIPPOS_LEGGINGS, 250}},
+		{
+			{DEF_EQUIPPOS_LEGGINGS, 250},
+			{DEF_EQUIPPOS_PANTS, 250}},
+		{
+			{DEF_EQUIPPOS_PANTS, 250},
+			{DEF_EQUIPPOS_ARMS, 250}},
+		{
+			{DEF_EQUIPPOS_ARMS, 250}},
+		{
+			{DEF_EQUIPPOS_ARMS, 250},
+			{DEF_EQUIPPOS_BODY, 250}},
+		{
+			{DEF_EQUIPPOS_BODY, 250},
+			{DEF_EQUIPPOS_LEGGINGS, 250}},
+		{
+			{DEF_EQUIPPOS_BODY, 250}},
+		{
+			{DEF_EQUIPPOS_BODY, 250},
+			{DEF_EQUIPPOS_PANTS, 250}}
 	};
-	constexpr size_t numItems = sizeof(damages) / sizeof(damages[0]);
+	constexpr size_t numItems = sizeof (damages) / sizeof (damages[0]);
 	const int index = iDice(1, numItems) - 1;
-	for(const Damage &dmg: damages[index]) {
+	for (const Damage &dmg : damages[index]) {
 		int itemIndex = target.m_sItemEquipmentStatus[dmg.position_];
 		if ((itemIndex != -1) && (target.m_pItemList[itemIndex] != nullptr)) {
 			auto &item = *target.m_pItemList[itemIndex];

@@ -5,8 +5,8 @@
 #include "StrTok.h"
 #include "TeleportLoc.h"
 #include "GlobalDef.h"
-#include "Client.h"
 #include <memory>
+#include <cstring>
 
 
 #define DEF_OWNERTYPE_PLAYER			1
@@ -41,6 +41,10 @@
 #define DEF_MAXSECTORS					60
 #define DEF_MAXSTRIKEPOINTS				20
 
+struct CMap;
+typedef std::shared_ptr<CMap> MapPtr;
+typedef std::weak_ptr<CMap> MapWPtr;
+struct Clients;
 class CMap : public std::enable_shared_from_this<CMap> {
 public:
 
@@ -80,8 +84,9 @@ public:
 	bool bAddCropsTotalSum();
 	void SetBigOwner(short sOwner, char cOwnerClass, short sX, short sY, char cArea);
 
-	CMap(class CGame * pGame);
+	CMap(int id, class CGame * pGame);
 	virtual ~CMap();
+	const int id_;
 	Clients &m_pClientList;
 	class CTile * m_pTile;
 	class CGame * m_pGame;
@@ -247,6 +252,24 @@ public:
 	bool m_bIsRecallImpossible;
 	bool m_bIsApocalypseMap;
 	bool m_bIsHeldenianMap;
+	
+	bool bGetEmptyPosition(short * pX, short * pY);
+	void GetMapInitialPoint(short * pX, short * pY, char * pPlayerLocation = nullptr);
+	int _iGetPlayerNumberOnSpot(short dX, short dY, char cRange);
+	void SendEventToNearClient_TypeB(uint32_t dwMsgID, uint16_t wMsgType, short sX, short sY, short sV1, short sV2, short sV3, short sV4 = 0);
+	void CheckFireBluring(int sX, int sY);
+	char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, char cTurn, int * pError);
+	int _iCalcPlayerNum(short dX, short dY, char cRadius);
+	bool __bReadMapInfo();
+	void RemoveOccupyFlags();
+	void MeteorStrikeHandler();
+	void CalcMeteorStrikeEffectHandler();
+	void DoMeteorStrikeDamageHandler();
+	void _DeleteRandomOccupyFlag();	
+	bool _bReadMapInfoFiles();
+	bool __bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH, bool bAdminFlag);
+	int iCreateMineral(int tX, int tY, char cLevel);
+	void _CheckStrategicPointOccupyStatus();
 };
 
 #define DEF_MAXMAPS					100
@@ -258,7 +281,14 @@ struct Maps {
 	ref_type operator[](size_t index) {
 		return m_pMapList[index];
 	}
-
+	value_type byName(const char *name) {
+		for(auto &m: m_pMapList) {
+			if(m && std::strcmp(m->m_cName, name)==0) {
+				return m;
+			}
+		}
+		return {};
+	}
 	void clear() {
 		m_pMapList = {
 			{}};

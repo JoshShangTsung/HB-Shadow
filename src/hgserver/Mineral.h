@@ -2,10 +2,10 @@
 
 class CMineral {
 public:
-	CMineral(char cType, char cMapIndex, int sX, int sY, int iRemain);
+	CMineral(char cType, MapPtr map, int sX, int sY, int iRemain);
 	char m_cType;
 
-	char m_cMapIndex;
+	MapPtr map_;
 	int m_sX, m_sY;
 	int m_iDifficulty;
 	short m_sDynamicObjectHandle;

@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include "Magic.h"
+#include "Map.h"
 
 #define DEF_MAXWAYPOINTS			10
 
@@ -30,7 +31,7 @@ public:
 	char m_sAreaSize;
 
 	char m_cName[6]; 
-	char m_cMapIndex;
+	MapPtr map_;
 	short m_sX, m_sY;
 	short m_dX, m_dY;
 	short m_vX, m_vY;
