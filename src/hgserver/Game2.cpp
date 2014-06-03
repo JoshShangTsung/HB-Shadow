@@ -1349,7 +1349,7 @@ void CGame::SendObjectMotionRejectMsg(int iClientH) {
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			DeleteClient(iClientH, true, true);
+			m_pClientList[iClientH]->DeleteClient(true, true);
 			return;
 	}
 	return;
@@ -1949,7 +1949,7 @@ void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				DeleteClient(iClientH, true, true);
+				m_pClientList[iClientH]->DeleteClient(true, true);
 				break;
 		}
 	} else {
@@ -1969,7 +1969,7 @@ void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				DeleteClient(iClientH, true, true);
+				m_pClientList[iClientH]->DeleteClient(true, true);
 				return;
 		}
 	}
@@ -2073,7 +2073,7 @@ void CGame::ReqRepairItemCofirmHandler(int iClientH, char cItemID, char * /*pStr
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					DeleteClient(iClientH, true, true);
+					m_pClientList[iClientH]->DeleteClient(true, true);
 					return;
 			}
 			return;
@@ -3278,7 +3278,7 @@ void CGame::AdminOrder_CloseConn(int iClientH, char * pData, uint32_t dwMsgSize)
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != nullptr) && (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0)) {
 				if (m_pClientList[i]->m_bIsInitComplete == true) {
-					DeleteClient(i, true, true, true, true);
+					m_pClientList[i]->DeleteClient(true, true, true, true);
 				}
 				// Admin Log
 				wsprintf(G_cTxt, "Admin Order(%s): Close Conn", m_pClientList[iClientH]->m_cCharName);
@@ -4058,8 +4058,8 @@ int CGame::_iForcePlayerDisconect(int iNum) {
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if (m_pClientList[i] != nullptr) {
 			if (m_pClientList[i]->m_bIsInitComplete == true)
-				DeleteClient(i, true, true);
-			else DeleteClient(i, false, false);
+				m_pClientList[i]->DeleteClient(true, true);
+			else m_pClientList[i]->DeleteClient(false, false);
 			iCnt++;
 			if (iCnt >= iNum) break;
 		}
@@ -4152,7 +4152,7 @@ void CGame::ForceDisconnectAccount(char *pAccountName, uint16_t wCount) {
 		if ((m_pClientList[i] != nullptr) && (memcmp(m_pClientList[i]->m_cAccountName, pAccountName, 10) == 0)) {
 			wsprintf(G_cTxt, "<%d> Force disconnect account: CharName(%s) AccntName(%s) Count(%d)", i, m_pClientList[i]->m_cCharName, m_pClientList[i]->m_cAccountName, wCount);
 			PutLogList(G_cTxt);
-			//DeleteClient(i, true, true);
+			//m_pClientList[i]->DeleteClient(true, true);
 			//v1.4312
 			m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_FORCEDISCONN, wCount, 0, 0, nullptr);
 		}
@@ -4686,7 +4686,7 @@ RCPH_LOOPBREAK:
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						break;
 				}
 				//if ((pItem->m_wPrice * pItem->m_dwCount) > 1000)
@@ -4707,7 +4707,7 @@ RCPH_LOOPBREAK:
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						break;
 				}
 			}
@@ -5726,7 +5726,7 @@ void CGame::GetOccupyFlagHandler(int iClientH) {
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						return;
 				}
 				m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, 0, 0, nullptr);
@@ -5743,7 +5743,7 @@ void CGame::GetOccupyFlagHandler(int iClientH) {
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						return;
 				}
 			}
@@ -5837,7 +5837,7 @@ void CGame::GetFightzoneTicketHandler(int iClientH) {
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				DeleteClient(iClientH, true, true);
+				m_pClientList[iClientH]->DeleteClient(true, true);
 				return;
 		}
 	} else {
@@ -5853,7 +5853,7 @@ void CGame::GetFightzoneTicketHandler(int iClientH) {
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				DeleteClient(iClientH, true, true);
+				m_pClientList[iClientH]->DeleteClient(true, true);
 				return;
 		}
 	}
@@ -6133,7 +6133,7 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char */*pString*/) {
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						return;
 				}
 				m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, 0, 0, nullptr);
@@ -6150,7 +6150,7 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char */*pString*/) {
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						return;
 				}
 			}
@@ -6620,7 +6620,7 @@ int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMod
 		(memcmp(m_pClientList[i]->m_cLocation, "NONE",4) != 0)) {
 			wsprintf(G_cTxt, "Traveller hack: (%s) Player: (%s) - is talking to William from a remote map.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 			PutHackLogFileList(G_cTxt);
-			DeleteClient(iClientH, true, true);
+			m_pClientList[iClientH]->DeleteClient(true, true);
 			return 0;
 	}*/
 	if (m_pClientList[iClientH]->m_iQuest != 0) {
@@ -8845,7 +8845,7 @@ void CGame::RequestCheckAccountPasswordHandler(char *pData, uint32_t /*dwMsgSize
 			if ((strcmp(m_pClientList[i]->m_cAccountPassword, cAccountPassword) != 0) || (m_pClientList[i]->m_iLevel != iLevel)) {
 				wsprintf(G_cTxt, "(TestLog) Error! Account(%s)-Level(%d) password(or level) mismatch! Disconnect.", cAccountName, iLevel);
 				PutLogList(G_cTxt);
-				DeleteClient(i, false, true);
+				m_pClientList[i]->DeleteClient(false, true);
 				return;
 			}
 		}
@@ -8985,7 +8985,7 @@ int CGame::iRequestPanningMapDataRequest(CClient &client, char * pData) {
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			DeleteClient(client.id_, true, true);
+			m_pClientList[client.id_]->DeleteClient(true, true);
 			return 0;
 	}
 	return 1;
@@ -9550,7 +9550,7 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 		if (m_iMiddlelandMapIndex < 0) return;
 		if (m_pMapList[m_iMiddlelandMapIndex] == nullptr) return;
 		if (iDice(1, 2000) != 123) return;
-		if (m_iTotalGameServerClients < 500) return;
+		if (m_iTotalClients < 500) return;
 		if (m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex >= 0) return;
 		iCIndex = iDice(1, m_pMapList[m_iMiddlelandMapIndex]->m_iTotalEnergySphereCreationPoint);
 		if (m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereCreationList[iCIndex].cType == 0) return;
@@ -10230,7 +10230,7 @@ void CGame::CheckConnectionHandler(int iClientH, char *pData) {
 		dwTimeGapServer = (dwTime - m_pClientList[iClientH]->m_dwInitCCTime);
 		if (dwTimeGapClient < dwTimeGapServer) return;
 		if ((abs(dwTimeGapClient - dwTimeGapServer)) >= (DEF_CLIENTTIMEOUT)) {
-			DeleteClient(iClientH, true, true);
+			m_pClientList[iClientH]->DeleteClient(true, true);
 			return;
 		}
 	}
@@ -12636,7 +12636,7 @@ bool CGame::bCheckClientAttackFrequency(int iClientH, uint32_t dwClientTime) {
 		if (dwTimeGap < 450) {
 			wsprintf(G_cTxt, "Swing Hack: (%s) Player: (%s) - attacking with weapon at irregular rates.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 			PutHackLogFileList(G_cTxt);
-			DeleteClient(iClientH, true, true);
+			m_pClientList[iClientH]->DeleteClient(true, true);
 			return false;
 		}
 		//testcode
@@ -12657,7 +12657,7 @@ bool CGame::bCheckClientMagicFrequency(int iClientH, uint32_t dwClientTime) {
 		if ((dwTimeGap < 1500) && (m_pClientList[iClientH]->m_bMagicConfirm == true)) {
 			wsprintf(G_cTxt, "Speed Cast: (%s) Player: (%s) - casting magic at irregular rates. ", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 			PutHackLogFileList(G_cTxt);
-			DeleteClient(iClientH, true, true);
+			m_pClientList[iClientH]->DeleteClient(true, true);
 			return false;
 		}
 		m_pClientList[iClientH]->m_iSpellCount--;
@@ -12692,7 +12692,7 @@ bool CGame::bCheckClientMoveFrequency(int iClientH, uint32_t dwClientTime) {
 		if ((dwTimeGap < 200) && (dwTimeGap >= 0)) {
 			wsprintf(G_cTxt, "Speed Hack: (%s) Player: (%s) - running too fast.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 			PutHackLogFileList(G_cTxt);
-			DeleteClient(iClientH, true, true);
+			m_pClientList[iClientH]->DeleteClient(true, true);
 			return false;
 		}
 		// testcode
@@ -12737,7 +12737,7 @@ for the neckie
 								) {
 						//wsprintf(G_cTxt, "(!) Invisibility Hack Suspect: (%s)", m_pClientList[iClientH]->m_cCharName);
 						//PutLogList(G_cTxt);
-						//DeleteClient(iClientH, true, true);
+						//m_pClientList[iClientH]->DeleteClient(true, true);
 						}
 					}
 			}
@@ -12764,8 +12764,14 @@ void CGame::OnTimer(char /*cType*/) {
 	int q; //added for "advertiser"
 	char cAdvert[1000]; //holds the text for the "advert"
 	std::memset(cAdvert, 0, sizeof (cAdvert));
-	uint32_t dwTime;
-	dwTime = timeGetTime();
+	for(int i=1;i<DEF_MAXCLIENTS;++i) {
+		if(m_pClientList[i] && m_pClientList[i]->m_bMarkedForDeletion) {
+			m_pClientList[i].reset();
+			RemoveClientShortCut(i);
+			--m_iTotalClients;
+		}
+	}
+	uint32_t dwTime = timeGetTime();
 	//if ((dwTime - m_dwGameTime1) > 200) {
 	GameProcess();
 	// m_dwGameTime1 = dwTime;
@@ -13075,13 +13081,13 @@ void CGame::RequestGuildTeleportHandler(int iClientH) {
 	if (!m_bIsCrusadeMode) {
 		wsprintf(G_cTxt, "Accessing crusade teleport: (%s) Player: (%s) - setting teleport location when crusade is disabled.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 		PutLogList(G_cTxt);
-		DeleteClient(iClientH, true, true);
+		m_pClientList[iClientH]->DeleteClient(true, true);
 		return;
 	}
 	if (m_pClientList[iClientH]->m_iCrusadeDuty == 0) {
 		wsprintf(G_cTxt, "Accessing crusade teleport: (%s) Player: (%s) - teleporting when not in a guild", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 		PutLogList(G_cTxt);
-		DeleteClient(iClientH, true, true);
+		m_pClientList[iClientH]->DeleteClient(true, true);
 		return;
 	}
 	if ((m_pClientList[iClientH]->m_cMapIndex == m_iMiddlelandMapIndex) && m_iMiddlelandMapIndex != -1) return;
@@ -13159,13 +13165,13 @@ void CGame::RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int 
 	if (!m_bIsCrusadeMode) {
 		wsprintf(G_cTxt, "Accessing Crusade Set Teleport: (%s) Player: (%s) - setting point when not a crusade.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 		PutLogList(G_cTxt);
-		DeleteClient(iClientH, true, true);
+		m_pClientList[iClientH]->DeleteClient(true, true);
 		return;
 	}
 	if (m_pClientList[iClientH]->m_iCrusadeDuty != 3) {
 		wsprintf(G_cTxt, "Accessing Crusade Set Teleport: (%s) Player: (%s) - setting point when not a guildmaster.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 		PutLogList(G_cTxt);
-		DeleteClient(iClientH, true, true);
+		m_pClientList[iClientH]->DeleteClient(true, true);
 		return;
 	}
 	if (dY < 100) dY = 100;
@@ -17277,7 +17283,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			if ((bIsDash == true) && (m_pClientList[sAttackerH]->m_cSkillMastery[sSkillUsed] != 100) && (wWeaponType != 25) && (wWeaponType != 27)) {
 				wsprintf(G_cTxt, "TSearch Fullswing Hack: (%s) Player: (%s) - dashing with only (%d) weapon skill.", m_pClientList[sAttackerH]->m_cIPaddress, m_pClientList[sAttackerH]->m_cCharName, m_pClientList[sAttackerH]->m_cSkillMastery[sSkillUsed]);
 				PutHackLogFileList(G_cTxt);
-				DeleteClient(sAttackerH, true, true);
+				m_pClientList[sAttackerH]->DeleteClient(true, true);
 				return 0;
 			}
 			cAttackerSide = m_pClientList[sAttackerH]->m_cSide;
@@ -17684,7 +17690,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 		if (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1) {
 			if (m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]] == nullptr) {
 				m_pClientList[sAttackerH]->m_bIsItemEquipped[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]] = false;
-				DeleteClient(sAttackerH, true, true);
+				m_pClientList[sAttackerH]->DeleteClient(true, true);
 				return 0;
 			}
 			if (m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_ARROW) {
@@ -19493,7 +19499,7 @@ SENDPLAYER:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			DeleteClient(iClientH, true, true);
+			m_pClientList[iClientH]->DeleteClient(true, true);
 			break;
 	}
 }
@@ -20208,7 +20214,7 @@ void CGame::RequestHeldenianScroll(int iClientH, char * pData, uint32_t /*dwMsgS
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					DeleteClient(iClientH, true, true);
+					m_pClientList[iClientH]->DeleteClient(true, true);
 					break;
 			}
 			m_pClientList[iClientH]->m_iConstructionPoint -= iRequiredConstruction;
@@ -20226,7 +20232,7 @@ void CGame::RequestHeldenianScroll(int iClientH, char * pData, uint32_t /*dwMsgS
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					DeleteClient(iClientH, true, true);
+					m_pClientList[iClientH]->DeleteClient(true, true);
 					break;
 			}
 		}
@@ -20400,7 +20406,7 @@ void CGame::AdminOrder_BanIP(int iClientH, char *pData, uint32_t dwMsgSize) {
 			//updates BannedList.cfg on the server
 			LocalUpdateConfigs(3);
 			//disconnects player, and he can't connect again.. :)
-			DeleteClient(i, true, true);
+			m_pClientList[i]->DeleteClient(true, true);
 			return;
 		}
 	}
@@ -20580,7 +20586,7 @@ void CGame::GetTradeEKMantleHandler(int iClientH, int iItemID, char */*pString*/
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						return;
 				}
 				m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ENEMYKILLS, m_pClientList[iClientH]->m_iEnemyKillCount, 0, 0, nullptr);
@@ -20597,7 +20603,7 @@ void CGame::GetTradeEKMantleHandler(int iClientH, int iItemID, char */*pString*/
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						DeleteClient(iClientH, true, true);
+						m_pClientList[iClientH]->DeleteClient(true, true);
 						return;
 				}
 			}

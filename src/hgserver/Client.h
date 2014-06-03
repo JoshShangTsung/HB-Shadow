@@ -290,6 +290,7 @@ public:
 	int m_iBallPoints;
 	uint32_t m_dwDSLAT, m_dwDSLATOld, m_dwDSLATS;
 	int m_iDSCount;
+	bool m_bMarkedForDeletion = false;
 	void ClientKilledHandler(int iAttackerH, char cAttackerType, short sDamage);
 	void SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_t sV2, uint32_t sV3, const char * pString, uint32_t sV4 = 0, uint32_t sV5 = 0, uint32_t sV6 = 0, uint32_t sV7 = 0, uint32_t sV8 = 0, uint32_t sV9 = 0, char * pString2 = nullptr);
 	int iUpgradeHeroCapeRequirements(int iItemIndex);
@@ -314,15 +315,43 @@ public:
 	void ReqCreateCraftingHandler(char *pData);
 	void ClientCommonHandler(char * pData);
 	void ReqCreateSlateHandler(char* pData);
+	void DeleteClient(bool bSave, bool bNotify, bool bCountLogout = true, bool bForceCloseConn = false);
 };
 #define DEF_MAXCLIENTS				2000
 
 struct Clients {
-	typedef CClient *value_type;
+	typedef std::unique_ptr<CClient> value_type;
 	typedef value_type &ref_type;
+	void clear() {
+		m_pClientList = Arr();
+	}
 	ref_type operator[](size_t index) {
 		return m_pClientList[index];
 	}
+	struct Iter {
+		Iter(Clients &clients, size_t index): clients_(clients), index_(index){}
+		ref_type operator*() {
+			return clients_[index_];
+		}
+		void operator++() {
+			do {
+				++index_;
+			} while(index_ < DEF_MAXCLIENTS && !clients_[index_]);
+		}
+		bool operator!=(const Iter &o) const {
+			return index_ != o.index_;
+		}
+	private:
+		Clients &clients_;
+		size_t index_;
+	};
+	Iter begin() {
+		return Iter(*this, 1);
+	}
+	Iter end() {
+		return Iter(*this, DEF_MAXCLIENTS);
+	}
 private:
-	std::array<value_type, DEF_MAXCLIENTS> m_pClientList;
+	typedef std::array<value_type, DEF_MAXCLIENTS> Arr;
+	Arr m_pClientList;
 };

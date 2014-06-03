@@ -573,7 +573,6 @@ public:
 	int iComposeMoveMapData(short sX, short sY, int iClientH, char cDir, char * pData);
 	void SendEventToNearClient_TypeB(uint32_t dwMsgID, uint16_t wMsgType, char cMapIndex, short sX, short sY, short sV1, short sV2, short sV3, short sV4 = 0);
 	void SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t dwMsgID, uint16_t wMsgType, short sV1, short sV2, short sV3);
-	void DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogout = true, bool bForceCloseConn = false);
 	int iComposeInitMapData(short sX, short sY, int iClientH, char * pData);
 	void RequestInitDataHandler(int iClientH, char * pData, char cKey);
 	void RequestInitPlayerHandler(CClient &client, char * pData, char cKey);
@@ -670,7 +669,7 @@ public:
 	class CPortion * m_pCraftingConfigList[DEF_MAXPORTIONTYPES];
 	char m_pMsgBuffer[DEF_MSGBUFFERSIZE + 1];
 	HWND m_hWnd;
-	int m_iTotalClients, m_iMaxClients, m_iTotalGameServerClients, m_iTotalGameServerMaxClients;
+	int m_iTotalClients, m_iMaxClients;
 	int m_iTotalBots, m_iMaxBots, m_iTotalGameServerBots, m_iTotalGameServerMaxBots;
 	SYSTEMTIME m_MaxUserSysTime;
 	bool m_bF1pressed, m_bF4pressed, m_bF12pressed, m_bF5pressed;

@@ -1327,7 +1327,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			break;
 		case DEF_NOTIFY_TOTALUSERS:
 			wp = (uint16_t *) cp;
-			*wp = (uint16_t) game_.m_iTotalGameServerClients; //_iGetTotalClients();
+			*wp = (uint16_t) game_.m_iTotalClients; //_iGetTotalClients();
 			cp += 2;
 			iRet = this->m_pXSock->iSendMsg(cData, 8);
 			break;
@@ -3085,7 +3085,7 @@ void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					game_.DeleteClient(this->id_, true, true);
+					this->DeleteClient(true, true);
 					return;
 					break;
 			}
@@ -3102,7 +3102,7 @@ void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					game_.DeleteClient(this->id_, true, true);
+					this->DeleteClient(true, true);
 					break;
 			}
 		}
@@ -3181,8 +3181,7 @@ void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, 
 				if ((dwTime - game_.m_dwGameTime2) > 3000) {
 					this->m_bIsClientConnected = false;
 					game_.m_iTotalClients--;
-					delete game_.m_pClientList[id_];
-					game_.m_pClientList[id_] = nullptr;
+					this->m_bMarkedForDeletion = true;
 				}
 				break;
 			} else {
@@ -3239,7 +3238,7 @@ void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, 
 			char m_msgBuff[1000];
 			wsprintf(m_msgBuff, "Unknown message received! (0x%.8X) Delete Client", msgId);
 			PutLogList(m_msgBuff);
-			game_.DeleteClient(this->id_, true, true); // v1.4
+			this->DeleteClient(true, true); // v1.4
 		}
 			break;
 	}
@@ -3254,7 +3253,7 @@ void CClient::RequestResurrectPlayer(bool bResurrect) {
 	if (this->m_bIsBeingResurrected == false) {
 		wsprintf(buff, "(!!!) Player(%s) Tried To Use Resurrection Hack", this->m_cCharName);
 		PutHackLogFileList(buff);
-		game_.DeleteClient(this->id_, true, true, true, true);
+		this->DeleteClient(true, true, true, true);
 		return;
 	}
 	wsprintf(buff, "(*) Resurrect Player! %s", this->m_cCharName);
@@ -3596,7 +3595,7 @@ RTH_NEXTSTEP:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			game_.DeleteClient(id_, true, true);
+			this->DeleteClient(true, true);
 			if (pBuffer != nullptr) delete pBuffer;
 			return;
 	}
@@ -4511,7 +4510,7 @@ RCPH_LOOPBREAK:
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						game_.DeleteClient(id_, true, true);
+						this->DeleteClient(true, true);
 						break;
 				}
 				//if ((pItem->m_wPrice * pItem->m_dwCount) > 1000)
@@ -4532,7 +4531,7 @@ RCPH_LOOPBREAK:
 					case DEF_XSOCKEVENT_SOCKETERROR:
 					case DEF_XSOCKEVENT_CRITICALERROR:
 					case DEF_XSOCKEVENT_SOCKETCLOSED:
-						game_.DeleteClient(id_, true, true);
+						this->DeleteClient(true, true);
 						break;
 				}
 			}
@@ -4845,7 +4844,7 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 		this->SendNotifyMsg(0, DEF_NOTIFY_SLATE_CREATEFAIL, 0, 0, 0, nullptr);
 		wsprintf(G_cTxt, "TSearch Slate Hack: (%s) Player: (%s) - creating slates without correct item!", this->m_cIPaddress, this->m_cCharName);
 		PutHackLogFileList(G_cTxt);
-		game_.DeleteClient(id_, true, true);
+		this->DeleteClient(true, true);
 		return;
 	}
 	// Are all 4 slates present ??
@@ -4954,7 +4953,7 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					game_.DeleteClient(id_, true, true);
+					this->DeleteClient(true, true);
 					return;
 			}
 		} else {
@@ -4972,10 +4971,166 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					game_.DeleteClient(id_, true, true);
+					this->DeleteClient(true, true);
 					break;
 			}
 		}
 	}
 	return;
 }
+
+void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bForceCloseConn) {
+	int i, iExH;
+	char cTmpMap[30];
+	if (this->m_bIsInitComplete == true) {
+		if (memcmp(this->m_cMapName, "fight", 5) == 0) {
+			wsprintf(G_cTxt, "Char(%s)-Exit(%s)", this->m_cCharName, this->m_cMapName);
+			PutLogEventFileList(G_cTxt);
+		}
+		if (this->m_bIsExchangeMode == true) {
+			iExH = this->m_iExchangeH;
+			game_._ClearExchangeStatus(iExH);
+			game_._ClearExchangeStatus(id_);
+		}
+		if ((this->m_iAllocatedFish != 0) && (game_.m_pFish[this->m_iAllocatedFish] != nullptr))
+			game_.m_pFish[this->m_iAllocatedFish]->m_sEngagingCount--;
+		if (bNotify == true)
+			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
+		game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
+		for (i = 1; i < DEF_MAXCLIENTS; i++) {
+			if ((game_.m_pClientList[i] != nullptr) && (game_.m_pClientList[i]->m_iWhisperPlayerIndex == id_)) {
+				game_.m_pClientList[i]->m_iWhisperPlayerIndex = -1;
+				game_.m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_WHISPERMODEOFF, 0, 0, 0, this->m_cCharName);
+			}
+		}
+		game_.m_pMapList[this->m_cMapIndex]->ClearOwner(2, id_, DEF_OWNERTYPE_PLAYER,
+				  this->m_sX,
+				  this->m_sY);
+		game_.delayEvents_.remove(id_, DEF_OWNERTYPE_PLAYER, 0);
+	}
+	if ((bSave == true) && (this->m_bIsOnServerChange == false)) {
+		if (this->m_bIsKilled == true) {
+			this->m_sX = -1;
+			this->m_sY = -1;
+			strcpy(cTmpMap, this->m_cMapName);
+			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+			if (this->m_cSide == 0) {
+				strcpy(this->m_cMapName, "default");
+			} else {
+				if (memcmp(this->m_cLocation, "are", 3) == 0) {
+					if (game_.m_bIsCrusadeMode == true) {
+						if (this->m_iDeadPenaltyTime > 0) {
+							std::memset(this->m_cLockedMapName, 0, sizeof (this->m_cLockedMapName));
+							strcpy(this->m_cLockedMapName, "aresden");
+							this->m_iLockedMapTime = 60 * 5;
+							this->m_iDeadPenaltyTime = 60 * 10;
+						} else {
+							this->m_iDeadPenaltyTime = 60 * 10;
+						}
+					}
+					if (strcmp(cTmpMap, "elvine") == 0) {
+						strcpy(this->m_cLockedMapName, "elvjail");
+						this->m_iLockedMapTime = 10 * 2;
+						memcpy(this->m_cMapName, "elvjail", 7);
+					} else if (this->m_iLevel > 80)
+						memcpy(this->m_cMapName, "resurr1", 7);
+					else memcpy(this->m_cMapName, "resurr1", 7);
+				} else {
+					if (game_.m_bIsCrusadeMode == true) {
+						if (this->m_iDeadPenaltyTime > 0) {
+							std::memset(this->m_cLockedMapName, 0, sizeof (this->m_cLockedMapName));
+							strcpy(this->m_cLockedMapName, "elvine");
+							this->m_iLockedMapTime = 60 * 5;
+							this->m_iDeadPenaltyTime = 60 * 10;
+						} else {
+							this->m_iDeadPenaltyTime = 60 * 10;
+						}
+					}
+					if (strcmp(cTmpMap, "aresden") == 0) {
+						strcpy(this->m_cLockedMapName, "arejail");
+						this->m_iLockedMapTime = 10 * 2;
+						memcpy(this->m_cMapName, "arejail", 7);
+					} else if (this->m_iLevel > 80)
+						memcpy(this->m_cMapName, "resurr2", 7);
+					else memcpy(this->m_cMapName, "resurr2", 7);
+				}
+			}
+		} else if (bForceCloseConn == true) {
+			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+			memcpy(this->m_cMapName, "bisle", 5);
+			this->m_sX = -1;
+			this->m_sY = -1;
+			std::memset(this->m_cLockedMapName, 0, sizeof (this->m_cLockedMapName));
+			strcpy(this->m_cLockedMapName, "bisle");
+			this->m_iLockedMapTime = 10 * 60;
+		}
+		if (this->m_bIsObserverMode == true) {
+			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+			if (this->m_cSide == 0) {
+				switch (iDice(1, 2)) {
+					case 1:
+						memcpy(this->m_cMapName, "aresden", 7);
+						break;
+					case 2:
+						memcpy(this->m_cMapName, "elvine", 6);
+						break;
+				}
+			} else {
+				memcpy(this->m_cMapName, this->m_cLocation, 10);
+			}
+			this->m_sX = -1;
+			this->m_sY = -1;
+		}
+		if (memcmp(this->m_cMapName, "fight", 5) == 0) {
+			std::memset(this->m_cMapName, 0, sizeof (this->m_cMapName));
+			if (this->m_cSide == 0) {
+				switch (iDice(1, 2)) {
+					case 1:
+						memcpy(this->m_cMapName, "aresden", 7);
+						break;
+					case 2:
+						memcpy(this->m_cMapName, "elvine", 6);
+						break;
+				}
+			} else {
+				memcpy(this->m_cMapName, this->m_cLocation, 10);
+			}
+			this->m_sX = -1;
+			this->m_sY = -1;
+		}
+		if (this->m_bIsInitComplete == true) {
+			if (game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout) == false) game_.LocalSavePlayerData(id_);
+		} else game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout);
+	} else {
+		if (this->m_bIsOnServerChange == false) {
+			game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, bCountLogout);
+		} else {
+			game_.bSendMsgToLS(MSGID_REQUEST_SETACCOUNTWAITSTATUS, id_, false);
+		}
+	}
+	if (this->m_iPartyID != 0) {
+		for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)
+			if (game_.m_stPartyInfo[this->m_iPartyID].iIndex[i] == id_) {
+				game_.m_stPartyInfo[this->m_iPartyID].iIndex[i] = 0;
+				game_.m_stPartyInfo[this->m_iPartyID].iTotalMembers--;
+				wsprintf(G_cTxt, "PartyID:%d member:%d Out(Delete) Total:%d", this->m_iPartyID, id_, game_.m_stPartyInfo[this->m_iPartyID].iTotalMembers);
+				PutLogList(G_cTxt);
+				goto DC_LOOPBREAK1;
+			}
+DC_LOOPBREAK1:
+		;
+		for (i = 0; i < DEF_MAXPARTYMEMBERS - 1; i++)
+			if ((game_.m_stPartyInfo[this->m_iPartyID].iIndex[i] == 0) && (game_.m_stPartyInfo[this->m_iPartyID].iIndex[i + 1] != 0)) {
+				game_.m_stPartyInfo[this->m_iPartyID].iIndex[i] = game_.m_stPartyInfo[this->m_iPartyID].iIndex[i + 1];
+				game_.m_stPartyInfo[this->m_iPartyID].iIndex[i + 1] = 0;
+			}
+	}
+	game_.m_iTotalClients--;
+	//50Cent - Capture The Flag
+	if (game_.bCheckIfIsFlagCarrier(id_)) {
+		game_.SetFlagCarrierFlag(id_, false);
+		game_.SetIceFlag(id_, DEF_OWNERTYPE_PLAYER, false);
+	}
+	this->m_bMarkedForDeletion = true;
+}
+
