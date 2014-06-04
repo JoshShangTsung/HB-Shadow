@@ -2765,7 +2765,7 @@ void CMap::DoMeteorStrikeDamageHandler() {
 			} else {
 				if (iDamage > 0) {
 					clientIter.SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-					game_.SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+					clientIter.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 					if (clientIter.m_bSkillUsingStatus[19] != true) {
 						clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 						clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
@@ -3063,7 +3063,7 @@ void CMap::DoAbaddonThunderDamageHandler() {
 			} else if (iResult > 0) {
 				clientIter.m_dwLastDamageTime = dwTime;
 				clientIter.SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-				game_.SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, 0, 0);
+				clientIter.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, 0, 0);
 				if (clientIter.m_bSkillUsingStatus[19] != true) {
 					clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 					clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
@@ -3309,7 +3309,7 @@ GET_VALIDLOC_SUCCESS:
 					this->bAddCropsTotalSum();
 					break;
 			}
-			game_.SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
+			npcs_[i]->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
 			return true;
 		}
 	}

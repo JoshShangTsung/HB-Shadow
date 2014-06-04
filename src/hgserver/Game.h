@@ -487,7 +487,6 @@ public:
 	void CheckClientResponseTime();
 	void OnTimer(char cType);
 	int iComposeMoveMapData(short sX, short sY, int iClientH, char cDir, char * pData);
-	void SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t dwMsgID, uint16_t wMsgType, short sV1, short sV2, short sV3);
 	int iComposeInitMapData(short sX, short sY, int iClientH, char * pData);
 	void RequestInitDataHandler(int iClientH, char * pData, char cKey);
 	void RequestInitPlayerHandler(CClient &client, char * pData, char cKey);

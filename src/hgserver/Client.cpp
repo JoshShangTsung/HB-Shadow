@@ -282,7 +282,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		sAttackerWeapon = ((game_.m_pClientList[iAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
 	} else sAttackerWeapon = 1;
-	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDYING, sDamage, sAttackerWeapon, 0);
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDYING, sDamage, sAttackerWeapon, 0);
 	this->map_->ClearOwner(12, id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
 	this->map_->SetDeadOwner(id_, DEF_OWNERTYPE_PLAYER, this->m_sX, this->m_sY);
 	if (this->map_->m_cType == DEF_MAPTYPE_NOPENALTY_NOREWARD) return;
@@ -3282,7 +3282,7 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 	this->map_->ClearOwner(13, id_, DEF_OWNERTYPE_PLAYER,
 			  this->m_sX,
 			  this->m_sY);
-	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 	sX = this->m_sX;
 	sY = this->m_sY;
 	std::memset(cDestMapName, 0, sizeof (cDestMapName));
@@ -3558,7 +3558,7 @@ RTH_NEXTSTEP:
 			return;
 	}
 	if (pBuffer != nullptr) delete pBuffer;
-	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
 	if ((memcmp(this->m_cLocation, "are", 3) == 0) &&
 			  (memcmp(this->map_->m_cLocationName, "elvine", 6) == 0) &&
 			  (this->m_iAdminUserLevel == 0)) {
@@ -4170,7 +4170,7 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 			sTemp = this->m_sAppr4;
 			sTemp = sTemp & 0xFF0F;
 			this->m_sAppr4 = sTemp;
-			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+			this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 		}
 	}
 	if ((iPrevSAType != 0) && (this->m_iSpecialAbilityType != 0) &&
@@ -4182,7 +4182,7 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 			sTemp = this->m_sAppr4;
 			sTemp = sTemp & 0xFF0F;
 			this->m_sAppr4 = sTemp;
-			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+			this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 		}
 	}
 	this->m_iDefenseRatio += this->m_iAngelicDex * 2;
@@ -4970,7 +4970,7 @@ void CClient::DeleteClient(bool bSave, bool bNotify, bool bCountLogout, bool bFo
 		if ((this->m_iAllocatedFish != 0) && (game_.m_pFish[this->m_iAllocatedFish] != nullptr))
 			game_.m_pFish[this->m_iAllocatedFish]->m_sEngagingCount--;
 		if (bNotify == true)
-			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
+			this->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 		game_.RemoveFromTarget(id_, DEF_OWNERTYPE_PLAYER);
 		for (auto &iterClient : game_.m_pClientList) {
 			auto whisperedPlayer = iterClient.whisperedPlayer_.lock();
@@ -5290,7 +5290,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 	this->m_bIsItemEquipped[sItemIndex] = false;
 	this->m_sItemEquipmentStatus[cEquipPos] = -1;
 	if (bNotice == true)
-		game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+		this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 	this->CalcTotalItemEffect(sItemIndex, true);
 }
 
@@ -5453,7 +5453,7 @@ void CClient::update(uint32_t dwTime) {
 				sTemp = this->m_sAppr4;
 				sTemp = sTemp & 0xFF0F;
 				this->m_sAppr4 = sTemp;
-				game_.SendEventToNearClient_TypeA(this->id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+				this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 			}
 		}
 		//Crusade

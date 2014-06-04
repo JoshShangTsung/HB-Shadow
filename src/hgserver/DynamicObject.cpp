@@ -141,7 +141,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 											}
 
 
-											game_.SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+											game_.m_pNpcList[sOwnerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 										}
 										break;
 								}
@@ -233,7 +233,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 											}
 
 
-											game_.SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+											game_.m_pNpcList[sOwnerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 
 
 											if ((game_.m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false) &&
@@ -368,7 +368,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 											}
 
 
-											game_.SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+											game_.m_pNpcList[sOwnerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 										}
 										break;
 								}

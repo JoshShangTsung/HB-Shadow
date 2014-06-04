@@ -58,7 +58,7 @@ void CNpc::RemoveEventNpc() {
 	game_.ReleaseFollowMode(id_, DEF_OWNERTYPE_NPC);
 	this->m_iTargetIndex = 0;
 	this->m_cTargetType = 0;
-	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDYING, 0, 1, 0);
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDYING, 0, 1, 0);
 	if (this->m_sAreaSize == 0) {
 		this->map_->ClearOwner(10, id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
 	} else {
@@ -1500,7 +1500,7 @@ void CNpc::NpcBehavior_Stop() {
 						this->m_sBehaviorTurnCount = 0;
 						bFlag = this->_bNpcBehavior_ManaCollector();
 						if (bFlag == true) {
-							game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX, this->m_sY, 1);
+							this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX, this->m_sY, 1);
 						}
 					}
 					break;
@@ -1509,7 +1509,7 @@ void CNpc::NpcBehavior_Stop() {
 						this->m_sBehaviorTurnCount = 0;
 						bFlag = this->_bNpcBehavior_Detector();
 						if (bFlag == true) {
-							game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX, this->m_sY, 1);
+							this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX, this->m_sY, 1);
 						}
 					}
 					break;
@@ -1560,7 +1560,7 @@ void CNpc::DeleteNpc() {
 	//Init number of items to 1 unless its a multidrop;
 	iNumItem = 0;
 	iItemID = 0; // No current item
-	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 	this->map_->ClearOwner(11, id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
 	std::memset(cTmp, 0, sizeof (cTmp));
 	strcpy(cTmp, (char *) (this->m_cName + 2));
@@ -2108,7 +2108,7 @@ void CNpc::NpcBehavior_Flee() {
 		this->m_sX = dX;
 		this->m_sY = dY;
 		this->m_cDir = cDir;
-		game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+		this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
 	}
 }
 
@@ -2137,7 +2137,7 @@ void CNpc::NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage)
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		sAttackerWeapon = ((clientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4);
 	} else sAttackerWeapon = 1;
-	game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDYING, sDamage, sAttackerWeapon, 0);
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDYING, sDamage, sAttackerWeapon, 0);
 	this->map_->ClearOwner(10, id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
 	this->map_->SetDeadOwner(id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
 	this->m_cBehavior = DEF_BEHAVIOR_DEAD;
@@ -2488,7 +2488,7 @@ void CNpc::NpcBehavior_Move() {
 				this->m_sX = dX;
 				this->m_sY = dY;
 				this->m_cDir = cDir;
-				game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+				this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
 			}
 		}
 	} else {
@@ -2509,7 +2509,7 @@ void CNpc::NpcBehavior_Move() {
 			this->m_sX = dX;
 			this->m_sY = dY;
 			this->m_cDir = cDir;
-			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+			this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
 		}
 	}
 }
@@ -2696,27 +2696,27 @@ void CNpc::NpcBehavior_Attack() {
 
 			switch (this->m_sType) {
 				case 89:
-					game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
+					this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 					this->m_iMagicHitRatio = 1000;
 					this->NpcMagicHandler(dX, dY, 61);
 					break;
 				case 87:
-					game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
+					this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 					game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2);
 					break;
 				case 36:
-					game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 2); // Ȱ
+					this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 2); // Ȱ
 					game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2, false, false, false);
 					break;
 				case 37: // Cannon Guard Tower:
-					game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
+					this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 					this->m_iMagicHitRatio = 1000;
 					this->NpcMagicHandler(dX, dY, 61);
 					break;
 			}
 		} else {
 
-			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
+			this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
 			game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 1, false, false);
 		}
 
@@ -2870,7 +2870,7 @@ void CNpc::NpcBehavior_Attack() {
 							break;
 					}
 				}
-				game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
+				this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
 				this->NpcMagicHandler(dX, dY, iMagicType);
 				this->m_dwTime = dwTime + 2000;
 				return;
@@ -2887,7 +2887,7 @@ void CNpc::NpcBehavior_Attack() {
 			else if (magicCfgs[0]->m_sValue1 <= this->m_iMana)
 				iMagicType = 0;
 			if (iMagicType != -1) {
-				game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
+				this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
 				this->NpcMagicHandler(dX, dY, iMagicType);
 				this->m_dwTime = dwTime + 2000;
 				return;
@@ -2903,11 +2903,11 @@ void CNpc::NpcBehavior_Attack() {
 			if (this->m_cActionLimit == 5) {
 				switch (this->m_sType) {
 					case 36: // Crossbow Guard Tower
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
+						this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2);
 						break;
 					case 37:
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
+						this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 						this->m_iMagicHitRatio = 1000;
 						this->NpcMagicHandler(dX, dY, 61);
 						break;
@@ -2915,12 +2915,12 @@ void CNpc::NpcBehavior_Attack() {
 			} else {
 				switch (this->m_sType) {
 					case 51:
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
+						this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 						this->m_iMagicHitRatio = 1000;
 						this->NpcMagicHandler(dX, dY, 61);
 						break;
 					case 54:
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
+						this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2);
 						break;
 					case 63: // Frost
@@ -2992,11 +2992,11 @@ void CNpc::NpcBehavior_Attack() {
 						}
 NBA_BREAK1:
 						;
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20);
+						this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 20);
 						break;
 					default:
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20);
+						this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 20);
 						break;
 				}
@@ -3042,7 +3042,7 @@ NBA_CHASE:
 			this->m_sX = dX;
 			this->m_sY = dY;
 			this->m_cDir = cDir;
-			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+			this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
 		}
 	}
 }
