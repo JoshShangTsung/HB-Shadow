@@ -3163,7 +3163,7 @@ void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, 
 			game_.ClientMotionHandler(*this, pData);
 			break;
 		case MSGID_COMMAND_CHECKCONNECTION:
-			game_.CheckConnectionHandler(id_, pData);
+			game_.CheckConnectionHandler(*this, pData);
 			break;
 		case MSGID_COMMAND_CHATMSG:
 			game_.ChatMsgHandler(*this, pData, dwMsgSize);
@@ -3545,7 +3545,7 @@ RTH_NEXTSTEP:
 	//Unknown variable
 	*cp = 0;
 	cp++;
-	iSize = game_.iComposeInitMapData(this->m_sX - 10, this->m_sY - 7, id_, cp);
+	iSize = this->iComposeInitMapData(this->m_sX - 10, this->m_sY - 7, cp);
 	iRet = this->m_pXSock->iSendMsg(pBuffer, 46 + iSize + 4 + 4 + 1 + 4 + 4 + 3); //Zabuza fix
 	//iRet = this->m_pXSock->iSendMsg(pBuffer, 46 + iSize +4 +4 +1 +4 +4); // v1.41
 	switch (iRet) {
@@ -4554,7 +4554,7 @@ void CClient::ClientCommonHandler(char * pData) {
 			// 2.06 - by KLKS
 		case DEF_COMMONTYPE_REQ_CHANGEPLAYMODE:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> MSGID_REQUEST_CIVILRIGHT");
-			game_.RequestChangePlayMode(id_);
+			game_.RequestChangePlayMode(*this);
 			break;
 			//
 		case DEF_COMMONTYPE_SETGUILDTELEPORTLOC:
@@ -4563,7 +4563,7 @@ void CClient::ClientCommonHandler(char * pData) {
 			break;
 		case DEF_COMMONTYPE_SETGUILDCONSTRUCTLOC:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SETGUILDCONSTRUCTLOC");
-			game_.RequestSetGuildConstructLocHandler(id_, iV1, iV2, this->m_iGuildGUID, pString);
+			game_.RequestSetGuildConstructLocHandler(*this, iV1, iV2, this->m_iGuildGUID, pString);
 			break;
 		case DEF_COMMONTYPE_GUILDTELEPORT:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_GUILDTELEPORT");
@@ -4571,31 +4571,31 @@ void CClient::ClientCommonHandler(char * pData) {
 			break;
 		case DEF_COMMONTYPE_SUMMONWARUNIT:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_SUMMONWARUNIT");
-			game_.RequestSummonWarUnitHandler(id_, sX, sY, iV1, iV2, iV3);
+			game_.RequestSummonWarUnitHandler(*this, sX, sY, iV1, iV2, iV3);
 			break;
 		case DEF_COMMONTYPE_REQUEST_HELP:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_HELP");
-			game_.RequestHelpHandler(id_);
+			game_.RequestHelpHandler(*this);
 			break;
 		case DEF_COMMONTYPE_REQUEST_MAPSTATUS:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_MAPSTATUS");
-			game_.MapStatusHandler(id_, iV1, pString);
+			game_.MapStatusHandler(*this, iV1, pString);
 			break;
 		case DEF_COMMONTYPE_REQUEST_SELECTCRUSADEDUTY:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_SELECTCRUSADEDUTY");
-			game_.SelectCrusadeDutyHandler(id_, iV1);
+			game_.SelectCrusadeDutyHandler(*this, iV1);
 			break;
 		case DEF_COMMONTYPE_REQUEST_CANCELQUEST:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_CANCELQUEST");
-			game_.CancelQuestHandler(id_);
+			game_.CancelQuestHandler(*this);
 			break;
 		case DEF_COMMONTYPE_REQUEST_ACTIVATESPECABLTY:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_ACTIVATESPECABLTY");
-			game_.ActivateSpecialAbilityHandler(id_);
+			game_.ActivateSpecialAbilityHandler(*this);
 			break;
 		case DEF_COMMONTYPE_REQUEST_JOINPARTY:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQUEST_JOINPARTY");
-			game_.JoinPartyHandler(id_, iV1, pString);
+			game_.JoinPartyHandler(*this, iV1, pString);
 			break;
 		case DEF_COMMONTYPE_GETMAGICABILITY:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_GETMAGICABILITY");
@@ -5615,9 +5615,9 @@ void CClient::update(uint32_t dwTime) {
 		this->m_iTimeLeft_FirmStaminar--;
 		if (this->m_iTimeLeft_FirmStaminar < 0) this->m_iTimeLeft_FirmStaminar = 0;
 		if (m_bMarkedForDeletion) return;
-		if (this->m_bIsSendingMapStatus == true) game_._SendMapStatus(this->id_);
+		if (this->m_bIsSendingMapStatus == true) game_._SendMapStatus(*this);
 		if (this->m_iConstructionPoint > 0) {
-			game_.CheckCommanderConstructionPoint(this->id_);
+			game_.CheckCommanderConstructionPoint(*this);
 		}
 	}
 }
@@ -5877,4 +5877,654 @@ void CClient::_sendEventToNearClient_TypeA(uint32_t dwMsgID, uint16_t wMsgType, 
 			}
 		}
 	}
+}
+
+int CClient::iComposeInitMapData(short sX, short sY, char * pData) {
+	register int * ip, ix, iy, iSize, iTileExists;
+	class CTile * pTileSrc, * pTile;
+	unsigned char ucHeader;
+	short * sp, * pTotal;
+	int sTemp;
+	int sTemp2;
+	uint16_t * wp;
+	char * cp;
+	pTotal = (short *) pData;
+	cp = (char *) (pData + 2);
+	iSize = 2;
+	iTileExists = 0;
+	pTileSrc = (class CTile *)(this->map_->m_pTile +
+			  (sX) + (sY) * this->map_->m_sSizeY);
+	for (iy = 0; iy < 16; iy++) {
+		for (ix = 0; ix < 21; ix++) {
+			if (((sX + ix) == 100) && ((sY + iy) == 100))
+				sX = sX;
+			pTile = (class CTile *)(pTileSrc + ix + iy * this->map_->m_sSizeY);
+			//If player not same side and is invied (Beholder Hack)
+
+			if (pTile->m_sOwner && (pTile->m_cOwnerClass == DEF_OWNERTYPE_PLAYER) && (game_.m_pClientList[pTile->m_sOwner] != nullptr) && (pTile->m_sOwner != this->id_)) {
+				if ((game_.m_pClientList[pTile->m_sOwner]->m_cSide != 0) &&
+						  (game_.m_pClientList[pTile->m_sOwner]->m_cSide != this->m_cSide) &&
+						  ((game_.m_pClientList[pTile->m_sOwner]->m_iStatus & 0x00000010) != 0)) {
+					continue;
+				}
+			}
+			if ((pTile->m_sOwner != 0) || (pTile->m_sDeadOwner != 0) ||
+					  (pTile->m_pItem[0] != nullptr) || (pTile->m_sDynamicObjectType != 0)) {
+				iTileExists++;
+				sp = (short *) cp;
+				*sp = ix;
+				cp += 2;
+				sp = (short *) cp;
+				*sp = iy;
+				cp += 2;
+				iSize += 4;
+				ucHeader = 0;
+				if (pTile->m_sOwner != 0) {
+					if (pTile->m_cOwnerClass == DEF_OWNERTYPE_PLAYER) {
+						if (game_.m_pClientList[pTile->m_sOwner] != nullptr) ucHeader = ucHeader | 0x01;
+						else {
+							// ###debugcode
+							wsprintf(G_cTxt, "Empty player handle: %d", pTile->m_sOwner);
+							//PutLogFileList(G_cTxt);
+							//
+							pTile->m_sOwner = 0;
+						}
+					}
+					if (pTile->m_cOwnerClass == DEF_OWNERTYPE_NPC) {
+						if (game_.m_pNpcList[pTile->m_sOwner] != nullptr) ucHeader = ucHeader | 0x01;
+						else pTile->m_sOwner = 0;
+					}
+				}
+				if (pTile->m_sDeadOwner != 0) {
+					if (pTile->m_cDeadOwnerClass == DEF_OWNERTYPE_PLAYER) {
+						if (game_.m_pClientList[pTile->m_sDeadOwner] != nullptr) ucHeader = ucHeader | 0x02;
+						else pTile->m_sDeadOwner = 0;
+					}
+					if (pTile->m_cDeadOwnerClass == DEF_OWNERTYPE_NPC) {
+						if (game_.m_pNpcList[pTile->m_sDeadOwner] != nullptr) ucHeader = ucHeader | 0x02;
+						else pTile->m_sDeadOwner = 0;
+					}
+				}
+				if (pTile->m_pItem[0] != nullptr) ucHeader = ucHeader | 0x04;
+				if (pTile->m_sDynamicObjectType != 0) ucHeader = ucHeader | 0x08;
+				//
+				*cp = ucHeader;
+				cp++;
+				iSize++;
+				if ((ucHeader & 0x01) != 0) {
+					switch (pTile->m_cOwnerClass) {
+						case DEF_OWNERTYPE_PLAYER:
+							// Object ID number(Player) : 1~10000
+							sp = (short *) cp;
+							*sp = pTile->m_sOwner;
+							cp += 2;
+							iSize += 2;
+							// object type
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sOwner]->m_sType;
+							cp += 2;
+							iSize += 2;
+							// dir
+							*cp = game_.m_pClientList[pTile->m_sOwner]->m_cDir;
+							cp++;
+							iSize++;
+							// Appearance1
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr1;
+							cp += 2;
+							iSize += 2;
+							// Appearance2
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr2;
+							cp += 2;
+							iSize += 2;
+							// Appearance3
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr3;
+							cp += 2;
+							iSize += 2;
+							// Appearance4
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr4;
+							cp += 2;
+							iSize += 2;
+							// v1.4 ApprColor
+							ip = (int *) cp;
+							*ip = game_.m_pClientList[pTile->m_sOwner]->m_iApprColor;
+							cp += 4;
+							iSize += 4;
+							// Status
+							ip = (int *) cp;
+							sTemp = game_.m_pClientList[pTile->m_sOwner]->m_iStatus;
+							sTemp = 0x0FFFFFFF & sTemp;
+							sTemp2 = game_.iGetPlayerABSStatus(pTile->m_sOwner, this->id_); //(short)iGetPlayerRelationship(this->id_, pTile->m_sOwner);
+							sTemp = (sTemp | (sTemp2 << 28)); //Original : 12
+							*ip = sTemp;
+							//*sp = DEF_TEST;
+							cp += 4; //Original 2
+							iSize += 4; //Original 2
+							// Name
+							memcpy(cp, game_.m_pClientList[pTile->m_sOwner]->m_cCharName, 10);
+							cp += 10;
+							iSize += 10;
+							break;
+						case DEF_OWNERTYPE_NPC:
+							// Object ID number(NPC) : 10000~
+							sp = (short *) cp;
+							*sp = pTile->m_sOwner + 10000;
+							cp += 2;
+							iSize += 2;
+							// object type
+							sp = (short *) cp;
+							*sp = game_.m_pNpcList[pTile->m_sOwner]->m_sType;
+							cp += 2;
+							iSize += 2;
+							// dir
+							*cp = game_.m_pNpcList[pTile->m_sOwner]->m_cDir;
+							cp++;
+							iSize++;
+							// Appr2
+							sp = (short *) cp;
+							*sp = game_.m_pNpcList[pTile->m_sOwner]->m_sAppr2;
+							cp += 2;
+							iSize += 2;
+							// Status
+							ip = (int *) cp;
+							sTemp = game_.m_pNpcList[pTile->m_sOwner]->m_iStatus;
+							sTemp = 0x0FFFFFFF & sTemp;
+							sTemp2 = game_.iGetNpcRelationship(pTile->m_sOwner, this->id_);
+							sTemp = (sTemp | (sTemp2 << 28)); //Original : 12
+							*ip = sTemp;
+							//*sp = DEF_TEST;
+							cp += 4; //Original 2
+							iSize += 4; //Original 2
+							// Name
+							memcpy(cp, game_.m_pNpcList[pTile->m_sOwner]->m_cName, 5);
+							cp += 5;
+							iSize += 5;
+							break;
+					}
+				}
+				if ((ucHeader & 0x02) != 0) {
+					switch (pTile->m_cDeadOwnerClass) {
+						case DEF_OWNERTYPE_PLAYER:
+							// Object ID number : 1~10000
+							sp = (short *) cp;
+							*sp = pTile->m_sDeadOwner;
+							cp += 2;
+							iSize += 2;
+							// object type
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sType;
+							cp += 2;
+							iSize += 2;
+							// dir
+							*cp = game_.m_pClientList[pTile->m_sDeadOwner]->m_cDir;
+							cp++;
+							iSize++;
+							// Appearance1
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr1;
+							cp += 2;
+							iSize += 2;
+							// Appearance2
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr2;
+							cp += 2;
+							iSize += 2;
+							// Appearance3
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr3;
+							cp += 2;
+							iSize += 2;
+							// Appearance4
+							sp = (short *) cp;
+							*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr4;
+							cp += 2;
+							iSize += 2;
+							// v1.4 ApprColor
+							ip = (int *) cp;
+							*ip = game_.m_pClientList[pTile->m_sDeadOwner]->m_iApprColor;
+							cp += 4;
+							iSize += 4;
+							// Status
+							ip = (int *) cp;
+							sTemp = game_.m_pClientList[pTile->m_sDeadOwner]->m_iStatus;
+							sTemp = 0x0FFFFFFF & sTemp;
+							sTemp2 = game_.iGetPlayerABSStatus(pTile->m_sDeadOwner, this->id_); //(short)iGetPlayerRelationship(this->id_, pTile->m_sDeadOwner);
+							sTemp = (sTemp | (sTemp2 << 28)); //Original : 12
+							*ip = sTemp;
+							//*sp = DEF_TEST;
+							cp += 4; //Original 2
+							iSize += 4; //Original 2
+							// Name
+							memcpy(cp, game_.m_pClientList[pTile->m_sDeadOwner]->m_cCharName, 10);
+							cp += 10;
+							iSize += 10;
+							break;
+						case DEF_OWNERTYPE_NPC:
+							// Object ID number : 10000	~
+							sp = (short *) cp;
+							*sp = pTile->m_sDeadOwner + 10000;
+							cp += 2;
+							iSize += 2;
+							// object type
+							sp = (short *) cp;
+							*sp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_sType;
+							cp += 2;
+							iSize += 2;
+							// dir
+							*cp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_cDir;
+							cp++;
+							iSize++;
+							// Appr2
+							sp = (short *) cp;
+							*sp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_sAppr2;
+							cp += 2;
+							iSize += 2;
+							// Status
+							ip = (int *) cp;
+							sTemp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_iStatus;
+							sTemp = 0x0FFFFFFF & sTemp;
+							sTemp2 = game_.iGetNpcRelationship(pTile->m_sDeadOwner, this->id_);
+							sTemp = (sTemp | (sTemp2 << 28)); //Original : 12
+							*ip = sTemp;
+							//*sp = DEF_TEST;
+							cp += 4; //Original 2
+							iSize += 4; //Original 2
+							// Name
+							memcpy(cp, game_.m_pNpcList[pTile->m_sDeadOwner]->m_cName, 5);
+							cp += 5;
+							iSize += 5;
+							break;
+					}
+				}
+				if (pTile->m_pItem[0] != nullptr) {
+					sp = (short *) cp;
+					*sp = pTile->m_pItem[0]->m_sSprite;
+					cp += 2;
+					iSize += 2;
+					sp = (short *) cp;
+					*sp = pTile->m_pItem[0]->m_sSpriteFrame;
+					cp += 2;
+					iSize += 2;
+					*cp = pTile->m_pItem[0]->m_cItemColor;
+					cp++;
+					iSize++;
+				}
+				if (pTile->m_sDynamicObjectType != 0) {
+					wp = (uint16_t *) cp;
+					*wp = pTile->m_wDynamicObjectID;
+					cp += 2;
+					iSize += 2;
+					sp = (short *) cp;
+					*sp = pTile->m_sDynamicObjectType;
+					cp += 2;
+					iSize += 2;
+				}
+			} // Big if
+		} // while(1)
+	}
+	*pTotal = iTileExists;
+	return iSize;
+}
+
+int CClient::iComposeMoveMapData(short sX, short sY, char cDir, char * pData) {
+	constexpr int _tmp_iMoveLocX[9][37] = {
+		// 0
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		// 1
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+			20, -1, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//2
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+			20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
+			20, 20, 20, 20, 20, 20, -1},
+		//3
+		{20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
+			20, 20, 20, 20, 20, 20, -1, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//4
+		{20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
+			20, 20, 20, 20, 20, 20, 19, 18, 17, 16,
+			15, 14, 13, 12, 11, 10, 9, 8, 7, 6,
+			5, 4, 3, 2, 1, 0, -1},
+		//5
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+			20, -1, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//6
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 1, 2, 3, 4,
+			5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+			15, 16, 17, 18, 19, 20, -1},
+		//7
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//8
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 1, 2, 3, 4,
+			5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+			15, 16, 17, 18, 19, 20, -1}
+	};
+	constexpr int _tmp_iMoveLocY[9][37] = {
+		// 0
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//1
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, -1, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//2
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, -1},
+		//3
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, -1, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//4
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, 15, 15, 15, 15,
+			15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+			15, 15, 15, 15, 15, 15, -1},
+		//5
+		{15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+			15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+			15, -1, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		//6
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, 15, 15, 15, 15,
+			15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+			15, 15, 15, 15, 15, 15, -1},
+		//7
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+			10, 11, 12, 13, 14, 15, -1, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0},
+		// 8
+		{15, 14, 13, 12, 11, 10, 9, 8, 7, 6,
+			5, 4, 3, 2, 1, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, -1}
+	};
+
+	register int * ip, ix, iy, iSize, iTileExists, iIndex;
+	class CTile * pTileSrc, * pTile;
+	unsigned char ucHeader;
+	short * sp, * pTotal;
+	int iTemp;
+	int iTemp2;
+	uint16_t * wp;
+	char * cp;
+	pTotal = (short *) pData;
+	cp = (char *) (pData + 2);
+	iSize = 2;
+	iTileExists = 0;
+	pTileSrc = (class CTile *)(this->map_->m_pTile +
+			  (sX) + (sY) * this->map_->m_sSizeY);
+	iIndex = 0;
+	while (1) {
+		ix = _tmp_iMoveLocX[cDir][iIndex];
+		iy = _tmp_iMoveLocY[cDir][iIndex];
+		if ((ix == -1) || (iy == -1)) break;
+		iIndex++;
+		pTile = (class CTile *)(pTileSrc + ix + iy * this->map_->m_sSizeY);
+		//If player not same side and is invied (Beholder Hack)
+		// there is another person on the tiles, and the owner is not the player
+		//xxxxxx
+		if (pTile->m_cOwnerClass == DEF_OWNERTYPE_PLAYER && (game_.m_pClientList[pTile->m_sOwner] != nullptr) && (pTile->m_sOwner != this->id_))
+			if ((game_.m_pClientList[pTile->m_sOwner]->m_cSide != 0) &&
+					  (game_.m_pClientList[pTile->m_sOwner]->m_cSide != this->m_cSide) &&
+					  ((game_.m_pClientList[pTile->m_sOwner]->m_iStatus & 0x00000010) != 0)) {
+				continue;
+			}
+		if ((pTile->m_sOwner != 0) || (pTile->m_sDeadOwner != 0) ||
+				  (pTile->m_pItem[0] != nullptr) || (pTile->m_sDynamicObjectType != 0)) {
+			iTileExists++;
+			sp = (short *) cp;
+			*sp = ix;
+			cp += 2;
+			sp = (short *) cp;
+			*sp = iy;
+			cp += 2;
+			iSize += 4;
+			ucHeader = 0;
+			if (pTile->m_sOwner != 0) {
+				if (pTile->m_cOwnerClass == DEF_OWNERTYPE_PLAYER) {
+					if (game_.m_pClientList[pTile->m_sOwner] != nullptr) ucHeader = ucHeader | 0x01;
+					else pTile->m_sOwner = 0;
+				}
+				if (pTile->m_cOwnerClass == DEF_OWNERTYPE_NPC) {
+					if (game_.m_pNpcList[pTile->m_sOwner] != nullptr) ucHeader = ucHeader | 0x01;
+					else pTile->m_sOwner = 0;
+				}
+			}
+			if (pTile->m_sDeadOwner != 0) {
+				if (pTile->m_cDeadOwnerClass == DEF_OWNERTYPE_PLAYER) {
+					if (game_.m_pClientList[pTile->m_sDeadOwner] != 0) ucHeader = ucHeader | 0x02;
+					else pTile->m_sDeadOwner = 0;
+				}
+				if (pTile->m_cDeadOwnerClass == DEF_OWNERTYPE_NPC) {
+					if (game_.m_pNpcList[pTile->m_sDeadOwner] != 0) ucHeader = ucHeader | 0x02;
+					else pTile->m_sDeadOwner = 0;
+				}
+			}
+			if (pTile->m_pItem[0] != nullptr) ucHeader = ucHeader | 0x04;
+			if (pTile->m_sDynamicObjectType != 0) ucHeader = ucHeader | 0x08;
+			*cp = ucHeader;
+			cp++;
+			iSize++;
+			if ((ucHeader & 0x01) != 0) {
+				switch (pTile->m_cOwnerClass) {
+					case DEF_OWNERTYPE_PLAYER:
+						sp = (short *) cp;
+						*sp = pTile->m_sOwner;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sOwner]->m_sType;
+						cp += 2;
+						iSize += 2;
+						*cp = game_.m_pClientList[pTile->m_sOwner]->m_cDir;
+						cp++;
+						iSize++;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr1;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr2;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr3;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sOwner]->m_sAppr4;
+						cp += 2;
+						iSize += 2;
+						ip = (int *) cp;
+						*ip = game_.m_pClientList[pTile->m_sOwner]->m_iApprColor;
+						cp += 4;
+						iSize += 4;
+						ip = (int *) cp;
+						if (this->m_cSide != game_.m_pClientList[pTile->m_sOwner]->m_cSide) {
+							if (this->id_ != pTile->m_sOwner) {
+								iTemp = game_.m_pClientList[pTile->m_sOwner]->m_iStatus & 0x0F0FFFF7F;
+							} else {
+								iTemp = game_.m_pClientList[pTile->m_sOwner]->m_iStatus;
+							}
+						} else {
+							iTemp = game_.m_pClientList[pTile->m_sOwner]->m_iStatus;
+						}
+						//iTemp = m_pClientList[pTile->m_sOwner]->m_iStatus;
+						iTemp = 0x0FFFFFFF & iTemp;
+						iTemp2 = game_.iGetPlayerABSStatus(pTile->m_sOwner, this->id_);
+						iTemp = (iTemp | (iTemp2 << 28));
+						*ip = iTemp;
+						cp += 4;
+						iSize += 4;
+						memcpy(cp, game_.m_pClientList[pTile->m_sOwner]->m_cCharName, 10);
+						cp += 10;
+						iSize += 10;
+						break;
+					case DEF_OWNERTYPE_NPC:
+						sp = (short *) cp;
+						*sp = pTile->m_sOwner + 10000;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pNpcList[pTile->m_sOwner]->m_sType;
+						cp += 2;
+						iSize += 2;
+						*cp = game_.m_pNpcList[pTile->m_sOwner]->m_cDir;
+						cp++;
+						iSize++;
+						sp = (short *) cp;
+						*sp = game_.m_pNpcList[pTile->m_sOwner]->m_sAppr2;
+						cp += 2;
+						iSize += 2;
+						ip = (int *) cp;
+						iTemp = game_.m_pNpcList[pTile->m_sOwner]->m_iStatus;
+						iTemp = 0x0FFFFFFF & iTemp;
+						iTemp2 = game_.iGetNpcRelationship(pTile->m_sOwner, this->id_);
+						iTemp = (iTemp | (iTemp2 << 28));
+						*ip = iTemp;
+						cp += 4;
+						iSize += 4;
+						memcpy(cp, game_.m_pNpcList[pTile->m_sOwner]->m_cName, 5);
+						cp += 5;
+						iSize += 5;
+				}//end switch
+			}// if ((ucHeader & 0x01) != 0)
+			if ((ucHeader & 0x02) != 0) {
+				switch (pTile->m_cDeadOwnerClass) {
+					case DEF_OWNERTYPE_PLAYER:
+						sp = (short *) cp;
+						*sp = pTile->m_sDeadOwner;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sType;
+						cp += 2;
+						iSize += 2;
+						*cp = game_.m_pClientList[pTile->m_sDeadOwner]->m_cDir;
+						cp++;
+						iSize++;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr1;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr2;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr3;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pClientList[pTile->m_sDeadOwner]->m_sAppr4;
+						cp += 2;
+						iSize += 2;
+						ip = (int *) cp;
+						*ip = game_.m_pClientList[pTile->m_sDeadOwner]->m_iApprColor;
+						cp += 4;
+						iSize += 4;
+						ip = (int *) cp;
+						if (this->m_cSide != game_.m_pClientList[pTile->m_sDeadOwner]->m_cSide) {
+							if (this->id_ != pTile->m_sDeadOwner) {
+								iTemp = game_.m_pClientList[pTile->m_sDeadOwner]->m_iStatus & 0x0F0FFFF7F;
+							} else {
+								iTemp = game_.m_pClientList[pTile->m_sDeadOwner]->m_iStatus;
+							}
+						} else {
+							iTemp = game_.m_pClientList[pTile->m_sDeadOwner]->m_iStatus;
+						}
+						//iTemp = m_pClientList[pTile->m_sDeadOwner]->m_iStatus;
+						iTemp = 0x0FFFFFFF & iTemp;
+						iTemp2 = game_.iGetPlayerABSStatus(pTile->m_sDeadOwner, this->id_);
+						iTemp = (iTemp | (iTemp2 << 28));
+						*ip = iTemp;
+						cp += 4;
+						iSize += 4;
+						memcpy(cp, game_.m_pClientList[pTile->m_sDeadOwner]->m_cCharName, 10);
+						cp += 10;
+						iSize += 10;
+						break;
+					case DEF_OWNERTYPE_NPC:
+						sp = (short *) cp;
+						*sp = pTile->m_sDeadOwner + 10000;
+						cp += 2;
+						iSize += 2;
+						sp = (short *) cp;
+						*sp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_sType;
+						cp += 2;
+						iSize += 2;
+						*cp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_cDir;
+						cp++;
+						iSize++;
+						sp = (short *) cp;
+						*sp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_sAppr2;
+						cp += 2;
+						iSize += 2;
+						ip = (int *) cp;
+						iTemp = game_.m_pNpcList[pTile->m_sDeadOwner]->m_iStatus;
+						iTemp = 0x0FFFFFFF & iTemp;
+						iTemp2 = game_.iGetNpcRelationship(pTile->m_sDeadOwner, this->id_);
+						iTemp = (iTemp | (iTemp2 << 28));
+						*ip = iTemp;
+						cp += 4;
+						iSize += 4;
+						memcpy(cp, game_.m_pNpcList[pTile->m_sDeadOwner]->m_cName, 5);
+						cp += 5;
+						iSize += 5;
+						break;
+				}//End Switch
+			}// if ((ucHeader & 0x02) != 0)
+			if (pTile->m_pItem[0] != nullptr) {
+				sp = (short *) cp;
+				*sp = pTile->m_pItem[0]->m_sSprite;
+				cp += 2;
+				iSize += 2;
+				sp = (short *) cp;
+				*sp = pTile->m_pItem[0]->m_sSpriteFrame;
+				cp += 2;
+				iSize += 2;
+				*cp = pTile->m_pItem[0]->m_cItemColor;
+				cp++;
+				iSize++;
+			}
+			if (pTile->m_sDynamicObjectType != 0) {
+				wp = (uint16_t *) cp;
+				*wp = pTile->m_wDynamicObjectID;
+				cp += 2;
+				iSize += 2;
+				sp = (short *) cp;
+				*sp = pTile->m_sDynamicObjectType;
+				cp += 2;
+				iSize += 2;
+			} //(pTile->m_sDynamicObjectType != nullptr)
+		} //(pTile->m_sOwner != nullptr)
+	} // end While(1)
+	*pTotal = iTileExists;
+	return iSize;
 }

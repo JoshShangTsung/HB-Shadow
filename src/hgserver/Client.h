@@ -369,6 +369,8 @@ public:
 	void ReleaseItemHandler(short sItemIndex, bool bNotice);
 	void RequestRestartHandler();
 	void update(uint32_t dwTime);
+	int iComposeMoveMapData(short sX, short sY, char cDir, char * pData);
+	int iComposeInitMapData(short sX, short sY, char * pData);
 private:
 
 	CMap& _getMap() override;

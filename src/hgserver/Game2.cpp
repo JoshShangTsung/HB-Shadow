@@ -5106,7 +5106,7 @@ bool CGame::_bDepleteDestTypeItemUseEffect(int iClientH, int dX, int dY, short s
 			bRet = __bSetConstructionKit(dX, dY, //
 					  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1, //
 					  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2, //
-					  iClientH);
+					  *m_pClientList[iClientH]);
 			if (bRet) {
 			} else {
 			}
@@ -8580,7 +8580,7 @@ int CGame::iRequestPanningMapDataRequest(CClient &client, char * pData) {
 	cp += 2;
 	*cp = cDir;
 	cp++;
-	iSize = iComposeMoveMapData((short) (dX - 10), (short) (dY - 7), client.id_, cDir, cp);
+	iSize = client.iComposeMoveMapData((short) (dX - 10), (short) (dY - 7), cDir, cp);
 	iRet = client.m_pXSock->iSendMsg(cData, iSize + 12 + 1 + 4);
 	switch (iRet) {
 		case DEF_XSOCKEVENT_QUENEFULL:
@@ -8593,27 +8593,25 @@ int CGame::iRequestPanningMapDataRequest(CClient &client, char * pData) {
 	return 1;
 }
 
-void CGame::AdminOrder_SetObserverMode(int iClientH) {
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsObserverMode == true) {
-		m_pClientList[iClientH]->map_->SetOwner(iClientH, DEF_OWNERTYPE_PLAYER, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY);
-		m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_OBSERVERMODE, 0, 0, 0, nullptr);
-		m_pClientList[iClientH]->m_bIsObserverMode = false;
+void CGame::AdminOrder_SetObserverMode(CClient &client) {
+	if (client.m_bIsObserverMode == true) {
+		client.map_->SetOwner(client.id_, DEF_OWNERTYPE_PLAYER, client.m_sX, client.m_sY);
+		client.SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
+		client.SendNotifyMsg(0, DEF_NOTIFY_OBSERVERMODE, 0, 0, 0, nullptr);
+		client.m_bIsObserverMode = false;
 	} else {
-		m_pClientList[iClientH]->map_->ClearOwner(1, iClientH, DEF_OWNERTYPE_PLAYER, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY);
-		m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
+		client.map_->ClearOwner(1, client.id_, DEF_OWNERTYPE_PLAYER, client.m_sX, client.m_sY);
+		client.SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 		//iRequestPanningMapDataRequest(iClientH, pData)
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_OBSERVERMODE, 1, 0, 0, nullptr);
-		m_pClientList[iClientH]->m_bIsObserverMode = true;
+		client.SendNotifyMsg(0, DEF_NOTIFY_OBSERVERMODE, 1, 0, 0, nullptr);
+		client.m_bIsObserverMode = true;
 	}
 }
 
-void CGame::AdminOrder_EnableAdminCommand(int iClientH, char *pData, uint32_t dwMsgSize) {
+void CGame::AdminOrder_EnableAdminCommand(CClient &client, char *pData, uint32_t dwMsgSize) {
 	char * token, cBuff[256], len;
 	char seps[] = "= \t\n";
 	class CStrTok * pStrTok;
-	if (m_pClientList[iClientH] == nullptr) return;
 	if ((dwMsgSize) <= 0) return;
 	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
@@ -8624,16 +8622,16 @@ void CGame::AdminOrder_EnableAdminCommand(int iClientH, char *pData, uint32_t dw
 		len = strlen(token);
 		if (len > 10) len = 10;
 		if (memcmp(token, m_cSecurityNumber, len) == 0) {
-			m_pClientList[iClientH]->m_bIsAdminCommandEnabled = true;
+			client.m_bIsAdminCommandEnabled = true;
 		} else {
-			wsprintf(G_cTxt, "(%s) Player(%s) attempts to access /enableadmincommand with %s", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, token);
+			wsprintf(G_cTxt, "(%s) Player(%s) attempts to access /enableadmincommand with %s", client.m_cIPaddress, client.m_cCharName, token);
 			PutHackLogFileList(G_cTxt);
 			return;
 		}
 	}
 }
 
-void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize) {
+void CGame::AdminOrder_CreateItem(CClient &client, char *pData, uint32_t dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * cp, * token, cBuff[256], cItemName[256], cData[256], cTemp[256], cAttribute[256], cValue[256];
 	SYSTEMTIME SysTime;
@@ -8649,21 +8647,20 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize)
 	double dV2;
 	double dV3;
 	// if the client doesnt exist than no effect.
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == false) return;
+	if (client.m_bIsAdminCommandEnabled == false) return;
 	// if the command is just "/createitem " than no effect.
 	if ((dwMsgSize) <= 0) return;
 	// if client's admin level is less than 4 no effect.
-	if (m_pClientList[iClientH]->m_iAdminUserLevel < m_iAdminLevelCreateItem) {
+	if (client.m_iAdminUserLevel < m_iAdminLevelCreateItem) {
 		// if the admin user level is not 0 and less than 4 send message
-		if (m_pClientList[iClientH]->m_iAdminUserLevel != 0)
-			m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
+		if (client.m_iAdminUserLevel != 0)
+			client.SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
 		return;
-	} // close if (m_pClientList[iClientH]->m_iAdminUserLevel < 4) {
+	} // close if (client.m_iAdminUserLevel < 4) {
 	// IP address not able to create item
-	// DISABLED: if (memcmp(m_pClientList[iClientH]->m_cIPaddress, "192.168.1.", 12) != 0) return;
+	// DISABLED: if (memcmp(client.m_cIPaddress, "192.168.1.", 12) != 0) return;
 	// check if the client has typed "/enableadmincreateitem"
-	//if (m_pClientList[iClientH]->m_bIsAdminCreateItemEnabled == false) return;
+	//if (client.m_bIsAdminCreateItemEnabled == false) return;
 	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new class CStrTok(cBuff, seps);
@@ -8779,7 +8776,7 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize)
 			break;
 	}
 	std::memset(cData, 0, sizeof (cData));
-	if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
+	if (_bAddClientItemList(client.id_, pItem, &iEraseReq) == true) {
 		dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 		*dwp = MSGID_NOTIFY;
 		wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -8826,10 +8823,10 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize)
 			delete pItem;
 			pItem = nullptr;
 		}
-		m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 53);
+		client.m_pXSock->iSendMsg(cData, 53);
 		// v2.14 Admin Log
-		wsprintf(G_cTxt, "(%s) GM Order(%s): Create ItemName(%s)", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cItemName);
-		bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, 0, G_cTxt);
+		wsprintf(G_cTxt, "(%s) GM Order(%s): Create ItemName(%s)", client.m_cIPaddress, client.m_cCharName, cItemName);
+		bSendMsgToLS(MSGID_GAMEMASTERLOG, client.id_, 0, G_cTxt);
 		return;
 	} else {
 		delete pItem;
@@ -8864,33 +8861,31 @@ void CGame::RequestSellItemListHandler(CClient &client, char * pData) {
 	}
 }
 
-void CGame::CreateNewPartyHandler(int iClientH) {
+void CGame::CreateNewPartyHandler(CClient &client) {
 	bool bFlag;
-	if (m_pClientList[iClientH] == nullptr) return;
-	bFlag = m_pClientList[iClientH]->bCreateNewParty();
-	m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_RESPONSE_CREATENEWPARTY, (int) bFlag, 0, 0, nullptr);
+	bFlag = client.bCreateNewParty();
+	client.SendNotifyMsg(0, DEF_NOTIFY_RESPONSE_CREATENEWPARTY, (int) bFlag, 0, 0, nullptr);
 }
 
-void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
+void CGame::JoinPartyHandler(CClient &client, int iV1, char *pMemberName) {
 	short sAppr2;
 	int i;
-	if (m_pClientList[iClientH] == nullptr) return;
-	if ((m_bAdminSecurity) && (m_pClientList[iClientH]->m_iAdminUserLevel > 0)) return;
+	if ((m_bAdminSecurity) && (client.m_iAdminUserLevel > 0)) return;
 	switch (iV1) {
 		case 0:
-			RequestDeletePartyHandler(iClientH);
+			RequestDeletePartyHandler(client.id_);
 			break;
 		case 1:
 			//testcode
-			wsprintf(G_cTxt, "Join Party Req: %s(%d) ID(%d) Stat(%d) ReqJoinH(%d) ReqJoinName(%s)", m_pClientList[iClientH]->m_cCharName, iClientH,
-					  m_pClientList[iClientH]->m_iPartyID, m_pClientList[iClientH]->m_iPartyStatus, m_pClientList[iClientH]->m_iReqJoinPartyClientH,
-					  m_pClientList[iClientH]->m_cReqJoinPartyName);
+			wsprintf(G_cTxt, "Join Party Req: %s(%d) ID(%d) Stat(%d) ReqJoinH(%d) ReqJoinName(%s)", client.m_cCharName, client.id_,
+					  client.m_iPartyID, client.m_iPartyStatus, client.m_iReqJoinPartyClientH,
+					  client.m_cReqJoinPartyName);
 			PutLogList(G_cTxt);
-			if ((m_pClientList[iClientH]->m_iPartyID != 0) || (m_pClientList[iClientH]->m_iPartyStatus != DEF_PARTYSTATUS_NULL)) {
-				m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
-				m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-				std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
-				m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
+			if ((client.m_iPartyID != 0) || (client.m_iPartyStatus != DEF_PARTYSTATUS_NULL)) {
+				client.SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
+				client.m_iReqJoinPartyClientH = 0;
+				std::memset(client.m_cReqJoinPartyName, 0, sizeof (client.m_cReqJoinPartyName));
+				client.m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 				//testcode
 				PutLogList("Join Party Reject (1)");
 				return;
@@ -8899,38 +8894,38 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 				if ((m_pClientList[i] != nullptr) && (strcmp(m_pClientList[i]->m_cCharName, pMemberName) == 0)) {
 					sAppr2 = (short) ((m_pClientList[i]->m_sAppr2 & 0xF000) >> 12);
 					if (sAppr2 != 0) {
-						m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
+						client.SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
 						//testcode
 						PutLogList("Join Party Reject (2)");
-					} else if (m_pClientList[i]->m_cSide != m_pClientList[iClientH]->m_cSide) {
-						m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
+					} else if (m_pClientList[i]->m_cSide != client.m_cSide) {
+						client.SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
 						//testcode
 						PutLogList("Join Party Reject (3)");
 					} else if (m_pClientList[i]->m_iPartyStatus == DEF_PARTYSTATUS_PROCESSING) {
-						m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
+						client.SendNotifyMsg(0, DEF_NOTIFY_PARTY, 7, 0, 0, nullptr);
 						//testcode
 						PutLogList("Join Party Reject (4)");
 						//testcode
 						wsprintf(G_cTxt, "Party join reject(2) ClientH:%d ID:%d JoinName:%d", i, m_pClientList[i]->m_iPartyID, m_pClientList[i]->m_cReqJoinPartyName);
 						PutLogList(G_cTxt);
-						m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-						std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
-						m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
+						client.m_iReqJoinPartyClientH = 0;
+						std::memset(client.m_cReqJoinPartyName, 0, sizeof (client.m_cReqJoinPartyName));
+						client.m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 					} else {
-						m_pClientList[i]->m_iReqJoinPartyClientH = iClientH;
+						m_pClientList[i]->m_iReqJoinPartyClientH = client.id_;
 						std::memset(m_pClientList[i]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[i]->m_cReqJoinPartyName));
-						strcpy(m_pClientList[i]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName);
-						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_QUERY_JOINPARTY, 0, 0, 0, m_pClientList[iClientH]->m_cCharName);
-						m_pClientList[iClientH]->m_iReqJoinPartyClientH = i;
-						std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
-						strcpy(m_pClientList[iClientH]->m_cReqJoinPartyName, m_pClientList[i]->m_cCharName);
-						m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_PROCESSING;
+						strcpy(m_pClientList[i]->m_cReqJoinPartyName, client.m_cCharName);
+						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_QUERY_JOINPARTY, 0, 0, 0, client.m_cCharName);
+						client.m_iReqJoinPartyClientH = i;
+						std::memset(client.m_cReqJoinPartyName, 0, sizeof (client.m_cReqJoinPartyName));
+						strcpy(client.m_cReqJoinPartyName, m_pClientList[i]->m_cCharName);
+						client.m_iPartyStatus = DEF_PARTYSTATUS_PROCESSING;
 					}
 					return;
 				}
 			break;
 		case 2:
-			if (m_pClientList[iClientH]->m_iPartyStatus == DEF_PARTYSTATUS_CONFIRM) {
+			if (client.m_iPartyStatus == DEF_PARTYSTATUS_CONFIRM) {
 			}
 			break;
 	}
@@ -9014,19 +9009,18 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 	}
 }
 
-void CGame::ActivateSpecialAbilityHandler(int iClientH) {
+void CGame::ActivateSpecialAbilityHandler(CClient &client) {
 	uint32_t dwTime = timeGetTime();
 	short sTemp;
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_iSpecialAbilityTime != 0) return;
-	if (m_pClientList[iClientH]->m_iSpecialAbilityType == 0) return;
-	if (m_pClientList[iClientH]->m_bIsSpecialAbilityEnabled == true) return;
-	m_pClientList[iClientH]->m_bIsSpecialAbilityEnabled = true;
-	m_pClientList[iClientH]->m_dwSpecialAbilityStartTime = dwTime;
-	m_pClientList[iClientH]->m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
-	sTemp = m_pClientList[iClientH]->m_sAppr4;
+	if (client.m_iSpecialAbilityTime != 0) return;
+	if (client.m_iSpecialAbilityType == 0) return;
+	if (client.m_bIsSpecialAbilityEnabled == true) return;
+	client.m_bIsSpecialAbilityEnabled = true;
+	client.m_dwSpecialAbilityStartTime = dwTime;
+	client.m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
+	sTemp = client.m_sAppr4;
 	sTemp = sTemp & 0xFF0F;
-	switch (m_pClientList[iClientH]->m_iSpecialAbilityType) {
+	switch (client.m_iSpecialAbilityType) {
 		case 1:
 		case 2:
 		case 3:
@@ -9042,15 +9036,14 @@ void CGame::ActivateSpecialAbilityHandler(int iClientH) {
 			sTemp = sTemp | 0x0020;
 			break;
 	}
-	m_pClientList[iClientH]->m_sAppr4 = sTemp;
-	m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 1, m_pClientList[iClientH]->m_iSpecialAbilityType, m_pClientList[iClientH]->m_iSpecialAbilityLastSec, nullptr);
-	m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	client.m_sAppr4 = sTemp;
+	client.SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 1, client.m_iSpecialAbilityType, client.m_iSpecialAbilityLastSec, nullptr);
+	client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 }
 
-void CGame::CancelQuestHandler(int iClientH) {
-	if (m_pClientList[iClientH] == nullptr) return;
-	m_pClientList[iClientH]->_ClearQuestStatus();
-	m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_QUESTABORTED, 0, 0, 0, nullptr);
+void CGame::CancelQuestHandler(CClient &client) {
+	client._ClearQuestStatus();
+	client.SendNotifyMsg(0, DEF_NOTIFY_QUESTABORTED, 0, 0, 0, nullptr);
 }
 
 int CGame::iGetItemWeight(CItem &item, int iCount) {
@@ -9136,7 +9129,7 @@ void CGame::AgingMapSectorInfo() {
 		}
 }
 
-bool CGame::__bSetConstructionKit(int dX, int dY, int iType, int /*iTimeCost*/, int iClientH) {
+bool CGame::__bSetConstructionKit(int dX, int dY, int iType, int /*iTimeCost*/, CClient &client) {
 	int iNamingValue;
 	int ix;
 	int iy;
@@ -9144,21 +9137,21 @@ bool CGame::__bSetConstructionKit(int dX, int dY, int iType, int /*iTimeCost*/, 
 	int tY;
 	char cNpcName[21], cName[21], cNpcWaypoint[11], cOwnerType;
 	short sOwnerH;
-	if ((!m_bIsCrusadeMode) || (m_pClientList[iClientH]->m_iCrusadeDuty != 2)) return false;
-	if (m_pClientList[iClientH]->map_->m_iTotalCrusadeStructures >= DEF_MAXCRUSADESTRUCTURES) {
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_NOMORECRUSADESTRUCTURE, 0, 0, 0, nullptr);
+	if ((!m_bIsCrusadeMode) || (client.m_iCrusadeDuty != 2)) return false;
+	if (client.map_->m_iTotalCrusadeStructures >= DEF_MAXCRUSADESTRUCTURES) {
+		client.SendNotifyMsg(0, DEF_NOTIFY_NOMORECRUSADESTRUCTURE, 0, 0, 0, nullptr);
 		return false;
 	}
-	iNamingValue = m_pClientList[iClientH]->map_->iGetEmptyNamingValue();
+	iNamingValue = client.map_->iGetEmptyNamingValue();
 	if (iNamingValue == -1) {
 	} else {
 		for (ix = dX - 3; ix <= dX + 5; ix++)
 			for (iy = dY - 3; iy <= dX + 5; iy++) {
-				m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+				client.map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 				if ((sOwnerH != 0) && (cOwnerType == DEF_OWNERTYPE_NPC) && (m_pNpcList[sOwnerH]->m_cActionLimit == 5)) return false;
 			}
 		std::memset(cNpcName, 0, sizeof (cNpcName));
-		if (m_pClientList[iClientH]->m_cSide == 1) {
+		if (client.m_cSide == 1) {
 			switch (iType) {
 				case 1: strcpy(cNpcName, "AGT-Aresden");
 					break;
@@ -9169,7 +9162,7 @@ bool CGame::__bSetConstructionKit(int dX, int dY, int iType, int /*iTimeCost*/, 
 				case 4: strcpy(cNpcName, "DT-Aresden");
 					break;
 			}
-		} else if (m_pClientList[iClientH]->m_cSide == 2) {
+		} else if (client.m_cSide == 2) {
 			switch (iType) {
 				case 1: strcpy(cNpcName, "AGT-Elvine");
 					break;
@@ -9184,12 +9177,12 @@ bool CGame::__bSetConstructionKit(int dX, int dY, int iType, int /*iTimeCost*/, 
 		std::memset(cName, 0, sizeof (cName));
 		wsprintf(cName, "XX%d", iNamingValue);
 		cName[0] = '_';
-		cName[1] = m_pClientList[iClientH]->map_->id_ + 65;
+		cName[1] = client.map_->id_ + 65;
 		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) dX;
 		tY = (int) dY;
-		if (m_pClientList[iClientH]->map_->bCreateNewNpc(cNpcName, cName, 0, (rand() % 9), DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, false) == false) {
-			m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
+		if (client.map_->bCreateNewNpc(cNpcName, cName, 0, (rand() % 9), DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, false) == false) {
+			client.map_->SetNamingValueEmpty(iNamingValue);
 		} else {
 			wsprintf(G_cTxt, "Structure(%s) construction begin(%d,%d)!", cNpcName, tX, tY);
 			PutLogList(G_cTxt);
@@ -9332,13 +9325,12 @@ void CGame::CreateCrusadeStructures() {
 		}
 }
 
-void CGame::RequestSetGuildConstructLocHandler(int iClientH, int dX, int dY, int iGuildGUID, char * pMapName) {
+void CGame::RequestSetGuildConstructLocHandler(CClient &client, int dX, int dY, int iGuildGUID, char * pMapName) {
 	register int i;
 	int iIndex;
 	uint32_t dwTemp;
 	uint32_t dwTime;
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsOnServerChange == true) return;
+	if (client.m_bIsOnServerChange == true) return;
 	dwTime = timeGetTime();
 	wsprintf(G_cTxt, "SetGuildConstructLoc: %d %s %d %d", iGuildGUID, pMapName, dX, dY);
 	PutLogList(G_cTxt);
@@ -9384,7 +9376,7 @@ void CGame::RequestSetGuildConstructLocHandler(int iClientH, int dX, int dY, int
 	m_pGuildTeleportLoc[i].m_dwTime2 = dwTime;
 }
 
-void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType, char cNum, char cMode) {
+void CGame::RequestSummonWarUnitHandler(CClient &client, int dX, int dY, char cType, char cNum, char cMode) {
 	char cName[6], cNpcName[21], cMapName[11], cNpcWayPoint[11], cOwnerType;
 	register int i, x;
 	int iNamingValue;
@@ -9395,27 +9387,26 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 	bool bRet;
 	short sOwnerH;
 	uint32_t dwTime = timeGetTime();
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
+	if (client.m_bIsInitComplete == false) return;
 	std::memset(cNpcWayPoint, 0, sizeof (cNpcWayPoint));
 	std::memset(cNpcName, 0, sizeof (cNpcName));
 	std::memset(cMapName, 0, sizeof (cMapName));
 	if (cType < 0) return;
 	if (cNum > 10) return;
-	if (m_pClientList[iClientH]->m_iConstructionPoint < m_iNpcConstructionPoint[cType]) return;
-	if ((m_pClientList[iClientH]->map_ != nullptr) && (m_pClientList[iClientH]->map_->m_bIsFixedDayMode == true)) return;
+	if (client.m_iConstructionPoint < m_iNpcConstructionPoint[cType]) return;
+	if ((client.map_ != nullptr) && (client.map_->m_bIsFixedDayMode == true)) return;
 	cNum = 1;
 	for (x = 1; x <= cNum; x++) {
-		iNamingValue = m_pClientList[iClientH]->map_->iGetEmptyNamingValue();
+		iNamingValue = client.map_->iGetEmptyNamingValue();
 		if (iNamingValue == -1) {
 		} else {
 			std::memset(cName, 0, sizeof (cName));
 			wsprintf(cName, "XX%d", iNamingValue);
 			cName[0] = '_';
-			cName[1] = m_pClientList[iClientH]->map_->id_ + 65;
+			cName[1] = client.map_->id_ + 65;
 			switch (cType) {
 				case 43:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "LWB-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "LWB-Elvine");
@@ -9423,7 +9414,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 36:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "AGT-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "AGT-Elvine");
@@ -9431,7 +9422,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 37:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "CGT-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "CGT-Elvine");
@@ -9439,7 +9430,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 38:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "MS-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "MS-Elvine");
@@ -9447,7 +9438,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 39:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "DT-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "DT-Elvine");
@@ -9455,7 +9446,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 51:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "CP-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "CP-Elvine");
@@ -9475,7 +9466,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					strcpy(cNpcName, "BG");
 					break;
 				case 82:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "Sor-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "Sor-Elvine");
@@ -9483,7 +9474,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 83:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "ATK-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "ATK-Elvine");
@@ -9491,7 +9482,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 84:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "Elf-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "Elf-Elvine");
@@ -9499,7 +9490,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 85:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "DSK-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "DSK-Elvine");
@@ -9507,7 +9498,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 86:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "HBT-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "HBT-Elvine");
@@ -9515,7 +9506,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 87:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "CT-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "CT-Elvine");
@@ -9523,7 +9514,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 88:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "Bar-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "Bar-Elvine");
@@ -9531,7 +9522,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 					}
 					break;
 				case 89:
-					switch (m_pClientList[iClientH]->m_cSide) {
+					switch (client.m_cSide) {
 						case 1: strcpy(cNpcName, "AGC-Aresden");
 							break;
 						case 2: strcpy(cNpcName, "AGC-Elvine");
@@ -9549,28 +9540,28 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType
 				case 37:
 				case 38:
 				case 39:
-					if (strcmp(m_pClientList[iClientH]->m_cConstructMapName, m_pClientList[iClientH]->map_->m_cName) != 0) bRet = true;
-					if (abs(m_pClientList[iClientH]->m_sX - m_pClientList[iClientH]->m_iConstructLocX) > 10) bRet = true;
-					if (abs(m_pClientList[iClientH]->m_sY - m_pClientList[iClientH]->m_iConstructLocY) > 10) bRet = true;
+					if (strcmp(client.m_cConstructMapName, client.map_->m_cName) != 0) bRet = true;
+					if (abs(client.m_sX - client.m_iConstructLocX) > 10) bRet = true;
+					if (abs(client.m_sY - client.m_iConstructLocY) > 10) bRet = true;
 					if (bRet) {
-						m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
-						m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 2, 0, 0, nullptr);
+						client.map_->SetNamingValueEmpty(iNamingValue);
+						client.SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 2, 0, 0, nullptr);
 						return;
 					}
 					for (i = 0; i < DEF_MAXGUILDS; i++)
-						if (m_pGuildTeleportLoc[i].m_iV1 == m_pClientList[iClientH]->m_iGuildGUID) {
+						if (m_pGuildTeleportLoc[i].m_iV1 == client.m_iGuildGUID) {
 							m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 							if (m_pGuildTeleportLoc[i].m_iV2 >= DEF_MAXCONSTRUCTNUM) {
-								m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
-								m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 3, 0, 0, nullptr);
+								client.map_->SetNamingValueEmpty(iNamingValue);
+								client.SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 3, 0, 0, nullptr);
 								return;
 							} else {
 								m_pGuildTeleportLoc[i].m_iV2++;
 								goto RSWU_LOOPBREAK;
 							}
 						}
-					m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
-					m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 3, 0, 0, nullptr);
+					client.map_->SetNamingValueEmpty(iNamingValue);
+					client.SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 3, 0, 0, nullptr);
 					return;
 					break;
 				case 43:
@@ -9596,7 +9587,7 @@ RSWU_LOOPBREAK:
 				case 37:
 					for (ix = tX - 2; ix <= tX + 2; ix++)
 						for (iy = tY - 2; iy <= tY + 2; iy++) {
-							m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+							client.map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if ((sOwnerH != 0) && (cOwnerType == DEF_OWNERTYPE_NPC)) {
 								switch (m_pNpcList[sOwnerH]->m_sType) {
 									case 36:
@@ -9610,171 +9601,168 @@ RSWU_LOOPBREAK:
 					break;
 			}
 			if (bRet) {
-				m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
-				m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 1, 0, 0, nullptr);
+				client.map_->SetNamingValueEmpty(iNamingValue);
+				client.SendNotifyMsg(0, DEF_NOTIFY_CANNOTCONSTRUCT, 1, 0, 0, nullptr);
 				return;
 			}
 			if (cMode == 0) {
-				bRet = m_pClientList[iClientH]->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_FOLLOW, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, m_pClientList[iClientH]->m_iGuildGUID);
-				bSetNpcFollowMode(cName, m_pClientList[iClientH]->m_cCharName, DEF_OWNERTYPE_PLAYER);
-			} else bRet = m_pClientList[iClientH]->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_GUARD, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, m_pClientList[iClientH]->m_iGuildGUID);
+				bRet = client.map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_FOLLOW, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, client.m_iGuildGUID);
+				bSetNpcFollowMode(cName, client.m_cCharName, DEF_OWNERTYPE_PLAYER);
+			} else bRet = client.map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_GUARD, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, client.m_iGuildGUID);
 			if (!bRet) {
-				m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
+				client.map_->SetNamingValueEmpty(iNamingValue);
 			} else {
-				m_pClientList[iClientH]->m_iConstructionPoint -= m_iNpcConstructionPoint[cType];
-				if (m_pClientList[iClientH]->m_iConstructionPoint < 0) m_pClientList[iClientH]->m_iConstructionPoint = 0;
-				m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, m_pClientList[iClientH]->m_iConstructionPoint, m_pClientList[iClientH]->m_iWarContribution, 0, nullptr);
+				client.m_iConstructionPoint -= m_iNpcConstructionPoint[cType];
+				if (client.m_iConstructionPoint < 0) client.m_iConstructionPoint = 0;
+				client.SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, client.m_iConstructionPoint, client.m_iWarContribution, 0, nullptr);
 			}
 		}
 	}
 }
 
-void CGame::CheckConnectionHandler(int iClientH, char *pData) {
+void CGame::CheckConnectionHandler(CClient &client, char *pData) {
 	char * cp;
 	uint32_t * dwp, dwTimeRcv, dwTime, dwTimeGapClient, dwTimeGapServer;
-	if (m_pClientList[iClientH] == nullptr) return;
-	//m_pClientList[iClientH]->m_cConnectionCheck = 0;
+	//client.m_cConnectionCheck = 0;
 	dwTime = timeGetTime();
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	dwp = (uint32_t *) cp;
 	dwTimeRcv = *dwp;
-	CheckDenialServiceAttack(iClientH, dwTimeRcv);
-	if (m_pClientList[iClientH]->m_dwInitCCTimeRcv == 0) {
-		m_pClientList[iClientH]->m_dwInitCCTimeRcv = dwTimeRcv;
-		m_pClientList[iClientH]->m_dwInitCCTime = dwTime;
+	CheckDenialServiceAttack(client.id_, dwTimeRcv);
+	if (client.m_dwInitCCTimeRcv == 0) {
+		client.m_dwInitCCTimeRcv = dwTimeRcv;
+		client.m_dwInitCCTime = dwTime;
 	} else {
-		dwTimeGapClient = (dwTimeRcv - m_pClientList[iClientH]->m_dwInitCCTimeRcv);
-		dwTimeGapServer = (dwTime - m_pClientList[iClientH]->m_dwInitCCTime);
+		dwTimeGapClient = (dwTimeRcv - client.m_dwInitCCTimeRcv);
+		dwTimeGapServer = (dwTime - client.m_dwInitCCTime);
 		if (dwTimeGapClient < dwTimeGapServer) return;
 		if ((abs(dwTimeGapClient - dwTimeGapServer)) >= (DEF_CLIENTTIMEOUT)) {
-			m_pClientList[iClientH]->DeleteClient(true, true);
+			client.DeleteClient(true, true);
 			return;
 		}
 	}
 }
 
-void CGame::SelectCrusadeDutyHandler(int iClientH, int iDuty) {
-	if (m_pClientList[iClientH] == nullptr) return;
-	if ((m_pClientList[iClientH]->m_iGuildRank != 0) && (iDuty == 3)) return;
-	if (m_iLastCrusadeWinner == m_pClientList[iClientH]->m_cSide &&
-			  m_pClientList[iClientH]->m_dwCrusadeGUID == 0 && iDuty == 3) {
-		m_pClientList[iClientH]->m_iConstructionPoint = 3000;
+void CGame::SelectCrusadeDutyHandler(CClient &client, int iDuty) {
+	if ((client.m_iGuildRank != 0) && (iDuty == 3)) return;
+	if (m_iLastCrusadeWinner == client.m_cSide &&
+			  client.m_dwCrusadeGUID == 0 && iDuty == 3) {
+		client.m_iConstructionPoint = 3000;
 	}
-	m_pClientList[iClientH]->m_iCrusadeDuty = iDuty;
-	m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CRUSADE, (uint32_t) m_bIsCrusadeMode, m_pClientList[iClientH]->m_iCrusadeDuty, 0, nullptr);
+	client.m_iCrusadeDuty = iDuty;
+	client.SendNotifyMsg(0, DEF_NOTIFY_CRUSADE, (uint32_t) m_bIsCrusadeMode, client.m_iCrusadeDuty, 0, nullptr);
 	if (iDuty == 1)
-		_bCrusadeLog(DEF_CRUSADELOG_SELECTDUTY, iClientH, 0, "Fighter");
+		_bCrusadeLog(DEF_CRUSADELOG_SELECTDUTY, client.id_, 0, "Fighter");
 	else if (iDuty == 2)
-		_bCrusadeLog(DEF_CRUSADELOG_SELECTDUTY, iClientH, 0, "Constructor");
+		_bCrusadeLog(DEF_CRUSADELOG_SELECTDUTY, client.id_, 0, "Constructor");
 	else
-		_bCrusadeLog(DEF_CRUSADELOG_SELECTDUTY, iClientH, 0, "Commander");
+		_bCrusadeLog(DEF_CRUSADELOG_SELECTDUTY, client.id_, 0, "Commander");
 }
 
-void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
+void CGame::MapStatusHandler(CClient &client, int iMode, char * pMapName) {
 	register int i;
-	if (m_pClientList[iClientH] == nullptr) return;
 	switch (iMode) {
 		case 1:
-			if (m_pClientList[iClientH]->m_iCrusadeDuty == 0) return;
+			if (client.m_iCrusadeDuty == 0) return;
 			for (i = 0; i < DEF_MAXGUILDS; i++)
-				if ((m_pGuildTeleportLoc[i].m_iV1 != 0) && (m_pGuildTeleportLoc[i].m_iV1 == m_pClientList[iClientH]->m_iGuildGUID)) {
-					m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_TCLOC, m_pGuildTeleportLoc[i].m_sDestX, m_pGuildTeleportLoc[i].m_sDestY, 0, m_pGuildTeleportLoc[i].m_cDestMapName, m_pGuildTeleportLoc[i].m_sDestX2, m_pGuildTeleportLoc[i].m_sDestY2, 0, 0, 0, 0, m_pGuildTeleportLoc[i].m_cDestMapName2);
-					std::memset(m_pClientList[iClientH]->m_cConstructMapName, 0, sizeof (m_pClientList[iClientH]->m_cConstructMapName));
-					memcpy(m_pClientList[iClientH]->m_cConstructMapName, m_pGuildTeleportLoc[i].m_cDestMapName2, 10);
-					m_pClientList[iClientH]->m_iConstructLocX = m_pGuildTeleportLoc[i].m_sDestX2;
-					m_pClientList[iClientH]->m_iConstructLocY = m_pGuildTeleportLoc[i].m_sDestY2;
+				if ((m_pGuildTeleportLoc[i].m_iV1 != 0) && (m_pGuildTeleportLoc[i].m_iV1 == client.m_iGuildGUID)) {
+					client.SendNotifyMsg(0, DEF_NOTIFY_TCLOC, m_pGuildTeleportLoc[i].m_sDestX, m_pGuildTeleportLoc[i].m_sDestY, 0, m_pGuildTeleportLoc[i].m_cDestMapName, m_pGuildTeleportLoc[i].m_sDestX2, m_pGuildTeleportLoc[i].m_sDestY2, 0, 0, 0, 0, m_pGuildTeleportLoc[i].m_cDestMapName2);
+					std::memset(client.m_cConstructMapName, 0, sizeof (client.m_cConstructMapName));
+					memcpy(client.m_cConstructMapName, m_pGuildTeleportLoc[i].m_cDestMapName2, 10);
+					client.m_iConstructLocX = m_pGuildTeleportLoc[i].m_sDestX2;
+					client.m_iConstructLocY = m_pGuildTeleportLoc[i].m_sDestY2;
 					return;
 				}
 			break;
 		case 3:
 			for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = 0;
-				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = 0;
-				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = 0;
-				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = 0;
+				client.m_stCrusadeStructureInfo[i].cType = 0;
+				client.m_stCrusadeStructureInfo[i].cSide = 0;
+				client.m_stCrusadeStructureInfo[i].sX = 0;
+				client.m_stCrusadeStructureInfo[i].sY = 0;
 			}
-			m_pClientList[iClientH]->m_iCSIsendPoint = 0;
-			std::memset(m_pClientList[iClientH]->m_cSendingMapName, 0, sizeof (m_pClientList[iClientH]->m_cSendingMapName));
-			if (strcmp(pMapName, m_pClientList[iClientH]->map_->m_cName) == 0) {
-				for (i = 0; i < m_pClientList[iClientH]->map_->m_iTotalCrusadeStructures; i++) {
-					if (m_pClientList[iClientH]->m_iCrusadeDuty == 3) {
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].cType;
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].cSide;
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].sX;
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].sY;
-					} else if (m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].cType == 42) {
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].cType;
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].cSide;
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].sX;
-						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = m_pClientList[iClientH]->map_->m_stCrusadeStructureInfo[i].sY;
+			client.m_iCSIsendPoint = 0;
+			std::memset(client.m_cSendingMapName, 0, sizeof (client.m_cSendingMapName));
+			if (strcmp(pMapName, client.map_->m_cName) == 0) {
+				for (i = 0; i < client.map_->m_iTotalCrusadeStructures; i++) {
+					if (client.m_iCrusadeDuty == 3) {
+						client.m_stCrusadeStructureInfo[i].cType = client.map_->m_stCrusadeStructureInfo[i].cType;
+						client.m_stCrusadeStructureInfo[i].cSide = client.map_->m_stCrusadeStructureInfo[i].cSide;
+						client.m_stCrusadeStructureInfo[i].sX = client.map_->m_stCrusadeStructureInfo[i].sX;
+						client.m_stCrusadeStructureInfo[i].sY = client.map_->m_stCrusadeStructureInfo[i].sY;
+					} else if (client.map_->m_stCrusadeStructureInfo[i].cType == 42) {
+						client.m_stCrusadeStructureInfo[i].cType = client.map_->m_stCrusadeStructureInfo[i].cType;
+						client.m_stCrusadeStructureInfo[i].cSide = client.map_->m_stCrusadeStructureInfo[i].cSide;
+						client.m_stCrusadeStructureInfo[i].sX = client.map_->m_stCrusadeStructureInfo[i].sX;
+						client.m_stCrusadeStructureInfo[i].sY = client.map_->m_stCrusadeStructureInfo[i].sY;
 					}
 				}
-				memcpy(m_pClientList[iClientH]->m_cSendingMapName, m_pClientList[iClientH]->map_->m_cName, 10);
+				memcpy(client.m_cSendingMapName, client.map_->m_cName, 10);
 			} else {
 				if (strcmp(pMapName, "middleland") == 0) {
 					for (i = 0; i < m_iTotalMiddleCrusadeStructures; i++) {
-						if (m_pClientList[iClientH]->m_iCrusadeDuty == 3) {
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = m_stMiddleCrusadeStructureInfo[i].cType;
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_stMiddleCrusadeStructureInfo[i].cSide;
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_stMiddleCrusadeStructureInfo[i].sX;
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = m_stMiddleCrusadeStructureInfo[i].sY;
+						if (client.m_iCrusadeDuty == 3) {
+							client.m_stCrusadeStructureInfo[i].cType = m_stMiddleCrusadeStructureInfo[i].cType;
+							client.m_stCrusadeStructureInfo[i].cSide = m_stMiddleCrusadeStructureInfo[i].cSide;
+							client.m_stCrusadeStructureInfo[i].sX = m_stMiddleCrusadeStructureInfo[i].sX;
+							client.m_stCrusadeStructureInfo[i].sY = m_stMiddleCrusadeStructureInfo[i].sY;
 						} else if (m_stMiddleCrusadeStructureInfo[i].cType == 42) {
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = m_stMiddleCrusadeStructureInfo[i].cType;
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_stMiddleCrusadeStructureInfo[i].cSide;
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_stMiddleCrusadeStructureInfo[i].sX;
-							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = m_stMiddleCrusadeStructureInfo[i].sY;
+							client.m_stCrusadeStructureInfo[i].cType = m_stMiddleCrusadeStructureInfo[i].cType;
+							client.m_stCrusadeStructureInfo[i].cSide = m_stMiddleCrusadeStructureInfo[i].cSide;
+							client.m_stCrusadeStructureInfo[i].sX = m_stMiddleCrusadeStructureInfo[i].sX;
+							client.m_stCrusadeStructureInfo[i].sY = m_stMiddleCrusadeStructureInfo[i].sY;
 						}
 					}
-					strcpy(m_pClientList[iClientH]->m_cSendingMapName, "middleland");
+					strcpy(client.m_cSendingMapName, "middleland");
 				} else {
 				}
 			}
-			_SendMapStatus(iClientH);
+			_SendMapStatus(client);
 			break;
 	}
 }
 
-void CGame::_SendMapStatus(int iClientH) {
+void CGame::_SendMapStatus(CClient &client) {
 	register int i, iDataSize;
 	char *cp, cData[DEF_MAXCRUSADESTRUCTURES * 6];
 	short * sp;
 	std::memset(cData, 0, sizeof (cData));
 	cp = (char *) (cData);
-	memcpy(cp, m_pClientList[iClientH]->m_cSendingMapName, 10);
+	memcpy(cp, client.m_cSendingMapName, 10);
 	cp += 10;
 	sp = (short *) cp;
-	*sp = (short) m_pClientList[iClientH]->m_iCSIsendPoint;
+	*sp = (short) client.m_iCSIsendPoint;
 	cp += 2;
 	cp++;
-	if (m_pClientList[iClientH]->m_iCSIsendPoint == 0)
-		m_pClientList[iClientH]->m_bIsSendingMapStatus = true;
+	if (client.m_iCSIsendPoint == 0)
+		client.m_bIsSendingMapStatus = true;
 	iDataSize = 0;
 	for (i = 0; i < 100; i++) {
-		if (m_pClientList[iClientH]->m_iCSIsendPoint >= DEF_MAXCRUSADESTRUCTURES) goto SMS_ENDOFDATA;
-		if (m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].cType == 0) goto SMS_ENDOFDATA;
-		*cp = m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].cType;
+		if (client.m_iCSIsendPoint >= DEF_MAXCRUSADESTRUCTURES) goto SMS_ENDOFDATA;
+		if (client.m_stCrusadeStructureInfo[client.m_iCSIsendPoint].cType == 0) goto SMS_ENDOFDATA;
+		*cp = client.m_stCrusadeStructureInfo[client.m_iCSIsendPoint].cType;
 		cp++;
 		sp = (short *) cp;
-		*sp = m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].sX;
+		*sp = client.m_stCrusadeStructureInfo[client.m_iCSIsendPoint].sX;
 		cp += 2;
 		sp = (short *) cp;
-		*sp = m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].sY;
+		*sp = client.m_stCrusadeStructureInfo[client.m_iCSIsendPoint].sY;
 		cp += 2;
-		*cp = m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].cSide;
+		*cp = client.m_stCrusadeStructureInfo[client.m_iCSIsendPoint].cSide;
 		cp++;
 		iDataSize += 6;
-		m_pClientList[iClientH]->m_iCSIsendPoint++;
+		client.m_iCSIsendPoint++;
 	}
 	cp = (char *) (cData + 12);
 	*cp = (iDataSize / 6);
-	m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_MAPSTATUSNEXT, iDataSize + 13, 0, 0, cData);
+	client.SendNotifyMsg(0, DEF_NOTIFY_MAPSTATUSNEXT, iDataSize + 13, 0, 0, cData);
 	return;
 SMS_ENDOFDATA:
 	;
 	cp = (char *) (cData + 12);
 	*cp = (iDataSize / 6);
-	m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_MAPSTATUSLAST, iDataSize + 13, 0, 0, cData);
-	m_pClientList[iClientH]->m_bIsSendingMapStatus = false;
+	client.SendNotifyMsg(0, DEF_NOTIFY_MAPSTATUSLAST, iDataSize + 13, 0, 0, cData);
+	client.m_bIsSendingMapStatus = false;
 	return;
 }
 
@@ -9796,18 +9784,17 @@ void CGame::RemoveCrusadeStructures() {
 		}
 }
 
-void CGame::RequestHelpHandler(int iClientH) {
+void CGame::RequestHelpHandler(CClient &client) {
 	register int i;
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_iGuildRank == -1) return;
-	if (m_pClientList[iClientH]->m_iCrusadeDuty != 1) return;
+	if (client.m_iGuildRank == -1) return;
+	if (client.m_iCrusadeDuty != 1) return;
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_iGuildRank == 0) &&
-				  (m_pClientList[i]->m_iCrusadeDuty == 3) && (m_pClientList[i]->m_iGuildGUID == m_pClientList[iClientH]->m_iGuildGUID)) {
-			m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_HELP, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, m_pClientList[iClientH]->m_iHP, m_pClientList[iClientH]->m_cCharName);
+				  (m_pClientList[i]->m_iCrusadeDuty == 3) && (m_pClientList[i]->m_iGuildGUID == client.m_iGuildGUID)) {
+			m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_HELP, client.m_sX, client.m_sY, client.m_iHP, client.m_cCharName);
 			return;
 		}
-	m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_HELPFAILED, 0, 0, 0, nullptr);
+	client.SendNotifyMsg(0, DEF_NOTIFY_HELPFAILED, 0, 0, 0, nullptr);
 }
 
 void CGame::SyncMiddlelandMapInfo() {
@@ -9880,27 +9867,26 @@ void CGame::GSM_SetGuildConstructLoc(int iGuildGUID, int dX, int dY, char * pMap
 	m_pGuildTeleportLoc[i].m_dwTime2 = dwTime;
 }
 
-void CGame::CheckCommanderConstructionPoint(int iClientH) {
+void CGame::CheckCommanderConstructionPoint(CClient &client) {
 	int i;
-	if (m_pClientList[iClientH] == nullptr) return;
 	if (!m_bIsCrusadeMode) return;
-	if (m_pClientList[iClientH]->m_iConstructionPoint <= 0) return;
-	switch (m_pClientList[iClientH]->m_iCrusadeDuty) {
+	if (client.m_iConstructionPoint <= 0) return;
+	switch (client.m_iCrusadeDuty) {
 		case 1:
 		case 2:
 			for (i = 0; i < DEF_MAXCLIENTS; i++)
-				if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_iCrusadeDuty == 3) && (m_pClientList[i]->m_iGuildGUID == m_pClientList[iClientH]->m_iGuildGUID)) {
-					m_pClientList[i]->m_iConstructionPoint += m_pClientList[iClientH]->m_iConstructionPoint;
-					m_pClientList[i]->m_iWarContribution += (m_pClientList[iClientH]->m_iConstructionPoint / 10);
+				if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_iCrusadeDuty == 3) && (m_pClientList[i]->m_iGuildGUID == client.m_iGuildGUID)) {
+					m_pClientList[i]->m_iConstructionPoint += client.m_iConstructionPoint;
+					m_pClientList[i]->m_iWarContribution += (client.m_iConstructionPoint / 10);
 					if (m_pClientList[i]->m_iConstructionPoint > DEF_MAXCONSTRUCTIONPOINT)
 						m_pClientList[i]->m_iConstructionPoint = DEF_MAXCONSTRUCTIONPOINT;
 					if (m_pClientList[i]->m_iWarContribution > DEF_MAXWARCONTRIBUTION)
 						m_pClientList[i]->m_iWarContribution = DEF_MAXWARCONTRIBUTION;
 					m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_CONSTRUCTIONPOINT, m_pClientList[i]->m_iConstructionPoint, m_pClientList[i]->m_iWarContribution, 0, nullptr);
-					m_pClientList[iClientH]->m_iConstructionPoint = 0;
+					client.m_iConstructionPoint = 0;
 					return;
 				}
-			m_pClientList[iClientH]->m_iConstructionPoint = 0;
+			client.m_iConstructionPoint = 0;
 			break;
 		case 3:
 			break;
@@ -10081,7 +10067,7 @@ bool CGame::bCopyItemContents(CItem * pCopy, CItem *pOriginal) {
 	return true;
 }
 
-void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize) {
+void CGame::AdminOrder_SummonStorm(CClient &client, char* pData, uint32_t dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cBuff[256], cOwnerType;
 	int i;
@@ -10096,11 +10082,10 @@ void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize
 	int iResult = 0, tX, tY, iErr, ix, iy;
 	int iStormCount;
 	int iMagicAttr;
-	if (m_pClientList[iClientH] == nullptr) return;
 	if ((dwMsgSize) <= 0) return;
-	if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == false) return;
-	if (m_pClientList[iClientH]->m_iAdminUserLevel < m_iAdminLevelStorm) {
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
+	if (client.m_bIsAdminCommandEnabled == false) return;
+	if (client.m_iAdminUserLevel < m_iAdminLevelStorm) {
+		client.SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
 		return;
 	}
 	std::memset(cBuff, 0, sizeof (cBuff));
@@ -10130,15 +10115,15 @@ void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize
 		iStormCount = 30; //Original : 30
 	try {
 		//Whether Bouns
-		iWhetherBonus = iGetWhetherMagicBonusEffect(sType, m_pClientList[iClientH]->map_->m_cWhetherStatus);
+		iWhetherBonus = iGetWhetherMagicBonusEffect(sType, client.map_->m_cWhetherStatus);
 		//Magic Attribute
 		iMagicAttr = m_pMagicConfigList[sType]->m_iAttribute;
 		//Calculate Area Coords
 		//Gives Right
-		dX1 = m_pClientList[iClientH]->m_sX;
+		dX1 = client.m_sX;
 		dX1 -= 10;
 		//Gives Top
-		dY1 = m_pClientList[iClientH]->m_sY;
+		dY1 = client.m_sY;
 		dY1 -= 7;
 		while (iStormCount != 0) {
 			int randX;
@@ -10148,126 +10133,126 @@ void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize
 			switch (m_pMagicConfigList[sType]->m_sType) {
 				case DEF_MAGICTYPE_DAMAGE_SPOT:
 					//Calculate Damage
-					m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, randX, randY);
-					Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
-					m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, randX, randY);
+					client.map_->GetOwner(&sOwnerH, &cOwnerType, randX, randY);
+					Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
+					client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, randX, randY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
+						Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
 					}
 					//Show effects
-					m_pClientList[iClientH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
-							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, randX, randY, (sType + 100), m_pClientList[iClientH]->m_sType);
+					client.map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
+							  client.m_sX, client.m_sY, randX, randY, (sType + 100), client.m_sType);
 					break;
 				case DEF_MAGICTYPE_DAMAGE_LINEAR:
-					sX = m_pClientList[iClientH]->m_sX;
-					sY = m_pClientList[iClientH]->m_sY;
+					sX = client.m_sX;
+					sY = client.m_sY;
 					for (i = 2; i < 10; i++) {
 						iErr = 0;
 						m_Misc.GetPoint2(sX, sY, randX, randY, &tX, &tY, &iErr, i);
 						// tx, ty
-						m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, tX, tY);
-						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
-						m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY);
+						client.map_->GetOwner(&sOwnerH, &cOwnerType, tX, tY);
+						if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+							Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+						client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+							if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+								Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
 						}
 						// tx-1, ty
-						m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, tX - 1, tY);
-						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
-						m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX - 1, tY);
+						client.map_->GetOwner(&sOwnerH, &cOwnerType, tX - 1, tY);
+						if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+							Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+						client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX - 1, tY);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+							if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+								Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
 						}
 						// tx+1, ty
-						m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, tX + 1, tY);
-						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
-						m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX + 1, tY);
+						client.map_->GetOwner(&sOwnerH, &cOwnerType, tX + 1, tY);
+						if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+							Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+						client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX + 1, tY);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+							if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+								Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
 						}
 						// tx, ty-1
-						m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, tX, tY - 1);
-						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
-						m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY - 1);
+						client.map_->GetOwner(&sOwnerH, &cOwnerType, tX, tY - 1);
+						if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+							Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+						client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY - 1);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+							if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+								Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
 						}
 						// tx, ty+1
-						m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, tX, tY + 1);
-						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
-						m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY + 1);
+						client.map_->GetOwner(&sOwnerH, &cOwnerType, tX, tY + 1);
+						if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+							Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+						client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY + 1);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+							if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+								Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
 						}
 						if ((abs(tX - randX) <= 1) && (abs(tY - randY) <= 1)) break;
 					}
 					for (iy = randY - m_pMagicConfigList[sType]->m_sValue3; iy <= randY + m_pMagicConfigList[sType]->m_sValue3; iy++)
 						for (ix = randX - m_pMagicConfigList[sType]->m_sValue2; ix <= randX + m_pMagicConfigList[sType]->m_sValue2; ix++) {
-							m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
-							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
-							m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
+							client.map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+							if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+								Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+							client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 									  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-								if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-									Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+								if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+									Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
 							}
 						}
 					// dX, dY
-					m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, randX, randY);
-					if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-						Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr); // v1.41 false
-					m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, randX, randY);
+					client.map_->GetOwner(&sOwnerH, &cOwnerType, randX, randY);
+					if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+						Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr); // v1.41 false
+					client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, randX, randY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr); // v1.41 false
+						if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+							Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr); // v1.41 false
 					}
 					//Show effects
-					m_pClientList[iClientH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
-							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, randX, randY, (sType + 100), m_pClientList[iClientH]->m_sType);
+					client.map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
+							  client.m_sX, client.m_sY, randX, randY, (sType + 100), client.m_sType);
 					break;
 				case DEF_MAGICTYPE_DAMAGE_AREA:
-					m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, randX, randY);
-					if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-						Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
-					m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, randX, randY);
+					client.map_->GetOwner(&sOwnerH, &cOwnerType, randX, randY);
+					if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+						Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
+					client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, randX, randY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
+						if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+							Effect_Damage_Spot(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, false, iMagicAttr);
 					}
 					for (iy = randY - m_pMagicConfigList[sType]->m_sValue3; iy <= randY + m_pMagicConfigList[sType]->m_sValue3; iy++)
 						for (ix = randX - m_pMagicConfigList[sType]->m_sValue2; ix <= randX + m_pMagicConfigList[sType]->m_sValue2; ix++) {
-							m_pClientList[iClientH]->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
-							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-								Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, randX, randY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
-							m_pClientList[iClientH]->map_->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
+							client.map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
+							if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+								Effect_Damage_Spot_DamageMove(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, randX, randY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+							client.map_->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != nullptr) &&
 									  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-								if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)
-									Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, randX, randY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
+								if (bCheckResistingMagicSuccess(client.m_cDir, sOwnerH, cOwnerType, iResult) == false)
+									Effect_Damage_Spot_DamageMove(client.id_, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, randX, randY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, false, iMagicAttr);
 							}
 						}
 					//Show effects
-					m_pClientList[iClientH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
-							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, randX, randY, (sType + 100), m_pClientList[iClientH]->m_sType);
+					client.map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
+							  client.m_sX, client.m_sY, randX, randY, (sType + 100), client.m_sType);
 					break;
 				default:
 					goto Skip_Storm;
@@ -10287,7 +10272,7 @@ void CGame::SendMsg(short sOwnerH, char /*cOwnerType*/, bool /*bStatus*/, long l
 	m_pClientList[sOwnerH]->SendNotifyMsg(0, lPass, 0, 0, 0, nullptr);
 }
 
-void CGame::AdminOrder_Weather(int iClientH, char * pData, uint32_t dwMsgSize) {
+void CGame::AdminOrder_Weather(CClient &client, char * pData, uint32_t dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cBuff[256];
 	class CStrTok * pStrTok;
@@ -10298,10 +10283,9 @@ void CGame::AdminOrder_Weather(int iClientH, char * pData, uint32_t dwMsgSize) {
 	int sTime;
 	uint32_t dwTime;
 	dwTime = timeGetTime();
-	if (m_pClientList[iClientH] == nullptr) return;
 	if ((dwMsgSize) <= 0) return;
-	if (m_pClientList[iClientH]->m_iAdminUserLevel < m_iAdminLevelWeather) {
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
+	if (client.m_iAdminUserLevel < m_iAdminLevelWeather) {
+		client.SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
 		return;
 	}
 	std::memset(cBuff, 0, sizeof (cBuff));
@@ -10342,33 +10326,31 @@ void CGame::AdminOrder_Weather(int iClientH, char * pData, uint32_t dwMsgSize) {
 	}
 }
 
-void CGame::RequestChangePlayMode(int iClientH) {
-	if (m_pClientList[iClientH] == nullptr) return;
-	if (m_pClientList[iClientH]->m_iPKCount > 0) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-	if (memcmp(m_pClientList[iClientH]->map_->m_cName, "cityhall", 8) != 0) return;
-	if (m_pClientList[iClientH]->m_iLevel < 100 ||
-			  m_pClientList[iClientH]->m_bIsPlayerCivil == true) {
-		if (memcmp(m_pClientList[iClientH]->m_cLocation, "aresden", 7) == 0) strcpy(m_pClientList[iClientH]->m_cLocation, "arehunter");
-		else if (memcmp(m_pClientList[iClientH]->m_cLocation, "elvine", 6) == 0) strcpy(m_pClientList[iClientH]->m_cLocation, "elvhunter");
-		else if (memcmp(m_pClientList[iClientH]->m_cLocation, "arehunter", 9) == 0) strcpy(m_pClientList[iClientH]->m_cLocation, "aresden");
-		else if (memcmp(m_pClientList[iClientH]->m_cLocation, "elvhunter", 9) == 0) strcpy(m_pClientList[iClientH]->m_cLocation, "elvine");
-		if (m_pClientList[iClientH]->m_bIsPlayerCivil == true)
-			m_pClientList[iClientH]->m_bIsPlayerCivil = false;
-		else m_pClientList[iClientH]->m_bIsPlayerCivil = true;
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_CHANGEPLAYMODE, 0, 0, 0, m_pClientList[iClientH]->m_cLocation);
-		m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, 100, 0, 0, 0);
+void CGame::RequestChangePlayMode(CClient &client) {
+	if (client.m_iPKCount > 0) return;
+	if (client.m_bIsInitComplete == false) return;
+	if (memcmp(client.map_->m_cName, "cityhall", 8) != 0) return;
+	if (client.m_iLevel < 100 ||
+			  client.m_bIsPlayerCivil == true) {
+		if (memcmp(client.m_cLocation, "aresden", 7) == 0) strcpy(client.m_cLocation, "arehunter");
+		else if (memcmp(client.m_cLocation, "elvine", 6) == 0) strcpy(client.m_cLocation, "elvhunter");
+		else if (memcmp(client.m_cLocation, "arehunter", 9) == 0) strcpy(client.m_cLocation, "aresden");
+		else if (memcmp(client.m_cLocation, "elvhunter", 9) == 0) strcpy(client.m_cLocation, "elvine");
+		if (client.m_bIsPlayerCivil == true)
+			client.m_bIsPlayerCivil = false;
+		else client.m_bIsPlayerCivil = true;
+		client.SendNotifyMsg(0, DEF_NOTIFY_CHANGEPLAYMODE, 0, 0, 0, client.m_cLocation);
+		client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, 100, 0, 0, 0);
 	}
 }
 
-void CGame::AdminOrder_SetStatus(int iClientH, char *pData, uint32_t dwMsgSize) {
+void CGame::AdminOrder_SetStatus(CClient &client, char *pData, uint32_t dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cBuff[256];
 	class CStrTok * pStrTok;
-	if (m_pClientList[iClientH] == nullptr) return;
 	if ((dwMsgSize) <= 0) return;
-	if (m_pClientList[iClientH]->m_iAdminUserLevel < m_iAdminLevelSetStatus) {
-		m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
+	if (client.m_iAdminUserLevel < m_iAdminLevelSetStatus) {
+		client.SendNotifyMsg(0, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, nullptr);
 		return;
 	}
 	std::memset(cBuff, 0, sizeof (cBuff));
@@ -10378,38 +10360,38 @@ void CGame::AdminOrder_SetStatus(int iClientH, char *pData, uint32_t dwMsgSize) 
 	/*auto dummy = */pStrTok->pGet();
 	if (token != nullptr) {
 		if (token[0] == '0') {
-			SetPoisonFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
-			SetIllusionFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
-			SetDefenseShieldFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
-			SetMagicProtectionFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
-			SetProtectionFromArrowFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
-			SetIllusionMovementFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
-			SetInhibitionCastingFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
-			SetHeroFlag(iClientH, DEF_OWNERTYPE_PLAYER, false);
+			SetPoisonFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
+			SetIllusionFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
+			SetDefenseShieldFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
+			SetMagicProtectionFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
+			SetProtectionFromArrowFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
+			SetIllusionMovementFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
+			SetInhibitionCastingFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
+			SetHeroFlag(client.id_, DEF_OWNERTYPE_PLAYER, false);
 		}
 		if (token[0] == '1') {
-			SetPoisonFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetPoisonFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 		if (token[0] == '2') {
-			SetIllusionFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetIllusionFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 		if (token[0] == '3') {
-			SetDefenseShieldFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetDefenseShieldFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 		if (token[0] == '4') {
-			SetMagicProtectionFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetMagicProtectionFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 		if (token[0] == '5') {
-			SetProtectionFromArrowFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetProtectionFromArrowFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 		if (token[0] == '6') {
-			SetIllusionMovementFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetIllusionMovementFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 		if (token[0] == '7') {
-			SetInhibitionCastingFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetInhibitionCastingFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 		if (token[0] == '8') {
-			SetHeroFlag(iClientH, DEF_OWNERTYPE_PLAYER, true);
+			SetHeroFlag(client.id_, DEF_OWNERTYPE_PLAYER, true);
 		}
 	}
 	delete pStrTok;
