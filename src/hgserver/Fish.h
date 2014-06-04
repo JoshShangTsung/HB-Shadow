@@ -7,7 +7,8 @@ public:
 	virtual ~CFish();
 
 	MapPtr map_;
-	short m_sX, m_sY;
+	short m_sX;
+	short m_sY;
 
 	short m_sType;
 	class CItem * m_pItem;

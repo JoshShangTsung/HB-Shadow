@@ -81,12 +81,17 @@ public:
 	char m_cItemType;
 	char m_cEquipPos;
 	short m_sItemEffectType;
-	short m_sItemEffectValue1, m_sItemEffectValue2, m_sItemEffectValue3;
-	short m_sItemEffectValue4, m_sItemEffectValue5, m_sItemEffectValue6;
+	short m_sItemEffectValue1;
+	short m_sItemEffectValue2;
+	short m_sItemEffectValue3;
+	short m_sItemEffectValue4;
+	short m_sItemEffectValue5;
+	short m_sItemEffectValue6;
 	uint16_t m_wMaxLifeSpan;
 	short m_sSpecialEffect;
 
-	short m_sSpecialEffectValue1, m_sSpecialEffectValue2;
+	short m_sSpecialEffectValue1;
+	short m_sSpecialEffectValue2;
 
 	short m_sSprite;
 	short m_sSpriteFrame;

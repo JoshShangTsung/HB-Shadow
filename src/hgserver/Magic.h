@@ -45,9 +45,20 @@ public:
 	char m_cName[31];
 
 	short m_sType;
-	uint32_t m_dwDelayTime, m_dwLastTime;
-	short m_sValue1, m_sValue2, m_sValue3, m_sValue4, m_sValue5, m_sValue6;
-	short m_sValue7, m_sValue8, m_sValue9, m_sValue10, m_sValue11, m_sValue12;
+	uint32_t m_dwDelayTime;
+	uint32_t m_dwLastTime;
+	short m_sValue1;
+	short m_sValue2;
+	short m_sValue3;
+	short m_sValue4;
+	short m_sValue5;
+	short m_sValue6;
+	short m_sValue7;
+	short m_sValue8;
+	short m_sValue9;
+	short m_sValue10;
+	short m_sValue11;
+	short m_sValue12;
 	short m_sIntLimit;
 	int m_iGoldCost;
 

@@ -81,7 +81,8 @@ private:
 
 	char * m_pUnsentDataList[DEF_XSOCKBLOCKLIMIT];
 	int m_iUnsentDataSize[DEF_XSOCKBLOCKLIMIT];
-	short m_sHead, m_sTail;
+	short m_sHead;
+	short m_sTail;
 
 	unsigned int m_uiMsg;
 	HWND m_hWnd;

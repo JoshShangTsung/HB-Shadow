@@ -7,6 +7,7 @@ public:
 	char m_cName[21];
 	short m_sArray[12];
 
-	int m_iSkillLimit, m_iDifficulty;
+	int m_iSkillLimit;
+	int m_iDifficulty;
 
 };

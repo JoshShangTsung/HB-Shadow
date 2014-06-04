@@ -25,8 +25,12 @@ DynamicObjects::DynamicObjects(CGame &game, Maps &maps, Clients &clients) : game
 
 void DynamicObjects::DynamicObjectEffectProcessor() {
 	register int i;
-	int ix, iy, iIndex;
-	short sOwnerH, iDamage, sType;
+	int ix;
+	int iy;
+	int iIndex;
+	short sOwnerH;
+	short iDamage;
+	short sType;
 	char cOwnerType;
 	uint32_t dwTime = timeGetTime(), dwRegisterTime;
 
@@ -459,7 +463,8 @@ void DynamicObjects::CheckDynamicObjectList() {
 int DynamicObjects::iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, MapPtr map, short sX, short sY, uint32_t dwLastTime, int iV1) {
 	register int i;
 	short sPreType;
-	uint32_t dwTime, dwRegisterTime;
+	uint32_t dwTime;
+	uint32_t dwRegisterTime;
 
 	map->bGetDynamicObject(sX, sY, &sPreType, &dwRegisterTime);
 	if (sPreType != 0) return 0;

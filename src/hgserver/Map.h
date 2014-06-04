@@ -93,7 +93,9 @@ public:
 	class CGame * m_pGame;
 	char m_cName[11];
 	char m_cLocationName[11];
-	short m_sSizeX, m_sSizeY, m_sTileDataSize;
+	short m_sSizeX;
+	short m_sSizeY;
+	short m_sTileDataSize;
 	class CTeleportLoc * m_pTeleportLoc[DEF_MAXTELEPORTLOC];
 
 	//short m_sInitialPointX, m_sInitialPointY;
@@ -129,26 +131,42 @@ public:
 	RECT m_rcNoAttackRect[DEF_MAXNMR];
 
 	POINT m_FishPointList[DEF_MAXFISHPOINT];
-	int m_iTotalFishPoint, m_iMaxFish, m_iCurFish;
+	int m_iTotalFishPoint;
+	int m_iMaxFish;
+	int m_iCurFish;
 
-	int m_iApocalypseMobGenType, m_iApocalypseBossMobNpcID;
-	short m_sApocalypseBossMobRectX1, m_sApocalypseBossMobRectY1, m_sApocalypseBossMobRectX2, m_sApocalypseBossMobRectY2;
+	int m_iApocalypseMobGenType;
+
+	int m_iApocalypseBossMobNpcID;
+	short m_sApocalypseBossMobRectX1;
+	short m_sApocalypseBossMobRectY1;
+	short m_sApocalypseBossMobRectX2;
+	short m_sApocalypseBossMobRectY2;
 	char m_cDynamicGateType;
-	short m_sDynamicGateCoordRectX1, m_sDynamicGateCoordRectY1, m_sDynamicGateCoordRectX2, m_sDynamicGateCoordRectY2;
+	short m_sDynamicGateCoordRectX1;
+	short m_sDynamicGateCoordRectY1;
+	short m_sDynamicGateCoordRectX2;
+	short m_sDynamicGateCoordRectY2;
 	char m_cDynamicGateCoordDestMap[11];
-	short m_sDynamicGateCoordTgtX, m_sDynamicGateCoordTgtY;
+	short m_sDynamicGateCoordTgtX;
+	short m_sDynamicGateCoordTgtY;
 	bool m_bIsCitizenLimit;
-	short m_sHeldenianTowerType, m_sHeldenianTowerXPos, m_sHeldenianTowerYPos;
+	short m_sHeldenianTowerType;
+	short m_sHeldenianTowerXPos;
+	short m_sHeldenianTowerYPos;
 	char m_cHeldenianTowerSide;
 	char m_cHeldenianModeMap;
 
 	bool m_bMineralGenerator;
 	char m_cMineralGeneratorLevel;
 	POINT m_MineralPointList[DEF_MAXMINERALPOINT];
-	int m_iTotalMineralPoint, m_iMaxMineral, m_iCurMineral;
+	int m_iTotalMineralPoint;
+	int m_iMaxMineral;
+	int m_iCurMineral;
 
 	char m_cWhetherStatus; 
-	uint32_t m_dwWhetherLastTime, m_dwWhetherStartTime; 
+	uint32_t m_dwWhetherLastTime;
+	uint32_t m_dwWhetherStartTime; 
 
 	int m_iLevelLimit;
 	int m_iUpperLevelLimit; 
@@ -163,7 +181,8 @@ public:
 
 	struct {
 		char cType;
-		int sX, sY;
+		int sX;
+		int sY;
 
 	} m_stEnergySphereCreationList[DEF_MAXENERGYSPHERES];
 
@@ -171,7 +190,10 @@ public:
 
 	struct {
 		char cResult;
-		int aresdenX, aresdenY, elvineX, elvineY;
+		int aresdenX;
+		int aresdenY;
+		int elvineX;
+		int elvineY;
 	} m_stEnergySphereGoalList[DEF_MAXENERGYSPHERES];
 
 	int m_iTotalEnergySphereGoalPoint;
@@ -221,13 +243,33 @@ public:
 		char cSide;
 	} m_stHeldenianTower[DEF_MAXHELDENIANTOWER];
 
-	int m_iMaxNx, m_iMaxNy, m_iMaxAx, m_iMaxAy, m_iMaxEx, m_iMaxEy, m_iMaxMx, m_iMaxMy, m_iMaxPx, m_iMaxPy;
+	int m_iMaxNx;
+
+	int m_iMaxNy;
+
+	int m_iMaxAx;
+
+	int m_iMaxAy;
+
+	int m_iMaxEx;
+
+	int m_iMaxEy;
+
+	int m_iMaxMx;
+
+	int m_iMaxMy;
+
+	int m_iMaxPx;
+
+	int m_iMaxPy;
 
 	struct {
 		char cRelatedMapName[11];
 		int iMapIndex;
-		int dX, dY;
-		int iHP, iInitHP;
+		int dX;
+		int dY;
+		int iHP;
+		int iInitHP;
 
 		int iEffectX[5];
 		int iEffectY[5];
@@ -241,7 +283,8 @@ public:
 	struct {
 		char cType; 
 		char cSide; 
-		short sX, sY; 
+		short sX;
+		short sY; 
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 	int m_iTotalCrusadeStructures;
 	bool m_bIsEnergySphereAutoCreation;

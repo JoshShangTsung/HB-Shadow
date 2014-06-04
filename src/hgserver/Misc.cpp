@@ -10,7 +10,8 @@ void CMisc::GetMyCursorPos(short * pX, short * pY) {
 }
 
 char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY) {
-	short absX, absY;
+	short absX;
+	short absY;
 	char cRet = 0;
 
 	absX = sX - dX;
@@ -190,7 +191,8 @@ void CMisc::GetDirPoint(char cDir, int * pX, int * pY) {
 }
 
 bool CMisc::bEncode(char cKey, char *pStr) {
-	int i, iLen;
+	int i;
+	int iLen;
 
 	// !!
 	return true;
@@ -204,7 +206,8 @@ bool CMisc::bEncode(char cKey, char *pStr) {
 }
 
 bool CMisc::bDecode(char cKey, char *pStr) {
-	int i, iLen;
+	int i;
+	int iLen;
 
 	// !!
 	return true;

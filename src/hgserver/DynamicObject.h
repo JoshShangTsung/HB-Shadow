@@ -12,7 +12,8 @@ public:
 
 	short m_sType;
 	MapPtr map_;
-	short m_sX, m_sY;
+	short m_sX;
+	short m_sY;
 	uint32_t m_dwRegisterTime;
 	uint32_t m_dwLastTime;
 

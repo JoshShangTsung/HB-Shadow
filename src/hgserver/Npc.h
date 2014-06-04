@@ -32,9 +32,12 @@ public:
 
 	char m_cName[6]; 
 	MapPtr map_;
-	short m_sX, m_sY;
-	short m_dX, m_dY;
-	short m_vX, m_vY;
+	short m_sX;
+	short m_sY;
+	short m_dX;
+	short m_dY;
+	short m_vX;
+	short m_vY;
 	int m_tmp_iError;
 	RECT m_rcRandomArea; 
 
@@ -49,8 +52,10 @@ public:
 
 	uint32_t m_dwTime;
 	uint32_t m_dwActionTime;
-	uint32_t m_dwHPupTime, m_dwMPupTime;
-	uint32_t m_dwDeadTime, m_dwRegenTime;
+	uint32_t m_dwHPupTime;
+	uint32_t m_dwMPupTime;
+	uint32_t m_dwDeadTime;
+	uint32_t m_dwRegenTime;
 
 	int m_iHP; // Hit Point 
 	int m_iExp; 

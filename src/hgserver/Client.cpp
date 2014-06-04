@@ -1645,7 +1645,11 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 }
 
 int CClient::iUpgradeHeroCapeRequirements(int iItemIndex) {
-	int iAfterItemID, iRequiredEnemyKills, iRequiredContribution, iStoneNumber, i;
+	int iAfterItemID;
+	int iRequiredEnemyKills;
+	int iRequiredContribution;
+	int iStoneNumber;
+	int i;
 	int iBeforeItemID;
 	iAfterItemID = 0;
 	iRequiredEnemyKills = 10000;
@@ -1685,9 +1689,20 @@ int CClient::iUpgradeHeroCapeRequirements(int iItemIndex) {
 }
 
 void CClient::RequestItemUpgradeHandler(int iItemIndex) {
-	int i, iItemX, iItemY, iSoM, iSoX, iSomH, iSoxH, iCheckHeroCape; // v2.172
-	uint32_t dwTemp, dwSWEType, iValue;
-	double dV1, dV2, dV3;
+	int i;
+	int iItemX;
+	int iItemY;
+	int iSoM;
+	int iSoX;
+	int iSomH;
+	int iSoxH;
+	int iCheckHeroCape; // v2.172
+	uint32_t dwTemp;
+	uint32_t dwSWEType;
+	uint32_t iValue;
+	double dV1;
+	double dV2;
+	double dV3;
 	short sItemUpgrade = 2;
 	if ((iItemIndex < 0) || (iItemIndex >= DEF_MAXITEMS)) return;
 	auto &itemPtr = m_pItemList[iItemIndex];
@@ -2678,7 +2693,9 @@ int CClient::_iCalcMaxLoad() {
 }
 
 void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
-	int iOldSSN, iSSNpoint, iWeaponIndex;
+	int iOldSSN;
+	int iSSNpoint;
+	int iWeaponIndex;
 	if (this->m_bIsInitComplete == false) return;
 	if (this->m_pItemList[sWeaponIndex] == nullptr) return;
 	if (this->m_bIsKilled == true) return;
@@ -2772,7 +2789,9 @@ void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 }
 
 void CClient::CalculateSSN_SkillIndex(short sSkillIndex, int iValue) {
-	int iOldSSN, iSSNpoint, iWeaponIndex;
+	int iOldSSN;
+	int iSSNpoint;
+	int iWeaponIndex;
 	if (this->m_bIsInitComplete == false) return;
 	if ((sSkillIndex < 0) || (sSkillIndex >= DEF_MAXSKILLTYPE)) return;
 	if (this->m_bIsKilled == true) return;
@@ -2887,7 +2906,9 @@ int CClient::iGetMaxSP() {
 }
 
 void CClient::AdminOrder_GetFightzoneTicket() {
-	int iReserveTime, iFightzoneTN, iFightzoneN;
+	int iReserveTime;
+	int iFightzoneTN;
+	int iFightzoneN;
 	char cTemp[21];
 	SYSTEMTIME SysTime;
 	if (memcmp(this->map_->m_cName, "fightzone", 9) == 0) {
@@ -2928,7 +2949,9 @@ void CClient::AdminOrder_GetFightzoneTicket() {
 void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
 	char *cp, cData[256], cTmpName[21];
 	int iAngel;
-	int iRet, iEraseReq, iRequiredMagesty;
+	int iRet;
+	int iEraseReq;
+	int iRequiredMagesty;
 	char cItemName[21];
 	short * sp;
 	uint16_t * wp;
@@ -3222,7 +3245,8 @@ void CClient::RequestTeleportHandler(const char * pData, const char * cMapName, 
 	char * cp, cDestMapName[11], cDir, cMapIndex, cQuestRemain;
 	short * sp, sX, sY, sSummonPoints;
 	int * ip, i, iRet, iSize, iDestX, iDestY, iMapSide;
-	bool bRet, bIsLockedMapNotify;
+	bool bRet;
+	bool bIsLockedMapNotify;
 	SYSTEMTIME SysTime;
 	this->m_dwLastActionTime = this->m_dwAFKCheckTime = timeGetTime();
 	if (this->m_bIsInitComplete == false) return;
@@ -3436,7 +3460,8 @@ RTH_NEXTSTEP:
 	;
 	// New 17/05/2004
 	game_.SetPlayingStatus(id_);
-	int iTemp, iTemp2;
+	int iTemp;
+	int iTemp2;
 	iTemp = this->m_iStatus;
 	iTemp = 0x0FFFFFFF & iTemp;
 	iTemp2 = game_.iGetPlayerABSStatus(id_);
@@ -3561,7 +3586,8 @@ RTH_NEXTSTEP:
 		game_.SetForceRecallTime(id_);
 	}
 	// No entering enemy shops
-	int iMapside, iMapside2;
+	int iMapside;
+	int iMapside2;
 	iMapside = game_.iGetMapLocationSide(this->map_->m_cName);
 	if (iMapside > 3) iMapside2 = iMapside - 2;
 	else iMapside2 = iMapside;
@@ -3681,10 +3707,14 @@ RTH_NEXTSTEP:
 }
 
 void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
-	int i, iTemp;
+	int i;
+	int iTemp;
 	char cEquipPos;
-	double dV1, dV2, dV3;
-	uint32_t dwSWEType, dwSWEValue;
+	double dV1;
+	double dV2;
+	double dV3;
+	uint32_t dwSWEType;
+	uint32_t dwSWEValue;
 	short sTemp;
 	if ((this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) &&
 			  (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)) {
@@ -4166,10 +4196,18 @@ void CClient::ReqCreateCraftingHandler(char *pData) {
 	uint32_t * dwp;
 	uint16_t * wp;
 	char * cp, cI[6], cCraftingName[21], cData[120];
-	int iRet, i, j, iEraseReq, iRiskLevel, iDifficulty, iNeededContrib = 0;
+	int iRet;
+	int i;
+	int j;
+	int iEraseReq;
+	int iRiskLevel;
+	int iDifficulty;
+	int iNeededContrib = 0;
 	short * sp, sTemp;
 	short sItemIndex[6], sItemPurity[6], sItemNumber[6], sItemArray[12];
-	bool bDup, bFlag, bNeedLog;
+	bool bDup;
+	bool bFlag;
+	bool bNeedLog;
 	class CItem * pItem;
 	this->m_iSkillMsgRecvCount++;
 	for (i = 0; i < 6; i++) {
@@ -4323,7 +4361,8 @@ RCPH_LOOPBREAK:
 		return;
 	}
 	// Purity
-	int iPurity, iTot = 0, iCount = 0;
+	int iPurity;
+	int iTot = 0, iCount = 0;
 	for (i = 0; i < 6; i++) {
 		if (sItemIndex[i] != -1) {
 			if (sItemPurity[i] != -1) {
@@ -4734,13 +4773,15 @@ void CClient::ClientCommonHandler(char * pData) {
 }
 
 void CClient::ReqCreateSlateHandler(char* pData) {
-	int i, iRet;
+	int i;
+	int iRet;
 	short *sp;
 	char cItemID[4], ctr[4];
 	char *cp, cSlateColour, cData[120];
 	bool bIsSlatePresent = false;
 	CItem * pItem;
-	int iSlateType, iEraseReq;
+	int iSlateType;
+	int iEraseReq;
 	uint32_t *dwp;
 	uint16_t *wp;
 	if (this->m_bIsOnServerChange == true) return;

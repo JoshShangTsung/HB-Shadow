@@ -50,7 +50,9 @@ public:
 	int m_iResponseMode;
 
 	char m_cTargetName[21]; 
-	int m_sX, m_sY, m_iRange; 
+	int m_sX;
+	int m_sY;
+	int m_iRange; 
 
 	int m_iQuestID; 
 

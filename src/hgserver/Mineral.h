@@ -7,7 +7,8 @@ public:
 	char m_cType;
 
 	MapPtr map_;
-	int m_sX, m_sY;
+	int m_sX;
+	int m_sY;
 	int m_iDifficulty;
 	short m_sDynamicObjectHandle;
 

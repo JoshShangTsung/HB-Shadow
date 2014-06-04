@@ -88,7 +88,6 @@
 #define DEF_ITEMLOG_DEPLETE				4
 #define DEF_ITEMLOG_NEWGENDROP			5
 #define DEF_ITEMLOG_DUPITEMID			6
-// New 07/05/2004
 #define DEF_ITEMLOG_BUY					7
 #define DEF_ITEMLOG_SELL				8
 #define DEF_ITEMLOG_RETRIEVE			9
@@ -107,39 +106,23 @@
 #define DEF_MAXCONSTRUCTNUM				10
 #define DEF_MAXSCHEDULE					10
 #define DEF_MAXHELDENIAN				10
-//MIHD Criticals CONFIG
 #define DEF_CRITICALSMINLVL            20
 #define DEF_GOLDMINLVL                5000
 #define DEF_CRITICALSMAXLVL            180
 #define DEF_MAJESTICSMAXLVL            2
 #define DEF_CRITICALSGM                2000
 #define DEF_MAXCRITICALS            5000
-//FIN Criticals Config
 
 #define DEF_MAXFIGHTZONE 10 
 #define DEF_LEVELLIMIT		20				
-//============================
-//============================
-#define DEF_MINIMUMHITRATIO 15				
-//============================		
-//============================
-#define DEF_MAXIMUMHITRATIO	99				
-//============================
-//============================
-#define DEF_PLAYERMAXLEVEL	180				
-//============================
-//============================
-// New Changed 12/05/2004
-#define DEF_GMGMANACONSUMEUNIT	15			
-//============================
+#define DEF_MINIMUMHITRATIO 15		
+#define DEF_MAXIMUMHITRATIO	99	
+#define DEF_PLAYERMAXLEVEL	180	
+#define DEF_GMGMANACONSUMEUNIT	15		
 #define DEF_MAXCONSTRUCTIONPOINT 30000		
 #define DEF_MAXSUMMONPOINTS		 30000
 #define DEF_MAXWARCONTRIBUTION	 200000
-// MOG Definitions - 3.51
-// Level up MSG
 #define MSGID_LEVELUPSETTINGS				0x11A01000
-
-// Stat Point Change MSG
 #define MSGID_STATECHANGEPOINT				0x11A01001
 #define DEF_STR 0x01 //Correct
 #define DEF_DEX 0x02 //Correct
@@ -186,7 +169,6 @@ public:
 	bool bReadHeldenianGUIDFile(const char * cFn);
 	void RemoveEventNpc(int iNpcH);
 	bool _bCheckCharacterData(int iClientH);
-	//bool _bDecodeNpcItemConfigFileContents(char * pData, uint32_t dwMsgSize);
 	void GlobalUpdateConfigs(char cConfigType);
 	void LocalUpdateConfigs(char cConfigType);
 	void SetHeroFlag(short sOwnerH, char cOwnerType, bool bStatus);
@@ -197,22 +179,18 @@ public:
 	void _CheckFarmingAction(short sAttackerH, short sTargetH, bool bType);
 	void GreenBall_Weather(int iClientH, char * pData, uint32_t dwMsgSize);
 	bool bReadScheduleConfigFile(const char *pFn);
-	// KLKS clean tiles
 	void AdminOrder_CleanMap(int iClientH, char * pData, uint32_t dwMsgSize);
-	// Lists
 	bool bReadBannedListConfigFile(const char *pFn);
 	bool bReadAdminListConfigFile(const char *pFn);
 	void AdminOrder_CheckStats(int iClientH, char *pData, uint32_t dwMsgSize);
 	void Command_RedBall(int iClientH, char *pData, uint32_t dwMsgSize);
 	void Command_BlueBall(int iClientH, char *pData, uint32_t dwMsgSize);
 	void Command_YellowBall(int iClientH, char* pData, uint32_t dwMsgSize);
-	// Crusade
 	void ManualEndCrusadeMode(int iWinnerSide); // 2.17 (x) 2.14 ( )
 	void CrusadeWarStarter();
 	bool bReadCrusadeGUIDFile(const char * cFn);
 	void _CreateCrusadeGUID(uint32_t dwCrusadeGUID, int iWinnerSide);
 	void GlobalStartCrusadeMode();
-	// Apocalypse
 	void GlobalStartApocalypseMode();
 	void GlobalEndApocalypseMode();
 	void LocalStartApocalypseMode(uint32_t dwApocalypseGUID);
@@ -248,28 +226,18 @@ public:
 	bool _bNpcBehavior_Detector(int iNpcH);
 	bool _bNpcBehavior_ManaCollector(int iNpcH);
 	bool __bSetConstructionKit(int dX, int dY, int iType, int iTimeCost, int iClientH);
-	//void AdminOrder_SummonGuild(int iClientH, char * pData, uint32_t dwMsgSize);
-	// Acidx commands
 	void AdminOrder_Time(int iClientH, char * pData, uint32_t dwMsgSize);
 	void AdminOrder_CheckRep(int iClientH, char *pData);
 	void AdminOrder_Pushplayer(int iClientH, char * pData, uint32_t dwMsgSize);
 	void AdminOrder_CheckRep(int iClientH, char *pData, uint32_t dwMsgSize);
 	void SetForceRecallTime(int iClientH);
 	void ApplyCombatKilledPenalty(int iClientH, int cPenaltyLevel, bool bIsSAattacked);
-	//	void AdminOrder_ClearTiles(int iClientH);
 	void AdminOrder_ClearNpc(int iClientH);
-	// Settings.cfg
 	bool bReadSettingsConfigFile(const char * cFn);
-	//  bool bReadTeleportConfigFile(char * cFn);
-	//	void RequestTeleportD2Handler(int iClientH, char * pData);
-	// Daryl - AdminSettings.cfg
 	bool bReadAdminSetConfigFile(const char * cFn);
-	// Hack Checks
 	bool bCheckClientMoveFrequency(int iClientH, uint32_t dwClientTime);
 	bool bCheckClientMagicFrequency(int iClientH, uint32_t dwClientTime);
 	bool bCheckClientAttackFrequency(int iClientH, uint32_t dwClientTime);
-	// bool bCheckClientInvisibility(short iClientH);
-	//Hypnotoad functions
 	void SetDefenseShieldFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void SetMagicProtectionFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void SetProtectionFromArrowFlag(short sOwnerH, char cOwnerType, bool bStatus);
@@ -324,7 +292,6 @@ public:
 	void CheckConnectionHandler(int iClientH, char *pData);
 	void AgingMapSectorInfo();
 	void UpdateMapSectorInfo();
-	//bool bGetItemNameWhenDeleteNpc(char * pItemName, short sNpcType);
 	bool bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType);
 	int iGetItemWeight(class CItem &pItem, int iCount);
 	void CancelQuestHandler(int iClientH);
@@ -376,7 +343,6 @@ public:
 	void _BWM_Init(CClient &client, char * pData);
 	void CheckUniqueItemEquipment(int iClientH);
 	void _SetItemPos(CClient &client, char * pData);
-	//void GetHeroMantleHandler(int iClientH);
 	bool _bDecodeOccupyFlagSaveFileContents(char * pData, uint32_t dwMsgSize);
 	void GetOccupyFlagHandler(int iClientH);
 	int _iComposeFlagStatusContents(char * pData);
@@ -403,7 +369,6 @@ public:
 	int iGetNpcRelationship_SendEvent(int iNpcH, int iOpponentH);
 	int _iForcePlayerDisconect(int iNum);
 	int iGetMapIndex(char * pMapName);
-	//int iGetNpcRelationship(int iClientH, int iOpponentH);
 	int iGetNpcRelationship(int iWhatH, int iRecvH);
 	int iGetPlayerRelationship(int iClientH, int iOpponentH);
 	int iGetWhetherMagicBonusEffect(short sType, char cWheatherStatus);
@@ -415,9 +380,7 @@ public:
 	bool bDeleteFish(int iHandle, int iDelMode);
 	int iCreateFish(MapPtr map, short sX, short sY, short sDifficulty, class CItem * pItem, int iDifficulty, uint32_t dwLastTime);
 	void UserCommand_DissmissGuild(int iClientH, char * pData, uint32_t dwMsgSize);
-
 	void UserCommand_BanGuildsman(int iClientH, char * pData, uint32_t dwMsgSize);
-
 	int iGetExpLevel(int iExp);
 	void ___RestorePlayerRating(int iClientH);
 	void CalcExpStock(int iClientH);
@@ -470,7 +433,6 @@ public:
 	void MobGenerator();
 	void GetRewardMoneyHandler(int iClientH);
 	void _PenaltyItemDrop(int iClientH, int iTotal, bool bIsSAattacked = false);
-	//void ApplyCombatKilledPenalty(int iClientH, char cPenaltyLevel, bool bIsSAattacked = false);
 	void EnemyKillRewardHandler(int iAttackerH, int iClientH);
 	void PK_KillRewardHandler(short sAttackerH, short sVictumH);
 	void ApplyPKpenalty(short sAttackerH, short sVictumH);
@@ -478,7 +440,6 @@ public:
 	void RequestCivilRightHandler(CClient &client, char * pData);
 	bool bCheckLimitedUser(int iClientH);
 	void LevelUpSettingsHandler(int iClientH, char * pData, uint32_t dwMsgSize);
-
 	void FightzoneReserveHandler(int iClientH, char * pData, uint32_t dwMsgSize);
 	bool bCheckLevelUp(int iClientH);
 	int iGetLevelExp(int iLevel);
@@ -530,7 +491,6 @@ public:
 	int iGetDangerValue(int iNpcH, short dX, short dY);
 	void NpcBehavior_Dead(int iNpcH);
 	void NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, short sDamage);
-	//int  iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, bool bNearAttack = false);
 	int iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, bool bNearAttack = false, bool bIsDash = false, bool bArrowUse = false);
 	void RemoveFromTarget(short sTargetH, char cTargetType, int iCode = 0);
 	void NpcBehavior_Attack(int iNpcH);
@@ -540,8 +500,6 @@ public:
 	void ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void NpcProcess();
 	int bCreateNewNpc(const char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
-	//bool bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sX, short sY);
-
 	bool _bInitItemAttr(class CItem &pItem, const char * pItemName);
 	bool bReadProgramConfigFile(const char * cFn);
 	void GameProcess();
@@ -564,17 +522,11 @@ public:
 	bool bInit();
 	void OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	bool bAccept(class XSocket * pXSock);
-
 	void GetFightzoneTicketHandler(int iClientH);
-
 	void FightzoneReserveProcessor();
-	// New 06/05/2004
-	// Upgrades
 	bool bCheckIsItemUpgradeSuccess(int iClientH, int iItemIndex, int iSomH, bool bBonus = false);
-	// ArchAngle's Codes
 	void StormBringer(int iClientH, short dX, short dY);
 	void FireBow(short iClientH, short dX, short dY);
-	//Party Codes
 	void RequestCreatePartyHandler(int iClientH);
 	void PartyOperationResultHandler(char *pData);
 	void PartyOperationResult_Create(int iClientH, char *pName, int iResult, int iPartyID);
@@ -588,25 +540,16 @@ public:
 	void RequestDeletePartyHandler(int iClientH);
 	void RequestAcceptJoinPartyHandler(int iClientH, int iResult);
 	void GetExp(int iClientH, int iExp, bool bIsAttackerOwn = false);
-	// New 07/05/2004
-	// Guild Codes
 	void RequestGuildNameHandler(int iClientH, int iObjectID, int iIndex);
-	// Item Logs
 	bool _bItemLog(int iAction, int iClientH, char * cName, class CItem * pItem);
 	bool _bItemLog(int iAction, int iGiveH, int iRecvH, class CItem * pItem, bool bForceItemLog = false);
 	bool _bCheckGoodItem(class CItem * pItem);
-	// MultiDrops
-	bool bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY,
-			  int iItemSpreadType, int iSpreadRange,
-			  int *iItemIDs, POINT *BasePos, int *iNumItem);
+	bool bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY, int iItemSpreadType, int iSpreadRange,int *iItemIDs, POINT *BasePos, int *iNumItem);
 	void processDelayedEvent(const DelayEvent &ev);
-	// Majestic Code By Diuuude
 	int m_iMajesticPointsPerLevel;
 	int m_iMajesticMinLevel;
 	int m_iMajesticPointsMax;
-	// Player shutup
 	void GSM_RequestShutupPlayer(char * pGMName, uint16_t wReqServerID, uint16_t wReqClientH, uint16_t wTime, char * pPlayer);
-	// PK Logs
 	bool _bPKLog(int iAction, int iAttackerH, int iVictumH, char * pNPC);
 	CGame(HWND hWnd);
 	virtual ~CGame();
@@ -618,7 +561,8 @@ public:
 	char m_cLogServerAddr[16];
 	int m_iGameServerPort;
 	int m_iLogServerPort;
-	int m_iLimitedUserExp, m_iLevelExp20;
+	int m_iLimitedUserExp;
+	int m_iLevelExp20;
 	bool _bDecodeItemConfigFileContents(char * pData, uint32_t dwMsgSize);
 	int _iComposePlayerDataFileContents(int iClientH, char * pData);
 	bool _bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t dwSize);
@@ -628,18 +572,24 @@ public:
 	Maps m_pMapList;
 	class CNpcItem * m_pTempNpcItem[DEF_MAXNPCITEMS];
 	DynamicObjects dynamicObjects_;
-	//class CDynamicObject * m_pDynamicObjectList[DEF_MAXDYNAMICOBJECTS];
 	DelayEvents delayEvents_;
 	class CBallSystem * m_pBallItemConfigList[DEF_MAXBALLITEMS];
 	class CMsg * m_pMsgQuene[DEF_MSGQUENESIZE];
-	int m_iQueneHead, m_iQueneTail;
+	int m_iQueneHead;
+	int m_iQueneTail;
 	int m_iTotalMaps;
 	class XSocket * m_pMainLogSock;
 	class CMisc m_Misc;
 	bool m_bIsGameStarted;
 	bool m_bIsLogSockAvailable;
-	bool m_bIsItemAvailable, m_bIsBuildItemAvailable, m_bIsNpcAvailable, m_bIsMagicAvailable;
-	bool m_bIsSkillAvailable, m_bIsPortionAvailable, m_bIsQuestAvailable, m_bIsTeleportAvailable;
+	bool m_bIsItemAvailable;
+	bool m_bIsBuildItemAvailable;
+	bool m_bIsNpcAvailable;
+	bool m_bIsMagicAvailable;
+	bool m_bIsSkillAvailable;
+	bool m_bIsPortionAvailable;
+	bool m_bIsQuestAvailable;
+	bool m_bIsTeleportAvailable;
 	class CItem * m_pItemConfigList[DEF_MAXITEMTYPES];
 	class CNpc * m_pNpcConfigList[DEF_MAXNPCTYPES];
 	class CMagic * m_pMagicConfigList[DEF_MAXMAGICTYPE];
@@ -648,21 +598,37 @@ public:
 	class CPortion * m_pCraftingConfigList[DEF_MAXPORTIONTYPES];
 	char m_pMsgBuffer[DEF_MSGBUFFERSIZE + 1];
 	HWND m_hWnd;
-	int m_iTotalClients, m_iMaxClients;
-	int m_iTotalBots, m_iMaxBots, m_iTotalGameServerBots, m_iTotalGameServerMaxBots;
+	int m_iTotalClients;
+	int m_iMaxClients;
+	int m_iTotalBots;
+	int m_iMaxBots;
+	int m_iTotalGameServerBots;
+	int m_iTotalGameServerMaxBots;
 	SYSTEMTIME m_MaxUserSysTime;
-	bool m_bF1pressed, m_bF4pressed, m_bF12pressed, m_bF5pressed;
+	bool m_bF1pressed;
+	bool m_bF4pressed;
+	bool m_bF12pressed;
+	bool m_bF5pressed;
 	bool m_bOnExitProcess;
 	uint32_t m_dwExitProcessTime;
-	uint32_t m_dwWhetherTime, m_dwGameTime1, m_dwGameTime2, m_dwGameTime3, m_dwGameTime4, m_dwGameTime5, m_dwGameTime6, m_dwGameTime7, m_dwFishTime; //Orkl - added 7 for advertiser	
-	// Crusade Schedule
+	uint32_t m_dwWhetherTime;
+	uint32_t m_dwGameTime1;
+	uint32_t m_dwGameTime2;
+	uint32_t m_dwGameTime3;
+	uint32_t m_dwGameTime4;
+	uint32_t m_dwGameTime5;
+	uint32_t m_dwGameTime6;
+	uint32_t m_dwGameTime7;
+	uint32_t m_dwFishTime;
 	bool m_bIsCrusadeWarStarter;
 	int m_iLatestCrusadeDayOfWeek;
 	char m_cDayOrNight;
 	int m_iSkillSSNpoint[102];
 	class CMsg * m_pNoticeMsgList[DEF_MAXNOTIFYMSGS];
-	int m_iTotalNoticeMsg, m_iPrevSendNoticeMsg;
-	uint32_t m_dwNoticeTime, m_dwSpecialEventTime;
+	int m_iTotalNoticeMsg;
+	int m_iPrevSendNoticeMsg;
+	uint32_t m_dwNoticeTime;
+	uint32_t m_dwSpecialEventTime;
 	bool m_bIsSpecialEventTime;
 	char m_cSpecialEventType;
 	int m_iLevelExpTable[3500]; //New 22/10/04
@@ -678,14 +644,11 @@ public:
 	int m_iGodHMapIndex;
 	int m_iAresdenOccupyTiles;
 	int m_iElvineOccupyTiles;
-	int m_iCurMsgs, m_iMaxMsgs;
-
+	int m_iCurMsgs;
+	int m_iMaxMsgs;
 	uint32_t m_dwCanFightzoneReserveTime;
-
 	int m_iFightZoneReserve[DEF_MAXFIGHTZONE];
-
 	int m_iFightzoneNoForceRecall;
-
 	struct {
 		__int64 iFunds;
 		__int64 iCrimes;
@@ -705,26 +668,23 @@ public:
 	uint32_t m_dwNoticementDataSize;
 	uint32_t m_dwMapSectorInfoTime;
 	int m_iMapSectorInfoUpdateCount;
-
 	int m_iCrusadeCount;
 	bool m_bIsCrusadeMode;
-	// Apocalypse
 	bool m_bIsApocalypseMode;
 	uint32_t m_dwApocalypseGUID;
-	// Daryl - Chat logging option
 	int m_iLogChatOption;
-
 	struct {
 		char cMapName[11];
 		char cType;
-		int dX, dY;
+		int dX;
+		int dY;
 	} m_stCrusadeStructures[DEF_MAXCRUSADESTRUCTURES];
 	int m_iCollectedMana[3];
-	int m_iAresdenMana, m_iElvineMana;
+	int m_iAresdenMana;
+	int m_iElvineMana;
 	class CTeleportLoc m_pGuildTeleportLoc[DEF_MAXGUILDS];
 	char m_cHeldenianMapName[11];
-	int m_iLastCrusadeWinner; // New 13/05/2004
-
+	int m_iLastCrusadeWinner;
 	struct {
 		int iCrashedStructureNum;
 		int iStructureDamageAmount;
@@ -734,7 +694,8 @@ public:
 	struct {
 		char cType;
 		char cSide;
-		short sX, sY;
+		short sX;
+		short sY;
 	} m_stMiddleCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 
 	struct {
@@ -744,7 +705,6 @@ public:
 	struct {
 		char m_cGMName[11];
 	} m_stAdminList[DEF_MAXADMINS];
-	// Crusade Scheduler
 
 	struct {
 		int iDay;
@@ -772,7 +732,6 @@ public:
 		int iTotalMembers;
 		int iIndex[9];
 	} m_stPartyInfo[DEF_MAXCLIENTS];
-	// Daryl - Admin level adjustments
 	int m_iAdminLevelWho;
 	int m_iAdminLevelGMKill;
 	int m_iAdminLevelGMRevive;
@@ -816,19 +775,14 @@ public:
 	int m_iAdminLevelSummonGuild;
 	int m_iAdminLevelCheckStatus;
 	int m_iAdminLevelCleanMap;
-	// 09/26/2004
 	short m_sSlateSuccessRate;
-	// 17/05/2004
 	short m_sForceRecallTime;
-	// 22/05/2004
-	int m_iPrimaryDropRate, m_iSecondaryDropRate;
-	// 25/05/2004
+	int m_iPrimaryDropRate;
+	int m_iSecondaryDropRate;
 	int m_iFinalShutdownCount;
-	// New 06/07/2004
 	bool m_bEnemyKillMode;
 	int m_iEnemyKillAdjust;
 	bool m_bAdminSecurity;
-	// Configurable Raid Time 
 	short m_sRaidTimeMonday;
 	short m_sRaidTimeTuesday;
 	short m_sRaidTimeWednesday;
@@ -838,29 +792,32 @@ public:
 	short m_sRaidTimeSunday;
 	bool m_bManualTime;
 	int m_iSummonGuildCost;
-	//Heldenian
 	bool m_bIsHeldenianMode;
 	bool m_bIsHeldenianTeleport;
-	//char	m_cHeldenianType;
-	// Slate exploit
 	int m_sCharPointLimit;
-	// Limit Checks
 	short m_sCharStatLimit;
 	bool m_bAllow100AllSkill;
 	short m_sCharSkillLimit;
 	char m_cRepDropModifier;
 	char m_cSecurityNumber[11];
 	short m_sMaxPlayerLevel;
-	bool var_89C, var_8A0;
-	char m_cHeldenianVictoryType, m_sLastHeldenianWinner, m_cHeldenianModeType;
-	short m_iHeldenianAresdenDead, m_iHeldenianElvineDead;
-	short m_iHeldenianAresdenLeftTower, m_iHeldenianElvineLeftTower;
-	uint32_t m_dwHeldenianGUID, m_dwHeldenianStartHour, m_dwHeldenianStartMinute;
-	int m_dwHeldenianStartTime, m_dwHeldenianFinishTime;
+	bool var_89C;
+	bool var_8A0;
+	char m_cHeldenianVictoryType;
+	char m_sLastHeldenianWinner;
+	char m_cHeldenianModeType;
+	short m_iHeldenianAresdenDead;
+	short m_iHeldenianElvineDead;
+	short m_iHeldenianAresdenLeftTower;
+	short m_iHeldenianElvineLeftTower;
+	uint32_t m_dwHeldenianGUID;
+	uint32_t m_dwHeldenianStartHour;
+	uint32_t m_dwHeldenianStartMinute;
+	int m_dwHeldenianStartTime;
+	int m_dwHeldenianFinishTime;
 	bool m_bReceivedItemList;
 	bool m_bHeldenianInitiated;
 	bool m_bHeldenianRunning;
-	// HBX 3.00 Heldenian Source
 	bool m_bHeldinianDuty;
 	bool m_bHeldenianDutyMultiplyer;
 	bool m_bIsHeldenianReady;

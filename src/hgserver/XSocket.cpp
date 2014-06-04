@@ -153,7 +153,8 @@ bool XSocket::bConnect(char * pAddr, int iPort, unsigned int uiMsg) {
 }
 
 int XSocket::_iOnRead() {
-	int iRet, WSAErr;
+	int iRet;
+	int WSAErr;
 	uint16_t * wp;
 
 	if (m_cStatus == DEF_XSOCKSTATUS_READINGHEADER) {
@@ -232,7 +233,9 @@ int XSocket::_iOnRead() {
 }
 
 int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
-	int iOutLen, iRet, WSAErr;
+	int iOutLen;
+	int iRet;
+	int WSAErr;
 
 	if (m_pUnsentDataList[m_sHead] != nullptr) {
 		if (bSaveFlag == true) {
@@ -293,7 +296,9 @@ int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 }
 
 int XSocket::_iSend_ForInternalUse(char * cData, int iSize) {
-	int iOutLen, iRet, WSAErr;
+	int iOutLen;
+	int iRet;
+	int WSAErr;
 
 	iOutLen = 0;
 	while (iOutLen < iSize) {
@@ -538,7 +543,8 @@ void _TermWinsock() {
 
 int XSocket::iGetPeerAddress(char * pAddrString) {
 	SOCKADDR_IN sockaddr;
-	int iRet, iLen;
+	int iRet;
+	int iLen;
 
 	iLen = sizeof (sockaddr);
 	iRet = getpeername(m_Sock, (struct sockaddr *) &sockaddr, &iLen);

@@ -23,7 +23,11 @@ public:
 	short m_sDynamicObjectType;
 	uint32_t m_dwDynamicObjectRegisterTime;
 
-	bool m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
+	bool m_bIsMoveAllowed;
+	bool m_bIsTeleport;
+	bool m_bIsWater;
+	bool m_bIsFarm;
+	bool m_bIsTempMoveAllowed;
 
 	
 	int m_iOccupyStatus; 

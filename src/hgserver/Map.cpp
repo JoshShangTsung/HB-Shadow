@@ -6,7 +6,9 @@ extern char G_cTxt[512];
 extern void PutLogFileList(char * cStr);
 
 CMap::CMap(int id, class CGame * pGame) : id_(id), m_pClientList(pGame->m_pClientList), m_bIsSnowEnabled(false) {
-	int i, ix, iy;
+	int i;
+	int ix;
+	int iy;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
 		m_pTeleportLoc[i] = nullptr;
@@ -184,7 +186,8 @@ char _tmp_cMoveDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 
 bool CMap::bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner) {
 	class CTile * pTile;
-	short dX, dY;
+	short dX;
+	short dY;
 
 	if ((cDir <= 0) || (cDir > 8)) return 0;
 	dX = _tmp_cMoveDirX[cDir] + sX;
@@ -332,7 +335,9 @@ char _tmp_cEmptyAreaX[] = {0, 1, 1, 0, -1, -1, -1, 0, 1, 2, 2, 2, 2, 1, 0, -1, -
 char _tmp_cEmptyAreaY[] = {0, 0, 1, 1, 1, 0, -1, -1, -1, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2};
 
 void CMap::ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea) {
-	short sX, sY, sAreaSquared;
+	short sX;
+	short sY;
+	short sAreaSquared;
 	class CTile * pTile;
 	register int i;
 
@@ -680,7 +685,8 @@ int CMap::iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI) {
 }
 
 void CMap::ClearSectorInfo() {
-	int ix, iy;
+	int ix;
+	int iy;
 
 	for (ix = 0; ix < DEF_MAXSECTORS; ix++)
 		for (iy = 0; iy < DEF_MAXSECTORS; iy++) {
@@ -693,7 +699,8 @@ void CMap::ClearSectorInfo() {
 }
 
 void CMap::ClearTempSectorInfo() {
-	int ix, iy;
+	int ix;
+	int iy;
 
 	for (ix = 0; ix < DEF_MAXSECTORS; ix++)
 		for (iy = 0; iy < DEF_MAXSECTORS; iy++) {
@@ -706,7 +713,9 @@ void CMap::ClearTempSectorInfo() {
 }
 
 void CMap::_SetupNoAttackArea() {
-	int i, ix, iy;
+	int i;
+	int ix;
+	int iy;
 	class CTile * pTile;
 
 	for (i = 0; i < DEF_MAXNMR; i++) {
@@ -841,7 +850,8 @@ bool CMap::bGetEmptyPosition(short * pX, short * pY) {
 			return true;
 		}
 	}
-	short sX, sY;
+	short sX;
+	short sY;
 	this->GetMapInitialPoint(&sX, &sY);
 	*pX = sX;
 	*pY = sY;
@@ -849,7 +859,8 @@ bool CMap::bGetEmptyPosition(short * pX, short * pY) {
 }
 
 void CMap::GetMapInitialPoint(short *pX, short *pY, char * pPlayerLocation) {
-	int i, iTotalPoint;
+	int i;
+	int iTotalPoint;
 	POINT pList[DEF_MAXINITIALPOINT];
 	iTotalPoint = 0;
 	for (i = 0; i < DEF_MAXINITIALPOINT; i++) {
@@ -925,7 +936,8 @@ void CMap::SendEventToNearClient_TypeB(uint32_t dwMsgID, uint16_t wMsgType, shor
 
 void CMap::CheckFireBluring(int sX, int sY) {
 	register int ix, iy, iItemNum;
-	short sSpr, sSprFrame;
+	short sSpr;
+	short sSprFrame;
 	char cItemColor;
 	class CItem * pItem;
 	for (ix = sX - 1; ix <= sX + 1; ix++)
@@ -945,9 +957,15 @@ void CMap::CheckFireBluring(int sX, int sY) {
 
 char CMap::cGetNextMoveDir(short sX, short sY, short dstX, short dstY, char cTurn, int * pError) {
 	CMisc m_Misc;
-	char cDir, cTmpDir;
-	int aX, aY, dX, dY;
-	int i, iResX, iResY;
+	char cDir;
+	char cTmpDir;
+	int aX;
+	int aY;
+	int dX;
+	int dY;
+	int i;
+	int iResX;
+	int iResY;
 	if ((sX == dstX) && (sY == dstY)) return 0;
 	dX = sX;
 	dY = sY;
@@ -1013,7 +1031,9 @@ bool CMap::__bReadMapInfo() {
 	uint32_t dwFileSize;
 	FILE * pFile;
 	char cName[6], cNpcName[21], cNpcMoveType, cNpcWaypointIndex[10], cNamePrefix;
-	short sIPindex, dX, dY;
+	short sIPindex;
+	short dX;
+	short dY;
 	if (memcmp(this->m_cName, "fightzone", 9) == 0)
 		this->m_bIsFightZone = true;
 	if (memcmp(this->m_cName, "icebound", 8) == 0)
@@ -2626,10 +2646,12 @@ RMI_SKIPDECODING:
 void CMap::RemoveOccupyFlags() {
 	uint32_t dwTime = timeGetTime();
 	register int i;
-	short dX, dY;
+	short dX;
+	short dY;
 	int iDynamicObjectIndex;
 	class CTile * pTile;
-	int iy, ix;
+	int iy;
+	int ix;
 	for (i = 1; i < DEF_MAXOCCUPYFLAG; i++)
 		if (this->m_pOccupyFlag[i] != false) return;
 	if (this->m_pOccupyFlag[i] != false) {
@@ -2655,7 +2677,15 @@ void CMap::RemoveOccupyFlags() {
 }
 
 void CMap::MeteorStrikeHandler() {
-	int i, ix, iy, dX, dY, iIndex, iTargetIndex, iTotalESG, iEffect;
+	int i;
+	int ix;
+	int iy;
+	int dX;
+	int dY;
+	int iIndex;
+	int iTargetIndex;
+	int iTotalESG;
+	int iEffect;
 	int iTargetArray[DEF_MAXSTRIKEPOINTS];
 	short sOwnerH;
 	char cOwnerType;
@@ -2727,7 +2757,8 @@ MSH_SKIP_STRIKE:
 }
 
 void CMap::CalcMeteorStrikeEffectHandler() {
-	int i, iActiveStructure;
+	int i;
+	int iActiveStructure;
 	char cTempData[120];
 	if (m_pGame->m_bIsCrusadeMode == false) return;
 	iActiveStructure = 0;
@@ -2755,7 +2786,8 @@ void CMap::CalcMeteorStrikeEffectHandler() {
 }
 
 void CMap::DoMeteorStrikeDamageHandler() {
-	int i, iDamage;
+	int i;
+	int iDamage;
 	auto self = shared_from_this();
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_cSide != 0) && (m_pClientList[i]->map_ == self)) {
@@ -2796,8 +2828,16 @@ void CMap::DoMeteorStrikeDamageHandler() {
 }
 
 void CMap::_DeleteRandomOccupyFlag() {
-	int i, iCount, iTotalFlags, iDynamicObjectIndex;
-	int tx, ty, fx, fy, iLocalSide, iLocalEKNum;
+	int i;
+	int iCount;
+	int iTotalFlags;
+	int iDynamicObjectIndex;
+	int tx;
+	int ty;
+	int fx;
+	int fy;
+	int iLocalSide;
+	int iLocalEKNum;
 	class CTile * pTile;
 	uint32_t dwTime;
 	dwTime = timeGetTime();
@@ -2861,7 +2901,8 @@ bool CMap::_bReadMapInfoFiles() {
 
 bool CMap::__bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH, bool bAdminFlag) {
 	register int ix, iy;
-	int iDynamicObjectIndex, iIndex;
+	int iDynamicObjectIndex;
+	int iIndex;
 	class CTile * pTile;
 	if (((m_pGame->m_bIsHeldenianMode == false) || (m_pGame->m_bIsHeldenianMode != m_pGame->m_cHeldenianModeType)) && (m_pGame->m_bHeldenianInitiated == 1)) return false;
 	if ((m_pGame->m_cHeldenianModeType == 1) && (m_pGame->m_iBTFieldMapIndex == -1)) return false;
@@ -3011,7 +3052,10 @@ int CMap::iCreateMineral(int tX, int tY, char cLevel) {
 
 void CMap::_CheckStrategicPointOccupyStatus() {
 	class CTile * pTile;
-	int i, iX, iY, iValue;
+	int i;
+	int iX;
+	int iY;
+	int iValue;
 	m_pGame->m_iStrategicStatus = 0;
 	for (i = 0; i < DEF_MAXSTRATEGICPOINTS; i++) {
 		if (this->m_pStrategicPointList[i] != nullptr) {
