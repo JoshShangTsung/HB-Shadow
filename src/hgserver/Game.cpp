@@ -630,7 +630,7 @@ void CGame::ClientMotionHandler(CClient &client, char * pData) {
 		case DEF_OBJECTSTOP:
 			iRet = iClientMotion_Stop_Handler(client.id_, sX, sY, cDir);
 			if (iRet == 1) {
-				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTSTOP, 0, 0, 0);
+				client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTSTOP, 0, 0, 0);
 			} else if (iRet == 2) {
 				SendObjectMotionRejectMsg(client.id_);
 			}
@@ -638,7 +638,7 @@ void CGame::ClientMotionHandler(CClient &client, char * pData) {
 		case DEF_OBJECTRUN:
 			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 1);
 			if (iRet == 1) {
-				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTRUN, 0, 0, 0);
+				client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTRUN, 0, 0, 0);
 				if (client.map_->bGetIsTeleport(client.m_sX, client.m_sY)) {
 					client.RequestTeleportHandler("3");
 				}
@@ -651,7 +651,7 @@ void CGame::ClientMotionHandler(CClient &client, char * pData) {
 		case DEF_OBJECTMOVE:
 			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 2);
 			if (iRet == 1) {
-				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+				m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
 				if (client.map_->bGetIsTeleport(client.m_sX, client.m_sY)) {
 					client.RequestTeleportHandler("3");
 				}
@@ -664,7 +664,7 @@ void CGame::ClientMotionHandler(CClient &client, char * pData) {
 		case DEF_OBJECTDAMAGEMOVE:
 			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 0);
 			if (iRet == 1) {
-				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGEMOVE, client.m_iLastDamage, 0, 0);
+				client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGEMOVE, client.m_iLastDamage, 0, 0);
 				if (client.map_->bGetIsTeleport(client.m_sX, client.m_sY)) {
 					client.RequestTeleportHandler("3");
 				}
@@ -676,7 +676,7 @@ void CGame::ClientMotionHandler(CClient &client, char * pData) {
 		case DEF_OBJECTATTACKMOVE:
 			iRet = iClientMotion_Move_Handler(client.id_, sX, sY, cDir, 0);
 			if ((iRet == 1) && (m_pClientList[iClientH] != nullptr)) {
-				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTATTACKMOVE, 0, 0, 0);
+				client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACKMOVE, 0, 0, 0);
 				iClientMotion_Attack_Handler(client.id_, client.m_sX, client.m_sY, dX, dY, wType, cDir, wTargetObjectID, false, true);
 				if (client.map_->bGetIsTeleport(client.m_sX, client.m_sY)) {
 					client.RequestTeleportHandler("3");
@@ -695,14 +695,14 @@ void CGame::ClientMotionHandler(CClient &client, char * pData) {
 					client.m_iSuperAttackLeft--;
 					if (client.m_iSuperAttackLeft < 0) client.m_iSuperAttackLeft = 0;
 				}
-				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, wType);
+				client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, wType);
 			} else if (iRet == 2) SendObjectMotionRejectMsg(client.id_);
 			bCheckClientAttackFrequency(client.id_, dwClientTime);
 			break;
 		case DEF_OBJECTGETITEM:
 			iRet = iClientMotion_GetItem_Handler(client.id_, sX, sY, cDir);
 			if (iRet == 1) {
-				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTGETITEM, 0, 0, 0);
+				client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTGETITEM, 0, 0, 0);
 			} else if (iRet == 2) SendObjectMotionRejectMsg(client.id_);
 			break;
 		case DEF_OBJECTMAGIC:
@@ -711,7 +711,7 @@ void CGame::ClientMotionHandler(CClient &client, char * pData) {
 			if (iRet == 1) {
 				if (client.m_bMagicPauseTime == false) {
 					client.m_bMagicPauseTime = true;
-					SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMAGIC, dX, 10, 0);
+					client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMAGIC, dX, 10, 0);
 					client.m_iSpellCount++;
 					bCheckClientMagicFrequency(client.id_, dwClientTime);
 				} else if (client.m_bMagicPauseTime == true) {
@@ -999,7 +999,7 @@ int CGame::iClientMotion_Move_Handler(int iClientH, short sX, short sY, char cDi
 		}
 		return 0;
 	}
-	//SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	//m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 	return 1;
 }
 
@@ -1433,7 +1433,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 			return;
 	}
 	if (pBuffer != nullptr) delete pBuffer;
-	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
+	m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
 
 	if ((memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) &&
 			  (memcmp(m_pClientList[iClientH]->map_->m_cLocationName, "elvine", 6) == 0)
@@ -2011,7 +2011,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 		*sp = sV3;
 		cp_sv += 2;
 		for (auto &clientIter : m_pClientList) {
-			if (clientIter.m_bIsInitComplete == true) {
+			if (clientIter.m_bIsInitComplete) {
 				if ((clientIter.map_ == m_pClientList[sOwnerH]->map_) &&
 						  (clientIter.m_sX >= m_pClientList[sOwnerH]->m_sX - 10 - sRange) &&
 						  (clientIter.m_sX <= m_pClientList[sOwnerH]->m_sX + 10 + sRange) &&
@@ -2057,7 +2057,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 							case DEF_MSGTYPE_CONFIRM:
 							case DEF_MSGTYPE_REJECT:
 							case DEF_OBJECTNULLACTION:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
@@ -2065,7 +2065,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 								break;
 							case DEF_OBJECTATTACK:
 							case DEF_OBJECTATTACKMOVE:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
@@ -2074,21 +2074,21 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 							case DEF_OBJECTMAGIC:
 							case DEF_OBJECTDAMAGE:
 							case DEF_OBJECTDAMAGEMOVE:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								break;
 							case DEF_OBJECTDYING:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								break;
 							default:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 9, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
@@ -2101,7 +2101,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 							case DEF_MSGTYPE_CONFIRM:
 							case DEF_MSGTYPE_REJECT:
 							case DEF_OBJECTNULLACTION:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
@@ -2109,7 +2109,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 								break;
 							case DEF_OBJECTATTACK:
 							case DEF_OBJECTATTACKMOVE:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
@@ -2118,21 +2118,21 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 							case DEF_OBJECTMAGIC:
 							case DEF_OBJECTDAMAGE:
 							case DEF_OBJECTDAMAGEMOVE:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								break;
 							case DEF_OBJECTDYING:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
 									clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								break;
 							default:
-								if (cOwnerSend == true)
+								if (cOwnerSend)
 									clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
 								else
 									if (clientIter.id_ != sOwnerH)
@@ -8153,7 +8153,7 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify) {
 	}
 	cHeroArmorType = _cCheckHeroItemEquipped(iClientH);
 	if (cHeroArmorType != 0x0FFFFFFFF) m_pClientList[iClientH]->m_cHeroArmourBonus = cHeroArmorType;
-	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 	m_pClientList[iClientH]->CalcTotalItemEffect(sItemIndex, bNotify);
 	return true;
 }
@@ -8937,7 +8937,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 							memcpy(m_pClientList[iClientH]->m_cGuildName, "NONE", 4);
 							m_pClientList[iClientH]->m_iGuildRank = -1;
 							m_pClientList[iClientH]->m_iGuildGUID = -1;
-							SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+							m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 							m_pClientList[iClientH]->m_iExp -= 300;
 							if (m_pClientList[iClientH]->m_iExp < 0) m_pClientList[iClientH]->m_iExp = 0;
 							m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_EXP, 0, 0, 0, nullptr);
@@ -8994,7 +8994,7 @@ void CGame::JoinGuildApproveHandler(int iClientH, char * pName) {
 			strcpy(m_pClientList[i]->m_cLocation, m_pClientList[iClientH]->m_cLocation);
 			m_pClientList[i]->m_iGuildRank = DEF_GUILDSTARTRANK;
 			m_pClientList[i]->SendNotifyMsg(iClientH, DEF_COMMONTYPE_JOINGUILDAPPROVE, 0, 0, 0, nullptr);
-			SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+			m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 			SendGuildMsg(i, DEF_NOTIFY_NEWGUILDSMAN, 0, 0, nullptr);
 			bSendMsgToLS(MSGID_REQUEST_UPDATEGUILDINFO_NEWGUILDSMAN, i);
 			return;
@@ -9026,7 +9026,7 @@ void CGame::DismissGuildApproveHandler(int iClientH, char * pName) {
 			m_pClientList[i]->m_iGuildRank = -1;
 			m_pClientList[i]->m_iGuildGUID = -1;
 			m_pClientList[i]->SendNotifyMsg(iClientH, DEF_COMMONTYPE_DISMISSGUILDAPPROVE, 0, 0, 0, nullptr);
-			SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+			m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 			return;
 		}
 }
@@ -9840,7 +9840,7 @@ void CGame::ToggleCombatModeHandler(int iClientH) {
 	} else {
 		m_pClientList[iClientH]->m_sAppr2 = (0x0FFF & m_pClientList[iClientH]->m_sAppr2);
 	}
-	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 }
 /////////////////////////////////////////////////////////////////////////////////////
 //  int CGame::iClientMotion_Magic_Handler(int iClientH, short sX, short sY, char cDir)
@@ -9957,7 +9957,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 	if ((m_pClientList[iClientH]->map_->m_bIsAttackEnabled == false) && (m_pClientList[iClientH]->m_iAdminUserLevel == 0)) return;
 	//if ((var_874 == true) && (m_pClientList[iClientH]->map_->m_bIsHeldenianMap == true) && (m_pMagicConfigList[sType]->m_sType != 8)) return;
 	if (((m_pClientList[iClientH]->m_iStatus & 0x100000) != 0) && (bItemEffect != true)) {
-		SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
+		m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
 		return;
 	}
 	if (m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) {
@@ -9974,7 +9974,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 		return;
 	}
 	if (m_pClientList[iClientH]->m_bInhibition == true) {
-		SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
+		m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
 		return;
 	}
 	/*if (((m_pClientList[iClientH]->m_iUninteruptibleCheck - (iGetMaxHP(iClientH)/10)) > (m_pClientList[iClientH]->m_iHP)) && (m_pClientList[iClientH]->m_bMagicItem == false)) {
@@ -10053,12 +10053,12 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 	if (iResult < 100) {
 		iDiceRes = iDice(1, 100);
 		if (iResult < iDiceRes) {
-			SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
+			m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
 			return;
 		}
 	}
 	if (((m_pClientList[iClientH]->m_iHungerStatus <= 10) || (m_pClientList[iClientH]->m_iSP <= 0)) && (iDice(1, 1000) <= 100)) {
-		SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
+		m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
 		return;
 	}
 	if (m_pClientList[iClientH]->m_iMP < iManaCost) {
@@ -10176,7 +10176,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_POLYMORPH ] = (char) m_pMagicConfigList[sType]->m_sValue4;
 							m_pClientList[sOwnerH]->m_sOriginalType = m_pClientList[sOwnerH]->m_sType;
 							m_pClientList[sOwnerH]->m_sType = 18;
-							SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+							m_pClientList[sOwnerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 							break;
 						case DEF_OWNERTYPE_NPC:
 							if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
@@ -10184,7 +10184,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_POLYMORPH ] = (char) m_pMagicConfigList[sType]->m_sValue4;
 							m_pNpcList[sOwnerH]->m_sOriginalType = m_pNpcList[sOwnerH]->m_sType;
 							m_pNpcList[sOwnerH]->m_sType = 18;
-							SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+							m_pNpcList[sOwnerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 							break;
 					}
 					delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_POLYMORPH, dwTime + (m_pMagicConfigList[sType]->m_dwLastTime * 1000),
@@ -10234,7 +10234,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 					delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_CONFUSE, dwTime + (m_pMagicConfigList[sType]->m_dwLastTime),
 							  sOwnerH, cOwnerType, 0, 0, 0, m_pMagicConfigList[sType]->m_sValue4, 0, 0);
 					// Update Client
-					SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+					m_pClientList[sOwnerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 				}
 				break;
 			case DEF_MAGICTYPE_DAMAGE_AREA_NOSPOT_SPDOWN:
@@ -11930,7 +11930,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 											// Make Player stand up. (Currently, by a fake damage).
 											m_pClientList[sOwnerH]->map_->ClearDeadOwner(dX, dY);
 											m_pClientList[sOwnerH]->map_->SetOwner(sOwnerH, DEF_OWNERTYPE_PLAYER, dX, dY);
-											SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, nullptr, nullptr, nullptr);
+											m_pClientList[sOwnerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, nullptr, nullptr, nullptr);
 											SendNotifyMsg(nullptr, sOwnerH, DEF_NOTIFY_HP, nullptr, nullptr, nullptr, nullptr);
 											break;
 											// Resurrection is not for NPC's.
@@ -12029,7 +12029,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							m_pClientList[iClientH]->m_sAppr4 = sTemp;
 						}
 						m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 1, m_pClientList[iClientH]->m_iSpecialAbilityType, m_pClientList[iClientH]->m_iSpecialAbilityLastSec, nullptr);
-						SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+						m_pClientList[iClientH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 					}
 				}
 			}
@@ -13177,7 +13177,7 @@ void CGame::RequestCivilRightHandler(CClient &client, char */*pData*/) {
 			m_pClientList[client.id_]->DeleteClient(true, true);
 			return;
 	}
-	SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 	RequestChangePlayMode(client.id_);
 }
 
@@ -13332,7 +13332,7 @@ void CGame::ApplyPKpenalty(short sAttackerH, short sVictumH) {
 	m_pClientList[sAttackerH]->m_iExp -= iV2;
 	if (m_pClientList[sAttackerH]->m_iExp < 0) m_pClientList[sAttackerH]->m_iExp = 0;
 	m_pClientList[sAttackerH]->SendNotifyMsg(0, DEF_NOTIFY_PKPENALTY, 0, 0, 0, nullptr);
-	SendEventToNearClient_TypeA(sAttackerH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+	m_pClientList[sAttackerH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 	//PutLogFileList(G_cTxt);
 	m_stCityStatus[m_pClientList[sAttackerH]->m_cSide].iCrimes++;
 	m_pClientList[sAttackerH]->m_iRating -= 10;
@@ -15748,7 +15748,7 @@ void CGame::UseItemHandler(CClient &client, short sItemIndex, short dX, short dY
 						}
 						break;
 				}
-				SendEventToNearClient_TypeA(client.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+				client.SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 				break;
 		}
 		client.ItemDepleteHandler(sItemIndex, true, true);
@@ -16081,7 +16081,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 						}
 					}
 					m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-					SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+					m_pClientList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 					if (m_pClientList[sTargetH]->m_bSkillUsingStatus[19] != true) {
 						m_pClientList[sTargetH]->map_->ClearOwner(0, sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 						m_pClientList[sTargetH]->map_->SetOwner(sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
@@ -16133,7 +16133,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 					m_pNpcList[sTargetH]->m_sX = dX;
 					m_pNpcList[sTargetH]->m_sY = dY;
 					m_pNpcList[sTargetH]->m_cDir = cDamageMoveDir;
-					SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+					m_pNpcList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
 					dX = m_pNpcList[sTargetH]->m_sX + _tmp_cTmpDirX[cDamageMoveDir];
 					dY = m_pNpcList[sTargetH]->m_sY + _tmp_cTmpDirY[cDamageMoveDir];
 					if (m_pNpcList[sTargetH]->map_->bGetMoveable(dX, dY, nullptr) == false) {
@@ -16147,7 +16147,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 					m_pNpcList[sTargetH]->m_sX = dX;
 					m_pNpcList[sTargetH]->m_sY = dY;
 					m_pNpcList[sTargetH]->m_cDir = cDamageMoveDir;
-					SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+					m_pNpcList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
 					if (m_pNpcList[sTargetH]->bCheckEnergySphereDestination(sAttackerH, cAttackerType) == true) {
 						m_pNpcList[sTargetH]->DeleteNpc();
 					}
@@ -16190,7 +16190,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 						if (m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide) return;
 						break;
 				}
-				SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+				m_pNpcList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 				if ((iDice(1, 3) == 2) && (m_pNpcList[sTargetH]->m_cActionLimit == 0)) {
 					if ((cAttackerType == DEF_OWNERTYPE_NPC) &&
 							  (m_pNpcList[sAttackerH]->m_sType == m_pNpcList[sTargetH]->m_sType) &&
@@ -16344,7 +16344,7 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 
 					if (ev.effectType_ == DEF_MAGICTYPE_POLYMORPH) {
 						m_pClientList[ev.m_iTargetH]->m_sType = m_pClientList[ev.m_iTargetH]->m_sOriginalType;
-						SendEventToNearClient_TypeA(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+						m_pClientList[ev.m_iTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 					}
 
 					if (ev.effectType_ == DEF_MAGICTYPE_ICE)
@@ -16389,7 +16389,7 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 
 						if (ev.m_iEffectType == DEF_MAGICTYPE_POLYMORPH) {
 							m_pClientList[ev.m_iTargetH]->m_sType = m_pClientList[ev.m_iTargetH]->m_sOriginalType;
-							SendEventToNearClient_TypeA(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+							m_pClientList[ev.m_iTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 						}
 
 						if (ev.m_iEffectType == DEF_MAGICTYPE_ICE)
@@ -16404,7 +16404,7 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 						SetBerserkFlag(ev.m_iTargetH, DEF_OWNERTYPE_NPC, false);
 					if (ev.effectType_ == DEF_MAGICTYPE_POLYMORPH) {
 						m_pNpcList[ev.m_iTargetH]->m_sType = m_pNpcList[ev.m_iTargetH]->m_sOriginalType;
-						SendEventToNearClient_TypeA(ev.m_iTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+						m_pNpcList[ev.m_iTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 					}
 					if (ev.effectType_ == DEF_MAGICTYPE_ICE)
 						SetIceFlag(ev.m_iTargetH, DEF_OWNERTYPE_NPC, false);
