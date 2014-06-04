@@ -9,6 +9,7 @@
 #include "Map.h"
 #include <memory>
 #include <array>
+#include <set>
 #define DEF_CLIENTSOCKETBLOCKLIMIT	15
 #define DEF_MSGBUFFERSIZE	30000
 #define DEF_MAXITEMS		50
@@ -28,9 +29,11 @@ template<typename ValType, size_t S> struct Collection {
 	ref_type operator[](size_t index) {
 		return m_pItemList[index];
 	}
+
 	iterator begin() {
 		return m_pItemList.begin();
 	}
+
 	iterator end() {
 		return m_pItemList.end();
 	}
@@ -43,7 +46,8 @@ typedef Collection<std::unique_ptr<CItem>, DEF_MAXBANKITEMS> BankInventory;
 struct CClient;
 typedef std::shared_ptr<CClient> ClientPtr;
 typedef std::weak_ptr<CClient> ClientWPtr;
-class CClient: public std::enable_shared_from_this<CClient> {
+
+class CClient : public std::enable_shared_from_this<CClient> {
 public:
 	CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket);
 	CGame &game_;
@@ -363,28 +367,61 @@ public:
 	void ArmorLifeDecrement(int iTargetH, char cOwnerType, int iValue);
 	void ReleaseItemHandler(short sItemIndex, bool bNotice);
 	void RequestRestartHandler();
+	void update(uint32_t dwTime);
 };
 #define DEF_MAXCLIENTS				2000
 
 struct Clients {
 	typedef std::shared_ptr<CClient> value_type;
 	typedef value_type &ref_type;
+	Clients(CGame &game): game_(game){}
 	void clear() {
 		m_pClientList = Arr();
+	}
+	std::shared_ptr<CClient> add(int index, std::unique_ptr<XSocket>&& socket) {
+		std::shared_ptr<CClient> ptr = std::make_shared<CClient>(game_, index, std::move(socket));
+		m_pClientList[index] = ptr;
+		bAddClientShortCut(index);
+		totalClients_++;
+		if (totalClients_ > maxClients_) {
+			maxClients_ = totalClients_;
+		}
+		return ptr;
 	}
 	ref_type operator[](size_t index) {
 		return m_pClientList[index];
 	}
+	std::size_t getTotalClients() const {
+		return totalClients_;
+	}
+	std::size_t getMaxClients() const {
+		return maxClients_;
+	}
+	void cull() {
+		for(auto &ptr: m_pClientList) {
+			if (ptr && ptr->m_bMarkedForDeletion) {
+				RemoveClientShortCut(ptr->id_);
+				ptr.reset();
+				--totalClients_;
+			}
+		}
+	}
+
 	struct Iter {
-		Iter(Clients &clients, size_t index): clients_(clients), index_(index){}
+
+		Iter(Clients &clients, size_t index) : clients_(clients), index_(index) {
+		}
+
 		CClient &operator*() {
 			return *clients_[index_];
 		}
+
 		void operator++() {
 			do {
 				++index_;
-			} while(index_ < DEF_MAXCLIENTS && !clients_[index_]);
+			} while (index_ < DEF_MAXCLIENTS && !clients_[index_] && clients_[index_]->m_bMarkedForDeletion);
 		}
+
 		bool operator!=(const Iter &o) const {
 			return index_ != o.index_;
 		}
@@ -392,15 +429,30 @@ struct Clients {
 		Clients &clients_;
 		size_t index_;
 	};
+
 	Iter begin() {
 		Iter ret(*this, 0);
 		++ret;
 		return ret;
 	}
+
 	Iter end() {
 		return Iter(*this, DEF_MAXCLIENTS);
 	}
 private:
+	CGame &game_;
+	size_t totalClients_ = 0;
+	size_t maxClients_ = 0;
 	typedef std::array<value_type, DEF_MAXCLIENTS> Arr;
 	Arr m_pClientList;
+	std::set<int> m_iClientShortCut;
+
+	bool bAddClientShortCut(int iClientH) {
+		m_iClientShortCut.insert(iClientH);
+		return true;
+	}
+
+	void RemoveClientShortCut(int iClientH) {
+		m_iClientShortCut.erase(iClientH);
+	}
 };

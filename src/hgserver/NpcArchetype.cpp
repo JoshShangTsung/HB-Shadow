@@ -1,0 +1,2 @@
+#include "NpcArchetype.h"
+

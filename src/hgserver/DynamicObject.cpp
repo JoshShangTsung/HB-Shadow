@@ -129,7 +129,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 
 										if (game_.m_pNpcList[sOwnerH]->m_iHP <= 0) {
 
-											game_.NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0);
+											game_.m_pNpcList[sOwnerH]->NpcKilledHandler(sOwnerH, cOwnerType, 0);
 										} else {
 
 											if (iDice(1, 3) == 2)
@@ -221,7 +221,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 
 										if (game_.m_pNpcList[sOwnerH]->m_iHP <= 0) {
 
-											game_.NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0);
+											game_.m_pNpcList[sOwnerH]->NpcKilledHandler(sOwnerH, cOwnerType, 0);
 										} else {
 
 											if (iDice(1, 3) == 2)
@@ -356,7 +356,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 
 										if (game_.m_pNpcList[sOwnerH]->m_iHP <= 0) {
 
-											game_.NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0);
+											game_.m_pNpcList[sOwnerH]->NpcKilledHandler(sOwnerH, cOwnerType, 0);
 										} else {
 
 											if (iDice(1, 3) == 2)

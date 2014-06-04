@@ -38,6 +38,8 @@
       <itemPath>../../../src/hgserver/NetMessages.h</itemPath>
       <itemPath>../../../src/hgserver/Npc.cpp</itemPath>
       <itemPath>../../../src/hgserver/Npc.h</itemPath>
+      <itemPath>../../../src/hgserver/NpcArchetype.cpp</itemPath>
+      <itemPath>../../../src/hgserver/NpcArchetype.h</itemPath>
       <itemPath>../../../src/hgserver/OccupyFlag.cpp</itemPath>
       <itemPath>../../../src/hgserver/OccupyFlag.h</itemPath>
       <itemPath>../../../src/hgserver/Player.h</itemPath>
@@ -204,6 +206,16 @@
       <item path="../../../src/hgserver/Npc.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Npc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NpcArchetype.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NpcArchetype.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="../../../src/hgserver/OccupyFlag.cpp"
             ex="false"
@@ -415,6 +427,16 @@
       <item path="../../../src/hgserver/Npc.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Npc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NpcArchetype.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/NpcArchetype.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="../../../src/hgserver/OccupyFlag.cpp"
             ex="false"

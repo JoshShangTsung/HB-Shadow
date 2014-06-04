@@ -20,10 +20,12 @@
 #define DEF_BEHAVIOR_FLEE			3
 #define DEF_BEHAVIOR_DEAD			4
 
+struct CGame;
 class CNpc {
 public:
-	CNpc(const char * pName5);
-
+	CNpc(int id, CGame &game, const char * pName5);
+	const int id_;
+	CGame &game_;
 	char m_pMagicConfigList[100];
 
 	char m_cNpcName[21]; 
@@ -151,4 +153,48 @@ public:
 
 	int m_iNpcItemType;
 	int m_iNpcItemMax;
+	bool markedForDeletion_ = false;
+	
+	void RemoveEventNpc();
+	void _NpcBehavior_GrandMagicGenerator();
+	bool _bNpcBehavior_Detector();
+	bool _bNpcBehavior_ManaCollector();
+	bool bCheckEnergySphereDestination(short sAttackerH, char cAttackerType);
+	void NpcDeadItemGenerator(short sAttackerH, char cAttackerType);
+	void NpcRequestAssistance();
+	int iGetNpcRelationship_SendEvent(int iOpponentH);
+	void NpcMagicHandler(short dX, short dY, short sType);
+	void NpcBehavior_Stop();
+	void DeleteNpc();
+	void CalcNextWayPointDestination();
+	void NpcBehavior_Flee();
+	int iGetDangerValue(short dX, short dY);
+	void NpcBehavior_Dead();
+	void NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage);
+	void NpcBehavior_Attack();
+	void TargetSearch(short * pTarget, char * pTargetType);
+	void NpcBehavior_Move();
+};
+
+
+#define DEF_MAXNPCS					15000
+struct Npcs {
+	typedef std::unique_ptr<CNpc> value_type;
+	typedef value_type& ref_type;
+	ref_type operator[](size_t index) {
+		return m_pNpcList[index];
+	}
+	void clear() {
+		m_pNpcList = {{}};
+	}
+	void cull() {
+		for (auto &ptr: m_pNpcList) {
+			if (ptr && ptr->markedForDeletion_) {
+				ptr.reset();
+			}
+		}
+	}
+private:
+	typedef std::array<value_type, DEF_MAXNPCS> List;
+	List m_pNpcList;
 };

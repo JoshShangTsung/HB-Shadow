@@ -1271,7 +1271,7 @@ void CClient::SendNotifyMsg(int iFromH, uint16_t wMsgType, uint32_t sV1, uint32_
 			break;
 		case DEF_NOTIFY_TOTALUSERS:
 			wp = (uint16_t *) cp;
-			*wp = (uint16_t) game_.m_iTotalClients; //_iGetTotalClients();
+			*wp = (uint16_t) game_.m_pClientList.getTotalClients();
 			cp += 2;
 			iRet = this->m_pXSock->iSendMsg(cData, 8);
 			break;
@@ -3147,7 +3147,6 @@ void CClient::processClientMsg(uint32_t msgId, char *pData, uint32_t dwMsgSize, 
 				game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATALOGOUT, id_, false);
 				if ((dwTime - game_.m_dwGameTime2) > 3000) {
 					this->m_bIsClientConnected = false;
-					game_.m_iTotalClients--;
 					this->m_bMarkedForDeletion = true;
 				}
 				break;
@@ -5107,37 +5106,50 @@ void CClient::ArmorLifeDecrement(int iTargetH, char cOwnerType, int /*iValue*/) 
 	};
 	std::vector<Damage> damages[] = {
 		{
-			{DEF_EQUIPPOS_BODY, 380}},
+			{DEF_EQUIPPOS_BODY, 380}
+		},
 		{
-			{DEF_EQUIPPOS_PANTS, 250}},
+			{DEF_EQUIPPOS_PANTS, 250}
+		},
 		{
-			{DEF_EQUIPPOS_LEGGINGS, 250}},
+			{DEF_EQUIPPOS_LEGGINGS, 250}
+		},
 		{
-			{DEF_EQUIPPOS_ARMS, 250}},
+			{DEF_EQUIPPOS_ARMS, 250}
+		},
 		{
-			{DEF_EQUIPPOS_HEAD, 250}},
+			{DEF_EQUIPPOS_HEAD, 250}
+		},
 		{
 			{DEF_EQUIPPOS_HEAD, 250},
-			{DEF_EQUIPPOS_LEGGINGS, 250}},
+			{DEF_EQUIPPOS_LEGGINGS, 250}
+		},
 		{
 			{DEF_EQUIPPOS_LEGGINGS, 250},
-			{DEF_EQUIPPOS_PANTS, 250}},
+			{DEF_EQUIPPOS_PANTS, 250}
+		},
 		{
 			{DEF_EQUIPPOS_PANTS, 250},
-			{DEF_EQUIPPOS_ARMS, 250}},
+			{DEF_EQUIPPOS_ARMS, 250}
+		},
 		{
-			{DEF_EQUIPPOS_ARMS, 250}},
+			{DEF_EQUIPPOS_ARMS, 250}
+		},
 		{
 			{DEF_EQUIPPOS_ARMS, 250},
-			{DEF_EQUIPPOS_BODY, 250}},
+			{DEF_EQUIPPOS_BODY, 250}
+		},
 		{
 			{DEF_EQUIPPOS_BODY, 250},
-			{DEF_EQUIPPOS_LEGGINGS, 250}},
+			{DEF_EQUIPPOS_LEGGINGS, 250}
+		},
 		{
-			{DEF_EQUIPPOS_BODY, 250}},
+			{DEF_EQUIPPOS_BODY, 250}
+		},
 		{
 			{DEF_EQUIPPOS_BODY, 250},
-			{DEF_EQUIPPOS_PANTS, 250}}
+			{DEF_EQUIPPOS_PANTS, 250}
+		}
 	};
 	constexpr size_t numItems = sizeof (damages) / sizeof (damages[0]);
 	const int index = iDice(1, numItems) - 1;
@@ -5334,5 +5346,278 @@ void CClient::RequestRestartHandler() {
 		this->m_iHP = (3 * this->m_iVit) + (2 * this->m_iLevel) + (this->m_iStr / 2);
 		this->m_iHungerStatus = 100;
 		this->RequestTeleportHandler("2   ", this->map_->m_cName, -1, -1);
+	}
+}
+
+void CClient::update(uint32_t dwTime) {
+	int iPlusTime;
+	int iMaxSuperAttack;
+	int iValue;
+	short sTemp;
+	short sItemIndex;
+	int iMapside;
+	int iMapside2;
+	if ((dwTime - this->m_dwTime) > DEF_CLIENTTIMEOUT) {
+		if (this->m_bIsInitComplete == true) {
+			//Testcode
+			wsprintf(G_cTxt, "Client Timeout: %s", this->m_cIPaddress);
+			PutLogList(G_cTxt);
+			this->DeleteClient(true, true);
+		} else if ((dwTime - this->m_dwTime) > DEF_CLIENTTIMEOUT) {
+			this->DeleteClient(false, false);
+		}
+	} else if (this->m_bIsInitComplete == true) {
+		this->m_iTimeLeft_ShutUp--;
+		if (this->m_iTimeLeft_ShutUp < 0) this->m_iTimeLeft_ShutUp = 0;
+		this->m_iTimeLeft_Rating--;
+		if (this->m_iTimeLeft_Rating < 0) this->m_iTimeLeft_Rating = 0;
+		if (((dwTime - this->m_dwHungerTime) > DEF_HUNGERTIME) && (this->m_bIsKilled == false)) {
+			if ((this->m_iLevel < DEF_LEVELLIMIT) || (this->m_iAdminUserLevel >= 1)) {
+			} else this->m_iHungerStatus--;
+			if (this->m_iHungerStatus <= 0) this->m_iHungerStatus = 0;
+			this->m_dwHungerTime = dwTime;
+			if ((this->m_iHP > 0) && (this->m_iHungerStatus < 40)) {//50Cent - Hunger Fix
+				this->SendNotifyMsg(0, DEF_NOTIFY_HUNGER, this->m_iHungerStatus, 0, 0, nullptr);
+			}
+		}
+		if (game_._bCheckCharacterData(this->id_) == false) {
+			this->DeleteClient(true, true);
+			return;
+		}
+		if ((this->m_iHungerStatus <= 30) && (this->m_iHungerStatus >= 0))
+			iPlusTime = (30 - this->m_iHungerStatus)*1000;
+		else iPlusTime = 0;
+		iPlusTime = abs(iPlusTime);
+		if ((dwTime - this->m_dwHPTime) > (uint32_t) (DEF_HPUPTIME + iPlusTime)) {
+			game_.TimeHitPointsUp(this->id_);
+			this->m_dwHPTime = dwTime;
+		}
+		if ((dwTime - this->m_dwMPTime) > (uint32_t) (DEF_MPUPTIME + iPlusTime)) {
+			game_.TimeManaPointsUp(this->id_);
+			this->m_dwMPTime = dwTime;
+		}
+		if ((dwTime - this->m_dwSPTime) > (uint32_t) (DEF_SPUPTIME + iPlusTime)) {
+			game_.TimeStaminarPointsUp(this->id_);
+			this->m_dwSPTime = dwTime;
+		}
+		if ((this->m_bIsPoisoned == true) && ((dwTime - this->m_dwPoisonTime) > DEF_POISONTIME)) {
+			game_.PoisonEffect(this->id_, 0);
+			this->m_dwPoisonTime = dwTime;
+		}
+		if ((this->map_->m_bIsFightZone == false) &&
+				  ((dwTime - this->m_dwAutoSaveTime) > (uint32_t) DEF_AUTOSAVETIME)) {
+			game_.bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, this->id_);
+			this->m_dwAutoSaveTime = dwTime;
+		}
+		if ((dwTime - this->m_dwExpStockTime) > (uint32_t) DEF_EXPSTOCKTIME) {
+			this->m_dwExpStockTime = dwTime;
+			game_.CalcExpStock(this->id_);
+			game_.CheckUniqueItemEquipment(this->id_);
+			game_.CheckCrusadeResultCalculation(this->id_);
+			game_.CheckHeldenianResultCalculation(this->id_); // new
+		}
+		if ((dwTime - this->m_dwAutoExpTime) > (uint32_t) DEF_AUTOEXPTIME) {
+			iValue = (this->m_iLevel / 2);
+			if (iValue <= 0) iValue = 1;
+			if (this->m_iAutoExpAmount < iValue) {
+				if ((this->m_iExp + iValue) < game_.m_iLevelExpTable[this->m_iLevel + 1]) {
+					//this->m_iExpStock += iValue;
+					game_.GetExp(this->id_, iValue, false);
+					game_.CalcExpStock(this->id_);
+				}
+			}
+			this->m_iAutoExpAmount = 0;
+			this->m_dwAutoExpTime = dwTime;
+		}
+		if (this->m_iSpecialAbilityTime == 3) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYENABLED, 0, 0, 0, nullptr);
+			// New 25/05/2004
+			// After the time up, add magic back
+			sItemIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			if (sItemIndex != -1) {
+				if ((this->m_pItemList[sItemIndex]->m_sIDnum == 865) || (this->m_pItemList[sItemIndex]->m_sIDnum == 866)) {
+					if ((this->m_iInt + this->m_iAngelicInt) > 99 && (this->m_iMag + this->m_iAngelicMag) > 99) {
+						this->m_cMagicMastery[94] = true;
+						this->SendNotifyMsg(0, DEF_NOTIFY_STATECHANGE_SUCCESS, 0, 0, 0, nullptr);
+					}
+				}
+			}
+		}
+		this->m_iSpecialAbilityTime -= 3;
+		if (this->m_iSpecialAbilityTime < 0) this->m_iSpecialAbilityTime = 0;
+		if (this->m_bIsSpecialAbilityEnabled == true) {
+			if (((dwTime - this->m_dwSpecialAbilityStartTime) / 1000) > this->m_iSpecialAbilityLastSec) {
+				this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 3, 0, 0, nullptr);
+				this->m_bIsSpecialAbilityEnabled = false;
+				this->m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
+				sTemp = this->m_sAppr4;
+				sTemp = sTemp & 0xFF0F;
+				this->m_sAppr4 = sTemp;
+				game_.SendEventToNearClient_TypeA(this->id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+			}
+		}
+		//Crusade
+		this->m_iLockedMapTime -= 3;
+		if (this->m_iLockedMapTime < 0) {
+			this->m_iLockedMapTime = 0;
+			this->lockedMap_.reset();
+		}
+
+		this->m_iDeadPenaltyTime -= 3;
+		if (this->m_iDeadPenaltyTime < 0) this->m_iDeadPenaltyTime = 0;
+		if ((this->m_bIsWarLocation == true)) {
+			// Crusade
+			if (game_.m_bIsCrusadeMode == false)
+				if (this->m_bIsInsideOwnTown == false)
+					this->m_iTimeLeft_ForceRecall--;
+			if (this->m_iTimeLeft_ForceRecall <= 0) {
+
+				this->m_iTimeLeft_ForceRecall = 0;
+				this->m_dwWarBeginTime = dwTime;
+				this->m_bIsWarLocation = false;
+
+				this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+				this->RequestTeleportHandler("1   ");
+			}
+		}
+		if ((game_.m_bIsHeldenianMode == true) && (this->map_ != 0)) {
+			if (game_.bCheckHeldenianMap(this->id_, game_.m_iBTFieldMapIndex, DEF_OWNERTYPE_PLAYER) == 1) {
+				game_.SetHeroFlag(this->id_, DEF_OWNERTYPE_PLAYER, true);
+			} else {
+				game_.SetHeroFlag(this->id_, DEF_OWNERTYPE_PLAYER, false);
+			}
+		}
+		if (m_bMarkedForDeletion) return;
+		if (this->m_iSkillMsgRecvCount >= 2) {
+			//PutLogFileList(G_cTxt);
+			this->DeleteClient(true, true);
+		} else {
+			this->m_iSkillMsgRecvCount = 0;
+		}
+		if (m_bMarkedForDeletion) return;
+		//if (this->m_iLevel < this->map_->m_iLevelLimit) {
+		if ((this->m_iLevel < this->map_->m_iLevelLimit) && (this->m_iAdminUserLevel < 2)) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+			this->RequestTeleportHandler("0   ");
+		}
+		if (m_bMarkedForDeletion) return;
+		//if ( (this->map_->m_iUpperLevelLimit != 0) &&
+		//	 (this->m_iLevel > this->map_->m_iUpperLevelLimit) ) {
+		if ((this->map_->m_iUpperLevelLimit != 0) &&
+				  (this->m_iLevel > this->map_->m_iUpperLevelLimit) && (this->m_iAdminUserLevel < 2)) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+			if ((this->m_cSide == 1) &&
+					  (this->m_iAdminUserLevel == 0)) {
+				this->RequestTeleportHandler("2   ", "aresden", -1, -1);
+			} else if ((this->m_cSide == 2) &&
+					  (this->m_iAdminUserLevel == 0)) {
+				this->RequestTeleportHandler("2   ", "elvine", -1, -1);
+			}
+		}
+		if (m_bMarkedForDeletion) return;
+		if ((strcmp(this->m_cLocation, "elvine") != 0) &&
+				  (strcmp(this->m_cLocation, "elvhunter") != 0) &&
+				  (strcmp(this->m_cLocation, "arehunter") != 0) &&
+				  (strcmp(this->m_cLocation, "aresden") != 0) &&
+				  (this->m_iLevel >= 20) &&
+				  (this->m_iAdminUserLevel == 0)) {
+			wsprintf(G_cTxt, "Traveller Hack: (%s) Player: (%s) is a traveller and is greater than level 19.", this->m_cIPaddress, this->m_cCharName);
+			PutHackLogFileList(G_cTxt);
+			this->DeleteClient(true, true);
+		}
+		if (m_bMarkedForDeletion) return;
+		if (((memcmp(this->m_cLocation, "aresden", 7) == 0) || (memcmp(this->m_cLocation, "elvine", 6) == 0)) &&
+				  (game_.m_bIsCrusadeMode == true)) {
+			iMapside = game_.iGetMapLocationSide(this->map_->m_cName);
+			if (iMapside > 3) iMapside2 = iMapside - 2;
+			else iMapside2 = iMapside;
+			if ((this->m_cSide != iMapside2) && (iMapside != 0)) {
+				if ((iMapside <= 2) && (this->m_iAdminUserLevel < 1)) {
+					if (this->m_cSide != 0) {
+						this->m_dwWarBeginTime = timeGetTime();
+						this->m_bIsWarLocation = true;
+						this->m_iTimeLeft_ForceRecall = 1;
+						this->RequestTeleportHandler("1   ");
+						this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+					}
+				}
+			}
+		}
+		if (m_bMarkedForDeletion) return;
+		if (((memcmp(this->m_cLocation, "arehunter", 9) == 0) || (memcmp(this->m_cLocation, "elvhunter", 9) == 0)) &&
+				  ((strcmp(this->map_->m_cName, "2ndmiddle") == 0) || (strcmp(this->map_->m_cName, "middleland") == 0))) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+			this->RequestTeleportHandler("1   ");
+		}
+		if (game_.m_bIsApocalypseMode == true) {
+			if (memcmp(this->map_->m_cName, "abaddon", 7) == 0) {
+				this->SendNotifyMsg(0, DEF_NOTIFY_APOCGATEOPEN, 167, 169, 0, this->map_->m_cName);
+			} else if (memcmp(this->map_->m_cName, "icebound", 8) == 0) {
+				this->SendNotifyMsg(0, DEF_NOTIFY_APOCGATEOPEN, 89, 31, 0, this->map_->m_cName);
+			}
+		}
+		//50Cent - Capture The Flag
+		if (game_.m_bIsCTFMode) {
+			game_.RequestCheckFlag(this->id_);
+			if (game_.bCheckIfIsFlagCarrier(this->id_)) {
+				if (this->m_iHP >= 1) {
+					game_.SetInvisibilityFlag(this->id_, DEF_OWNERTYPE_PLAYER, false);
+					game_.SetIceFlag(this->id_, DEF_OWNERTYPE_PLAYER, true);
+				}
+			}
+		}
+		if (m_bMarkedForDeletion) return;
+		if ((game_.m_bIsApocalypseMode == true) &&
+				  (memcmp(this->map_->m_cName, "icebound", 8) == 0) &&
+				  ((this->m_sX == 89 && this->m_sY == 31) ||
+				  (this->m_sX == 89 && this->m_sY == 32) ||
+				  (this->m_sX == 90 && this->m_sY == 31) ||
+				  (this->m_sX == 90 && this->m_sY == 32))) {
+			this->RequestTeleportHandler("2   ", "druncncity", -1, -1);
+		}
+		if (m_bMarkedForDeletion) return;
+		if ((memcmp(this->m_cLocation, "are", 3) == 0) &&
+				  (strcmp(this->map_->m_cName, "elvfarm") == 0)) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+			this->RequestTeleportHandler("0   ");
+		}
+		if (m_bMarkedForDeletion) return;
+		if ((memcmp(this->m_cLocation, "elv", 3) == 0) &&
+				  (strcmp(this->map_->m_cName, "arefarm") == 0)) {
+			this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+			this->RequestTeleportHandler("0   ");
+		}
+		if (m_bMarkedForDeletion) return;
+		if ((strcmp(this->map_->m_cName, "middleland") == 0)
+				  && (strcmp(this->m_cLocation, "NONE") == 0) &&
+				  (this->m_iAdminUserLevel < 1)) {
+
+			this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+			this->RequestTeleportHandler("0   ");
+		}
+		if (this->m_bInRecallImpossibleMap == true) {
+			this->m_iTimeLeft_ForceRecall--;
+			if (this->m_iTimeLeft_ForceRecall <= 0) {
+				this->m_iTimeLeft_ForceRecall = 0;
+				this->m_bInRecallImpossibleMap = false;
+				this->SendNotifyMsg(0, DEF_NOTIFY_TOBERECALLED, 0, 0, 0, nullptr);
+				this->RequestTeleportHandler("0   ");
+			}
+		}
+		if (m_bMarkedForDeletion) return;
+		this->m_iSuperAttackCount++;
+		if (this->m_iSuperAttackCount > 12) {
+			this->m_iSuperAttackCount = 0;
+			iMaxSuperAttack = (this->m_iLevel / 10);
+			if (this->m_iSuperAttackLeft < iMaxSuperAttack) this->m_iSuperAttackLeft++;
+			this->SendNotifyMsg(0, DEF_NOTIFY_SUPERATTACKLEFT, 0, 0, 0, nullptr);
+		}
+		this->m_iTimeLeft_FirmStaminar--;
+		if (this->m_iTimeLeft_FirmStaminar < 0) this->m_iTimeLeft_FirmStaminar = 0;
+		if (m_bMarkedForDeletion) return;
+		if (this->m_bIsSendingMapStatus == true) game_._SendMapStatus(this->id_);
+		if (this->m_iConstructionPoint > 0) {
+			game_.CheckCommanderConstructionPoint(this->id_);
+		}
 	}
 }

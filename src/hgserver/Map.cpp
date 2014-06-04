@@ -287,18 +287,6 @@ bool CMap::bGetIsMoveAllowedTile(short dX, short dY) {
 	return true;
 }
 
-/*bool CMap::sub_4C0F20(short dX, short dY)
-{
- class CTile * pTile;	
-	
-	3CA18h = 0;
-
-	if ((dX < 14) || (dX >= m_sSizeX - 16) || (dY < 12) || (dY >= m_sSizeY - 14)) return false;
-
-	pTile = (class CTile *)(m_pTile + dX + dY*m_sSizeY);
-
-}*/
-
 bool CMap::bGetIsTeleport(short dX, short dY) {
 	class CTile * pTile;
 
@@ -392,8 +380,7 @@ bool CMap::bSetItem(short sX, short sY, class CItem * pItem) {
 	return true;
 }
 
-class CItem * CMap::pGetItem(short sX, short sY, short * pRemainItemSprite, short * pRemainItemSpriteFrame, char * pRemainItemColor) //v1.4 color
-{
+class CItem * CMap::pGetItem(short sX, short sY, short * pRemainItemSprite, short * pRemainItemSpriteFrame, char * pRemainItemColor) {
 	class CTile * pTile;
 	class CItem * pItem;
 	register int i;
@@ -769,32 +756,6 @@ bool CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) 
 	return false;
 }
 
-/*bool CMap::bAddHeldenianTowerInfo(char cType, short sX, short sY, char cSide)
-{
- register int i;
-
-	for (i = 0; i < DEF_MAXHELDENIANTOWER; i++)
-	if (m_stHeldenianTower[i].cType == nullptr) {
-	if (m_stHeldenianTower[i].cSide == 1) {
-		m_stHeldenianTower[i].sTypeID = sTypeID;
-		m_stHeldenianTower[i].cSide = cSide;
-		m_stHeldenianTower[i].sX = sX;
-		m_stHeldenianTower[i].sY = sY;
-		m_iHeldenianAresdenLeftTower++;
-		return true;
-	}
-	else if (m_stHeldenianTower[i].cSide == 2) {
-		m_stHeldenianTower[i].sTypeID = sTypeID;
-		m_stHeldenianTower[i].cSide = cSide;
-		m_stHeldenianTower[i].sX = sX;
-		m_stHeldenianTower[i].sY = sY;
-		m_iHeldenianElvineLeftTower++;
-		return true;
-	}
-
-	return false;
-}*/
-
 bool CMap::bRemoveCrusadeStructureInfo(short sX, short sY) {
 	register int i;
 
@@ -920,76 +881,70 @@ void CMap::SendEventToNearClient_TypeB(uint32_t dwMsgID, uint16_t wMsgType, shor
 	*sp = sV4;
 	cp += 2;
 	auto self = shared_from_this();
-	for (int i : m_pGame->m_iClientShortCut) {
-		if (i == 0) break;
-		if ((m_pClientList[i] != nullptr)) {
-			if ((m_pClientList[i]->map_ == self) &&
-					  (m_pClientList[i]->m_sX >= sX - 10) &&
-					  (m_pClientList[i]->m_sX <= sX + 10) &&
-					  (m_pClientList[i]->m_sY >= sY - 8) &&
-					  (m_pClientList[i]->m_sY <= sY + 8)) {
-				m_pClientList[i]->m_pXSock->iSendMsg(cData, 18);
-			}
+	for (auto &clientIter : this->m_pClientList) {
+		if ((clientIter.map_ == self) &&
+				  (clientIter.m_sX >= sX - 10) &&
+				  (clientIter.m_sX <= sX + 10) &&
+				  (clientIter.m_sY >= sY - 8) &&
+				  (clientIter.m_sY <= sY + 8)) {
+			clientIter.m_pXSock->iSendMsg(cData, 18);
 		}
 	}
 }
 
 void CMap::CheckFireBluring(int sX, int sY) {
-	register int ix, iy, iItemNum;
-	short sSpr;
-	short sSprFrame;
-	char cItemColor;
-	class CItem * pItem;
-	for (ix = sX - 1; ix <= sX + 1; ix++)
-		for (iy = sY - 1; iy <= sY + 1; iy++) {
-			iItemNum = this->iCheckItem(ix, iy);
+	for (int ix = sX - 1; ix <= sX + 1; ix++) {
+		for (int iy = sY - 1; iy <= sY + 1; iy++) {
+			int iItemNum = this->iCheckItem(ix, iy);
 			switch (iItemNum) {
 				case 355:
-					pItem = this->pGetItem(ix, iy, &sSpr, &sSprFrame, &cItemColor);
+				{
+					short sSpr;
+					short sSprFrame;
+					char cItemColor;
+					CItem *pItem = this->pGetItem(ix, iy, &sSpr, &sSprFrame, &cItemColor);
 					if (pItem != nullptr) delete pItem;
 					m_pGame->dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_FIRE, shared_from_this(), ix, iy, 6000);
 					this->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_SETITEM,
 							  ix, iy, sSpr, sSprFrame, cItemColor);
+				}
 					break;
 			}
 		}
+	}
 }
 
 char CMap::cGetNextMoveDir(short sX, short sY, short dstX, short dstY, char cTurn, int * pError) {
-	CMisc m_Misc;
-	char cDir;
-	char cTmpDir;
-	int aX;
-	int aY;
-	int dX;
-	int dY;
-	int i;
+	if ((sX == dstX) && (sY == dstY)) return 0;
+	int dX = sX;
+	int dY = sY;
+
 	int iResX;
 	int iResY;
-	if ((sX == dstX) && (sY == dstY)) return 0;
-	dX = sX;
-	dY = sY;
+	CMisc m_Misc;
 	if ((abs(dX - dstX) <= 1) && (abs(dY - dstY) <= 1)) {
 		iResX = dstX;
 		iResY = dstY;
 	} else m_Misc.GetPoint(dX, dY, dstX, dstY, &iResX, &iResY, pError);
-	cDir = m_Misc.cGetNextMoveDir(dX, dY, iResX, iResY);
-	if (cTurn == 0)
-		for (i = cDir; i <= cDir + 7; i++) {
-			cTmpDir = i;
+	char cDir = m_Misc.cGetNextMoveDir(dX, dY, iResX, iResY);
+	if (cTurn == 0) {
+		for (int i = cDir; i <= cDir + 7; i++) {
+			char cTmpDir = i;
 			if (cTmpDir > 8) cTmpDir -= 8;
-			aX = _tmp_cTmpDirX[cTmpDir];
-			aY = _tmp_cTmpDirY[cTmpDir];
+			int aX = _tmp_cTmpDirX[cTmpDir];
+			int aY = _tmp_cTmpDirY[cTmpDir];
 			if (this->bGetMoveable(dX + aX, dY + aY) == true) return cTmpDir;
 		}
-	if (cTurn == 1)
-		for (i = cDir; i >= cDir - 7; i--) {
-			cTmpDir = i;
+	}
+	if (cTurn == 1) {
+		for (int i = cDir; i >= cDir - 7; i--) {
+			char cTmpDir = i;
 			if (cTmpDir < 1) cTmpDir += 8;
-			aX = _tmp_cTmpDirX[cTmpDir];
-			aY = _tmp_cTmpDirY[cTmpDir];
+			int aX = _tmp_cTmpDirX[cTmpDir];
+			int aY = _tmp_cTmpDirY[cTmpDir];
 			if (this->bGetMoveable(dX + aX, dY + aY) == true) return cTmpDir;
 		}
+	}
 	return 0;
 }
 
@@ -1208,7 +1163,7 @@ bool CMap::__bReadMapInfo() {
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = cNamePrefix;
 								cName[1] = id_ + 65;
-								if (m_pGame->bCreateNewNpc(cNpcName, cName, this->m_cName, 0, 0, cNpcMoveType, nullptr, nullptr, cNpcWaypointIndex, nullptr, 0, -1, false) == false) {
+								if (m_pGame->bCreateNewNpc(cNpcName, cName, shared_from_this(), 0, 0, cNpcMoveType, nullptr, nullptr, cNpcWaypointIndex, nullptr, 0, -1, false) == false) {
 									this->SetNamingValueEmpty(iNamingValue);
 								}
 							}
@@ -2093,7 +2048,7 @@ bool CMap::__bReadMapInfo() {
 							}
 							iIndex = atoi(token);
 							if (strlen(this->m_stItemEventList[iIndex].cItemName) != 0) {
-								
+
 								wsprintf(G_cTxt, "(!!!) CRITICAL ERROR! Map Info file error 79 - Duplicate Item-Event number(%d:%s)", iIndex, this->m_stItemEventList[iIndex].cItemName);
 								PutLogList(G_cTxt);
 								delete pContents;
@@ -2662,7 +2617,7 @@ void CMap::RemoveOccupyFlags() {
 		iDynamicObjectIndex = this->m_pOccupyFlag[i]->m_iDynamicObjectIndex;
 		auto &dynObj = m_pGame->dynamicObjects_[iDynamicObjectIndex];
 		if (dynObj == 0) return;
-		dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, 
+		dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT,
 				  dynObj->m_sX, dynObj->m_sY,
 				  dynObj->m_sType, iDynamicObjectIndex, 0);
 		dynObj->map_->SetDynamicObject(0, 0, dynObj->m_sX, dynObj->m_sY, dwTime);
@@ -2713,10 +2668,11 @@ void CMap::MeteorStrikeHandler() {
 		m_pGame->delayEvents_.add(DelayEventType::CALCMETEORSTRIKEEFFECT, 0, dwTime + 6000, 0, 0, shared_from_this(), 0, 0, 0, 0, 0);
 	} else {
 		auto self = shared_from_this();
-		for (i = 1; i < DEF_MAXCLIENTS; i++)
-			if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_bIsInitComplete == true) && (m_pClientList[i]->map_ == self)) {
-				m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_METEORSTRIKEHIT, 0, 0, 0, nullptr);
+		for (auto &clientIter : m_pClientList) {
+			if ((clientIter.m_bIsInitComplete == true) && (clientIter.map_ == self)) {
+				clientIter.SendNotifyMsg(0, DEF_NOTIFY_METEORSTRIKEHIT, 0, 0, 0, nullptr);
 			}
+		}
 		for (i = 0; i < iIndex; i++) {
 			iTargetIndex = iTargetArray[i];
 			if (iTargetIndex == -1) {
@@ -2786,45 +2742,45 @@ void CMap::CalcMeteorStrikeEffectHandler() {
 }
 
 void CMap::DoMeteorStrikeDamageHandler() {
-	int i;
 	int iDamage;
 	auto self = shared_from_this();
-	for (i = 1; i < DEF_MAXCLIENTS; i++)
-		if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_cSide != 0) && (m_pClientList[i]->map_ == self)) {
-			if (m_pClientList[i]->m_iLevel < 80)
-				iDamage = m_pClientList[i]->m_iLevel + iDice(1, 10);
-			else iDamage = m_pClientList[i]->m_iLevel * 2 + iDice(1, 10);
-			iDamage = iDice(1, m_pClientList[i]->m_iLevel) + m_pClientList[i]->m_iLevel;
+	for(auto &clientIter: m_pClientList) {
+		if ((clientIter.m_cSide != 0) && (clientIter.map_ == self)) {
+			if (clientIter.m_iLevel < 80)
+				iDamage = clientIter.m_iLevel + iDice(1, 10);
+			else iDamage = clientIter.m_iLevel * 2 + iDice(1, 10);
+			iDamage = iDice(1, clientIter.m_iLevel) + clientIter.m_iLevel;
 			if (iDamage > 255) iDamage = 255;
-			if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2) {
+			if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2) {
 				iDamage = (iDamage / 2) - 2;
 			}
-			if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5) {
+			if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5) {
 				iDamage = 0;
 			}
-			if (m_pClientList[i]->m_iAdminUserLevel > 0) {
+			if (clientIter.m_iAdminUserLevel > 0) {
 				iDamage = 0;
 			}
-			m_pClientList[i]->m_iHP -= iDamage;
-			if (m_pClientList[i]->m_iHP <= 0) {
-				m_pClientList[i]->ClientKilledHandler(0, 0, iDamage);
+			clientIter.m_iHP -= iDamage;
+			if (clientIter.m_iHP <= 0) {
+				clientIter.ClientKilledHandler(0, 0, iDamage);
 				m_pGame->m_stMeteorStrikeResult.iCasualties++;
 			} else {
 				if (iDamage > 0) {
-					m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-					m_pGame->SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
-					if (m_pClientList[i]->m_bSkillUsingStatus[19] != true) {
-						m_pClientList[i]->map_->ClearOwner(0, i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
-						m_pClientList[i]->map_->SetOwner(i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
+					clientIter.SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+					m_pGame->SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+					if (clientIter.m_bSkillUsingStatus[19] != true) {
+						clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
+						clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 					}
-					if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], 0, nullptr);
-						m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						m_pGame->delayEvents_.remove(i, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+					if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
+						clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], 0, nullptr);
+						clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
+						m_pGame->delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
 					}
 				}
 			}
 		}
+	}
 }
 
 void CMap::_DeleteRandomOccupyFlag() {
@@ -2847,7 +2803,7 @@ void CMap::_DeleteRandomOccupyFlag() {
 			iTotalFlags++;
 		}
 	iCount = 0;
-	for (i = 1; i < DEF_MAXOCCUPYFLAG; i++)
+	for (i = 1; i < DEF_MAXOCCUPYFLAG; i++) {
 		if (this->m_pOccupyFlag[i] != nullptr) {
 			iCount++;
 			if ((iCount == iTotalFlags) && (this->m_pOccupyFlag[i] != nullptr)) {
@@ -2863,7 +2819,7 @@ void CMap::_DeleteRandomOccupyFlag() {
 				this->m_iTotalOccupyFlags--;
 				iDynamicObjectIndex = this->m_pOccupyFlag[i]->m_iDynamicObjectIndex;
 				auto &dynObj = m_pGame->dynamicObjects_[iDynamicObjectIndex];
-				dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, 
+				dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT,
 						  dynObj->m_sX, dynObj->m_sY,
 						  dynObj->m_sType, iDynamicObjectIndex, 0);
 				dynObj->map_->SetDynamicObject(0, 0, dynObj->m_sX, dynObj->m_sY, dwTime);
@@ -2893,6 +2849,7 @@ void CMap::_DeleteRandomOccupyFlag() {
 				return;
 			}
 		}
+	}
 }
 
 bool CMap::_bReadMapInfoFiles() {
@@ -3070,56 +3027,53 @@ void CMap::_CheckStrategicPointOccupyStatus() {
 
 void CMap::DoAbaddonThunderDamageHandler() {
 	int iResult;
-	register int i;
 	//if (m_bIsApocalypseMode != true) return;
 	if (iDice(1, 15) != 13) return;
 	uint32_t dwTime = timeGetTime();
 	auto self = shared_from_this();
-	for (i = 0; i < DEF_MAXCLIENTS; i++) {
-		if (m_pClientList[i] != nullptr) { //if (m_pClientList[i]->m_iAdminUserLevel > 0) return;
-			if ((memcmp(m_pClientList[i]->map_->m_cName, "abaddon", 7) == 0)
-					  || (m_pClientList[i]->map_ == self)) {
-				switch (iDice(1, 4)) {
-					case 1:
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 203, m_pClientList[i]->m_sType);
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX - iDice(1, 7), m_pClientList[i]->m_sY + iDice(1, 5), 161, m_pClientList[i]->m_sType);
-						break;
-					case 2:
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 202, m_pClientList[i]->m_sType);
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX + iDice(1, 7), m_pClientList[i]->m_sY - iDice(1, 5), 161, m_pClientList[i]->m_sType);
-						break;
-					case 3:
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 201, m_pClientList[i]->m_sType);
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX + iDice(1, 7), m_pClientList[i]->m_sY + 5 - iDice(1, 9), 161, m_pClientList[i]->m_sType);
-						break;
-					case 4:
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY, 200, m_pClientList[i]->m_sType);
-						m_pGame->SendThunder(i, m_pClientList[i]->m_sX + 5 - iDice(1, 9), m_pClientList[i]->m_sY + 7 - iDice(1, 4), 161, m_pClientList[i]->m_sType);
-						break;
+	for (auto &clientIter : m_pClientList) {
+		if ((memcmp(clientIter.map_->m_cName, "abaddon", 7) == 0)
+				  || (clientIter.map_ == self)) {
+			switch (iDice(1, 4)) {
+				case 1:
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 203, clientIter.m_sType);
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX - iDice(1, 7), clientIter.m_sY + iDice(1, 5), 161, clientIter.m_sType);
+					break;
+				case 2:
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 202, clientIter.m_sType);
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX + iDice(1, 7), clientIter.m_sY - iDice(1, 5), 161, clientIter.m_sType);
+					break;
+				case 3:
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 201, clientIter.m_sType);
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX + iDice(1, 7), clientIter.m_sY + 5 - iDice(1, 9), 161, clientIter.m_sType);
+					break;
+				case 4:
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 200, clientIter.m_sType);
+					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX + 5 - iDice(1, 9), clientIter.m_sY + 7 - iDice(1, 4), 161, clientIter.m_sType);
+					break;
+			}
+			if (clientIter.m_iAdminUserLevel > 0) continue;
+			iResult = iDice(1, 20) + 100;
+			if ((clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+					  || (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5)) {
+				iResult /= 2;
+			}
+			// Not for v3.51: clientIter.SendNotifyMsg(0,DEF_NOTIFY_0BE5, 0, 0, 0, nullptr);
+			clientIter.m_iHP -= iResult;
+			if (clientIter.m_iHP <= 0) {
+				clientIter.ClientKilledHandler(0, 0, iResult);
+			} else if (iResult > 0) {
+				clientIter.m_dwLastDamageTime = dwTime;
+				clientIter.SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
+				m_pGame->SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, 0, 0);
+				if (clientIter.m_bSkillUsingStatus[19] != true) {
+					clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
+					clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 				}
-				if (m_pClientList[i]->m_iAdminUserLevel > 0) continue;
-				iResult = iDice(1, 20) + 100;
-				if ((m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
-						  || (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5)) {
-					iResult /= 2;
-				}
-				// Not for v3.51: m_pClientList[i]->SendNotifyMsg(0,DEF_NOTIFY_0BE5, 0, 0, 0, nullptr);
-				m_pClientList[i]->m_iHP -= iResult;
-				if (m_pClientList[i]->m_iHP <= 0) {
-					m_pClientList[i]->ClientKilledHandler(0, 0, iResult);
-				} else if (iResult > 0) {
-					m_pClientList[i]->m_dwLastDamageTime = dwTime;
-					m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-					m_pGame->SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, 0, 0);
-					if (m_pClientList[i]->m_bSkillUsingStatus[19] != true) {
-						m_pClientList[i]->map_->ClearOwner(0, i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
-						m_pClientList[i]->map_->SetOwner(i, DEF_OWNERTYPE_PLAYER, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
-					}
-					if (m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-						m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, 2, 0, nullptr);
-						m_pGame->delayEvents_.remove(i, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
-						m_pClientList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-					}
+				if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
+					clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, 2, 0, nullptr);
+					m_pGame->delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+					clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
 				}
 			}
 		}

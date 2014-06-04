@@ -44,7 +44,6 @@
 #define DEF_MAXBANNED				500
 #define DEF_MAXBALLITEMS			50
 #define DEF_MAXNPCITEMS				1000
-#define DEF_MAXNPCS					15000
 #define DEF_MAXITEMTYPES			5000
 #define DEF_CLIENTTIMEOUT			10000
 #define DEF_SPUPTIME				10000
@@ -102,7 +101,6 @@
 #define DEF_ITEMLOG_USE					32
 #define DEF_MAXDUPITEMID				100
 #define DEF_MAXGUILDS					1000 
-#define DEF_MAXONESERVERUSERS			800	
 #define DEF_MAXCONSTRUCTNUM				10
 #define DEF_MAXSCHEDULE					10
 #define DEF_MAXHELDENIAN				10
@@ -167,7 +165,6 @@ public:
 	void RequestNpcSpeakTeleport(int iClientH, char * pData, uint32_t dwMsgSize);
 	bool bCheckHeldenianMap(int sAttackerH, int iMapIndex, char cType);
 	bool bReadHeldenianGUIDFile(const char * cFn);
-	void RemoveEventNpc(int iNpcH);
 	bool _bCheckCharacterData(int iClientH);
 	void GlobalUpdateConfigs(char cConfigType);
 	void LocalUpdateConfigs(char cConfigType);
@@ -209,7 +206,6 @@ public:
 	void RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int iGuildGUID, const char * pMapName);
 	void _LinkStrikePointMapIndex();
 	void MeteorStrikeMsgHandler(char cAttackerSide);
-	void _NpcBehavior_GrandMagicGenerator(int iNpcH);
 	void CollectedManaHandler(uint16_t wAresdenMana, uint16_t wElvineMana);
 	void SendCollectedMana();
 	void CreateCrusadeStructures();
@@ -223,8 +219,6 @@ public:
 	void LocalEndCrusadeMode(int iWinnerSide);
 	void LocalStartCrusadeMode(uint32_t dwGuildGUID);
 	void CheckCrusadeResultCalculation(int iClientH);
-	bool _bNpcBehavior_Detector(int iNpcH);
-	bool _bNpcBehavior_ManaCollector(int iNpcH);
 	bool __bSetConstructionKit(int dX, int dY, int iType, int iTimeCost, int iClientH);
 	void AdminOrder_Time(int iClientH, char * pData, uint32_t dwMsgSize);
 	void AdminOrder_CheckRep(int iClientH, char *pData);
@@ -284,8 +278,6 @@ public:
 	bool bCopyItemContents(class CItem * pOriginal, class CItem * pCopy);
 	int iGetMapLocationSide(char * pMapName);
 	void ChatMsgHandlerGSM(int iMsgType, int iV1, char * pName, char * pData, uint32_t dwMsgSize);
-	void RemoveClientShortCut(int iClientH);
-	bool bAddClientShortCut(int iClientH);
 	void GSM_RequestFindCharacter(uint16_t wReqServerID, uint16_t wReqClientH, char *pName, char * pFinder); // New 16/05/2001 Changed
 	void ServerStockMsgHandler(char * pData);
 	void RequestHelpHandler(int iClientH);
@@ -297,7 +289,6 @@ public:
 	void CancelQuestHandler(int iClientH);
 	void ActivateSpecialAbilityHandler(int iClientH);
 	void EnergySphereProcessor(bool bIsAdminCreate = false, int iClientH = 0);
-	bool bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAttackerType);
 	void JoinPartyHandler(int iClientH, int iV1, char *pMemberName);
 	void CreateNewPartyHandler(int iClientH);
 	void RequestSellItemListHandler(CClient &client, char * pData);
@@ -313,7 +304,6 @@ public:
 	void _AdjustRareItemValue(class CItem &pItem);
 	bool _bCheckDupItemID(class CItem * pItem);
 	bool _bDecodeDupItemIDFileContents(char * pData, uint32_t dwMsgSize);
-	void NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType);
 	int iGetPlayerABSStatus(int iWhatH, int iRecvH);
 	void CheckSpecialEvent(int iClientH);
 	char _cGetSpecialAbility(int iKindSA);
@@ -361,12 +351,10 @@ public:
 	void _CheckAttackType(int iClientH, short * spType);
 	bool bOnClose();
 	void ForceDisconnectAccount(char * pAccountName, uint16_t wCount);
-	void NpcRequestAssistance(int iNpcH);
 	void ToggleSafeAttackModeHandler(int iClientH);
 	void SetBerserkFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void SpecialEventHandler();
 	int iGetPlayerRelationship_SendEvent(int iClientH, int iOpponentH);
-	int iGetNpcRelationship_SendEvent(int iNpcH, int iOpponentH);
 	int _iForcePlayerDisconect(int iNum);
 	int iGetMapIndex(char * pMapName);
 	int iGetNpcRelationship(int iWhatH, int iRecvH);
@@ -416,7 +404,6 @@ public:
 	void OnKeyUp(WPARAM wParam, LPARAM lParam);
 	void OnKeyDown(WPARAM wParam, LPARAM lParam);
 	bool bCheckTotalSkillMasteryPoints(int iClientH, int iSkill);
-	void NpcMagicHandler(int iNpcH, short dX, short dY, short sType);
 	bool bCheckResistingIceSuccess(char cAttackerDir, short sTargetH, char cTargetType, int iHitRatio);
 	bool bCheckResistingMagicSuccess(char cAttackerDir, short sTargetH, char cTargetType, int iHitRatio);
 	void Effect_SpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
@@ -425,11 +412,8 @@ public:
 	void Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3, bool bExp, int iAttr = 0);
 	void Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
 	void UseItemHandler(CClient &client, short sItemIndex, short dX, short dY, short sDestItemID);
-	void NpcBehavior_Stop(int iNpcH);
 	int _iGetArrowItemIndex(int iClientH);
 	void RequestFullObjectData(CClient &client, char * pData);
-	void DeleteNpc(int iNpcH);
-	void CalcNextWayPointDestination(int iNpcH);
 	void MobGenerator();
 	void GetRewardMoneyHandler(int iClientH);
 	void _PenaltyItemDrop(int iClientH, int iTotal, bool bIsSAattacked = false);
@@ -487,19 +471,12 @@ public:
 	bool __fastcall bGetMsgQuene(char * pFrom, char * pData, uint32_t * pMsgSize, int * pIndex, char * pKey);
 	void MsgProcess();
 	bool __fastcall bPutMsgQuene(char cFrom, char * pData, uint32_t dwMsgSize, int iIndex, char cKey);
-	void NpcBehavior_Flee(int iNpcH);
-	int iGetDangerValue(int iNpcH, short dX, short dY);
-	void NpcBehavior_Dead(int iNpcH);
-	void NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, short sDamage);
 	int iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, bool bNearAttack = false, bool bIsDash = false, bool bArrowUse = false);
 	void RemoveFromTarget(short sTargetH, char cTargetType, int iCode = 0);
-	void NpcBehavior_Attack(int iNpcH);
-	void TargetSearch(int iNpcH, short * pTarget, char * pTargetType);
-	void NpcBehavior_Move(int iNpcH);
 	int iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short dX, short dY, short wType, char cDir, uint16_t wTargetObjectID, bool bResponse = true, bool bIsDash = false);
 	void ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void NpcProcess();
-	int bCreateNewNpc(const char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
+	int bCreateNewNpc(const char * pNpcName, char * pName, MapPtr map, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
 	bool _bInitItemAttr(class CItem &pItem, const char * pItemName);
 	bool bReadProgramConfigFile(const char * cFn);
 	void GameProcess();
@@ -568,7 +545,7 @@ public:
 	bool _bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t dwSize);
 	bool _bRegisterMap(char * pName);
 	Clients m_pClientList;
-	class CNpc * m_pNpcList[DEF_MAXNPCS];
+	Npcs m_pNpcList;
 	Maps m_pMapList;
 	class CNpcItem * m_pTempNpcItem[DEF_MAXNPCITEMS];
 	DynamicObjects dynamicObjects_;
@@ -591,15 +568,13 @@ public:
 	bool m_bIsQuestAvailable;
 	bool m_bIsTeleportAvailable;
 	class CItem * m_pItemConfigList[DEF_MAXITEMTYPES];
-	class CNpc * m_pNpcConfigList[DEF_MAXNPCTYPES];
+	class NpcArchetype * m_pNpcConfigList[DEF_MAXNPCTYPES];
 	class CMagic * m_pMagicConfigList[DEF_MAXMAGICTYPE];
 	class CSkill * m_pSkillConfigList[DEF_MAXSKILLTYPE];
 	class CQuest * m_pQuestConfigList[DEF_MAXQUESTTYPE];
 	class CPortion * m_pCraftingConfigList[DEF_MAXPORTIONTYPES];
 	char m_pMsgBuffer[DEF_MSGBUFFERSIZE + 1];
 	HWND m_hWnd;
-	int m_iTotalClients;
-	int m_iMaxClients;
 	int m_iTotalBots;
 	int m_iMaxBots;
 	int m_iTotalGameServerBots;
@@ -721,7 +696,6 @@ public:
 	} m_stHeldenianSchedule[DEF_MAXHELDENIAN];
 	int m_iTotalMiddleCrusadeStructures;
 
-	int m_iClientShortCut[DEF_MAXCLIENTS + 1];
 	int m_iNpcConstructionPoint[DEF_MAXNPCTYPES];
 	uint32_t m_dwCrusadeGUID;
 	short m_sLastCrusadeDate;
