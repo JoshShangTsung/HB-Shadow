@@ -5,7 +5,7 @@
 extern char G_cTxt[512];
 extern void PutLogFileList(char * cStr);
 
-CMap::CMap(int id, class CGame * pGame) : id_(id), m_pClientList(pGame->m_pClientList), m_bIsSnowEnabled(false) {
+CMap::CMap(int id, CGame &game) : id_(id), m_pClientList(game.m_pClientList), game_(game), m_bIsSnowEnabled(false), npcs_(game.m_pNpcList) {
 	int i;
 	int ix;
 	int iy;
@@ -84,8 +84,6 @@ CMap::CMap(int id, class CGame * pGame) : id_(id), m_pClientList(pGame->m_pClien
 
 	m_cWhetherStatus = 0;
 	m_cType = DEF_MAPTYPE_NORMAL;
-
-	m_pGame = pGame;
 
 	m_iLevelLimit = 0;
 	m_iUpperLevelLimit = 0; // v1.4
@@ -312,7 +310,7 @@ void CMap::ClearOwner(int /*iDebugCode*/, short sOwnerH, char cOwnerType, short 
 		pTile->m_cOwnerClass = 0;
 	}
 
-	// 
+	//
 	if ((pTile->m_sDeadOwner == sOwnerH) && (pTile->m_cDeadOwnerClass == cOwnerType)) {
 		pTile->m_sDeadOwner = 0;
 		pTile->m_cDeadOwnerClass = 0;
@@ -477,7 +475,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 
 	pStrTok = new class CStrTok(cHeader, seps);
 	token = pStrTok->pGet();
-	//token = strtok( cHeader, seps );   
+	//token = strtok( cHeader, seps );
 	while (token != nullptr) {
 
 		if (cReadMode != 0) {
@@ -904,7 +902,7 @@ void CMap::CheckFireBluring(int sX, int sY) {
 					char cItemColor;
 					CItem *pItem = this->pGetItem(ix, iy, &sSpr, &sSprFrame, &cItemColor);
 					if (pItem != nullptr) delete pItem;
-					m_pGame->dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_FIRE, shared_from_this(), ix, iy, 6000);
+					game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_FIRE, shared_from_this(), ix, iy, 6000);
 					this->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_SETITEM,
 							  ix, iy, sSpr, sSprFrame, cItemColor);
 				}
@@ -1163,7 +1161,7 @@ bool CMap::__bReadMapInfo() {
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = cNamePrefix;
 								cName[1] = id_ + 65;
-								if (m_pGame->bCreateNewNpc(cNpcName, cName, shared_from_this(), 0, 0, cNpcMoveType, nullptr, nullptr, cNpcWaypointIndex, nullptr, 0, -1, false) == false) {
+								if (this->bCreateNewNpc(cNpcName, cName, 0, 0, cNpcMoveType, nullptr, nullptr, cNpcWaypointIndex, nullptr, 0, -1, false) == false) {
 									this->SetNamingValueEmpty(iNamingValue);
 								}
 							}
@@ -2593,8 +2591,8 @@ RMI_SKIPDECODING:
 	PutLogList(cTxt);
 	this->_SetupNoAttackArea();
 	//Heldenian 3.00 Source
-	strncpy(m_pGame->m_cHeldenianMapName, this->m_cName, 11);
-	m_pGame->m_bIsHeldenianReady = true;
+	strncpy(game_.m_cHeldenianMapName, this->m_cName, 11);
+	game_.m_bIsHeldenianReady = true;
 	return true;
 }
 
@@ -2615,7 +2613,7 @@ void CMap::RemoveOccupyFlags() {
 		pTile = (class CTile *)(this->m_pTile + dX + dY * this->m_sSizeY);
 		this->m_iTotalOccupyFlags--;
 		iDynamicObjectIndex = this->m_pOccupyFlag[i]->m_iDynamicObjectIndex;
-		auto &dynObj = m_pGame->dynamicObjects_[iDynamicObjectIndex];
+		auto &dynObj = game_.dynamicObjects_[iDynamicObjectIndex];
 		if (dynObj == 0) return;
 		dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT,
 				  dynObj->m_sX, dynObj->m_sY,
@@ -2660,12 +2658,12 @@ void CMap::MeteorStrikeHandler() {
 	}
 	wsprintf(G_cTxt, "(!) Map(%s) has %d available strike points", this->m_cName, iIndex);
 	PutLogList(G_cTxt);
-	m_pGame->m_stMeteorStrikeResult.iCasualties = 0;
-	m_pGame->m_stMeteorStrikeResult.iCrashedStructureNum = 0;
-	m_pGame->m_stMeteorStrikeResult.iStructureDamageAmount = 0;
+	game_.m_stMeteorStrikeResult.iCasualties = 0;
+	game_.m_stMeteorStrikeResult.iCrashedStructureNum = 0;
+	game_.m_stMeteorStrikeResult.iStructureDamageAmount = 0;
 	if (iIndex == 0) {
 		PutLogList("(!) No strike points!");
-		m_pGame->delayEvents_.add(DelayEventType::CALCMETEORSTRIKEEFFECT, 0, dwTime + 6000, 0, 0, shared_from_this(), 0, 0, 0, 0, 0);
+		game_.delayEvents_.add(DelayEventType::CALCMETEORSTRIKEEFFECT, 0, dwTime + 6000, 0, 0, shared_from_this(), 0, 0, 0, 0, 0);
 	} else {
 		auto self = shared_from_this();
 		for (auto &clientIter : m_pClientList) {
@@ -2685,7 +2683,7 @@ void CMap::MeteorStrikeHandler() {
 			for (ix = dX - 10; ix <= dX + 10; ix++)
 				for (iy = dY - 10; iy <= dY + 10; iy++) {
 					this->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
-					if ((cOwnerType == DEF_OWNERTYPE_NPC) && (m_pGame->m_pNpcList[sOwnerH] != nullptr) && (m_pGame->m_pNpcList[sOwnerH]->m_sType == 40)) {
+					if ((cOwnerType == DEF_OWNERTYPE_NPC) && (game_.m_pNpcList[sOwnerH] != nullptr) && (game_.m_pNpcList[sOwnerH]->m_sType == 40)) {
 						iTotalESG++;
 					}
 				}
@@ -2695,20 +2693,20 @@ void CMap::MeteorStrikeHandler() {
 				this->m_stStrikePoint[iTargetIndex].iHP -= (2 - iTotalESG);
 				if (this->m_stStrikePoint[iTargetIndex].iHP <= 0) {
 					this->m_stStrikePoint[iTargetIndex].iHP = 0;
-					m_pGame->m_pMapList[this->m_stStrikePoint[iTargetIndex].iMapIndex]->m_bIsDisabled = true;
-					m_pGame->m_stMeteorStrikeResult.iCrashedStructureNum++;
+					game_.m_pMapList[this->m_stStrikePoint[iTargetIndex].iMapIndex]->m_bIsDisabled = true;
+					game_.m_stMeteorStrikeResult.iCrashedStructureNum++;
 				} else {
-					m_pGame->m_stMeteorStrikeResult.iStructureDamageAmount += (2 - iTotalESG);
+					game_.m_stMeteorStrikeResult.iStructureDamageAmount += (2 - iTotalESG);
 					iEffect = iDice(1, 5) - 1;
-					m_pGame->dynamicObjects_.iAddDynamicObjectList(0, DEF_OWNERTYPE_PLAYER_INDIRECT, DEF_DYNAMICOBJECT_FIRE2, self, this->m_stStrikePoint[iTargetIndex].iEffectX[iEffect] +(iDice(1, 3) - 2), this->m_stStrikePoint[iTargetIndex].iEffectY[iEffect] +(iDice(1, 3) - 2), 60 * 1000 * 50);
+					game_.dynamicObjects_.iAddDynamicObjectList(0, DEF_OWNERTYPE_PLAYER_INDIRECT, DEF_DYNAMICOBJECT_FIRE2, self, this->m_stStrikePoint[iTargetIndex].iEffectX[iEffect] +(iDice(1, 3) - 2), this->m_stStrikePoint[iTargetIndex].iEffectY[iEffect] +(iDice(1, 3) - 2), 60 * 1000 * 50);
 				}
 			}
 MSH_SKIP_STRIKE:
 			;
 		}
-		m_pGame->delayEvents_.add(DelayEventType::DOMETEORSTRIKEDAMAGE, 0, dwTime + 1000, 0, 0, self, 0, 0, 0, 0, 0);
-		m_pGame->delayEvents_.add(DelayEventType::DOMETEORSTRIKEDAMAGE, 0, dwTime + 4000, 0, 0, self, 0, 0, 0, 0, 0);
-		m_pGame->delayEvents_.add(DelayEventType::CALCMETEORSTRIKEEFFECT, 0, dwTime + 6000, 0, 0, self, 0, 0, 0, 0, 0);
+		game_.delayEvents_.add(DelayEventType::DOMETEORSTRIKEDAMAGE, 0, dwTime + 1000, 0, 0, self, 0, 0, 0, 0, 0);
+		game_.delayEvents_.add(DelayEventType::DOMETEORSTRIKEDAMAGE, 0, dwTime + 4000, 0, 0, self, 0, 0, 0, 0, 0);
+		game_.delayEvents_.add(DelayEventType::CALCMETEORSTRIKEEFFECT, 0, dwTime + 6000, 0, 0, self, 0, 0, 0, 0, 0);
 	}
 }
 
@@ -2716,29 +2714,29 @@ void CMap::CalcMeteorStrikeEffectHandler() {
 	int i;
 	int iActiveStructure;
 	char cTempData[120];
-	if (m_pGame->m_bIsCrusadeMode == false) return;
+	if (game_.m_bIsCrusadeMode == false) return;
 	iActiveStructure = 0;
 	for (i = 1; i <= this->m_iTotalStrikePoints; i++) {
 		if (this->m_stStrikePoint[i].iHP > 0) {
 			iActiveStructure++;
 		}
 	}
-	wsprintf(G_cTxt, "ActiveStructure:%d  MapIndex:%d AresdenMap:%d ElvineMap:%d", iActiveStructure, id_, m_pGame->m_iAresdenMapIndex, m_pGame->m_iElvineMapIndex);
+	wsprintf(G_cTxt, "ActiveStructure:%d  MapIndex:%d AresdenMap:%d ElvineMap:%d", iActiveStructure, id_, game_.m_iAresdenMapIndex, game_.m_iElvineMapIndex);
 	PutLogList(G_cTxt);
 	if (iActiveStructure == 0) {
-		if (id_ == m_pGame->m_iAresdenMapIndex) {
-			m_pGame->LocalEndCrusadeMode(2);
-		} else if (id_ == m_pGame->m_iElvineMapIndex) {
-			m_pGame->LocalEndCrusadeMode(1);
+		if (id_ == game_.m_iAresdenMapIndex) {
+			game_.LocalEndCrusadeMode(2);
+		} else if (id_ == game_.m_iElvineMapIndex) {
+			game_.LocalEndCrusadeMode(1);
 		} else {
-			m_pGame->LocalEndCrusadeMode(0);
+			game_.LocalEndCrusadeMode(0);
 		}
 	} else {
-		m_pGame->GrandMagicResultHandler(this->m_cName, m_pGame->m_stMeteorStrikeResult.iCrashedStructureNum, m_pGame->m_stMeteorStrikeResult.iStructureDamageAmount, m_pGame->m_stMeteorStrikeResult.iCasualties, iActiveStructure, this->m_iTotalStrikePoints, cTempData);
+		game_.GrandMagicResultHandler(this->m_cName, game_.m_stMeteorStrikeResult.iCrashedStructureNum, game_.m_stMeteorStrikeResult.iStructureDamageAmount, game_.m_stMeteorStrikeResult.iCasualties, iActiveStructure, this->m_iTotalStrikePoints, cTempData);
 	}
-	m_pGame->m_stMeteorStrikeResult.iCasualties = 0;
-	m_pGame->m_stMeteorStrikeResult.iCrashedStructureNum = 0;
-	m_pGame->m_stMeteorStrikeResult.iStructureDamageAmount = 0;
+	game_.m_stMeteorStrikeResult.iCasualties = 0;
+	game_.m_stMeteorStrikeResult.iCrashedStructureNum = 0;
+	game_.m_stMeteorStrikeResult.iStructureDamageAmount = 0;
 }
 
 void CMap::DoMeteorStrikeDamageHandler() {
@@ -2763,11 +2761,11 @@ void CMap::DoMeteorStrikeDamageHandler() {
 			clientIter.m_iHP -= iDamage;
 			if (clientIter.m_iHP <= 0) {
 				clientIter.ClientKilledHandler(0, 0, iDamage);
-				m_pGame->m_stMeteorStrikeResult.iCasualties++;
+				game_.m_stMeteorStrikeResult.iCasualties++;
 			} else {
 				if (iDamage > 0) {
 					clientIter.SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-					m_pGame->SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
+					game_.SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 					if (clientIter.m_bSkillUsingStatus[19] != true) {
 						clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 						clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
@@ -2775,7 +2773,7 @@ void CMap::DoMeteorStrikeDamageHandler() {
 					if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
 						clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], 0, nullptr);
 						clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						m_pGame->delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+						game_.delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
 					}
 				}
 			}
@@ -2818,7 +2816,7 @@ void CMap::_DeleteRandomOccupyFlag() {
 						  this->m_pOccupyFlag[i]->m_sY * this->m_sSizeY);
 				this->m_iTotalOccupyFlags--;
 				iDynamicObjectIndex = this->m_pOccupyFlag[i]->m_iDynamicObjectIndex;
-				auto &dynObj = m_pGame->dynamicObjects_[iDynamicObjectIndex];
+				auto &dynObj = game_.dynamicObjects_[iDynamicObjectIndex];
 				dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT,
 						  dynObj->m_sX, dynObj->m_sY,
 						  dynObj->m_sType, iDynamicObjectIndex, 0);
@@ -2861,13 +2859,13 @@ bool CMap::__bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH,
 	int iDynamicObjectIndex;
 	int iIndex;
 	class CTile * pTile;
-	if (((m_pGame->m_bIsHeldenianMode == false) || (m_pGame->m_bIsHeldenianMode != m_pGame->m_cHeldenianModeType)) && (m_pGame->m_bHeldenianInitiated == 1)) return false;
-	if ((m_pGame->m_cHeldenianModeType == 1) && (m_pGame->m_iBTFieldMapIndex == -1)) return false;
-	if ((m_pGame->m_cHeldenianModeType == 2) && (m_pGame->m_iGodHMapIndex == -1)) return false;
+	if (((game_.m_bIsHeldenianMode == false) || (game_.m_bIsHeldenianMode != game_.m_cHeldenianModeType)) && (game_.m_bHeldenianInitiated == 1)) return false;
+	if ((game_.m_cHeldenianModeType == 1) && (game_.m_iBTFieldMapIndex == -1)) return false;
+	if ((game_.m_cHeldenianModeType == 2) && (game_.m_iGodHMapIndex == -1)) return false;
 	if ((m_pClientList[iClientH]->m_iGuildRank == 0)) return false;
 	pTile = (class CTile *)(this->m_pTile + dX + dY * this->m_sSizeY);
 	if (pTile->m_iAttribute != 0) return false;
-	iSide = m_pGame->m_sLastHeldenianWinner;
+	iSide = game_.m_sLastHeldenianWinner;
 	if ((dX < 25) || (dX >= this->m_sSizeX - 25) ||
 			  (dY < 25) || (dY >= this->m_sSizeY - 25)) return false;
 	if ((iClientH > 0) && (m_pClientList[iClientH] != nullptr)) {
@@ -2891,9 +2889,9 @@ bool CMap::__bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH,
 		return false;
 	}
 	switch (iSide) {
-		case 1: iDynamicObjectIndex = m_pGame->dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_ARESDENFLAG1, shared_from_this(), dX, dY, 0, 0);
+		case 1: iDynamicObjectIndex = game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_ARESDENFLAG1, shared_from_this(), dX, dY, 0, 0);
 			break;
-		case 2: iDynamicObjectIndex = m_pGame->dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_ELVINEFLAG1, shared_from_this(), dX, dY, 0, 0);
+		case 2: iDynamicObjectIndex = game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_ELVINEFLAG1, shared_from_this(), dX, dY, 0, 0);
 			break;
 		default: iDynamicObjectIndex = 0;
 	}
@@ -2906,7 +2904,7 @@ bool CMap::__bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH,
 	pTile = (class CTile *)(this->m_pTile + dX + dY * this->m_sSizeY);
 	pTile->m_iOccupyFlagIndex = iIndex;
 	this->m_iTotalOccupyFlags++;
-	if (m_pGame->m_cHeldenianModeType == 1) {
+	if (game_.m_cHeldenianModeType == 1) {
 		for (ix = dX - 3; ix <= dX + 3; ix++)
 			for (iy = dY - 3; iy <= dY + 3; iy++) {
 				if ((ix < 0) || (ix >= this->m_sSizeX) ||
@@ -2924,10 +2922,10 @@ bool CMap::__bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH,
 				}
 			}
 	}
-	if (m_pGame->m_cHeldenianModeType == 2) {
-		if (iSide == m_pGame->m_sLastHeldenianWinner) {
-			m_pGame->m_cHeldenianVictoryType = iSide;
-			m_pGame->GlobalEndHeldenianMode();
+	if (game_.m_cHeldenianModeType == 2) {
+		if (iSide == game_.m_sLastHeldenianWinner) {
+			game_.m_cHeldenianVictoryType = iSide;
+			game_.GlobalEndHeldenianMode();
 		}
 	}
 	return true;
@@ -2948,13 +2946,13 @@ int CMap::iCreateMineral(int tX, int tY, char cLevel) {
 	register int i, iDynamicHandle, iMineralType;
 	auto self = shared_from_this();
 	for (i = 1; i < DEF_MAXMINERALS; i++) {
-		auto &mineral = m_pGame->m_pMineral[i];
+		auto &mineral = game_.m_pMineral[i];
 		if (mineral == nullptr) {
 			iMineralType = iDice(1, cLevel);
 			mineral = new class CMineral(iMineralType, self, tX, tY, 1);
 			if (mineral == nullptr) return 0;
 			iDynamicHandle = 0;
-			auto &dynObjects = m_pGame->dynamicObjects_;
+			auto &dynObjects = game_.dynamicObjects_;
 			switch (iMineralType) {
 				case 1:
 				case 2:
@@ -3013,14 +3011,14 @@ void CMap::_CheckStrategicPointOccupyStatus() {
 	int iX;
 	int iY;
 	int iValue;
-	m_pGame->m_iStrategicStatus = 0;
+	game_.m_iStrategicStatus = 0;
 	for (i = 0; i < DEF_MAXSTRATEGICPOINTS; i++) {
 		if (this->m_pStrategicPointList[i] != nullptr) {
 			iValue = this->m_pStrategicPointList[i]->m_iValue;
 			iX = this->m_pStrategicPointList[i]->m_iX;
 			iY = this->m_pStrategicPointList[i]->m_iY;
 			pTile = (class CTile *)(this->m_pTile + iX + iY * this->m_sSizeY);
-			m_pGame->m_iStrategicStatus += pTile->m_iOccupyStatus * iValue;
+			game_.m_iStrategicStatus += pTile->m_iOccupyStatus * iValue;
 		}
 	}
 }
@@ -3036,20 +3034,20 @@ void CMap::DoAbaddonThunderDamageHandler() {
 				  || (clientIter.map_ == self)) {
 			switch (iDice(1, 4)) {
 				case 1:
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 203, clientIter.m_sType);
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX - iDice(1, 7), clientIter.m_sY + iDice(1, 5), 161, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 203, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX - iDice(1, 7), clientIter.m_sY + iDice(1, 5), 161, clientIter.m_sType);
 					break;
 				case 2:
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 202, clientIter.m_sType);
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX + iDice(1, 7), clientIter.m_sY - iDice(1, 5), 161, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 202, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX + iDice(1, 7), clientIter.m_sY - iDice(1, 5), 161, clientIter.m_sType);
 					break;
 				case 3:
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 201, clientIter.m_sType);
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX + iDice(1, 7), clientIter.m_sY + 5 - iDice(1, 9), 161, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 201, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX + iDice(1, 7), clientIter.m_sY + 5 - iDice(1, 9), 161, clientIter.m_sType);
 					break;
 				case 4:
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 200, clientIter.m_sType);
-					m_pGame->SendThunder(clientIter.id_, clientIter.m_sX + 5 - iDice(1, 9), clientIter.m_sY + 7 - iDice(1, 4), 161, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX, clientIter.m_sY, 200, clientIter.m_sType);
+					game_.SendThunder(clientIter.id_, clientIter.m_sX + 5 - iDice(1, 9), clientIter.m_sY + 7 - iDice(1, 4), 161, clientIter.m_sType);
 					break;
 			}
 			if (clientIter.m_iAdminUserLevel > 0) continue;
@@ -3065,18 +3063,256 @@ void CMap::DoAbaddonThunderDamageHandler() {
 			} else if (iResult > 0) {
 				clientIter.m_dwLastDamageTime = dwTime;
 				clientIter.SendNotifyMsg(0, DEF_NOTIFY_HP, 0, 0, 0, nullptr);
-				m_pGame->SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, 0, 0);
+				game_.SendEventToNearClient_TypeA(clientIter.id_, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iResult, 0, 0);
 				if (clientIter.m_bSkillUsingStatus[19] != true) {
 					clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 					clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 				}
 				if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
 					clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, 2, 0, nullptr);
-					m_pGame->delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+					game_.delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
 					clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
 				}
 			}
 		}
 	}
+}
+
+int CMap::bCreateNewNpc(const char * pNpcName, char * pName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
+	int t, j, k;
+	char cTxt[120];
+	short sX;
+	short sY;
+	short sRange;
+	bool bFlag;
+	if (strlen(pName) == 0) return false;
+	SYSTEMTIME SysTime;
+	GetLocalTime(&SysTime);
+	for (int i = 1; i < DEF_MAXNPCS; i++) {
+		if (npcs_[i] == nullptr) {
+			npcs_[i] = std::make_shared<CNpc>(i, game_, pName);
+			if (game_._bInitNpcAttr(&*npcs_[i], pNpcName, sClass, cSA) == false) {
+				wsprintf(cTxt, "(!) Not existing NPC creation request! (%s) Ignored.", pNpcName);
+				PutLogList(cTxt);
+				npcs_[i].reset();
+				return false;
+			}
+			if (npcs_[i]->m_cDayOfWeekLimit < 10) {
+				if (npcs_[i]->m_cDayOfWeekLimit != SysTime.wDayOfWeek) {
+					npcs_[i].reset();
+					return false;
+				}
+			}
+			switch (cMoveType) {
+				case DEF_MOVETYPE_GUARD:
+				case DEF_MOVETYPE_RANDOM:
+					if ((poX != nullptr) && (poY != nullptr) && (*poX != 0) && (*poY != 0)) {
+						sX = *poX;
+						sY = *poY;
+					} else {
+						for (j = 0; j <= 30; j++) {
+							sX = (rand() % (this->m_sSizeX - 50)) + 15;
+							sY = (rand() % (this->m_sSizeY - 50)) + 15;
+							bFlag = true;
+							for (k = 0; k < DEF_MAXMGAR; k++)
+								if (this->m_rcMobGenAvoidRect[k].left != -1) {
+									if ((sX >= this->m_rcMobGenAvoidRect[k].left) &&
+											  (sX <= this->m_rcMobGenAvoidRect[k].right) &&
+											  (sY >= this->m_rcMobGenAvoidRect[k].top) &&
+											  (sY <= this->m_rcMobGenAvoidRect[k].bottom)) {
+										bFlag = false;
+									}
+								}
+							if (bFlag == true) goto GET_VALIDLOC_SUCCESS;
+						}
+						npcs_[i].reset();
+						return false;
+GET_VALIDLOC_SUCCESS:
+						;
+					}
+					break;
+				case DEF_MOVETYPE_RANDOMAREA:
+					sRange = (short) (pArea->right - pArea->left);
+					sX = (short) ((rand() % sRange) + pArea->left);
+					sRange = (short) (pArea->bottom - pArea->top);
+					sY = (short) ((rand() % sRange) + pArea->top);
+					break;
+				case DEF_MOVETYPE_RANDOMWAYPOINT:
+					sX = (short) this->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].x;
+					sY = (short) this->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].y;
+					break;
+				default:
+					if ((poX != nullptr) && (poY != nullptr) && (*poX != 0) && (*poY != 0)) {
+						sX = *poX;
+						sY = *poY;
+					} else {
+						sX = (short) this->m_WaypointList[pWaypointList[0]].x;
+						sY = (short) this->m_WaypointList[pWaypointList[0]].y;
+					}
+					break;
+			}
+			if (this->bGetEmptyPosition(&sX, &sY) == false) {
+				npcs_[i].reset();
+				return false;
+			}
+			if ((bHideGenMode == true) && (this->_iGetPlayerNumberOnSpot(sX, sY, 7) != 0)) {
+				npcs_[i].reset();
+				return false;
+			}
+			if ((poX != nullptr) && (poY != nullptr)) {
+				*poX = sX;
+				*poY = sY;
+			}
+			npcs_[i]->m_sX = sX;
+			npcs_[i]->m_sY = sY;
+			npcs_[i]->m_vX = sX;
+			npcs_[i]->m_vY = sY;
+			for (t = 0; t < 10; t++)
+				npcs_[i]->m_iWayPointIndex[t] = pWaypointList[t];
+			npcs_[i]->m_cTotalWaypoint = 0;
+			for (t = 0; t < 10; t++)
+				if (npcs_[i]->m_iWayPointIndex[t] != -1) npcs_[i]->m_cTotalWaypoint++;
+			if (pArea != nullptr) {
+				// RANDOMAREA Copy
+				SetRect(&npcs_[i]->m_rcRandomArea, pArea->left, pArea->top, pArea->right, pArea->bottom);
+			}
+			switch (cMoveType) {
+				case DEF_MOVETYPE_GUARD:
+					npcs_[i]->m_dX = npcs_[i]->m_sX;
+					npcs_[i]->m_dY = npcs_[i]->m_sY;
+					break;
+				case DEF_MOVETYPE_SEQWAYPOINT:
+					npcs_[i]->m_cCurWaypoint = 1;
+					npcs_[i]->m_dX = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].x;
+					npcs_[i]->m_dY = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].y;
+					break;
+				case DEF_MOVETYPE_RANDOMWAYPOINT:
+					npcs_[i]->m_cCurWaypoint = (rand() % (npcs_[i]->m_cTotalWaypoint - 1)) + 1;
+					npcs_[i]->m_dX = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].x;
+					npcs_[i]->m_dY = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].y;
+					break;
+				case DEF_MOVETYPE_RANDOMAREA:
+					npcs_[i]->m_cCurWaypoint = 0;
+					sRange = (short) (npcs_[i]->m_rcRandomArea.right - npcs_[i]->m_rcRandomArea.left);
+					npcs_[i]->m_dX = (short) ((rand() % sRange) + npcs_[i]->m_rcRandomArea.left);
+					sRange = (short) (npcs_[i]->m_rcRandomArea.bottom - npcs_[i]->m_rcRandomArea.top);
+					npcs_[i]->m_dY = (short) ((rand() % sRange) + npcs_[i]->m_rcRandomArea.top);
+					break;
+				case DEF_MOVETYPE_RANDOM:
+					npcs_[i]->m_dX = (short) ((rand() % (this->m_sSizeX - 50)) + 15);
+					npcs_[i]->m_dY = (short) ((rand() % (this->m_sSizeY - 50)) + 15);
+					break;
+			}
+			npcs_[i]->m_tmp_iError = 0;
+			npcs_[i]->m_cMoveType = cMoveType;
+			switch (npcs_[i]->m_cActionLimit) {
+				case 2:
+				case 3:
+				case 5:
+					npcs_[i]->m_cBehavior = DEF_BEHAVIOR_STOP;
+					switch (npcs_[i]->m_sType) {
+						case 15: // ShopKeeper-W
+						case 19: // Gandlf
+						case 20: // Howard
+						case 24: // Tom
+						case 25: // William
+						case 26: // Kennedy
+							npcs_[i]->m_cDir = 4 + iDice(1, 3) - 1;
+							break;
+						default:
+							npcs_[i]->m_cDir = iDice(1, 8);
+							break;
+					}
+					break;
+				default:
+					npcs_[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+					npcs_[i]->m_cDir = 5;
+					break;
+			}
+			npcs_[i]->m_iFollowOwnerIndex = 0;
+			npcs_[i]->m_iTargetIndex = 0;
+			npcs_[i]->m_cTurn = (rand() % 2);
+			switch (npcs_[i]->m_sType) {
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+					npcs_[i]->m_sAppr2 = (short) 0xF000;
+					npcs_[i]->m_sAppr2 = npcs_[i]->m_sAppr2 | ((rand() % 13) << 4); // ¹«±â
+					npcs_[i]->m_sAppr2 = npcs_[i]->m_sAppr2 | (rand() % 9); // ¹æÆÐ
+					break;
+				case 36: // AGT-Aresden/AGT-Elvine
+				case 37: // CGT-Aresden/CGT-Elvine
+				case 38: // MS-Aresden/MS-Elvine
+				case 39: // DT-Aresden/DT-Elvine
+					npcs_[i]->m_sAppr2 = 3;
+					break;
+					//case 64: // Crop
+					//	npcs_[i]->m_sAppr2 = 1;
+					//	break;
+					// appr2 = 2 seems to be enemy detection for crusade
+					/*case 91: // gate
+
+						npcs_[i]->m_sAppr2 = 0xF000; // 10 aura no sphere 13 no name movable with magic (crash) test to 29
+						break;*/
+				case 64: // Crop
+					npcs_[i]->m_sAppr2 = 1; // 1 bud; 2 grown; 3 large
+					break;
+					// case 66: // Wyvern
+					//	npcs_[i]->m_iStatus = 0x00000010;
+					//	// npcs_[i]->m_cSide = 2;
+					//	break;
+				default:
+					npcs_[i]->m_sAppr2 = 0;
+					break;
+			}
+			npcs_[i]->map_ = shared_from_this();
+			npcs_[i]->m_dwTime = timeGetTime() + (rand() % 10000);
+			npcs_[i]->m_dwActionTime += (rand() % 300);
+			npcs_[i]->m_dwMPupTime = timeGetTime();
+			npcs_[i]->m_dwHPupTime = npcs_[i]->m_dwMPupTime;
+			npcs_[i]->m_sBehaviorTurnCount = 0;
+			npcs_[i]->m_bIsSummoned = bIsSummoned;
+			npcs_[i]->m_bIsMaster = bIsMaster;
+			if (bIsSummoned == true)
+				npcs_[i]->m_dwSummonedTime = timeGetTime();
+			if (bFirmBerserk == true) {
+				npcs_[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] = 1;
+				npcs_[i]->m_iStatus = npcs_[i]->m_iStatus | 0x20;
+				//iExpRoll = iDice(npcs_[i]->m_iExpDiceMin, npcs_[i]->m_iExpDiceMax);
+				//iExpRoll *= 2;
+			}
+			// !!!
+			if (cChangeSide != -1) npcs_[i]->m_cSide = cChangeSide;
+			npcs_[i]->m_cBravery = (rand() % 3) + npcs_[i]->m_iMinBravery;
+			npcs_[i]->m_iSpotMobIndex = iSpotMobIndex;
+			npcs_[i]->m_iGuildGUID = iGuildGUID;
+			//testcode
+			if (iGuildGUID != 0) {
+				wsprintf(G_cTxt, "Summon War Unit(%d) GUID(%d)", npcs_[i]->m_sType, iGuildGUID);
+				PutLogList(G_cTxt);
+			}
+			this->SetOwner(i, DEF_OWNERTYPE_NPC, sX, sY);
+			this->m_iTotalActiveObject++;
+			this->m_iTotalAliveObject++;
+			switch (npcs_[i]->m_sType) {
+				case 36: // AGT-Aresden/AGT-Elvine
+				case 37: // CGT-Aresden/CGT-Elvine
+				case 38: // MS-Aresden/MS-Elvine
+				case 39: // DT-Aresden/DT-Elvine
+				case 42: // ManaStone
+					this->bAddCrusadeStructureInfo(npcs_[i]->m_sType, sX, sY, npcs_[i]->m_cSide);
+					break;
+				case 64:
+					this->bAddCropsTotalSum();
+					break;
+			}
+			game_.SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
+			return true;
+		}
+	}
+	return false;
 }
 

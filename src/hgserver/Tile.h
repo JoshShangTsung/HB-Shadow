@@ -13,7 +13,7 @@ public:
 	char m_cOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC
 	short m_sOwner;
 
-	char m_cDeadOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC �׾��ִ� �÷��̾�� �̰��� 
+	char m_cDeadOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC �׾��ִ� �÷��̾�� �̰���
 	short m_sDeadOwner;
 
 	class CItem * m_pItem[DEF_TILE_PER_ITEMS];
@@ -29,9 +29,9 @@ public:
 	bool m_bIsFarm;
 	bool m_bIsTempMoveAllowed;
 
-	
-	int m_iOccupyStatus; 
-	int m_iOccupyFlagIndex; 
+
+	int m_iOccupyStatus;
+	int m_iOccupyFlagIndex;
 
 	// Crusade
 	int m_iAttribute;

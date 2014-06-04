@@ -128,9 +128,8 @@ CGame::CGame(HWND hWnd) : m_pClientList(*this), dynamicObjects_(*this, m_pMapLis
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
 		m_pItemConfigList[i] = nullptr;
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
-		m_pNpcConfigList[i] = nullptr;
-	for (i = 0; i < DEF_MAXNPCS; i++)
-		m_pNpcList[i] = nullptr;
+		m_pNpcArchetypes[i] = nullptr;
+	m_pNpcList.clear();
 	for (i = 0; i < DEF_MSGQUENESIZE; i++)
 		m_pMsgQuene[i] = nullptr;
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
@@ -294,7 +293,7 @@ bool CGame::bInit() {
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
 		if (m_pItemConfigList[i] != nullptr) delete m_pItemConfigList[i];
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
-		if (m_pNpcConfigList[i] != nullptr) delete m_pNpcConfigList[i];
+		if (m_pNpcArchetypes[i] != nullptr) delete m_pNpcArchetypes[i];
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
 		if (m_pMagicConfigList[i] != nullptr) delete m_pMagicConfigList[i];
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++)
@@ -362,9 +361,8 @@ bool CGame::bInit() {
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
 		m_pItemConfigList[i] = nullptr;
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
-		m_pNpcConfigList[i] = nullptr;
-	for (i = 0; i < DEF_MAXNPCS; i++)
-		m_pNpcList[i] = nullptr;
+		m_pNpcArchetypes[i] = nullptr;
+	m_pNpcList.clear();
 	for (i = 0; i < DEF_MSGQUENESIZE; i++)
 		m_pMsgQuene[i] = nullptr;
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
@@ -1271,7 +1269,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		*dwp = m_pClientList[iClientH]->m_pItemList[i]->m_dwAttribute;
 		cp += 4;
 		/*
-		 *cp = (char)(m_pClientList[iClientH]->m_pItemList[i]->m_dwAttribute & 0x00000001); 
+		 *cp = (char)(m_pClientList[iClientH]->m_pItemList[i]->m_dwAttribute & 0x00000001);
 		cp++;
 		 */
 	}
@@ -1323,7 +1321,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		*dwp = m_pClientList[iClientH]->m_pItemInBankList[i]->m_dwAttribute;
 		cp += 4;
 		/*
-		 *cp = (char)(m_pClientList[iClientH]->m_pItemInBankList[i]->m_dwAttribute & 0x00000001); 
+		 *cp = (char)(m_pClientList[iClientH]->m_pItemInBankList[i]->m_dwAttribute & 0x00000001);
 		cp++;
 		 */
 	}
@@ -1890,13 +1888,12 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 }
 
 void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t dwMsgID, uint16_t wMsgType, short sV1, short sV2, short sV3) {
-	int * ip, iShortCutIndex;
+	int * ip;
 	char * cp_a, * cp_s, * cp_sv, cData_All[200], cData_Srt[200], cData_Srt_Av[200];
 	uint32_t * dwp;
 	uint16_t * wp;
 	int * ipStatus, iDumm;
 	short * sp, sRange, sX, sY;
-	bool bFlag;
 	bool cOwnerSend;
 	char cKey;
 	int iTemp3;
@@ -2013,8 +2010,6 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 		sp = (short *) cp_sv;
 		*sp = sV3;
 		cp_sv += 2;
-		bFlag = true;
-		iShortCutIndex = 0;
 		for (auto &clientIter : m_pClientList) {
 			if (clientIter.m_bIsInitComplete == true) {
 				if ((clientIter.map_ == m_pClientList[sOwnerH]->map_) &&
@@ -2033,7 +2028,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 						continue;
 					}*/
 					/*iTemp = *ipStatus;
-					iTemp = 0x0FFFFFFF & iTemp; 
+					iTemp = 0x0FFFFFFF & iTemp;
 					iTemp2 = (short)iGetPlayerABSStatus(sOwnerH, i); //(short)iGetPlayerRelationship_SendEvent(sOwnerH, i);
 					iTemp  = (iTemp | (iTemp2 << 28));
 					 *ipStatus = iTemp;*/
@@ -2211,8 +2206,6 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 		sp = (short *) cp_sv;
 		*sp = sV3;
 		cp_sv += 2;
-		bFlag = true;
-		iShortCutIndex = 0;
 		for (auto &clientIter : m_pClientList) {
 			if ((clientIter.map_ == m_pNpcList[sOwnerH]->map_) &&
 					  (clientIter.m_sX >= m_pNpcList[sOwnerH]->m_sX - 10 - sRange) &&
@@ -2548,16 +2541,16 @@ void CGame::CheckClientResponseTime() {
 	uint32_t dwTime;
 	//SYSTEMTIME SysTime;
 	/*
-	
+
 	GetLocalTime(&SysTime);
 	switch (SysTime.wDayOfWeek) {
-	case 1:	iWarPeriod = 30; break; 
-	case 2:	iWarPeriod = 30; break; 
-	case 3:	iWarPeriod = 60; break; 
-	case 4:	iWarPeriod = 60*2;  break; 
-	case 5:	iWarPeriod = 60*5;  break; 
-	case 6:	iWarPeriod = 60*10; break; 
-	case 0:	iWarPeriod = 60*20; break; 
+	case 1:	iWarPeriod = 30; break;
+	case 2:	iWarPeriod = 30; break;
+	case 3:	iWarPeriod = 60; break;
+	case 4:	iWarPeriod = 60*2;  break;
+	case 5:	iWarPeriod = 60*5;  break;
+	case 6:	iWarPeriod = 60*10; break;
+	case 0:	iWarPeriod = 60*20; break;
 	}
 	 */
 	dwTime = timeGetTime();
@@ -2625,10 +2618,10 @@ bool CGame::bSendMsgToLS(uint32_t dwMsg, int iClientH, bool bFlag, char* pData) 
 	char cGuildLoc[11], cTemp[120];
 	int * ip, iSendSize;
 	/*
-	
+
 	m_iCurSubLogSockIndex++;
 	if (m_iCurSubLogSockIndex >= DEF_MAXSUBLOGSOCK) m_iCurSubLogSockIndex = 0;
-	
+
 	iCnt = 0;
 	bLoopFlag = false;
 	while (bLoopFlag == false) {
@@ -2637,12 +2630,12 @@ bool CGame::bSendMsgToLS(uint32_t dwMsg, int iClientH, bool bFlag, char* pData) 
 		else m_iCurSubLogSockIndex++;
 		iCnt++;
 		if (iCnt >= DEF_MAXSUBLOGSOCK) {
-			
+
 			if (m_bOnExitProcess == false) {
 				m_cShutDownCode      = 3;
 				m_bOnExitProcess     = true;
 				m_dwExitProcessTime  = timeGetTime();
-				
+
 				PutLogList("(!) GAME SERVER SHUTDOWN PROCESS STARTED(by Log-server connection Lost)!!!");
 			}
 			return false;
@@ -4450,7 +4443,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 					break;
 					/* 2.03 Code - Fixed by KLKS
 								case 29:
-									
+
 									std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof(m_pClientList[iClientH]->m_cLocation));
 									strcpy(m_pClientList[iClientH]->m_cLocation, token);
 									cReadModeA = 0;
@@ -6259,244 +6252,6 @@ NEXT_STEP_SNFM2:
 	return true;
 }
 
-int CGame::bCreateNewNpc(const char * pNpcName, char * pName, MapPtr map, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
-	register int i, t, j, k;
-	char cTxt[120];
-	short sX;
-	short sY;
-	short sRange;
-	bool bFlag;
-	if (strlen(pName) == 0) return false;
-	if (!map) return false;
-	SYSTEMTIME SysTime;
-	GetLocalTime(&SysTime);
-	for (i = 1; i < DEF_MAXNPCS; i++)
-		if (m_pNpcList[i] == nullptr) {
-			m_pNpcList[i].reset(new class CNpc(i, *this, pName));
-			if (_bInitNpcAttr(&*m_pNpcList[i], pNpcName, sClass, cSA) == false) {
-				wsprintf(cTxt, "(!) Not existing NPC creation request! (%s) Ignored.", pNpcName);
-				PutLogList(cTxt);
-				m_pNpcList[i].reset();
-				return false;
-			}
-			if (m_pNpcList[i]->m_cDayOfWeekLimit < 10) {
-				if (m_pNpcList[i]->m_cDayOfWeekLimit != SysTime.wDayOfWeek) {
-					m_pNpcList[i].reset();
-					return false;
-				}
-			}
-			switch (cMoveType) {
-				case DEF_MOVETYPE_GUARD:
-				case DEF_MOVETYPE_RANDOM:
-					if ((poX != nullptr) && (poY != nullptr) && (*poX != 0) && (*poY != 0)) {
-						sX = *poX;
-						sY = *poY;
-					} else {
-						for (j = 0; j <= 30; j++) {
-							sX = (rand() % (map->m_sSizeX - 50)) + 15;
-							sY = (rand() % (map->m_sSizeY - 50)) + 15;
-							bFlag = true;
-							for (k = 0; k < DEF_MAXMGAR; k++)
-								if (map->m_rcMobGenAvoidRect[k].left != -1) {
-									if ((sX >= map->m_rcMobGenAvoidRect[k].left) &&
-											  (sX <= map->m_rcMobGenAvoidRect[k].right) &&
-											  (sY >= map->m_rcMobGenAvoidRect[k].top) &&
-											  (sY <= map->m_rcMobGenAvoidRect[k].bottom)) {
-										bFlag = false;
-									}
-								}
-							if (bFlag == true) goto GET_VALIDLOC_SUCCESS;
-						}
-						m_pNpcList[i].reset();
-						return false;
-GET_VALIDLOC_SUCCESS:
-						;
-					}
-					break;
-				case DEF_MOVETYPE_RANDOMAREA:
-					sRange = (short) (pArea->right - pArea->left);
-					sX = (short) ((rand() % sRange) + pArea->left);
-					sRange = (short) (pArea->bottom - pArea->top);
-					sY = (short) ((rand() % sRange) + pArea->top);
-					break;
-				case DEF_MOVETYPE_RANDOMWAYPOINT:
-					sX = (short) map->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].x;
-					sY = (short) map->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].y;
-					break;
-				default:
-					if ((poX != nullptr) && (poY != nullptr) && (*poX != 0) && (*poY != 0)) {
-						sX = *poX;
-						sY = *poY;
-					} else {
-						sX = (short) map->m_WaypointList[pWaypointList[0]].x;
-						sY = (short) map->m_WaypointList[pWaypointList[0]].y;
-					}
-					break;
-			}
-			if (map->bGetEmptyPosition(&sX, &sY) == false) {
-				m_pNpcList[i].reset();
-				return false;
-			}
-			if ((bHideGenMode == true) && (map->_iGetPlayerNumberOnSpot(sX, sY, 7) != 0)) {
-				m_pNpcList[i].reset();
-				return false;
-			}
-			if ((poX != nullptr) && (poY != nullptr)) {
-				*poX = sX;
-				*poY = sY;
-			}
-			m_pNpcList[i]->m_sX = sX;
-			m_pNpcList[i]->m_sY = sY;
-			m_pNpcList[i]->m_vX = sX;
-			m_pNpcList[i]->m_vY = sY;
-			for (t = 0; t < 10; t++)
-				m_pNpcList[i]->m_iWayPointIndex[t] = pWaypointList[t];
-			m_pNpcList[i]->m_cTotalWaypoint = 0;
-			for (t = 0; t < 10; t++)
-				if (m_pNpcList[i]->m_iWayPointIndex[t] != -1) m_pNpcList[i]->m_cTotalWaypoint++;
-			if (pArea != nullptr) {
-				// RANDOMAREA Copy
-				SetRect(&m_pNpcList[i]->m_rcRandomArea, pArea->left, pArea->top, pArea->right, pArea->bottom);
-			}
-			switch (cMoveType) {
-				case DEF_MOVETYPE_GUARD:
-					m_pNpcList[i]->m_dX = m_pNpcList[i]->m_sX;
-					m_pNpcList[i]->m_dY = m_pNpcList[i]->m_sY;
-					break;
-				case DEF_MOVETYPE_SEQWAYPOINT:
-					m_pNpcList[i]->m_cCurWaypoint = 1;
-					m_pNpcList[i]->m_dX = (short) map->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].x;
-					m_pNpcList[i]->m_dY = (short) map->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].y;
-					break;
-				case DEF_MOVETYPE_RANDOMWAYPOINT:
-					m_pNpcList[i]->m_cCurWaypoint = (rand() % (m_pNpcList[i]->m_cTotalWaypoint - 1)) + 1;
-					m_pNpcList[i]->m_dX = (short) map->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].x;
-					m_pNpcList[i]->m_dY = (short) map->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].y;
-					break;
-				case DEF_MOVETYPE_RANDOMAREA:
-					m_pNpcList[i]->m_cCurWaypoint = 0;
-					sRange = (short) (m_pNpcList[i]->m_rcRandomArea.right - m_pNpcList[i]->m_rcRandomArea.left);
-					m_pNpcList[i]->m_dX = (short) ((rand() % sRange) + m_pNpcList[i]->m_rcRandomArea.left);
-					sRange = (short) (m_pNpcList[i]->m_rcRandomArea.bottom - m_pNpcList[i]->m_rcRandomArea.top);
-					m_pNpcList[i]->m_dY = (short) ((rand() % sRange) + m_pNpcList[i]->m_rcRandomArea.top);
-					break;
-				case DEF_MOVETYPE_RANDOM:
-					m_pNpcList[i]->m_dX = (short) ((rand() % (map->m_sSizeX - 50)) + 15);
-					m_pNpcList[i]->m_dY = (short) ((rand() % (map->m_sSizeY - 50)) + 15);
-					break;
-			}
-			m_pNpcList[i]->m_tmp_iError = 0;
-			m_pNpcList[i]->m_cMoveType = cMoveType;
-			switch (m_pNpcList[i]->m_cActionLimit) {
-				case 2:
-				case 3:
-				case 5:
-					m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_STOP;
-					switch (m_pNpcList[i]->m_sType) {
-						case 15: // ShopKeeper-W
-						case 19: // Gandlf
-						case 20: // Howard
-						case 24: // Tom
-						case 25: // William
-						case 26: // Kennedy
-							m_pNpcList[i]->m_cDir = 4 + iDice(1, 3) - 1;
-							break;
-						default:
-							m_pNpcList[i]->m_cDir = iDice(1, 8);
-							break;
-					}
-					break;
-				default:
-					m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
-					m_pNpcList[i]->m_cDir = 5;
-					break;
-			}
-			m_pNpcList[i]->m_iFollowOwnerIndex = 0;
-			m_pNpcList[i]->m_iTargetIndex = 0;
-			m_pNpcList[i]->m_cTurn = (rand() % 2);
-			switch (m_pNpcList[i]->m_sType) {
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-				case 6:
-					m_pNpcList[i]->m_sAppr2 = (short) 0xF000;
-					m_pNpcList[i]->m_sAppr2 = m_pNpcList[i]->m_sAppr2 | ((rand() % 13) << 4); // ¹«±â
-					m_pNpcList[i]->m_sAppr2 = m_pNpcList[i]->m_sAppr2 | (rand() % 9); // ¹æÆÐ
-					break;
-				case 36: // AGT-Aresden/AGT-Elvine
-				case 37: // CGT-Aresden/CGT-Elvine
-				case 38: // MS-Aresden/MS-Elvine
-				case 39: // DT-Aresden/DT-Elvine
-					m_pNpcList[i]->m_sAppr2 = 3;
-					break;
-					//case 64: // Crop
-					//	m_pNpcList[i]->m_sAppr2 = 1;
-					//	break;
-					// appr2 = 2 seems to be enemy detection for crusade
-					/*case 91: // gate
-						
-						m_pNpcList[i]->m_sAppr2 = 0xF000; // 10 aura no sphere 13 no name movable with magic (crash) test to 29
-						break;*/
-				case 64: // Crop
-					m_pNpcList[i]->m_sAppr2 = 1; // 1 bud; 2 grown; 3 large
-					break;
-					// case 66: // Wyvern
-					//	m_pNpcList[i]->m_iStatus = 0x00000010;
-					//	// m_pNpcList[i]->m_cSide = 2;
-					//	break;
-				default:
-					m_pNpcList[i]->m_sAppr2 = 0;
-					break;
-			}
-			m_pNpcList[i]->map_ = map;
-			m_pNpcList[i]->m_dwTime = timeGetTime() + (rand() % 10000);
-			m_pNpcList[i]->m_dwActionTime += (rand() % 300);
-			m_pNpcList[i]->m_dwMPupTime = timeGetTime();
-			m_pNpcList[i]->m_dwHPupTime = m_pNpcList[i]->m_dwMPupTime;
-			m_pNpcList[i]->m_sBehaviorTurnCount = 0;
-			m_pNpcList[i]->m_bIsSummoned = bIsSummoned;
-			m_pNpcList[i]->m_bIsMaster = bIsMaster;
-			if (bIsSummoned == true)
-				m_pNpcList[i]->m_dwSummonedTime = timeGetTime();
-			if (bFirmBerserk == true) {
-				m_pNpcList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] = 1;
-				m_pNpcList[i]->m_iStatus = m_pNpcList[i]->m_iStatus | 0x20;
-				//iExpRoll = iDice(m_pNpcList[i]->m_iExpDiceMin, m_pNpcList[i]->m_iExpDiceMax);
-				//iExpRoll *= 2;
-			}
-			// !!!
-			if (cChangeSide != -1) m_pNpcList[i]->m_cSide = cChangeSide;
-			m_pNpcList[i]->m_cBravery = (rand() % 3) + m_pNpcList[i]->m_iMinBravery;
-			m_pNpcList[i]->m_iSpotMobIndex = iSpotMobIndex;
-			m_pNpcList[i]->m_iGuildGUID = iGuildGUID;
-			//testcode
-			if (iGuildGUID != 0) {
-				wsprintf(G_cTxt, "Summon War Unit(%d) GUID(%d)", m_pNpcList[i]->m_sType, iGuildGUID);
-				PutLogList(G_cTxt);
-			}
-			map->SetOwner(i, DEF_OWNERTYPE_NPC, sX, sY);
-			map->m_iTotalActiveObject++;
-			map->m_iTotalAliveObject++;
-			switch (m_pNpcList[i]->m_sType) {
-				case 36: // AGT-Aresden/AGT-Elvine
-				case 37: // CGT-Aresden/CGT-Elvine
-				case 38: // MS-Aresden/MS-Elvine
-				case 39: // DT-Aresden/DT-Elvine
-				case 42: // ManaStone
-					map->bAddCrusadeStructureInfo(m_pNpcList[i]->m_sType, sX, sY, m_pNpcList[i]->m_cSide);
-					break;
-				case 64:
-					map->bAddCropsTotalSum();
-					break;
-			}
-			SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
-			return true;
-		}
-	return false;
-}
-
 void CGame::NpcProcess() {
 	register int i, iMaxHP;
 	uint32_t dwTime;
@@ -7719,11 +7474,11 @@ void CGame::MsgProcess() {
 						//PutLogList(G_cTxt);
 						/*
 						if ((m_bIsGameStarted == false) && (m_bIsItemAvailable == true) &&
-							(m_bIsNpcAvailable == true) && (m_bIsLogSockAvailable == true) && 
+							(m_bIsNpcAvailable == true) && (m_bIsLogSockAvailable == true) &&
 							(m_bIsMagicAvailable == true) &&
 							(m_bIsSkillAvailable == true) && (m_bIsPortionAvailable == true) &&
 							(m_bIsQuestAvailable == true) ) {
-							
+
 							SendMessage(m_hWnd, WM_USER_STARTGAMESIGNAL, nullptr, nullptr);
 							m_bIsGameStarted = true;
 						}
@@ -7804,7 +7559,7 @@ bool CGame::bPutMsgQuene(char cFrom, char * pData, uint32_t dwMsgSize, int iInde
 	/*
 	HANDLE hMutex;
 	hMutex = OpenMutex(MUTEX_ALL_ACCESS, false, m_cServerName);
-	if (hMutex != nullptr) return false; 
+	if (hMutex != nullptr) return false;
 	hMutex = CreateMutex(nullptr, false, m_cServerName);
 	 */
 	if (m_pMsgQuene[m_iQueneTail] != nullptr) return false;
@@ -7821,7 +7576,7 @@ bool CGame::bGetMsgQuene(char * pFrom, char * pData, uint32_t * pMsgSize, int * 
 	/*
 	HANDLE hMutex;
 	hMutex = OpenMutex(MUTEX_ALL_ACCESS, false, m_cServerName);
-	if (hMutex != nullptr) return false; 
+	if (hMutex != nullptr) return false;
 	hMutex = CreateMutex(nullptr, false, m_cServerName);
 	 */
 	if (m_pMsgQuene[m_iQueneHead] == nullptr) return false;
@@ -8707,8 +8462,8 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 				iItemWeight = (pItem->m_wWeight * pItem->m_dwCount);
 			else iItemWeight = pItem->m_wWeight;
 			if ( (iItemWeight + m_pClientList[iClientH]->m_iCurWeightLoad) > _iCalcMaxLoad(iClientH)) {
-				
-				
+
+
 				dwp  = (uint32_t *)(cData + DEF_INDEX4_MSGID);
 			 *dwp = MSGID_NOTIFY;
 				wp   = (uint16_t *)(cData + DEF_INDEX2_MSGTYPE);
@@ -8719,7 +8474,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 				case DEF_XSOCKEVENT_SOCKETERROR:
 				case DEF_XSOCKEVENT_CRITICALERROR:
 				case DEF_XSOCKEVENT_SOCKETCLOSED:
-					
+
 					m_pClientList[iClientH]->DeleteClient(true, true);
 					break;
 				}
@@ -8944,7 +8699,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					*dwp = pItem->m_dwAttribute;
 					cp += 4;
 					/*
-					 *cp = (char)(pItem->m_dwAttribute & 0x00000001); 
+					 *cp = (char)(pItem->m_dwAttribute & 0x00000001);
 					cp++;
 					 */
 					if (iEraseReq == 1) delete pItem;
@@ -9121,7 +8876,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					*dwp = pItem->m_dwAttribute;
 					cp += 4;
 					/*
-					 *cp = (char)(pItem->m_dwAttribute & 0x00000001); 
+					 *cp = (char)(pItem->m_dwAttribute & 0x00000001);
 					cp++;
 					 */
 					if (iEraseReq == 1) delete pItem;
@@ -9361,8 +9116,8 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							std::memset(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName, 0, sizeof (m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName));
-							memcpy(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName, token, strlen(token));
+							std::memset(m_pNpcArchetypes[iNpcConfigListIndex]->m_cNpcName, 0, sizeof (m_pNpcArchetypes[iNpcConfigListIndex]->m_cNpcName));
+							memcpy(m_pNpcArchetypes[iNpcConfigListIndex]->m_cNpcName, token, strlen(token));
 							cReadModeB = 2;
 							break;
 						case 2:
@@ -9373,7 +9128,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_sType = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_sType = atoi(token);
 							cReadModeB = 3;
 							break;
 						case 3:
@@ -9384,7 +9139,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iHitDice = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iHitDice = atoi(token);
 							cReadModeB = 4;
 							break;
 						case 4:
@@ -9395,7 +9150,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iDefenseRatio = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iDefenseRatio = atoi(token);
 							cReadModeB = 5;
 							break;
 						case 5:
@@ -9406,7 +9161,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iHitRatio = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iHitRatio = atoi(token);
 							cReadModeB = 6;
 							break;
 						case 6:
@@ -9417,7 +9172,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iMinBravery = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iMinBravery = atoi(token);
 							cReadModeB = 7;
 							break;
 						case 7:
@@ -9428,7 +9183,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMin = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iExpDiceMin = atoi(token);
 							cReadModeB = 8;
 							break;
 						case 8:
@@ -9439,7 +9194,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMax = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iExpDiceMax = atoi(token);
 							cReadModeB = 9;
 							break;
 						case 9:
@@ -9450,7 +9205,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMin = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iGoldDiceMin = atoi(token);
 							cReadModeB = 10;
 							break;
 						case 10:
@@ -9461,7 +9216,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMax = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iGoldDiceMax = atoi(token);
 							cReadModeB = 11;
 							break;
 						case 11:
@@ -9472,7 +9227,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceThrow = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cAttackDiceThrow = atoi(token);
 							cReadModeB = 12;
 							break;
 						case 12:
@@ -9483,7 +9238,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cAttackDiceRange = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cAttackDiceRange = atoi(token);
 							cReadModeB = 13;
 							break;
 						case 13:
@@ -9494,7 +9249,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cSize = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cSize = atoi(token);
 							cReadModeB = 14;
 							break;
 						case 14:
@@ -9504,7 +9259,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cSide = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cSide = atoi(token);
 							cReadModeB = 15;
 							break;
 						case 15:
@@ -9515,7 +9270,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cActionLimit = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cActionLimit = atoi(token);
 							cReadModeB = 16;
 							break;
 						case 16:
@@ -9526,7 +9281,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_dwActionTime = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_dwActionTime = atoi(token);
 							cReadModeB = 17;
 							break;
 						case 17:
@@ -9537,7 +9292,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cResistMagic = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cResistMagic = atoi(token);
 							cReadModeB = 18;
 							break;
 						case 18:
@@ -9548,7 +9303,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cMagicLevel = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cMagicLevel = atoi(token);
 							cReadModeB = 19;
 							break;
 						case 19:
@@ -9558,7 +9313,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cDayOfWeekLimit = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cDayOfWeekLimit = atoi(token);
 							cReadModeB = 20;
 							break;
 						case 20:
@@ -9569,8 +9324,8 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cChatMsgPresence = atoi(token);
-							if (m_pNpcConfigList[iNpcConfigListIndex]->m_cChatMsgPresence == 1) {
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cChatMsgPresence = atoi(token);
+							if (m_pNpcArchetypes[iNpcConfigListIndex]->m_cChatMsgPresence == 1) {
 							}
 							cReadModeB = 21;
 							break;
@@ -9582,7 +9337,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cTargetSearchRange = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cTargetSearchRange = atoi(token);
 							cReadModeB = 22;
 							break;
 						case 22:
@@ -9592,7 +9347,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_dwRegenTime = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_dwRegenTime = atoi(token);
 							cReadModeB = 23;
 							break;
 						case 23:
@@ -9603,7 +9358,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_cAttribute = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_cAttribute = atoi(token);
 							cReadModeB = 24;
 							break;
 						case 24:
@@ -9614,7 +9369,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iAbsDamage = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iAbsDamage = atoi(token);
 							cReadModeB = 25;
 							break;
 						case 25:
@@ -9625,7 +9380,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iMaxMana = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iMaxMana = atoi(token);
 							cReadModeB = 26;
 							break;
 						case 26:
@@ -9636,7 +9391,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iMagicHitRatio = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iMagicHitRatio = atoi(token);
 							cReadModeB = 27;
 							break;
 						case 27:
@@ -9647,7 +9402,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iAttackRange = atoi(token);
+							m_pNpcArchetypes[iNpcConfigListIndex]->m_iAttackRange = atoi(token);
 							cReadModeA = 0;
 							cReadModeB = 0;
 							iNpcConfigListIndex++;
@@ -9666,7 +9421,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 			if (memcmp(token, "Npc", 3) == 0) {
 				cReadModeA = 1;
 				cReadModeB = 1;
-				m_pNpcConfigList[iNpcConfigListIndex] = new class NpcArchetype();
+				m_pNpcArchetypes[iNpcConfigListIndex] = new class NpcArchetype();
 			}
 			if (memcmp(token, "world-server-max-level", 22) == 0) {
 				cReadModeA = 2;
@@ -9693,9 +9448,9 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 	strcpy(cTmpName, pNpcName);
 	NpcArchetype *npcArchPtr = nullptr;
 	for (int i = 0; i < DEF_MAXNPCTYPES; i++) {
-		if (m_pNpcConfigList[i] != nullptr) {
-			if (memcmp(cTmpName, m_pNpcConfigList[i]->m_cNpcName, 20) == 0) {
-				npcArchPtr = m_pNpcConfigList[i];
+		if (m_pNpcArchetypes[i] != nullptr) {
+			if (memcmp(cTmpName, m_pNpcArchetypes[i]->m_cNpcName, 20) == 0) {
+				npcArchPtr = m_pNpcArchetypes[i];
 				break;
 			}
 		}
@@ -9884,18 +9639,18 @@ void CGame::OnStartGameSignal()
  HANDLE hFile;
  FILE * pFile;
  uint32_t  dwFileSize;
-	
+
 	for (i = 0; i < DEF_MAXMAPS; i++)
 	if (m_pMapList[i] != nullptr)
 		_bReadMapInfoFiles(i);
 	// Crusade
-	
+
 	hFile = CreateFile("GameData\\OccupyFlag.txt", GENERIC_READ, nullptr, nullptr, OPEN_EXISTING, nullptr, nullptr);
 	dwFileSize = GetFileSize(hFile, nullptr);
 	if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);
 	pFile = fopen("GameData\\OccupyFlag.txt", "rt");
 	if (pFile == nullptr) {
-		
+
 		PutLogList("(!) Cannot open file: GameData\\OccupyFlag.txt");
 	}
 	else {
@@ -9906,9 +9661,9 @@ void CGame::OnStartGameSignal()
 		_bDecodeOccupyFlagSaveFileContents(cp, dwFileSize);
 		delete cp;
 	}
-	
+
 	bReadCrusadeStructureConfigFile("Crusade.cfg");
-	
+
 	_LinkStrikePointMapIndex();
 	bReadCrusadeGUIDFile("GameData\\CrusadeGUID.txt");
 	PutLogList("");
@@ -10597,7 +10352,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
 								if (m_pClientList[sOwnerH]->m_iHP < 0) goto MAGIC_NOEFFECT;
-								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10609,7 +10364,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								break;
 							case DEF_OWNERTYPE_NPC:
 								if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10628,7 +10383,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10640,7 +10395,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 									break;
 								case DEF_OWNERTYPE_NPC:
 									if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10660,7 +10415,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10672,7 +10427,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								break;
 							case DEF_OWNERTYPE_NPC:
 								if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10692,7 +10447,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10704,7 +10459,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 									break;
 								case DEF_OWNERTYPE_NPC:
 									if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10724,7 +10479,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10736,7 +10491,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								break;
 							case DEF_OWNERTYPE_NPC:
 								if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10756,7 +10511,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10768,7 +10523,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 									break;
 								case DEF_OWNERTYPE_NPC:
 									if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10788,7 +10543,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10800,7 +10555,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								break;
 							case DEF_OWNERTYPE_NPC:
 								if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10820,7 +10575,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10832,7 +10587,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 									break;
 								case DEF_OWNERTYPE_NPC:
 									if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10852,7 +10607,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10864,7 +10619,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								break;
 							case DEF_OWNERTYPE_NPC:
 								if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10884,7 +10639,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10896,7 +10651,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 									break;
 								case DEF_OWNERTYPE_NPC:
 									if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10919,7 +10674,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10931,7 +10686,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 									break;
 								case DEF_OWNERTYPE_NPC:
 									if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10951,7 +10706,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								switch (cOwnerType) {
 									case DEF_OWNERTYPE_PLAYER:
 										if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-										if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+										if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 											if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 												m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 												SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10963,7 +10718,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 										break;
 									case DEF_OWNERTYPE_NPC:
 										if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-										if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+										if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 											if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 												m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 												SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10984,7 +10739,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 					switch (cOwnerType) {
 						case DEF_OWNERTYPE_PLAYER:
 							if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-							if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+							if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 								if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 									m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 									SetIceFlag(sOwnerH, cOwnerType, true);
@@ -10996,7 +10751,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							break;
 						case DEF_OWNERTYPE_NPC:
 							if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-							if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+							if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 								if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 									m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 									SetIceFlag(sOwnerH, cOwnerType, true);
@@ -11016,7 +10771,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -11028,7 +10783,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								break;
 							case DEF_OWNERTYPE_NPC:
 								if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -11527,7 +11282,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							case 14: strcpy(cNpcName, "Bar-Elvine");
 								break;
 						}
-						if (bCreateNewNpc(cNpcName, cName, m_pClientList[iClientH]->map_, 0, 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypoint, nullptr, 0, m_pClientList[iClientH]->m_cSide, false, true) == false) {
+						if (m_pClientList[iClientH]->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypoint, nullptr, 0, m_pClientList[iClientH]->m_cSide, false, true) == false) {
 							m_pClientList[iClientH]->map_->SetNamingValueEmpty(iNamingValue);
 						} else {
 							std::memset(cName_Master, 0, sizeof (cName_Master));
@@ -11957,7 +11712,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						*dwp = pItem->m_dwAttribute;
 						cp += 4;
 						/*
-						 *cp = (char)(pItem->m_dwAttribute & 0x00000001); 
+						 *cp = (char)(pItem->m_dwAttribute & 0x00000001);
 						cp++;
 						 */
 						if (iEraseReq == 1) delete pItem;
@@ -12194,7 +11949,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -12206,7 +11961,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 									break;
 								case DEF_OWNERTYPE_NPC:
 									if (m_pNpcList[sOwnerH] == nullptr) goto MAGIC_NOEFFECT;
-									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+									if ((m_pNpcList[sOwnerH]->m_iHP > 0) && (m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 										if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 											SetIceFlag(sOwnerH, cOwnerType, true);
@@ -12223,7 +11978,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false) {
 								//Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, true, iMagicAttr);
 								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, true, iMagicAttr);
-								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false)) {
+								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										SetIceFlag(sOwnerH, cOwnerType, true);
@@ -12878,69 +12633,69 @@ void CGame::TrainSkillResponse(bool bSuccess, int iClientH, int iSkillNum, int i
 	} else {
 	}
 	/*
-	
+
 	std::memset(cData, 0, sizeof(cData));
 	std::memset(cSkillName, 0, sizeof(cSkillName));
 	memcpy(cSkillName, pName, 20);
 	iRet = _iGetSkillNumber(cSkillName);
 	if (iRet == 0) {
-		
+
 	}
 	else {
-		
+
 		if (1) {
-			
+
 			m_pClientList[iClientH]->m_cSkillMastery[iRet]++;
-			
+
 			dwp  = (uint32_t *)(cData + DEF_INDEX4_MSGID);
 	 *dwp = MSGID_NOTIFY;
 			wp   = (uint16_t *)(cData + DEF_INDEX2_MSGTYPE);
 	 *wp  = DEF_NOTIFY_SKILLTRAINSUCCESS;
 			cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);
-			
+
 	 *cp = m_pClientList[iClientH]->m_cSkillMastery[iRet];
 			cp++;
-			
+
 	 *cp = iRet;
 			cp++;
 			memcpy(cp, cSkillName, 20);
 			cp += 20;
-			
+
 			iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 28);
 			switch (iRet) {
 			case DEF_XSOCKEVENT_QUENEFULL:
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				
+
 				m_pClientList[iClientH]->DeleteClient(true, true);
 				return;
 			}
 		}
 		else {
-			
-			
+
+
 			dwp  = (uint32_t *)(cData + DEF_INDEX4_MSGID);
 	 *dwp = MSGID_NOTIFY;
 			wp   = (uint16_t *)(cData + DEF_INDEX2_MSGTYPE);
 	 *wp  = DEF_NOTIFY_SKILLTRAINFAIL;
 			cp = (char *)(cData + DEF_INDEX2_MSGTYPE + 2);
-			
+
 	 *cp = 1;
 			cp++;
-			
+
 	 *cp = iRet;
 			cp++;
 			memcpy(cp, cSkillName, 20);
 			cp += 20;
-			
+
 			iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 28);
 			switch (iRet) {
 			case DEF_XSOCKEVENT_QUENEFULL:
 			case DEF_XSOCKEVENT_SOCKETERROR:
 			case DEF_XSOCKEVENT_CRITICALERROR:
 			case DEF_XSOCKEVENT_SOCKETCLOSED:
-				
+
 				m_pClientList[iClientH]->DeleteClient(true, true);
 				return;
 			}
@@ -13009,7 +12764,7 @@ void CGame::Quit() {
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
 		if (m_pItemConfigList[i] != nullptr) delete m_pItemConfigList[i];
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
-		if (m_pNpcConfigList[i] != nullptr) delete m_pNpcConfigList[i];
+		if (m_pNpcArchetypes[i] != nullptr) delete m_pNpcArchetypes[i];
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
 		if (m_pMagicConfigList[i] != nullptr) delete m_pMagicConfigList[i];
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++)
@@ -13066,7 +12821,7 @@ bool CGame::bCheckLevelUp(int iClientH) // Sobrepaso de lvl fix.
 		}
 		return false;
 	}
-	/*	if ((m_pClientList[iClientH]->m_iLevel > DEF_LIMITHUNTERLEVEL - 1 ) && (m_pClientList[iClientH]->m_bIsHunter == true ) ) 
+	/*	if ((m_pClientList[iClientH]->m_iLevel > DEF_LIMITHUNTERLEVEL - 1 ) && (m_pClientList[iClientH]->m_bIsHunter == true ) )
 		{
 			SetNoHunterMode(iClientH,true) ;
 	 */
@@ -13994,7 +13749,7 @@ void CGame::GetRewardMoneyHandler(int iClientH) {
 		*dwp = pItem->m_dwAttribute;
 		cp += 4;
 		/*
-		 *cp = (char)(pItem->m_dwAttribute & 0x00000001); 
+		 *cp = (char)(pItem->m_dwAttribute & 0x00000001);
 		cp++;
 		 */
 		if (iEraseReq == 1) delete pItem;
@@ -15032,9 +14787,8 @@ void CGame::MobGenerator() {
 				if (iDice(1, 100) <= iProbSA) {
 					cSA = _cGetSpecialAbility(iKindSA);
 				}
-				if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i], (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, bFirmBerserk, true)) == false) {
+				if ((bMaster = m_pMapList[i]->bCreateNewNpc(cNpcName, cName_Master, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, bFirmBerserk, true)) == false) {
 					m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
-				} else {
 				}
 			}
 			switch (iResult) {
@@ -15220,7 +14974,7 @@ void CGame::MobGenerator() {
 					if (iDice(1, 100) <= iProbSA) {
 						cSA = _cGetSpecialAbility(iKindSA);
 					}
-					if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[i], (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, bFirmBerserk) == false) {
+					if (m_pMapList[i]->bCreateNewNpc(cNpcName, cName_Slave, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, nullptr, 0, -1, false, false, bFirmBerserk) == false) {
 						m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
 					} else {
 						bSetNpcFollowMode(cName_Slave, cName_Master, DEF_OWNERTYPE_NPC);
@@ -15513,14 +15267,14 @@ void CGame::MobGenerator() {
 						}
 						switch (m_pMapList[i]->m_stSpotMobGenerator[j].cType) {
 							case 1:
-								if (bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i], (rand() % 3), cSA, DEF_MOVETYPE_RANDOMAREA, &pX, &pY, cWaypoint, &m_pMapList[i]->m_stSpotMobGenerator[j].rcRect, j, -1, false, false, bFirmBerserk) == false) {
+								if (m_pMapList[i]->bCreateNewNpc(cNpcName, cName_Master, (rand() % 3), cSA, DEF_MOVETYPE_RANDOMAREA, &pX, &pY, cWaypoint, &m_pMapList[i]->m_stSpotMobGenerator[j].rcRect, j, -1, false, false, bFirmBerserk) == false) {
 									m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
 								} else {
 									m_pMapList[i]->m_stSpotMobGenerator[j].iCurMobs++;
 								}
 								break;
 							case 2:
-								if (bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i], (rand() % 3), cSA, DEF_MOVETYPE_RANDOMWAYPOINT, nullptr, nullptr, m_pMapList[i]->m_stSpotMobGenerator[j].cWaypoint, nullptr, j, -1, false, false, bFirmBerserk) == false) {
+								if (m_pMapList[i]->bCreateNewNpc(cNpcName, cName_Master, (rand() % 3), cSA, DEF_MOVETYPE_RANDOMWAYPOINT, nullptr, nullptr, m_pMapList[i]->m_stSpotMobGenerator[j].cWaypoint, nullptr, j, -1, false, false, bFirmBerserk) == false) {
 									m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
 								} else {
 									m_pMapList[i]->m_stSpotMobGenerator[j].iCurMobs++;
@@ -16146,7 +15900,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 				}
 				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
-					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness  
+					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness
 						if (cTargetType == DEF_OWNERTYPE_PLAYER) {
 							if (m_pClientList[sTargetH] != nullptr) {
 								iRepDamage = (abs(m_pClientList[sTargetH]->m_iRating) / 20);
@@ -16607,10 +16361,10 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 						// Inhibition Casting
 						if (ev.m_iEffectType == DEF_MAGICTYPE_INHIBITION)
 							m_pClientList[ev.m_iTargetH]->m_bInhibition = false;
-								
+
 						if (ev.m_iEffectType == DEF_MAGICTYPE_INVISIBILITY)
 							SetInvisibilityFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
-								
+
 						if (ev.m_iEffectType == DEF_MAGICTYPE_BERSERK)
 							SetBerserkFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 						// Illusion
@@ -16632,12 +16386,12 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 									break;
 							}
 						}
-								
+
 						if (ev.m_iEffectType == DEF_MAGICTYPE_POLYMORPH) {
 							m_pClientList[ev.m_iTargetH]->m_sType = m_pClientList[ev.m_iTargetH]->m_sOriginalType;
 							SendEventToNearClient_TypeA(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 						}
-								
+
 						if (ev.m_iEffectType == DEF_MAGICTYPE_ICE)
 							SetIceFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 						break;*/

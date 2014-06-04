@@ -182,7 +182,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 												}
 											}
 
-											if ((game_.bCheckResistingIceSuccess(1, sOwnerH, DEF_OWNERTYPE_PLAYER, m_pDynamicObjectList[i]->m_iV1) == false) &&
+											if ((m_pClientList[sOwnerH]->bCheckResistingIceSuccess() == false) &&
 													  (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0)) {
 
 												m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -236,7 +236,7 @@ void DynamicObjects::DynamicObjectEffectProcessor() {
 											game_.SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
 
 
-											if ((game_.bCheckResistingIceSuccess(1, sOwnerH, DEF_OWNERTYPE_NPC, m_pDynamicObjectList[i]->m_iV1) == false) &&
+											if ((game_.m_pNpcList[sOwnerH]->bCheckResistingIceSuccess() == false) &&
 													  (game_.m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0)) {
 
 												game_.m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;

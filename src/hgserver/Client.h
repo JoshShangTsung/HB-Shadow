@@ -7,6 +7,7 @@
 #include "Magic.h"
 #include "GlobalDef.h"
 #include "Map.h"
+#include "Unit.h"
 #include <memory>
 #include <array>
 #include <set>
@@ -47,7 +48,7 @@ struct CClient;
 typedef std::shared_ptr<CClient> ClientPtr;
 typedef std::weak_ptr<CClient> ClientWPtr;
 
-class CClient : public std::enable_shared_from_this<CClient> {
+class CClient : public Unit, public std::enable_shared_from_this<CClient> {
 public:
 	CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket);
 	CGame &game_;
@@ -208,19 +209,19 @@ public:
 	short m_sCharIDnum3;
 	int m_iAbuseCount;
 	bool m_bIsBWMonitor;
-	//bool  m_bIsExchangeMode;		
-	//int   m_iExchangeH;				
-	//char  m_cExchangeName[11];		
-	//char  m_cExchangeItemName[21];	
-	//char  m_cExchangeItemIndex;  
-	//int   m_iExchangeItemAmount; 
-	//bool  m_bIsExchangeConfirm;  
-	bool m_bIsExchangeMode; // Is In Exchange Mode? 
+	//bool  m_bIsExchangeMode;
+	//int   m_iExchangeH;
+	//char  m_cExchangeName[11];
+	//char  m_cExchangeItemName[21];
+	//char  m_cExchangeItemIndex;
+	//int   m_iExchangeItemAmount;
+	//bool  m_bIsExchangeConfirm;
+	bool m_bIsExchangeMode; // Is In Exchange Mode?
 	ClientWPtr exchangingWith_;
-	char m_cExchangeItemName[4][21]; // Name of Item to exchange 
+	char m_cExchangeItemName[4][21]; // Name of Item to exchange
 	char m_cExchangeItemIndex[4]; // ItemID to Exchange
 	int m_iExchangeItemAmount[4]; // Ammount to exchange with
-	bool m_bIsExchangeConfirm; // Has the user hit confirm? 
+	bool m_bIsExchangeConfirm; // Has the user hit confirm?
 	int iExchangeCount; //Keeps track of items which are on list
 	int m_iQuest;
 	int m_iQuestID;
@@ -368,16 +369,26 @@ public:
 	void ReleaseItemHandler(short sItemIndex, bool bNotice);
 	void RequestRestartHandler();
 	void update(uint32_t dwTime);
+private:
+
+	CMap& _getMap() override;
+	UnitPtr _getPtr() override;
+	int _getEffectiveIceResist() override;
+	void _sendEventToNearClient_TypeA(uint32_t dwMsgID, uint16_t wMsgType, short sV1, short sV2, short sV3) override;
 };
 #define DEF_MAXCLIENTS				2000
 
 struct Clients {
 	typedef std::shared_ptr<CClient> value_type;
 	typedef value_type &ref_type;
-	Clients(CGame &game): game_(game){}
+
+	Clients(CGame &game) : game_(game) {
+	}
+
 	void clear() {
 		m_pClientList = Arr();
 	}
+
 	std::shared_ptr<CClient> add(int index, std::unique_ptr<XSocket>&& socket) {
 		std::shared_ptr<CClient> ptr = std::make_shared<CClient>(game_, index, std::move(socket));
 		m_pClientList[index] = ptr;
@@ -391,14 +402,17 @@ struct Clients {
 	ref_type operator[](size_t index) {
 		return m_pClientList[index];
 	}
+
 	std::size_t getTotalClients() const {
 		return totalClients_;
 	}
+
 	std::size_t getMaxClients() const {
 		return maxClients_;
 	}
+
 	void cull() {
-		for(auto &ptr: m_pClientList) {
+		for (auto &ptr : m_pClientList) {
 			if (ptr && ptr->m_bMarkedForDeletion) {
 				RemoveClientShortCut(ptr->id_);
 				ptr.reset();

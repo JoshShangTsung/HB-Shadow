@@ -3,7 +3,7 @@
 #include "Game.h"
 extern char G_cTxt[512];
 
-CNpc::CNpc(int id, CGame &game, const char * pName5): id_(id), game_(game) {
+CNpc::CNpc(int id, CGame &game, const char * pName5) : id_(id), game_(game) {
 	int i;
 	std::memset(m_cName, 0, sizeof (m_cName));
 	memcpy(m_cName, pName5, 5);
@@ -47,7 +47,6 @@ CNpc::CNpc(int id, CGame &game, const char * pName5): id_(id), game_(game) {
 	m_iNpcItemMax = 0;
 
 }
-
 
 void CNpc::RemoveEventNpc() {
 	if (this->m_bIsKilled == true) return;
@@ -177,7 +176,8 @@ bool CNpc::_bNpcBehavior_ManaCollector() {
 			this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 			if (sOwnerH != 0) {
 				switch (cOwnerType) {
-					case DEF_OWNERTYPE_PLAYER:{
+					case DEF_OWNERTYPE_PLAYER:
+					{
 						if (this->m_cSide == clientList[sOwnerH]->m_cSide) {
 							iMaxMP = (2 * clientList[sOwnerH]->m_iMag) + (2 * clientList[sOwnerH]->m_iLevel) + (clientList[sOwnerH]->m_iInt / 2);
 							if (clientList[sOwnerH]->m_iMP < iMaxMP) {
@@ -194,8 +194,10 @@ bool CNpc::_bNpcBehavior_ManaCollector() {
 								clientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_MP, 0, 0, 0, nullptr);
 							}
 						}
-					}break;
-					case DEF_OWNERTYPE_NPC: {
+					}
+						break;
+					case DEF_OWNERTYPE_NPC:
+					{
 						if ((npcList[sOwnerH]->m_sType == 42) && (npcList[sOwnerH]->m_iV1 > 0)) {
 							if (npcList[sOwnerH]->m_iV1 >= 3) {
 								game_.m_iCollectedMana[this->m_cSide] += 3;
@@ -207,7 +209,8 @@ bool CNpc::_bNpcBehavior_ManaCollector() {
 								bRet = true;
 							}
 						}
-					} break;
+					}
+						break;
 				}
 			}
 		}
@@ -352,7 +355,7 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 				return;
 			}
 			pItem->m_dwCount = (uint32_t) (iDice(1, (this->m_iGoldDiceMax - this->m_iGoldDiceMin)) + this->m_iGoldDiceMin);
-			// v1.42 Gold 
+			// v1.42 Gold
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (clientList[sAttackerH]->m_iAddGold != 0)) {
 				dTmp1 = (double) clientList[sAttackerH]->m_iAddGold;
 				dTmp2 = (double) pItem->m_dwCount;
@@ -361,8 +364,8 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 			}
 		} else {
 			// 9000 default; the lower the greater the Weapon/Armor/Wand Drop
-			// 35% Drop 40% of that is an Item 
-			dTmp1 = clientList[sAttackerH]->m_iRating*game_.m_cRepDropModifier;
+			// 35% Drop 40% of that is an Item
+			dTmp1 = clientList[sAttackerH]->m_iRating * game_.m_cRepDropModifier;
 			if (dTmp1 > 3000) dTmp1 = 3000;
 			if (dTmp1 < -3000) dTmp1 = -3000;
 			dTmp2 = (game_.m_iSecondaryDropRate - (dTmp1));
@@ -1118,7 +1121,7 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 		this->map_->bSetItem(this->m_sX,
 				  this->m_sY,
 				  pItem);
-		this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, 
+		this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
 				  this->m_sX, this->m_sY,
 				  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
 		game_._bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, 0, pItem);
@@ -1135,12 +1138,12 @@ void CNpc::NpcRequestAssistance() {
 	for (ix = sX - 8; ix <= sX + 8; ix++)
 		for (iy = sY - 8; iy <= sY + 8; iy++) {
 			this->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
-			if ((sOwnerH != 0) && 
-					  (cOwnerType == DEF_OWNERTYPE_NPC) && 
-					  (npcList[sOwnerH] != nullptr) && 
-					  (sOwnerH != id_) && 
+			if ((sOwnerH != 0) &&
+					  (cOwnerType == DEF_OWNERTYPE_NPC) &&
+					  (npcList[sOwnerH] != nullptr) &&
+					  (sOwnerH != id_) &&
 					  (npcList[sOwnerH]->m_cSide == this->m_cSide) &&
-					  (npcList[sOwnerH]->m_bIsPermAttackMode == false) && 
+					  (npcList[sOwnerH]->m_bIsPermAttackMode == false) &&
 					  (npcList[sOwnerH]->m_cBehavior == DEF_BEHAVIOR_MOVE)) {
 				npcList[sOwnerH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
 				npcList[sOwnerH]->m_sBehaviorTurnCount = 0;
@@ -1196,23 +1199,23 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 	if ((sType < 0) || (sType >= 100)) return;
 	auto &magicCfg = game_.m_pMagicConfigList[sType];
 	if (magicCfg == nullptr) return;
-	
+
 	if (this->map_->m_bIsAttackEnabled == false) return;
-	
+
 	iResult = this->m_iMagicHitRatio;
-	
+
 	iWhetherBonus = game_.iGetWhetherMagicBonusEffect(sType, this->map_->m_cWhetherStatus);
-	
+
 	iMagicAttr = magicCfg->m_iAttribute;
 	auto &clientList = game_.m_pClientList;
 	auto &npcList = game_.m_pNpcList;
 	if (magicCfg->m_dwDelayTime == 0) {
-		
+
 		switch (magicCfg->m_sType) {
 			case DEF_MAGICTYPE_INVISIBILITY:
 				switch (magicCfg->m_sValue4) {
 					case 1:
-						
+
 						this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
@@ -1227,18 +1230,18 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 								if (npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] != 0) goto NMH_NOEFFECT;
 								npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = (char) magicCfg->m_sValue4;
 								game_.SetInvisibilityFlag(sOwnerH, cOwnerType, true);
-								
+
 								game_.RemoveFromTarget(sOwnerH, DEF_OWNERTYPE_NPC);
 								break;
 						}
-						
+
 						game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_INVISIBILITY, dwTime + (magicCfg->m_dwLastTime * 1000),
 								  sOwnerH, cOwnerType, 0, 0, 0, magicCfg->m_sValue4, 0, 0);
 						if (cOwnerType == DEF_OWNERTYPE_PLAYER)
 							clientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_INVISIBILITY, magicCfg->m_sValue4, 0, nullptr);
 						break;
 					case 2:
-						
+
 						for (ix = dX - 8; ix <= dX + 8; ix++)
 							for (iy = dY - 8; iy <= dY + 8; iy++) {
 								this->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
@@ -1271,7 +1274,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 				}
 				break;
 			case DEF_MAGICTYPE_HOLDOBJECT:
-				
+
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false) {
 					switch (cOwnerType) {
@@ -1288,16 +1291,16 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 							npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = (char) magicCfg->m_sValue4;
 							break;
 					}
-					
+
 					game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_HOLDOBJECT, dwTime + (magicCfg->m_dwLastTime * 1000),
 							  sOwnerH, cOwnerType, 0, 0, 0, magicCfg->m_sValue4, 0, 0);
-					
+
 					if (cOwnerType == DEF_OWNERTYPE_PLAYER)
 						clientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_HOLDOBJECT, magicCfg->m_sValue4, 0, nullptr);
 				}
 				break;
 			case DEF_MAGICTYPE_DAMAGE_LINEAR:
-				
+
 				sX = this->m_sX;
 				sY = this->m_sY;
 				for (i = 2; i < 10; i++) {
@@ -1355,10 +1358,10 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 					}
 					if ((abs(tX - dX) <= 1) && (abs(tY - dY) <= 1)) break;
 				}
-				
+
 				for (iy = dY - magicCfg->m_sValue3; iy <= dY + magicCfg->m_sValue3; iy++)
 					for (ix = dX - magicCfg->m_sValue2; ix <= dX + magicCfg->m_sValue2; ix++) {
-						
+
 						this->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 							game_.Effect_Damage_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue7, magicCfg->m_sValue8, magicCfg->m_sValue9 + iWhetherBonus, false, iMagicAttr);
@@ -1392,7 +1395,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 				}
 				break;
 			case DEF_MAGICTYPE_HPUP_SPOT:
-				
+
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				game_.Effect_HpUp_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6);
 				break;
@@ -1410,10 +1413,10 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 					if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 						game_.Effect_Damage_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6 + iWhetherBonus, true, iMagicAttr);
 				}
-				
+
 				for (iy = dY - magicCfg->m_sValue3; iy <= dY + magicCfg->m_sValue3; iy++)
 					for (ix = dX - magicCfg->m_sValue2; ix <= dX + magicCfg->m_sValue2; ix++) {
-						
+
 						this->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 							game_.Effect_Damage_Spot_DamageMove(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, magicCfg->m_sValue7, magicCfg->m_sValue8, magicCfg->m_sValue9 + iWhetherBonus, false, iMagicAttr);
@@ -1426,10 +1429,10 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 					}
 				break;
 			case DEF_MAGICTYPE_DAMAGE_AREA_NOSPOT:
-				
+
 				for (iy = dY - magicCfg->m_sValue3; iy <= dY + magicCfg->m_sValue3; iy++)
 					for (ix = dX - magicCfg->m_sValue2; ix <= dX + magicCfg->m_sValue2; ix++) {
-						
+
 						this->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 							game_.Effect_Damage_Spot_DamageMove(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, magicCfg->m_sValue7, magicCfg->m_sValue8, magicCfg->m_sValue9 + iWhetherBonus, false, iMagicAttr);
@@ -1442,45 +1445,45 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 					}
 				break;
 			case DEF_MAGICTYPE_SPDOWN_AREA:
-				
+
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 					game_.Effect_SpDown_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6);
-				
+
 				for (iy = dY - magicCfg->m_sValue3; iy <= dY + magicCfg->m_sValue3; iy++)
 					for (ix = dX - magicCfg->m_sValue2; ix <= dX + magicCfg->m_sValue2; ix++) {
-						
+
 						this->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 							game_.Effect_SpDown_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue7, magicCfg->m_sValue8, magicCfg->m_sValue9);
 					}
 				break;
 			case DEF_MAGICTYPE_SPUP_AREA:
-				
+
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
-				
+
 				game_.Effect_SpUp_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6);
-				
+
 				for (iy = dY - magicCfg->m_sValue3; iy <= dY + magicCfg->m_sValue3; iy++)
 					for (ix = dX - magicCfg->m_sValue2; ix <= dX + magicCfg->m_sValue2; ix++) {
-						
+
 						this->map_->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
-						
+
 						game_.Effect_SpUp_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue7, magicCfg->m_sValue8, magicCfg->m_sValue9);
 					}
 				break;
 		}
 	} else {
-		
+
 	}
 NMH_NOEFFECT:
 	;
-	
-	this->m_iMana -= magicCfg->m_sValue1; 
+
+	this->m_iMana -= magicCfg->m_sValue1;
 	if (this->m_iMana < 0)
 		this->m_iMana = 0;
-	
-	this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, 
+
+	this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC,
 			  this->m_sX, this->m_sY, dX, dY, (sType + 100), this->m_sType);
 }
 
@@ -1518,7 +1521,7 @@ void CNpc::NpcBehavior_Stop() {
 						this->_NpcBehavior_GrandMagicGenerator();
 					}
 					break;
-				case 42: 
+				case 42:
 					this->m_sBehaviorTurnCount = 0;
 					this->m_iV1 += 5;
 					if (this->m_iV1 >= 5) this->m_iV1 = 5;
@@ -1530,12 +1533,12 @@ void CNpc::NpcBehavior_Stop() {
 			break;
 	}
 	if ((sTarget != 0)) {
-		
+
 		this->m_cBehavior = DEF_BEHAVIOR_ATTACK;
 		this->m_sBehaviorTurnCount = 0;
 		this->m_iTargetIndex = sTarget;
 		this->m_cTargetType = cTargetType;
-		
+
 		return;
 	}
 }
@@ -1592,7 +1595,7 @@ void CNpc::DeleteNpc() {
 		switch (this->m_sType) {
 			case 10: // Slime
 				if (iDice(1, 25) == 1) iItemID = 220;
-				break; // SlimeJelly 
+				break; // SlimeJelly
 				break;
 			case 11: // Skeleton
 				switch (iDice(1, 2)) {
@@ -1966,7 +1969,8 @@ void CNpc::CalcNextWayPointDestination() {
 			sRange = (short) (this->m_rcRandomArea.bottom - this->m_rcRandomArea.top);
 			this->m_dY = (short) ((rand() % sRange) + this->m_rcRandomArea.top);
 			break;
-		case DEF_MOVETYPE_RANDOM: {
+		case DEF_MOVETYPE_RANDOM:
+		{
 			//this->m_dX = (rand() % (this->map_->m_sSizeX - 50)) + 15;
 			//this->m_dY = (rand() % (this->map_->m_sSizeY - 50)) + 15;
 			auto map = this->map_;
@@ -1992,7 +1996,8 @@ CNW_GET_VALIDLOC_SUCCESS:
 			;
 			this->m_dX = sX;
 			this->m_dY = sY;
-		} break;
+		}
+			break;
 	}
 	this->m_tmp_iError = 0; // @@@ !!! @@@
 }
@@ -2040,14 +2045,14 @@ void CNpc::NpcBehavior_Flee() {
 	short sTarget;
 	char cTargetType;
 	if (this->m_bIsKilled == true) return;
-	
+
 	this->m_sBehaviorTurnCount++;
-	
+
 	switch (this->m_iAttackStrategy) {
-		case DEF_ATTACKAI_EXCHANGEATTACK: 
-		case DEF_ATTACKAI_TWOBYONEATTACK: 
+		case DEF_ATTACKAI_EXCHANGEATTACK:
+		case DEF_ATTACKAI_TWOBYONEATTACK:
 			if (this->m_sBehaviorTurnCount >= 2) {
-				
+
 				this->m_cBehavior = DEF_BEHAVIOR_ATTACK;
 				this->m_sBehaviorTurnCount = 0;
 				return;
@@ -2058,12 +2063,12 @@ void CNpc::NpcBehavior_Flee() {
 			break;
 	}
 	if (this->m_sBehaviorTurnCount > 10) {
-		
+
 		this->m_sBehaviorTurnCount = 0;
 		this->m_cBehavior = DEF_BEHAVIOR_MOVE;
 		this->m_tmp_iError = 0;
 		if (this->m_iHP <= 3) {
-			this->m_iHP += iDice(1, this->m_iHitDice); 
+			this->m_iHP += iDice(1, this->m_iHitDice);
 			if (this->m_iHP <= 0) this->m_iHP = 1;
 		}
 		return;
@@ -2073,7 +2078,7 @@ void CNpc::NpcBehavior_Flee() {
 		this->m_iTargetIndex = sTarget;
 		this->m_cTargetType = cTargetType;
 	}
-	
+
 	sX = this->m_sX;
 	sY = this->m_sY;
 	auto &clientList = game_.m_pClientList;
@@ -2092,13 +2097,13 @@ void CNpc::NpcBehavior_Flee() {
 	dY = sY - (dY - sY);
 	cDir = this->map_->cGetNextMoveDir(sX, sY, dX, dY, this->m_cTurn, &this->m_tmp_iError);
 	if (cDir == 0) {
-		
+
 	} else {
 		dX = this->m_sX + _tmp_cTmpDirX[cDir];
 		dY = this->m_sY + _tmp_cTmpDirY[cDir];
-		
+
 		this->map_->ClearOwner(11, id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
-		
+
 		this->map_->SetOwner(id_, DEF_OWNERTYPE_NPC, dX, dY);
 		this->m_sX = dX;
 		this->m_sY = dY;
@@ -2142,7 +2147,7 @@ void CNpc::NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage)
 	this->NpcDeadItemGenerator(sAttackerH, cAttackerType);
 	if ((this->m_bIsSummoned != true) && (cAttackerType == DEF_OWNERTYPE_PLAYER) &&
 			  (clientList[sAttackerH] != nullptr)) {
-		//Happy Hour para vos 
+		//Happy Hour para vos
 		if (game_.m_bHappyHour == true) {
 			iExp = (this->m_iExp);
 		} else {
@@ -2194,7 +2199,7 @@ void CNpc::NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage)
 		switch (this->m_sType) {
 			case 32:
 				clientList[sAttackerH]->m_iRating -= 0;
-				
+
 				clientList[sAttackerH]->m_iRating -= 0;
 				if (clientList[sAttackerH]->m_iRating > 10000) clientList[sAttackerH]->m_iRating = 10000;
 				if (clientList[sAttackerH]->m_iRating < -10000) clientList[sAttackerH]->m_iRating = -10000;
@@ -2381,7 +2386,7 @@ void CNpc::NpcBehavior_Move() {
 	if ((this->m_bIsSummoned == true) &&
 			  (this->m_iSummonControlMode == 1)) return;
 	if (this->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) return;
-	
+
 	switch (this->m_cActionLimit) {
 		case 2:
 		case 3:
@@ -2390,55 +2395,55 @@ void CNpc::NpcBehavior_Move() {
 			this->m_sBehaviorTurnCount = 0;
 			return;
 	}
-	
+
 	int iStX;
-	
+
 	int iStY;
 	if (this->map_) {
 		iStX = this->m_sX / 20;
 		iStY = this->m_sY / 20;
 		this->map_->m_stTempSectorInfo[iStX][iStY].iMonsterActivity++;
 	}
-	
+
 	this->m_sBehaviorTurnCount++;
 	if (this->m_sBehaviorTurnCount > 5) {
-		
+
 		this->m_sBehaviorTurnCount = 0;
-		
+
 		absX = abs(this->m_vX - this->m_sX);
 		absY = abs(this->m_vY - this->m_sY);
 		if ((absX <= 2) && (absY <= 2)) {
-			
+
 			this->CalcNextWayPointDestination();
 		}
 		this->m_vX = this->m_sX;
 		this->m_vY = this->m_sY;
 	}
-	
+
 	this->TargetSearch(&sTarget, &cTargetType);
 	if (sTarget != 0) {
-		
+
 		if (this->m_dwActionTime < 1000) {
-			
+
 			if (iDice(1, 3) == 3) {
 				this->m_cBehavior = DEF_BEHAVIOR_ATTACK;
 				this->m_sBehaviorTurnCount = 0;
 				this->m_iTargetIndex = sTarget;
 				this->m_cTargetType = cTargetType;
-				
+
 				return;
 			}
 		} else {
-			
+
 			this->m_cBehavior = DEF_BEHAVIOR_ATTACK;
 			this->m_sBehaviorTurnCount = 0;
 			this->m_iTargetIndex = sTarget;
 			this->m_cTargetType = cTargetType;
-			
+
 			return;
 		}
 	}
-	
+
 	if ((this->m_bIsMaster == true) && (iDice(1, 3) == 2)) return;
 	if (this->m_cMoveType == DEF_MOVETYPE_FOLLOW) {
 		sX = this->m_sX;
@@ -2469,16 +2474,16 @@ void CNpc::NpcBehavior_Move() {
 			sDistance = abs(sX - dX);
 		else sDistance = abs(sY - dY);
 		if (sDistance >= 3) {
-			
+
 			cDir = this->map_->cGetNextMoveDir(sX, sY, dX, dY, this->m_cTurn, &this->m_tmp_iError);
 			if (cDir == 0) {
-				
+
 			} else {
 				dX = this->m_sX + _tmp_cTmpDirX[cDir];
 				dY = this->m_sY + _tmp_cTmpDirY[cDir];
-				
+
 				this->map_->ClearOwner(3, id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
-				
+
 				this->map_->SetOwner(id_, DEF_OWNERTYPE_NPC, dX, dY);
 				this->m_sX = dX;
 				this->m_sY = dY;
@@ -2487,19 +2492,19 @@ void CNpc::NpcBehavior_Move() {
 			}
 		}
 	} else {
-		
+
 		cDir = this->map_->cGetNextMoveDir(this->m_sX, this->m_sY,
 				  this->m_dX, this->m_dY,
 				  this->m_cTurn, &this->m_tmp_iError);
 		if (cDir == 0) {
-			
+
 			if (iDice(1, 10) == 3) this->CalcNextWayPointDestination();
 		} else {
 			dX = this->m_sX + _tmp_cTmpDirX[cDir];
 			dY = this->m_sY + _tmp_cTmpDirY[cDir];
-			
+
 			this->map_->ClearOwner(4, id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
-			
+
 			this->map_->SetOwner(id_, DEF_OWNERTYPE_NPC, dX, dY);
 			this->m_sX = dX;
 			this->m_sY = dY;
@@ -2541,7 +2546,7 @@ void CNpc::TargetSearch(short * pTarget, char * pTargetType) {
 							this->map_->ClearOwner(5, sOwner, DEF_OWNERTYPE_PLAYER, ix, iy);
 						} else {
 							if (clientList[sOwner]->m_iAdminUserLevel > 0) goto SKIP_SEARCH;
-							if (clientList[sOwner]->m_cSide == 0) goto SKIP_SEARCH; 
+							if (clientList[sOwner]->m_cSide == 0) goto SKIP_SEARCH;
 							dX = clientList[sOwner]->m_sX;
 							dY = clientList[sOwner]->m_sY;
 							cTargetSide = clientList[sOwner]->m_cSide;
@@ -2615,29 +2620,29 @@ void CNpc::NpcBehavior_Attack() {
 		case 5:
 			if (this->m_iBuildCount > 0) return;
 	}
-	
+
 	int iStX;
-	
+
 	int iStY;
 	if (this->map_ != nullptr) {
 		iStX = this->m_sX / 20;
 		iStY = this->m_sY / 20;
 		this->map_->m_stTempSectorInfo[iStX][iStY].iMonsterActivity++;
 	}
-	
+
 	if (this->m_sBehaviorTurnCount == 0)
 		this->m_iAttackCount = 0;
-	
+
 	this->m_sBehaviorTurnCount++;
 	if (this->m_sBehaviorTurnCount > 20) {
-		
+
 		this->m_sBehaviorTurnCount = 0;
 		if ((this->m_bIsPermAttackMode == false))
 			this->m_cBehavior = DEF_BEHAVIOR_MOVE;
-		
+
 		return;
 	}
-	
+
 	sX = this->m_sX;
 	sY = this->m_sY;
 	auto &clientList = game_.m_pClientList;
@@ -2645,7 +2650,7 @@ void CNpc::NpcBehavior_Attack() {
 	switch (this->m_cTargetType) {
 		case DEF_OWNERTYPE_PLAYER:
 			if (clientList[this->m_iTargetIndex] == nullptr) {
-				
+
 				this->m_sBehaviorTurnCount = 0;
 				this->m_cBehavior = DEF_BEHAVIOR_MOVE;
 				return;
@@ -2655,7 +2660,7 @@ void CNpc::NpcBehavior_Attack() {
 			break;
 		case DEF_OWNERTYPE_NPC:
 			if (npcList[this->m_iTargetIndex] == nullptr) {
-				
+
 				this->m_sBehaviorTurnCount = 0;
 				this->m_cBehavior = DEF_BEHAVIOR_MOVE;
 				return;
@@ -2664,7 +2669,7 @@ void CNpc::NpcBehavior_Attack() {
 			dY = npcList[this->m_iTargetIndex]->m_sY;
 			break;
 	}
-	
+
 	if ((this->iGetDangerValue(dX, dY) > this->m_cBravery) &&
 			  (this->m_bIsPermAttackMode == false) &&
 			  (this->m_cActionLimit != 5)) {
@@ -2672,7 +2677,7 @@ void CNpc::NpcBehavior_Attack() {
 		this->m_cBehavior = DEF_BEHAVIOR_FLEE;
 		return;
 	}
-	
+
 	if ((this->m_iHP <= 2) && (iDice(1, this->m_cBravery) <= 3) &&
 			  (this->m_bIsPermAttackMode == false) &&
 			  (this->m_cActionLimit != 5)) {
@@ -2682,13 +2687,13 @@ void CNpc::NpcBehavior_Attack() {
 	}
 	auto &magicCfgs = game_.m_pMagicConfigList;
 	if ((abs(sX - dX) <= 1) && (abs(sY - dY) <= 1)) {
-		
+
 		cDir = game_.m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
 		if (cDir == 0) return;
-		
+
 		this->m_cDir = cDir;
 		if (this->m_cActionLimit == 5) {
-			
+
 			switch (this->m_sType) {
 				case 89:
 					game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
@@ -2699,7 +2704,7 @@ void CNpc::NpcBehavior_Attack() {
 					game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 					game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2);
 					break;
-				case 36: 
+				case 36:
 					game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 2); // Ȱ
 					game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2, false, false, false);
 					break;
@@ -2710,21 +2715,21 @@ void CNpc::NpcBehavior_Attack() {
 					break;
 			}
 		} else {
-			
-			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1); 
-			game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 1, false, false); 
+
+			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
+			game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 1, false, false);
 		}
-		
+
 		this->m_iAttackCount++;
 		if ((this->m_bIsPermAttackMode == false) && (this->m_cActionLimit == 0)) {
 			switch (this->m_iAttackStrategy) {
 				case DEF_ATTACKAI_EXCHANGEATTACK:
-					
+
 					this->m_sBehaviorTurnCount = 0;
 					this->m_cBehavior = DEF_BEHAVIOR_FLEE;
 					break;
 				case DEF_ATTACKAI_TWOBYONEATTACK:
-					
+
 					if (this->m_iAttackCount >= 2) {
 						this->m_sBehaviorTurnCount = 0;
 						this->m_cBehavior = DEF_BEHAVIOR_FLEE;
@@ -2739,7 +2744,7 @@ void CNpc::NpcBehavior_Attack() {
 		if ((this->m_cMagicLevel > 0) && (iDice(1, 2) == 1) &&
 				  (abs(sX - dX) <= 9) && (abs(sY - dY) <= 7)) {
 			iMagicType = -1;
-			switch (this->m_cMagicLevel) { 
+			switch (this->m_cMagicLevel) {
 				case 1:
 					if (magicCfgs[0]->m_sValue1 <= this->m_iMana)
 						iMagicType = 0;
@@ -2841,37 +2846,37 @@ void CNpc::NpcBehavior_Attack() {
 					switch (this->m_cTargetType) {
 						case DEF_OWNERTYPE_PLAYER:
 							if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] == 2) {
-								
+
 								if ((abs(sX - dX) > this->m_iAttackRange) || (abs(sY - dY) > this->m_iAttackRange)) {
 									this->m_sBehaviorTurnCount = 0;
 									this->m_cBehavior = DEF_BEHAVIOR_MOVE;
 									return;
 								} else goto NBA_CHASE;
 							}
-							
+
 							if ((iMagicType == 35) && (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
 							break;
 						case DEF_OWNERTYPE_NPC:
 							if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] == 2) {
-								
+
 								if ((abs(sX - dX) > this->m_iAttackRange) || (abs(sY - dY) > this->m_iAttackRange)) {
 									this->m_sBehaviorTurnCount = 0;
 									this->m_cBehavior = DEF_BEHAVIOR_MOVE;
 									return;
 								} else goto NBA_CHASE;
 							}
-							
+
 							if ((iMagicType == 35) && (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
 							break;
 					}
 				}
-				game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1); 
+				game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
 				this->NpcMagicHandler(dX, dY, iMagicType);
 				this->m_dwTime = dwTime + 2000;
 				return;
 			}
 		}
-		
+
 		if ((this->m_cMagicLevel < 0) && (iDice(1, 2) == 1) &&
 				  (abs(sX - dX) <= 9) && (abs(sY - dY) <= 7)) {
 			iMagicType = -1;
@@ -2882,18 +2887,18 @@ void CNpc::NpcBehavior_Attack() {
 			else if (magicCfgs[0]->m_sValue1 <= this->m_iMana)
 				iMagicType = 0;
 			if (iMagicType != -1) {
-				game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1); 
+				game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, this->m_sX + _tmp_cTmpDirX[cDir], this->m_sY + _tmp_cTmpDirY[cDir], 1);
 				this->NpcMagicHandler(dX, dY, iMagicType);
 				this->m_dwTime = dwTime + 2000;
 				return;
 			}
 		}
-		
+
 		if ((this->m_iAttackRange > 1) &&
 				  (abs(sX - dX) <= this->m_iAttackRange) && (abs(sY - dY) <= this->m_iAttackRange)) {
 			cDir = game_.m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
 			if (cDir == 0) return;
-			
+
 			this->m_cDir = cDir;
 			if (this->m_cActionLimit == 5) {
 				switch (this->m_sType) {
@@ -2901,7 +2906,7 @@ void CNpc::NpcBehavior_Attack() {
 						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2);
 						break;
-					case 37: 
+					case 37:
 						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 						this->m_iMagicHitRatio = 1000;
 						this->NpcMagicHandler(dX, dY, 61);
@@ -2909,13 +2914,13 @@ void CNpc::NpcBehavior_Attack() {
 				}
 			} else {
 				switch (this->m_sType) {
-					case 51: 
+					case 51:
 						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 						this->m_iMagicHitRatio = 1000;
 						this->NpcMagicHandler(dX, dY, 61);
 						break;
-					case 54: 
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2); 
+					case 54:
+						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 2);
 						break;
 					case 63: // Frost
@@ -2926,14 +2931,14 @@ void CNpc::NpcBehavior_Attack() {
 								if ((magicCfgs[57]->m_sValue1 <= this->m_iMana) && (iDice(1, 3) == 2))
 									this->NpcMagicHandler(dX, dY, 57);
 								if ((clientList[this->m_iTargetIndex]->m_iHP > 0) &&
-										  (game_.bCheckResistingIceSuccess(this->m_cDir, this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, this->m_iMagicHitRatio) == false)) {
+										  (this->bCheckResistingIceSuccess() == false)) {
 									if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, true);
-										
+
 										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
-										
+
 										clientList[this->m_iTargetIndex]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, 0, nullptr);
 									}
 								}
@@ -2943,30 +2948,30 @@ void CNpc::NpcBehavior_Attack() {
 								if ((magicCfgs[57]->m_sValue1 <= this->m_iMana) && (iDice(1, 3) == 2))
 									this->NpcMagicHandler(dX, dY, 57);
 								if ((npcList[this->m_iTargetIndex]->m_iHP > 0) &&
-										  (game_.bCheckResistingIceSuccess(this->m_cDir, this->m_iTargetIndex, DEF_OWNERTYPE_NPC, this->m_iMagicHitRatio) == false)) {
+										  (this->bCheckResistingIceSuccess() == false)) {
 									if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_NPC, true);
-										
+
 										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_NPC, 0, 0, 0, 1, 0, 0);
 									}
 								}
 								break;
 						}
-					case 53: 
+					case 53:
 						switch (this->m_cTargetType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (clientList[this->m_iTargetIndex] == nullptr) goto NBA_BREAK1;
 								if ((clientList[this->m_iTargetIndex]->m_iHP > 0) &&
-										  (game_.bCheckResistingIceSuccess(this->m_cDir, this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, this->m_iMagicHitRatio) == false)) {
+										  (this->bCheckResistingIceSuccess() == false)) {
 									if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, true);
-										
+
 										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
-										
+
 										clientList[this->m_iTargetIndex]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, 0, nullptr);
 									}
 								}
@@ -2974,11 +2979,11 @@ void CNpc::NpcBehavior_Attack() {
 							case DEF_OWNERTYPE_NPC:
 								if (npcList[this->m_iTargetIndex] == nullptr) goto NBA_BREAK1;
 								if ((npcList[this->m_iTargetIndex]->m_iHP > 0) &&
-										  (game_.bCheckResistingIceSuccess(this->m_cDir, this->m_iTargetIndex, DEF_OWNERTYPE_NPC, this->m_iMagicHitRatio) == false)) {
+										  (this->bCheckResistingIceSuccess() == false)) {
 									if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_NPC, true);
-										
+
 										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_NPC, 0, 0, 0, 1, 0, 0);
 									}
@@ -2987,26 +2992,26 @@ void CNpc::NpcBehavior_Attack() {
 						}
 NBA_BREAK1:
 						;
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20); 
+						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 20);
 						break;
 					default:
-						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20); 
+						game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20);
 						game_.iCalculateAttackEffect(this->m_iTargetIndex, this->m_cTargetType, id_, DEF_OWNERTYPE_NPC, dX, dY, 20);
 						break;
 				}
 			}
-			
+
 			this->m_iAttackCount++;
 			if ((this->m_bIsPermAttackMode == false) && (this->m_cActionLimit == 0)) {
 				switch (this->m_iAttackStrategy) {
 					case DEF_ATTACKAI_EXCHANGEATTACK:
-						
+
 						this->m_sBehaviorTurnCount = 0;
 						this->m_cBehavior = DEF_BEHAVIOR_FLEE;
 						break;
 					case DEF_ATTACKAI_TWOBYONEATTACK:
-						
+
 						if (this->m_iAttackCount >= 2) {
 							this->m_sBehaviorTurnCount = 0;
 							this->m_cBehavior = DEF_BEHAVIOR_FLEE;
@@ -3016,28 +3021,198 @@ NBA_BREAK1:
 			}
 			return;
 		}
-		
+
 NBA_CHASE:
 		;
 		if (this->m_cActionLimit != 0) return;
-		
+
 		this->m_iAttackCount = 0;
 		{
-			
+
 			cDir = this->map_->cGetNextMoveDir(sX, sY, dX, dY, this->m_cTurn, &this->m_tmp_iError);
 			if (cDir == 0) {
 				return;
 			}
 			dX = this->m_sX + _tmp_cTmpDirX[cDir];
 			dY = this->m_sY + _tmp_cTmpDirY[cDir];
-			
+
 			this->map_->ClearOwner(9, id_, DEF_OWNERTYPE_NPC, this->m_sX, this->m_sY);
-			
+
 			this->map_->SetOwner(id_, DEF_OWNERTYPE_NPC, dX, dY);
 			this->m_sX = dX;
 			this->m_sY = dY;
 			this->m_cDir = cDir;
 			game_.SendEventToNearClient_TypeA(id_, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, 0, 0, 0);
+		}
+	}
+}
+
+UnitPtr CNpc::_getPtr() {
+	return shared_from_this();
+}
+
+CMap &CNpc::_getMap() {
+	return *map_;
+}
+
+int CNpc::_getEffectiveIceResist() {
+	return (this->m_cResistMagic) - (this->m_cResistMagic / 3);
+}
+
+void CNpc::_sendEventToNearClient_TypeA(uint32_t dwMsgID, uint16_t wMsgType, short sV1, short sV2, short sV3) {
+	int * ip;
+	char * cp_a, * cp_s, * cp_sv, cData_All[200], cData_Srt[200], cData_Srt_Av[200];
+	uint32_t * dwp;
+	uint16_t * wp;
+	int * ipStatus, iDumm;
+	short * sp, sRange, sX, sY;
+	char cKey;
+	int iTemp;
+	int iTemp2;
+	std::memset(cData_All, 0, sizeof (cData_All));
+	std::memset(cData_Srt, 0, sizeof (cData_Srt));
+	std::memset(cData_Srt_Av, 0, sizeof (cData_Srt_Av));
+	ipStatus = (int *) &iDumm;
+	cKey = (rand() % 255) + 1;
+	dwp = (uint32_t *) (cData_All + DEF_INDEX4_MSGID);
+	*dwp = dwMsgID;
+	wp = (uint16_t *) (cData_All + DEF_INDEX2_MSGTYPE);
+	*wp = wMsgType;
+	dwp = (uint32_t *) (cData_Srt + DEF_INDEX4_MSGID);
+	*dwp = dwMsgID;
+	wp = (uint16_t *) (cData_Srt + DEF_INDEX2_MSGTYPE);
+	*wp = wMsgType;
+	dwp = (uint32_t *) (cData_Srt_Av + DEF_INDEX4_MSGID);
+	*dwp = dwMsgID;
+	wp = (uint16_t *) (cData_Srt_Av + DEF_INDEX2_MSGTYPE);
+	*wp = wMsgType;
+	cp_a = (char *) (cData_All + DEF_INDEX2_MSGTYPE + 2);
+	cp_s = (char *) (cData_Srt + DEF_INDEX2_MSGTYPE + 2);
+	cp_sv = (char *) (cData_Srt_Av + DEF_INDEX2_MSGTYPE + 2);
+	if ((dwMsgID == MSGID_EVENT_LOG) || (wMsgType == DEF_OBJECTMOVE) || (wMsgType == DEF_OBJECTRUN) ||
+			  (wMsgType == DEF_OBJECTATTACKMOVE) || (wMsgType == DEF_OBJECTDAMAGEMOVE) || (wMsgType == DEF_OBJECTDYING))
+		sRange = 1;
+	else sRange = 0;
+
+	wp = (uint16_t *) cp_a;
+	*wp = id_ + 10000;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	sX = this->m_sX;
+	*sp = sX;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	sY = this->m_sY;
+	*sp = sY;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	*sp = this->m_sType;
+	cp_a += 2;
+	*cp_a = this->m_cDir;
+	cp_a++;
+	memcpy(cp_a, this->m_cName, 5);
+	cp_a += 5;
+	sp = (short *) cp_a;
+	*sp = this->m_sAppr2;
+	cp_a += 2;
+	ip = (int *) cp_a;
+	ipStatus = ip;
+	*ip = this->m_iStatus;
+	cp_a += 4;
+	if (wMsgType == DEF_OBJECTNULLACTION) {
+		if (this->m_bIsKilled == true)
+			*cp_a = 1;
+		else *cp_a = 0;
+	} else *cp_a = 0;
+	cp_a++;
+	wp = (uint16_t *) cp_s;
+	*wp = id_ + 40000;
+	cp_s += 2;
+	*cp_s = this->m_cDir;
+	cp_s++;
+	*cp_s = (unsigned char) sV1;
+	cp_s++;
+	*cp_s = (unsigned char) sV2;
+	cp_s++;
+	sp = (short *) cp_s;
+	sX = this->m_sX;
+	*sp = sX;
+	cp_s += 2;
+	sp = (short *) cp_s;
+	sY = this->m_sY;
+	*sp = sY;
+	cp_s += 2;
+	wp = (uint16_t *) cp_sv;
+	*wp = id_ + 40000;
+	cp_sv += 2;
+	*cp_sv = this->m_cDir;
+	cp_sv++;
+	*cp_sv = sV1 - sX;
+	cp_sv++;
+	*cp_sv = sV2 - sY;
+	cp_sv++;
+	sp = (short *) cp_sv;
+	*sp = sV3;
+	cp_sv += 2;
+	for (auto &clientIter : game_.m_pClientList) {
+		if ((clientIter.map_ == this->map_) &&
+				  (clientIter.m_sX >= this->m_sX - 10 - sRange) &&
+				  (clientIter.m_sX <= this->m_sX + 10 + sRange) &&
+				  (clientIter.m_sY >= this->m_sY - 8 - sRange) &&
+				  (clientIter.m_sY <= this->m_sY + 8 + sRange)) {
+			iTemp = *ipStatus;
+			iTemp = 0x0FFFFFFF & iTemp;
+			iTemp2 = game_.iGetNpcRelationship(id_, clientIter.id_);
+			iTemp = (iTemp | (iTemp2 << 28));
+			*ipStatus = iTemp;
+			if ((clientIter.m_sX >= this->m_sX - 9) &&
+					  (clientIter.m_sX <= this->m_sX + 9) &&
+					  (clientIter.m_sY >= this->m_sY - 7) &&
+					  (clientIter.m_sY <= this->m_sY + 7)) {
+				switch (wMsgType) {
+					case DEF_MSGTYPE_CONFIRM:
+					case DEF_MSGTYPE_REJECT:
+					case DEF_OBJECTNULLACTION:
+						clientIter.m_pXSock->iSendMsg(cData_All, 27, cKey);
+						break;
+					case DEF_OBJECTDYING:
+						clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+						break;
+					case DEF_OBJECTDAMAGE:
+					case DEF_OBJECTDAMAGEMOVE:
+						clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+						break;
+					case DEF_OBJECTATTACK:
+					case DEF_OBJECTATTACKMOVE:
+						clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+						break;
+					default:
+						clientIter.m_pXSock->iSendMsg(cData_Srt, 9, cKey);
+						break;
+				} //Switch
+			} else {
+				switch (wMsgType) {
+					case DEF_MSGTYPE_CONFIRM:
+					case DEF_MSGTYPE_REJECT:
+					case DEF_OBJECTNULLACTION:
+						clientIter.m_pXSock->iSendMsg(cData_All, 27, cKey);
+						break;
+					case DEF_OBJECTDYING:
+						clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+						break;
+					case DEF_OBJECTDAMAGE:
+					case DEF_OBJECTDAMAGEMOVE:
+						clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+						break;
+					case DEF_OBJECTATTACK:
+					case DEF_OBJECTATTACKMOVE:
+						clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+						break;
+					default:
+						clientIter.m_pXSock->iSendMsg(cData_All, 27, cKey);
+						break;
+				} //Switch
+			}
 		}
 	}
 }

@@ -56,28 +56,28 @@
 #define DEF_AUTOSAVETIME			600000
 #define DEF_AFKTIME                    150000 // Five Minutes
 #define MAX_HELDENIANTOWER			200
-#define DEF_EXPSTOCKTIME		1000*10		
-#define DEF_MSGQUENESIZE		100000		
-#define DEF_AUTOEXPTIME			1000*60*6	
-#define DEF_TOTALLEVELUPPOINT	3			
+#define DEF_EXPSTOCKTIME		1000*10
+#define DEF_MSGQUENESIZE		100000
+#define DEF_AUTOEXPTIME			1000*60*6
+#define DEF_TOTALLEVELUPPOINT	3
 #define DEF_MAXDYNAMICOBJECTS	60000
 #define DEF_GUILDSTARTRANK		12
-#define DEF_SSN_LIMIT_MULTIPLY_VALUE	2	
-#define DEF_MAXNOTIFYMSGS		300			
-#define DEF_MAXSKILLPOINTS		700			
+#define DEF_SSN_LIMIT_MULTIPLY_VALUE	2
+#define DEF_MAXNOTIFYMSGS		300
+#define DEF_MAXSKILLPOINTS		700
 #define DEF_NIGHTTIME			40
-#define DEF_CHARPOINTLIMIT		1000		
-#define DEF_RAGPROTECTIONTIME	7000		
-#define DEF_MAXREWARDGOLD		99999999	
-#define DEF_ATTACKAI_NORMAL				1	
-#define DEF_ATTACKAI_EXCHANGEATTACK		2	
-#define DEF_ATTACKAI_TWOBYONEATTACK		3	
+#define DEF_CHARPOINTLIMIT		1000
+#define DEF_RAGPROTECTIONTIME	7000
+#define DEF_MAXREWARDGOLD		99999999
+#define DEF_ATTACKAI_NORMAL				1
+#define DEF_ATTACKAI_EXCHANGEATTACK		2
+#define DEF_ATTACKAI_TWOBYONEATTACK		3
 #define DEF_MAXFISHS					200
 #define DEF_MAXMINERALS					200
 #define	DEF_MAXCROPS					200
-#define DEF_MAXENGAGINGFISH				30  
-#define DEF_MAXPORTIONTYPES				500 
-#define DEF_SPECIALEVENTTIME			300000 
+#define DEF_MAXENGAGINGFISH				30
+#define DEF_MAXPORTIONTYPES				500
+#define DEF_SPECIALEVENTTIME			300000
 #define DEF_MAXQUESTTYPE				200
 #define DEF_DEF_MAXHELDENIANDOOR			10
 #define DEF_MAXSUBLOGSOCK				10
@@ -100,7 +100,7 @@
 #define DEF_ITEMLOG_MAGICLEARN			16
 #define DEF_ITEMLOG_USE					32
 #define DEF_MAXDUPITEMID				100
-#define DEF_MAXGUILDS					1000 
+#define DEF_MAXGUILDS					1000
 #define DEF_MAXCONSTRUCTNUM				10
 #define DEF_MAXSCHEDULE					10
 #define DEF_MAXHELDENIAN				10
@@ -111,13 +111,13 @@
 #define DEF_CRITICALSGM                2000
 #define DEF_MAXCRITICALS            5000
 
-#define DEF_MAXFIGHTZONE 10 
-#define DEF_LEVELLIMIT		20				
-#define DEF_MINIMUMHITRATIO 15		
-#define DEF_MAXIMUMHITRATIO	99	
-#define DEF_PLAYERMAXLEVEL	180	
-#define DEF_GMGMANACONSUMEUNIT	15		
-#define DEF_MAXCONSTRUCTIONPOINT 30000		
+#define DEF_MAXFIGHTZONE 10
+#define DEF_LEVELLIMIT		20
+#define DEF_MINIMUMHITRATIO 15
+#define DEF_MAXIMUMHITRATIO	99
+#define DEF_PLAYERMAXLEVEL	180
+#define DEF_GMGMANACONSUMEUNIT	15
+#define DEF_MAXCONSTRUCTIONPOINT 30000
 #define DEF_MAXSUMMONPOINTS		 30000
 #define DEF_MAXWARCONTRIBUTION	 200000
 #define MSGID_LEVELUPSETTINGS				0x11A01000
@@ -128,7 +128,7 @@
 #define DEF_VIT 0x04 //Correct
 #define DEF_MAG 0x05 //Correct
 #define DEF_CHR 0x06 //Correct
-#define DEF_MAXGIZONPOINT		999			
+#define DEF_MAXGIZONPOINT		999
 //#define DEF_TEST 0xFFFF0000
 //#define DEF_TESTSERVER
 #define NO_MSGSPEEDCHECK
@@ -404,7 +404,7 @@ public:
 	void OnKeyUp(WPARAM wParam, LPARAM lParam);
 	void OnKeyDown(WPARAM wParam, LPARAM lParam);
 	bool bCheckTotalSkillMasteryPoints(int iClientH, int iSkill);
-	bool bCheckResistingIceSuccess(char cAttackerDir, short sTargetH, char cTargetType, int iHitRatio);
+	UnitPtr getUnit(short sHandle, char cType);
 	bool bCheckResistingMagicSuccess(char cAttackerDir, short sTargetH, char cTargetType, int iHitRatio);
 	void Effect_SpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
 	void Effect_SpDown_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
@@ -476,7 +476,6 @@ public:
 	int iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short dX, short dY, short wType, char cDir, uint16_t wTargetObjectID, bool bResponse = true, bool bIsDash = false);
 	void ChatMsgHandler(CClient &client, char * pData, uint32_t dwMsgSize);
 	void NpcProcess();
-	int bCreateNewNpc(const char * pNpcName, char * pName, MapPtr map, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
 	bool _bInitItemAttr(class CItem &pItem, const char * pItemName);
 	bool bReadProgramConfigFile(const char * cFn);
 	void GameProcess();
@@ -568,7 +567,7 @@ public:
 	bool m_bIsQuestAvailable;
 	bool m_bIsTeleportAvailable;
 	class CItem * m_pItemConfigList[DEF_MAXITEMTYPES];
-	class NpcArchetype * m_pNpcConfigList[DEF_MAXNPCTYPES];
+	class NpcArchetype * m_pNpcArchetypes[DEF_MAXNPCTYPES];
 	class CMagic * m_pMagicConfigList[DEF_MAXMAGICTYPE];
 	class CSkill * m_pSkillConfigList[DEF_MAXSKILLTYPE];
 	class CQuest * m_pQuestConfigList[DEF_MAXQUESTTYPE];

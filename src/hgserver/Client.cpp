@@ -268,7 +268,7 @@ void CClient::ClientKilledHandler(int iAttackerH, char cAttackerType, short sDam
 			break;
 		case DEF_OWNERTYPE_NPC:
 			if (game_.m_pNpcList[iAttackerH] != nullptr)
-#ifdef DEF_LOCALNPCNAME     
+#ifdef DEF_LOCALNPCNAME
 				wsprintf(cAttackerName, "NPCNPCNPC@%d", m_pNpcList[iAttackerH]->m_sType);
 #else
 				memcpy(cAttackerName, game_.m_pNpcList[iAttackerH]->m_cNpcName, 20);
@@ -2328,16 +2328,16 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 			return;
 		case 8:
 			switch (item.m_sIDnum) {
-				case 291: // MagicWand(MS30-LLF) 
-				case 714: // DarkMageMagicStaff 
-				case 732: // DarkMageMagicStaffW 
+				case 291: // MagicWand(MS30-LLF)
+				case 714: // DarkMageMagicStaff
+				case 732: // DarkMageMagicStaffW
 				case 738: // DarkMageMagicWand
 				case 746: // BlackMageTemple
 					/*if ((item.m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
 						(item.m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
 						(item.m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
 						this->SendNotifyMsg(0,DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
-						return; 
+						return;
 					}*/
 					if (this->m_iGizonItemUpgradeLeft <= 0) {
 						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, nullptr);
@@ -2391,7 +2391,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						item = CItem();
 						this->m_ItemPosList[iItemIndex].x = iItemX;
 						this->m_ItemPosList[iItemIndex].y = iItemY;
-						if (game_._bInitItemAttr(item, 746) == false) { // BlackMageTemple 
+						if (game_._bInitItemAttr(item, 746) == false) { // BlackMageTemple
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
@@ -5618,6 +5618,263 @@ void CClient::update(uint32_t dwTime) {
 		if (this->m_bIsSendingMapStatus == true) game_._SendMapStatus(this->id_);
 		if (this->m_iConstructionPoint > 0) {
 			game_.CheckCommanderConstructionPoint(this->id_);
+		}
+	}
+}
+
+CMap& CClient::_getMap() {
+	return *map_;
+}
+
+UnitPtr CClient::_getPtr() {
+	return shared_from_this();
+}
+
+int CClient::_getEffectiveIceResist() {
+	if (this->m_iAdminUserLevel > 0) {
+		return 100;
+	}
+	if (this->m_dwWarmEffectTime != 0) {
+		if ((timeGetTime() - this->m_dwWarmEffectTime) < 1000 * 30) {
+			return 100;
+		}
+	}
+	return this->m_iAddAbsWater * 2;
+}
+
+void CClient::_sendEventToNearClient_TypeA(uint32_t dwMsgID, uint16_t wMsgType, short sV1, short sV2, short sV3) {
+	int * ip;
+	char * cp_a, * cp_s, * cp_sv, cData_All[200], cData_Srt[200], cData_Srt_Av[200];
+	uint32_t * dwp;
+	uint16_t * wp;
+	int * ipStatus, iDumm;
+	short * sp, sRange, sX, sY;
+	bool cOwnerSend;
+	char cKey;
+	int iTemp3;
+	int iTemp;
+	int iTemp2;
+	std::memset(cData_All, 0, sizeof (cData_All));
+	std::memset(cData_Srt, 0, sizeof (cData_Srt));
+	std::memset(cData_Srt_Av, 0, sizeof (cData_Srt_Av));
+	ipStatus = (int *) &iDumm;
+	cKey = (rand() % 255) + 1;
+	dwp = (uint32_t *) (cData_All + DEF_INDEX4_MSGID);
+	*dwp = dwMsgID;
+	wp = (uint16_t *) (cData_All + DEF_INDEX2_MSGTYPE);
+	*wp = wMsgType;
+	dwp = (uint32_t *) (cData_Srt + DEF_INDEX4_MSGID);
+	*dwp = dwMsgID;
+	wp = (uint16_t *) (cData_Srt + DEF_INDEX2_MSGTYPE);
+	*wp = wMsgType;
+	dwp = (uint32_t *) (cData_Srt_Av + DEF_INDEX4_MSGID);
+	*dwp = dwMsgID;
+	wp = (uint16_t *) (cData_Srt_Av + DEF_INDEX2_MSGTYPE);
+	*wp = wMsgType;
+	cp_a = (char *) (cData_All + DEF_INDEX2_MSGTYPE + 2);
+	cp_s = (char *) (cData_Srt + DEF_INDEX2_MSGTYPE + 2);
+	cp_sv = (char *) (cData_Srt_Av + DEF_INDEX2_MSGTYPE + 2);
+	if ((dwMsgID == MSGID_EVENT_LOG) || (wMsgType == DEF_OBJECTMOVE) || (wMsgType == DEF_OBJECTRUN) ||
+			  (wMsgType == DEF_OBJECTATTACKMOVE) || (wMsgType == DEF_OBJECTDAMAGEMOVE) || (wMsgType == DEF_OBJECTDYING))
+		sRange = 1;
+	else sRange = 0;
+	switch (wMsgType) {
+		case DEF_OBJECTNULLACTION:
+		case DEF_OBJECTDAMAGE:
+		case DEF_OBJECTDYING:
+		case DEF_MSGTYPE_CONFIRM:
+			cOwnerSend = true;
+			break;
+		default:
+			cOwnerSend = false;
+			break;
+	}
+	wp = (uint16_t *) cp_a;
+	*wp = id_;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	sX = this->m_sX;
+	*sp = sX;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	sY = this->m_sY;
+	*sp = sY;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	*sp = this->m_sType;
+	cp_a += 2;
+	*cp_a = this->m_cDir;
+	cp_a++;
+	memcpy(cp_a, this->m_cCharName, 10);
+	cp_a += 10;
+	sp = (short *) cp_a;
+	*sp = this->m_sAppr1;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	*sp = this->m_sAppr2;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	*sp = this->m_sAppr3;
+	cp_a += 2;
+	sp = (short *) cp_a;
+	*sp = this->m_sAppr4;
+	cp_a += 2;
+	ip = (int *) cp_a;
+	*ip = this->m_iApprColor;
+	cp_a += 4;
+	ip = (int *) cp_a;
+	ipStatus = ip;
+	*ip = this->m_iStatus;
+	cp_a += 4;
+	iTemp3 = this->m_iStatus & 0x0F0FFFF7F; //0F0FFFF7Fh
+	if (wMsgType == DEF_OBJECTNULLACTION) {
+		if (this->m_bIsKilled == true)
+			*cp_a = 1;
+		else *cp_a = 0;
+	} else *cp_a = 0;
+	cp_a++;
+	wp = (uint16_t *) cp_s;
+	*wp = id_ + 30000;
+	cp_s += 2;
+	*cp_s = this->m_cDir;
+	cp_s++;
+	*cp_s = (unsigned char) sV1;
+	cp_s++;
+	*cp_s = (unsigned char) sV2;
+	cp_s++;
+	sp = (short *) cp_s;
+	sX = this->m_sX;
+	*sp = sX;
+	cp_s += 2;
+	sp = (short *) cp_s;
+	sY = this->m_sY;
+	*sp = sY;
+	cp_s += 2;
+	wp = (uint16_t *) cp_sv;
+	*wp = id_ + 30000;
+	cp_sv += 2;
+	*cp_sv = this->m_cDir;
+	cp_sv++;
+	*cp_sv = sV1 - sX;
+	cp_sv++;
+	*cp_sv = sV2 - sY;
+	cp_sv++;
+	sp = (short *) cp_sv;
+	*sp = sV3;
+	cp_sv += 2;
+	for (auto &clientIter : game_.m_pClientList) {
+		if (clientIter.m_bIsInitComplete == true) {
+			if ((clientIter.map_ == this->map_) &&
+					  (clientIter.m_sX >= this->m_sX - 10 - sRange) &&
+					  (clientIter.m_sX <= this->m_sX + 10 + sRange) &&
+					  (clientIter.m_sY >= this->m_sY - 8 - sRange) &&
+					  (clientIter.m_sY <= this->m_sY + 8 + sRange)) {
+				if (this->m_cSide != clientIter.m_cSide) {
+					if (clientIter.m_iAdminUserLevel > 0) {
+						iTemp = this->m_iStatus;
+					} else if (clientIter.id_ != id_) {
+						iTemp = iTemp3;
+					} else {
+						iTemp = this->m_iStatus;
+					}
+				} else {
+					iTemp = this->m_iStatus;
+				}
+				iTemp = 0x0FFFFFFF & iTemp;
+				iTemp2 = game_.iGetPlayerABSStatus(id_, clientIter.id_);
+				iTemp = (iTemp | (iTemp2 << 28));
+				*ipStatus = iTemp;
+				if ((clientIter.m_sX >= this->m_sX - 9) &&
+						  (clientIter.m_sX <= this->m_sX + 9) &&
+						  (clientIter.m_sY >= this->m_sY - 7) &&
+						  (clientIter.m_sY <= this->m_sY + 7)) {
+					switch (wMsgType) {
+						case DEF_MSGTYPE_CONFIRM:
+						case DEF_MSGTYPE_REJECT:
+						case DEF_OBJECTNULLACTION:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
+							break;
+						case DEF_OBJECTATTACK:
+						case DEF_OBJECTATTACKMOVE:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+							break;
+						case DEF_OBJECTMAGIC:
+						case DEF_OBJECTDAMAGE:
+						case DEF_OBJECTDAMAGEMOVE:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+							break;
+						case DEF_OBJECTDYING:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+							break;
+						default:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 9, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 9, cKey);
+							break;
+					}
+				} else {
+					switch (wMsgType) {
+						case DEF_MSGTYPE_CONFIRM:
+						case DEF_MSGTYPE_REJECT:
+						case DEF_OBJECTNULLACTION:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
+							break;
+						case DEF_OBJECTATTACK:
+						case DEF_OBJECTATTACKMOVE:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+							break;
+						case DEF_OBJECTMAGIC:
+						case DEF_OBJECTDAMAGE:
+						case DEF_OBJECTDAMAGEMOVE:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+							break;
+						case DEF_OBJECTDYING:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+							break;
+						default:
+							if (cOwnerSend == true)
+								clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
+							else
+								if (clientIter.id_ != id_)
+								clientIter.m_pXSock->iSendMsg(cData_All, 43, cKey);
+							break;
+					}
+				}
+			}
 		}
 	}
 }

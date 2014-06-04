@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <winbase.h>
 #include <mmsystem.h>
-#include <time.h>				   
+#include <time.h>
 #include "winmain.h"
 #include "Game.h"
 #include "UserMessages.h"
@@ -198,7 +198,7 @@ void Initialize() {
 		return;
 	}
 
-	
+
 	G_mmTimer = _StartTimer(300);
 
 	G_pListenSock = new class XSocket(G_hWnd, DEF_SERVERSOCKETBLOCKLIMIT);

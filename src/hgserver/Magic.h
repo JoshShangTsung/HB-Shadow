@@ -9,9 +9,9 @@
 #define DEF_MAGICTYPE_SPUP_SPOT					6
 #define DEF_MAGICTYPE_SPUP_AREA					7
 #define DEF_MAGICTYPE_TELEPORT					8
-#define DEF_MAGICTYPE_SUMMON					9 
+#define DEF_MAGICTYPE_SUMMON					9
 #define DEF_MAGICTYPE_CREATE					10
-#define DEF_MAGICTYPE_PROTECT					11	
+#define DEF_MAGICTYPE_PROTECT					11
 #define DEF_MAGICTYPE_HOLDOBJECT				12
 #define DEF_MAGICTYPE_INVISIBILITY				13
 #define DEF_MAGICTYPE_CREATE_DYNAMIC			14
@@ -25,14 +25,14 @@
 #define DEF_MAGICTYPE_TREMOR					22
 #define DEF_MAGICTYPE_ICE						23
 #define DEF_MAGICTYPE_PURITYLIFE_SPOT            24 // purity
-// 24 
+// 24
 #define DEF_MAGICTYPE_DAMAGE_AREA_NOSPOT_SPDOWN	25
 #define DEF_MAGICTYPE_ICE_LINEAR				26 // Blizzard
 // 27
 #define DEF_MAGICTYPE_DAMAGE_AREA_ARMOR_BREAK  28
 #define DEF_MAGICTYPE_CANCELLATION				29
 #define DEF_MAGICTYPE_DAMAGE_LINEAR_SPDOWN		30 // Earth-Shock-Wave
-#define DEF_MAGICTYPE_INHIBITION				31 // Inhibition-Casting	
+#define DEF_MAGICTYPE_INHIBITION				31 // Inhibition-Casting
 #define DEF_MAGICTYPE_RESURRECTION				32 // Resurrection
 #define DEF_MAGICTYPE_SCAN						33 // Scan
 
@@ -62,6 +62,6 @@ public:
 	short m_sIntLimit;
 	int m_iGoldCost;
 
-	char m_cCategory; 
-	int m_iAttribute; 
+	char m_cCategory;
+	int m_iAttribute;
 };

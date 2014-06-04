@@ -60,6 +60,8 @@
       <itemPath>../../../src/hgserver/TempNpcItem.h</itemPath>
       <itemPath>../../../src/hgserver/Tile.cpp</itemPath>
       <itemPath>../../../src/hgserver/Tile.h</itemPath>
+      <itemPath>../../../src/hgserver/Unit.cpp</itemPath>
+      <itemPath>../../../src/hgserver/Unit.h</itemPath>
       <itemPath>../../../src/hgserver/UserMessages.h</itemPath>
       <itemPath>../../../src/hgserver/Version.h</itemPath>
       <itemPath>../../../src/hgserver/WINMAIN.H</itemPath>
@@ -277,6 +279,10 @@
       <item path="../../../src/hgserver/Tile.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Tile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Unit.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Unit.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/UserMessages.h"
             ex="false"
@@ -498,6 +504,10 @@
       <item path="../../../src/hgserver/Tile.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../src/hgserver/Tile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Unit.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../src/hgserver/Unit.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../src/hgserver/UserMessages.h"
             ex="false"
