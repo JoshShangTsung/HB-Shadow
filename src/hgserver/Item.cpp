@@ -36,3 +36,12 @@ CItem::CItem() {
 
 	m_bIsForSale = false;
 }
+
+int CItem::iGetItemWeight(int iCount) const {
+	int iWeight = (this->m_wWeight);
+	if (iCount < 0) iCount = 1;
+	iWeight = iWeight * iCount;
+	if (this->m_sIDnum == 90) iWeight = iWeight / 20;
+	if (iWeight <= 0) iWeight = 1;
+	return iWeight;
+}

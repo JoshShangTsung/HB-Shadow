@@ -74,7 +74,7 @@
 class CItem {
 public:
 	CItem();
-
+	int iGetItemWeight(int iCount) const;
 	char m_cName[21];
 
 	short m_sIDnum;
