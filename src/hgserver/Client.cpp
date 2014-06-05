@@ -15836,7 +15836,7 @@ void CClient::RequestFullObjectData(char *pData) {
 		if (!targetNpcPtr) return;
 		auto &targetNpc = *targetNpcPtr;
 		wp = (uint16_t *) cp;
-		*wp = wObjectID;
+		*wp = wObjectID + 10000;
 		cp += 2;
 		sp = (short *) cp;
 		sX = targetNpc.m_sX;
