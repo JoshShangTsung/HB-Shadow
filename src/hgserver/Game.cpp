@@ -157,7 +157,7 @@ void CGame::OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 	iRet = client.m_pXSock->iOnSocketEvent(wParam, lParam);
 	switch (iRet) {
 		case DEF_XSOCKEVENT_READCOMPLETE:
-			OnClientRead(client);
+			client.OnClientRead();
 			client.m_dwTime = timeGetTime();
 			break;
 		case DEF_XSOCKEVENT_BLOCK:
@@ -512,7 +512,7 @@ void CGame::OnMainLogSocketEvent(UINT /*message*/, WPARAM wParam, LPARAM lParam)
 		case DEF_XSOCKEVENT_CONNECTIONESTABLISH:
 
 			PutLogList("(!!!) Main-log-socket connected!");
-			bSendMsgToLS(MSGID_REQUEST_REGISTERGAMESERVER, 0);
+			bSendMsgToLS(MSGID_REQUEST_REGISTERGAMESERVER);
 			break;
 		case DEF_XSOCKEVENT_READCOMPLETE:
 
@@ -566,7 +566,7 @@ void CGame::ResponsePlayerDataHandler(char * pData, uint32_t dwSize) {
 			wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
 			switch (*wp) {
 				case DEF_LOGRESMSGTYPE_CONFIRM:
-					InitPlayerData(clientIter.id_, pData, dwSize);
+					clientIter.InitPlayerData(pData, dwSize);
 					break;
 				case DEF_LOGRESMSGTYPE_REJECT:
 					wsprintf(G_cTxt, "(HACK?) Not existing character(%s) data request! Rejected!", clientIter.m_cCharName);
@@ -1761,12 +1761,11 @@ void CGame::MsgProcess() {
 	uint32_t dwMsgSize, * dwpMsgID;
 	uint16_t * wpMsgType;
 	int i;
-	CClient &client;
 	if ((m_bF5pressed == true) && (m_bF1pressed == true)) {
 		PutLogList("(XXX) RELOADING CONFIGS MANUALY...");
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_bIsInitComplete == true)) {
-				bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA, i);
+				m_pClientList[i]->bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA);
 			}
 		bInit();
 	}
@@ -1775,7 +1774,7 @@ void CGame::MsgProcess() {
 		m_bOnExitProcess = true;
 		m_dwExitProcessTime = timeGetTime();
 		PutLogList("(!) GAME SERVER SHUTDOWN PROCESS BEGIN(by Local command)!!!");
-		bSendMsgToLS(MSGID_GAMESERVERSHUTDOWNED, 0);
+		bSendMsgToLS(MSGID_GAMESERVERSHUTDOWNED);
 		auto ml = middlelandMap_.lock();
 		if (ml) {
 			// Crusade
@@ -1788,6 +1787,7 @@ void CGame::MsgProcess() {
 	ZeroMemory(m_pMsgBuffer, DEF_MSGBUFFERSIZE + 1);
 	pData = (char *) m_pMsgBuffer;
 	m_iCurMsgs = 0;
+	int iClientH;
 	while (bGetMsgQuene(&cFrom, pData, &dwMsgSize, &iClientH, &cKey) == true) {
 		m_iCurMsgs++;
 		if (m_iCurMsgs > m_iMaxMsgs) m_iMaxMsgs = m_iCurMsgs;
@@ -2068,7 +2068,7 @@ void CGame::ResponseDisbandGuildHandler(char * pData, uint32_t /*dwMsgSize*/) {
 					wsprintf(cTxt, "(!) Disband guild(%s) success! : character(%s)", m_pClientList[i]->m_cGuildName, m_pClientList[i]->m_cCharName);
 					PutLogList(cTxt);
 
-					SendGuildMsg(i, DEF_NOTIFY_GUILDDISBANDED, 0, 0, nullptr);
+					m_pClientList[i]->SendGuildMsg(DEF_NOTIFY_GUILDDISBANDED, 0, 0, nullptr);
 
 					std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof (m_pClientList[i]->m_cGuildName));
 					memcpy(m_pClientList[i]->m_cGuildName, "NONE", 4);
@@ -2703,10 +2703,10 @@ void CGame::CalculateGuildEffect(int iVictimH, char cVictimType, short sAttacker
 							if (m_pClientList[sAttackerH]->m_iLevel >= m_iPlayerMaxLevel) iExp = 0;
 							if (iExp > 0) {
 								m_pClientList[sOwnerH]->m_iExp += iExp;
-								if (bCheckLimitedUser(sOwnerH) == false) {
+								if (m_pClientList[sOwnerH]->bCheckLimitedUser() == false) {
 									m_pClientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_EXP, 0, 0, 0, nullptr);
 								}
-								bCheckLevelUp(sOwnerH);
+								m_pClientList[sOwnerH]->bCheckLevelUp();
 							}
 						}
 					}
@@ -3415,7 +3415,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 			if (iDamage <= 0) iDamage = 0;
 			if (m_pClientList[sAttackerH]->map_->m_bIsFightZone == true)
 				iDamage += iDamage / 3;
-			if (bCheckHeldenianMap(sAttackerH, m_iBTFieldMapIndex, DEF_OWNERTYPE_PLAYER) == 1) {
+			if (m_pClientList[sAttackerH]->bCheckHeldenianMap() == 1) {
 				iDamage += iDamage / 3;
 			}
 			if ((cTargetType == DEF_OWNERTYPE_PLAYER) && (m_bIsCrusadeMode == true) && (m_pClientList[sAttackerH]->m_iCrusadeDuty == 1)) {
@@ -3454,7 +3454,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 			m_pClientList[sTargetH]->m_dwLogoutHackCheck = dwTime;
 			if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 				if (m_pClientList[sAttackerH]->m_bIsSafeAttackMode == true) {
-					iSideCondition = iGetPlayerRelationship(sAttackerH, sTargetH);
+					iSideCondition = m_pClientList[sAttackerH]->iGetPlayerRelationship(sTargetH);
 					if ((iSideCondition == 7) || (iSideCondition == 2) || (iSideCondition == 6)) {
 					} else {
 						if (m_pClientList[sAttackerH]->map_->m_bIsFightZone == true) {
@@ -3465,7 +3465,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 				}
 				if (m_pClientList[sTargetH]->map_->iGetAttribute(m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY, 0x00000005) != 0) return;
 			}
-			ClearSkillUsingStatus(sTargetH);
+			m_pClientList[sTargetH]->ClearSkillUsingStatus();
 			switch (iAttr) {
 				case 1:
 					if (m_pClientList[sTargetH]->m_iAddAbsEarth != 0) {
@@ -3717,8 +3717,8 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 								}
 							}
 							if (bExp == true)
-								GetExp(sAttackerH, iExp, true);
-							else GetExp(sAttackerH, (iExp / 2), true);
+								m_pClientList[sAttackerH]->GetExp(iExp, true);
+							else m_pClientList[sAttackerH]->GetExp((iExp / 2), true);
 							m_pNpcList[sTargetH]->m_iNoDieRemainExp -= iDamage;
 						} else {
 							iExp = m_pNpcList[sTargetH]->m_iNoDieRemainExp;
@@ -3739,8 +3739,8 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 								}
 							}
 							if (bExp == true)
-								GetExp(sAttackerH, iExp, true);
-							else GetExp(sAttackerH, (iExp / 2), true);
+								m_pClientList[sAttackerH]->GetExp(iExp, true);
+							else m_pClientList[sAttackerH]->GetExp((iExp / 2), true);
 							m_pNpcList[sTargetH]->m_iNoDieRemainExp = 0;
 						}
 					}
@@ -3764,7 +3764,7 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 				iTemp = 4;
 			}
 			m_pClientList[ev.m_iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_SLATE_STATUS, iTemp, 0, 0, nullptr);
-			SetSlateFlag(ev.m_iTargetH, iTemp, false);
+			m_pClientList[ev.m_iTargetH]->SetSlateFlag(iTemp, false);
 			break;
 		case DelayEventType::CALCMETEORSTRIKEEFFECT:
 			ev.map_->CalcMeteorStrikeEffectHandler();
@@ -5445,4 +5445,115 @@ void CGame::MobGenerator() {
 				}
 		}
 	}
+}
+
+bool CGame::bSendMsgToLS(uint32_t dwMsg, const char *pData) {
+	uint32_t * dwp;
+	uint16_t * wp;
+	int iRet;
+	int i;
+	int iSize;
+	char cAccountName[11], cAddress[16], cTxt[120], * cp;
+	char cGuildLoc[11];
+	int iSendSize;
+	std::memset(G_cData50000, 0, sizeof (G_cData50000));
+	std::memset(cAccountName, 0, sizeof (cAccountName));
+	std::memset(cAddress, 0, sizeof (cAddress));
+	std::memset(cGuildLoc, 0, sizeof (cGuildLoc));
+	switch (dwMsg) {
+		case MSGID_GAMEITEMLOG:
+			if (_bCheckSubLogSocketIndex() == false) return false;
+			//		if (this->markedForDeletion_) return false;
+			if (pData == nullptr) return false;
+			dwp = (uint32_t *) (G_cData50000 + DEF_INDEX4_MSGID);
+			*dwp = MSGID_GAMEITEMLOG;
+			wp = (uint16_t *) (G_cData50000 + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_MSGTYPE_CONFIRM;
+			cp = (char *) (G_cData50000 + DEF_INDEX2_MSGTYPE + 2);
+			iSize = strlen(pData);
+			memcpy((char *) cp, pData, iSize);
+			iRet = m_pSubLogSock[m_iCurSubLogSockIndex]->iSendMsg(G_cData50000, 6 + iSize);
+			iSendSize = 6 + iSize;
+			break;
+		case MSGID_GAMESERVERSHUTDOWNED:
+			if (m_pMainLogSock == nullptr) return false;
+			dwp = (uint32_t *) (G_cData50000 + DEF_INDEX4_MSGID);
+			*dwp = MSGID_GAMESERVERSHUTDOWNED;
+			wp = (uint16_t *) (G_cData50000 + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_MSGTYPE_CONFIRM;
+			iRet = m_pMainLogSock->iSendMsg(G_cData50000, 6);
+			return true;
+		case MSGID_REQUEST_REGISTERGAMESERVER:
+			if (m_pMainLogSock == nullptr) return false;
+			wsprintf(cTxt, "(!) Try to register game server(%s)", m_cServerName);
+			PutLogList(cTxt);
+			dwp = (uint32_t *) (G_cData50000 + DEF_INDEX4_MSGID);
+			*dwp = MSGID_REQUEST_REGISTERGAMESERVER;
+			wp = (uint16_t *) (G_cData50000 + DEF_INDEX2_MSGTYPE);
+			*wp = DEF_MSGTYPE_CONFIRM;
+			cp = (char *) (G_cData50000 + DEF_INDEX2_MSGTYPE + 2);
+			memcpy(cAccountName, m_cServerName, 10);
+			if (m_iGameServerMode == 1) {
+				memcpy(cAddress, m_cGameServerAddrExternal, strlen(m_cGameServerAddrExternal));
+			}
+			if (m_iGameServerMode == 2) {
+				memcpy(cAddress, m_cGameServerAddr, strlen(m_cGameServerAddr));
+			}
+			memcpy(cp, cAccountName, 10);
+			cp += 10;
+			memcpy(cp, cAddress, 16);
+			cp += 16;
+			wp = (uint16_t *) cp;
+			*wp = m_iGameServerPort;
+			cp += 2;
+			*cp = m_iTotalMaps;
+			cp++;
+			for (i = 0; i < m_iTotalMaps; i++) {
+				memcpy(cp, m_pMapList[i]->m_cName, 11);
+				cp += 11;
+			}
+			iRet = m_pMainLogSock->iSendMsg(G_cData50000, 35 + m_iTotalMaps * 11);
+			return true;
+	}
+	switch (iRet) {
+		case DEF_XSOCKEVENT_QUENEFULL:
+		case DEF_XSOCKEVENT_SOCKETERROR:
+		case DEF_XSOCKEVENT_CRITICALERROR:
+		case DEF_XSOCKEVENT_SOCKETCLOSED:
+			wsprintf(G_cTxt, "(!!!) Sub-log-socket(%d) send error!", m_iCurSubLogSockIndex);
+			PutLogList(G_cTxt);
+			PutLogFileList(G_cTxt);
+			delete m_pSubLogSock[m_iCurSubLogSockIndex];
+			m_pSubLogSock[m_iCurSubLogSockIndex] = nullptr;
+			m_bIsSubLogSockAvailable[m_iCurSubLogSockIndex] = false;
+			m_iSubLogSockActiveCount--;
+			m_pSubLogSock[m_iCurSubLogSockIndex] = new class XSocket(m_hWnd, DEF_SERVERSOCKETBLOCKLIMIT);
+			m_pSubLogSock[m_iCurSubLogSockIndex]->bConnect(m_cLogServerAddr, m_iLogServerPort, (WM_ONLOGSOCKETEVENT + m_iCurSubLogSockIndex + 1));
+			m_pSubLogSock[m_iCurSubLogSockIndex]->bInitBufferSize(DEF_MSGBUFFERSIZE);
+			wsprintf(G_cTxt, "(!) Try to reconnect sub-log-socket(%d)... Addr:%s  Port:%d", m_iCurSubLogSockIndex, m_cLogServerAddr, m_iLogServerPort);
+			PutLogList(G_cTxt);
+			m_iSubLogSockFailCount++;
+			if (_bCheckSubLogSocketIndex() == false) return false;
+			m_pSubLogSock[m_iCurSubLogSockIndex]->iSendMsg(G_cData50000, iSendSize);
+			return false;
+	}
+	return true;
+}
+
+bool CGame::_bCrusadeLog(int iAction, int /*iData*/, const char * cName) {
+	char cTxt[200];
+	std::memset(cTxt, 0, sizeof (cTxt));
+	switch (iAction) {
+		case DEF_CRUSADELOG_ENDCRUSADE:
+			if (cName == nullptr) return false;
+			wsprintf(cTxt, "\tEnd Crusade\t%s", cName);
+			break;
+		case DEF_CRUSADELOG_STARTCRUSADE:
+			wsprintf(cTxt, "\tStart Crusade");
+			break;
+		default:
+			return false;
+	}
+	bSendMsgToLS(MSGID_GAMECRUSADELOG, cTxt);
+	return true;
 }

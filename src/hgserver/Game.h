@@ -160,17 +160,16 @@ public:
 	void GlobalEndHeldenianMode();
 	void LocalEndHeldenianMode();
 	bool bNotifyHeldenianWinner();
-	bool bCheckHeldenianMap(int sAttackerH, int iMapIndex, char cType);
 	bool bReadHeldenianGUIDFile(const char * cFn);
 	void GlobalUpdateConfigs(char cConfigType);
 	void LocalUpdateConfigs(char cConfigType);
 	void SetHeroFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void SetInhibitionCastingFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char cTargetType, char cAttackerType, int iArmorType);
-	void _CheckFarmingAction(short sAttackerH, short sTargetH, bool bType);
 	bool bReadScheduleConfigFile(const char *pFn);
 	bool bReadBannedListConfigFile(const char *pFn);
 	bool bReadAdminListConfigFile(const char *pFn);
+	bool bSendMsgToLS(uint32_t dwMsg, const char *data = nullptr);
 	void ManualEndCrusadeMode(int iWinnerSide); // 2.17 (x) 2.14 ( )
 	void CrusadeWarStarter();
 	bool bReadCrusadeGUIDFile(const char * cFn);
@@ -336,7 +335,9 @@ public:
 	void StartCaptureTheFlag();
 	void EndCaptureTheFlag(int iOption);
 	void _CreateCTFGUID(int iWinnerSide);
-
+	void EnergySphereProcessor(bool bIsAdminCreate = false, CClient *clientPtr = 0);
+	bool _bCrusadeLog(int iAction, int iData, const char * cName);
+	
 	int m_iMajesticPointsPerLevel;
 	int m_iMajesticMinLevel;
 	int m_iMajesticPointsMax;

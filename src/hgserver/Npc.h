@@ -174,6 +174,16 @@ public:
 	void NpcBehavior_Attack();
 	void TargetSearch(short * pTarget, char * pTargetType);
 	void NpcBehavior_Move();
+	void SetIceFlag(bool bStatus);
+	void SetProtectionFromArrowFlag(bool bStatus);
+	void SetMagicProtectionFlag(bool bStatus);
+	void SetDefenseShieldFlag(bool bStatus);
+	void SetInvisibilityFlag(bool bStatus);
+	void SetPoisonFlag(bool bStatus);
+	void SetBerserkFlag(bool bStatus);
+	void RemoveFromTarget(int iCode);
+	bool bCheckResistingPoisonSuccess();
+	bool _bItemLog(int iAction, char * cName, class CItem * pItem);
 private:
 	UnitPtr _getPtr() override;
 	CMap &_getMap() override;

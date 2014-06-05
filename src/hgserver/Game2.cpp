@@ -84,7 +84,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 			iDamage += m_pClientList[sAttackerH]->m_iAddMagicalDamage;
 			if (m_pClientList[sAttackerH]->map_->m_bIsFightZone == true)
 				iDamage += iDamage / 3;
-			if (bCheckHeldenianMap(sAttackerH, m_iBTFieldMapIndex, DEF_OWNERTYPE_PLAYER) == 1) {
+			if (m_pClientList[sAttackerH]->bCheckHeldenianMap() == 1) {
 				iDamage += iDamage / 3;
 			}
 			if ((cTargetType == DEF_OWNERTYPE_PLAYER) && (m_bIsCrusadeMode) && (m_pClientList[sAttackerH]->m_iCrusadeDuty == 1)) {
@@ -120,7 +120,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 			m_pClientList[sTargetH]->m_dwLogoutHackCheck = dwTime;
 			if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 				if (m_pClientList[sAttackerH]->m_bIsSafeAttackMode == true) {
-					iSideCondition = iGetPlayerRelationship(sAttackerH, sTargetH);
+					iSideCondition = m_pClientList[sAttackerH]->iGetPlayerRelationship(sTargetH);
 					if ((iSideCondition == 7) || (iSideCondition == 2) || (iSideCondition == 6)) {
 					} else {
 						if (m_pClientList[sAttackerH]->map_->m_bIsFightZone == true) {
@@ -131,7 +131,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 				}
 				if (m_pClientList[sTargetH]->map_->iGetAttribute(m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY, 0x00000005) != 0) return;
 			}
-			ClearSkillUsingStatus(sTargetH);
+			m_pClientList[sTargetH]->ClearSkillUsingStatus();
 			switch (iAttr) {
 				case 1:
 					if (m_pClientList[sTargetH]->m_iAddAbsEarth != 0) {
@@ -356,8 +356,8 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 								}
 							}
 							if (bExp)
-								GetExp(sAttackerH, iExp, true);
-							else GetExp(sAttackerH, (iExp / 2), true);
+								m_pClientList[sAttackerH]->GetExp(iExp, true);
+							else m_pClientList[sAttackerH]->GetExp((iExp / 2), true);
 							m_pNpcList[sTargetH]->m_iNoDieRemainExp -= iDamage;
 						} else {
 							iExp = m_pNpcList[sTargetH]->m_iNoDieRemainExp;
@@ -378,8 +378,8 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 								}
 							}
 							if (bExp)
-								GetExp(sAttackerH, iExp, true);
-							else GetExp(sAttackerH, (iExp / 2), true);
+								m_pClientList[sAttackerH]->GetExp(iExp, true);
+							else m_pClientList[sAttackerH]->GetExp((iExp / 2), true);
 							m_pNpcList[sTargetH]->m_iNoDieRemainExp = 0;
 						}
 					}
@@ -445,7 +445,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 			if (wWeaponType == 34) {
 				iDamage += iDamage / 3;
 			}
-			if (bCheckHeldenianMap(sAttackerH, m_iBTFieldMapIndex, DEF_OWNERTYPE_PLAYER) == 1) {
+			if (m_pClientList[sAttackerH]->bCheckHeldenianMap() == 1) {
 				iDamage += iDamage / 3;
 			}
 			cAttackerSide = m_pClientList[sAttackerH]->m_cSide;
@@ -471,7 +471,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 			m_pClientList[sTargetH]->m_dwLogoutHackCheck = dwTime;
 			if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 				if (m_pClientList[sAttackerH]->m_bIsSafeAttackMode == true) {
-					iSideCondition = iGetPlayerRelationship(sAttackerH, sTargetH);
+					iSideCondition = m_pClientList[sAttackerH]->iGetPlayerRelationship(sTargetH);
 					if ((iSideCondition == 7) || (iSideCondition == 2) || (iSideCondition == 6)) {
 					} else {
 						if (m_pClientList[sAttackerH]->map_->m_bIsFightZone == true) {
@@ -482,7 +482,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 				}
 				if (m_pClientList[sTargetH]->map_->iGetAttribute(m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY, 0x00000005) != 0) return;
 			}
-			ClearSkillUsingStatus(sTargetH);
+			m_pClientList[sTargetH]->ClearSkillUsingStatus();
 			switch (iAttr) {
 				case 1:
 					if (m_pClientList[sTargetH]->m_iAddAbsEarth != 0) {
@@ -733,8 +733,8 @@ EDSD_SKIPDAMAGEMOVE:
 								}
 							}
 							if (bExp)
-								GetExp(sAttackerH, iExp); //m_pClientList[sAttackerH]->m_iExpStock += iExp;     //iDamage;
-							else GetExp(sAttackerH, (iExp / 2)); //m_pClientList[sAttackerH]->m_iExpStock += (iExp/2); //(iDamage/2);
+								m_pClientList[sAttackerH]->GetExp(iExp); //m_pClientList[sAttackerH]->m_iExpStock += iExp;     //iDamage;
+							else m_pClientList[sAttackerH]->GetExp((iExp / 2)); //m_pClientList[sAttackerH]->m_iExpStock += (iExp/2); //(iDamage/2);
 							m_pNpcList[sTargetH]->m_iNoDieRemainExp -= iDamage;
 						} else {
 							// Crusade
@@ -756,8 +756,8 @@ EDSD_SKIPDAMAGEMOVE:
 								}
 							}
 							if (bExp)
-								GetExp(sAttackerH, iExp); //m_pClientList[sAttackerH]->m_iExpStock += iExp;     //m_pNpcList[sTargetH]->m_iNoDieRemainExp;
-							else GetExp(sAttackerH, (iExp / 2)); //m_pClientList[sAttackerH]->m_iExpStock += (iExp/2); //(m_pNpcList[sTargetH]->m_iNoDieRemainExp/2);
+								m_pClientList[sAttackerH]->GetExp(iExp); //m_pClientList[sAttackerH]->m_iExpStock += iExp;     //m_pNpcList[sTargetH]->m_iNoDieRemainExp;
+							else m_pClientList[sAttackerH]->GetExp((iExp / 2)); //m_pClientList[sAttackerH]->m_iExpStock += (iExp/2); //(m_pNpcList[sTargetH]->m_iNoDieRemainExp/2);
 							m_pNpcList[sTargetH]->m_iNoDieRemainExp = 0;
 						}
 					}
@@ -1090,19 +1090,19 @@ int CGame::iCalculateUseSkillItemEffect(int iOwnerH, char cOwnerType, char cOwne
 		m_pClientList[iOwnerH]->CalculateSSN_SkillIndex(iSkillNum, 1);
 	switch (m_pSkillConfigList[iSkillNum]->m_sType) {
 		case DEF_SKILLEFFECTTYPE_TAMING:
-			_TamingHandler(iOwnerH, iSkillNum, map, dX, dY);
+			m_pClientList[iOwnerH]->_TamingHandler(iSkillNum, map, dX, dY);
 			break;
 		case DEF_SKILLEFFECTTYPE_GET:
 			std::memset(cItemName, 0, sizeof (cItemName));
 			switch (m_pSkillConfigList[iSkillNum]->m_sValue1) {
 				case 1:
-					// ±¤¹°
+					// Â±Â¤Â¹Â°
 					wsprintf(cItemName, "Meat");
 					break;
 				case 2:
 					//if (map->bGetIsWater(dX, dY) == false) return 0;
 					if (cOwnerType == DEF_OWNERTYPE_PLAYER) {
-						iFish = iCheckFish(iOwnerH, map, dX, dY);
+						iFish = m_pClientList[iOwnerH]->iCheckFish(map, dX, dY);
 						if (iFish == 0) wsprintf(cItemName, "Fish");
 					} else wsprintf(cItemName, "Fish");
 					break;
@@ -1361,7 +1361,7 @@ bool CGame::bDeleteFish(int iHandle, int iDelMode) {
 		if ((m_pClientList[i] != nullptr) && (m_pClientList[i]->m_bIsInitComplete == true) &&
 				  (m_pClientList[i]->m_iAllocatedFish == iHandle)) {
 			m_pClientList[i]->SendNotifyMsg(0, DEF_NOTIFY_FISHCANCELED, iDelMode, 0, 0, nullptr);
-			ClearSkillUsingStatus(i);
+			m_pClientList[i]->ClearSkillUsingStatus();
 		}
 	}
 	delete m_pFish[iHandle];
@@ -3328,7 +3328,7 @@ void CGame::LocalStartCrusadeMode(uint32_t dwCrusadeGUID) {
 		if (m_pMapList[i] != nullptr) m_pMapList[i]->RestoreStrikePoints();
 	CreateCrusadeStructures();
 	PutLogList("(!)Crusade Mode ON.");
-	_bCrusadeLog(DEF_CRUSADELOG_STARTCRUSADE, 0, 0, nullptr);
+	_bCrusadeLog(DEF_CRUSADELOG_STARTCRUSADE, 0, nullptr);
 }
 
 void CGame::LocalEndCrusadeMode(int iWinnerSide) {
@@ -3351,11 +3351,11 @@ void CGame::LocalEndCrusadeMode(int iWinnerSide) {
 		}
 	RemoveCrusadeRecallTime();
 	if (iWinnerSide == 2) {
-		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, false, false, "Elvine Win!");
+		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, 0, "Elvine Win!");
 	} else if (iWinnerSide == 1) {
-		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, false, false, "Aresden Win!");
+		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, 0, "Aresden Win!");
 	} else {
-		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, false, false, "Drawn!");
+		_bCrusadeLog(DEF_CRUSADELOG_ENDCRUSADE, 0, "Drawn!");
 	}
 }
 
@@ -3992,7 +3992,7 @@ bool CGame::_bItemLog(int iAction, int iGiveH, int iRecvH, class CItem * pItem, 
 				  pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3,
 				  m_pClientList[iGiveH]->m_cCharName);
 		//	PutItemLogFileList(iGiveH,G_cTxt);
-		bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, 0, G_cTxt);
+		m_pClientList[iGiveH]->bSendMsgToLS(MSGID_GAMEITEMLOG, 0, G_cTxt);
 		return true;
 	}
 	std::memset(cTxt, 0, sizeof (cTxt));
@@ -4011,61 +4011,16 @@ bool CGame::_bItemLog(int iAction, int iGiveH, int iRecvH, class CItem * pItem, 
 					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
 					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY, m_pClientList[iRecvH]->m_cCharName);
 			break;
-		case DEF_ITEMLOG_DROP:
-			wsprintf(cTxt, "(%s) PC(%s)\tDrop\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, pItem->m_dwCount,
-					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
-		case DEF_ITEMLOG_GET:
-			wsprintf(cTxt, "(%s) PC(%s)\tGet\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, pItem->m_dwCount,
-					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
-		case DEF_ITEMLOG_MAKE:
-			wsprintf(cTxt, "(%s) PC(%s)\tMake\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, pItem->m_dwCount,
-					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
-		case DEF_ITEMLOG_DEPLETE:
-			wsprintf(cTxt, "(%s) PC(%s)\tDeplete\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, pItem->m_dwCount,
-					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
 		case DEF_ITEMLOG_BUY:
 			iItemCount = iRecvH;
 			wsprintf(cTxt, "(%s) PC(%s)\tBuy\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, iItemCount,
 					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
 					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
 			break;
-		case DEF_ITEMLOG_SELL:
-			wsprintf(cTxt, "(%s) PC(%s)\tSell\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, pItem->m_dwCount,
-					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
-		case DEF_ITEMLOG_RETRIEVE:
-			wsprintf(cTxt, "(%s) PC(%s)\tRetrieve\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, pItem->m_dwCount,
-					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
-		case DEF_ITEMLOG_DEPOSIT:
-			wsprintf(cTxt, "(%s) PC(%s)\tDeposit\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName, pItem->m_dwCount,
-					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
-		case DEF_ITEMLOG_UPGRADEFAIL:
-			wsprintf(cTxt, "(%s) PC(%s)\tUpgrade Fail\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName,
-					  pItem->m_dwCount, pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
-		case DEF_ITEMLOG_UPGRADESUCCESS:
-			wsprintf(cTxt, "(%s) PC(%s)\tUpgrade Success\t%s(%d %d %d %d %x)\t%s(%d %d)", m_pClientList[iGiveH]->m_cIPaddress, m_pClientList[iGiveH]->m_cCharName, pItem->m_cName,
-					  pItem->m_dwCount, pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3, pItem->m_dwAttribute,
-					  m_pClientList[iGiveH]->map_->m_cName, m_pClientList[iGiveH]->m_sX, m_pClientList[iGiveH]->m_sY);
-			break;
 		default:
 			return false;
 	}
-	bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, 0, cTxt);
+	m_pClientList[iGiveH]->bSendMsgToLS(MSGID_GAMEITEMLOG, 0, cTxt);
 	return true;
 }
 
@@ -4407,7 +4362,7 @@ void CGame::OnTimer(char /*cType*/) {
 		dynamicObjects_.DynamicObjectEffectProcessor();
 		NoticeHandler();
 		SpecialEventHandler();
-		EnergySphereProcessor();
+		EnergySphereProcessor(false, nullptr);
 		m_dwGameTime3 = dwTime;
 	}
 	if ((dwTime - m_dwGameTime7) > 100000) { //Timer
@@ -4417,7 +4372,7 @@ void CGame::OnTimer(char /*cType*/) {
 				break;
 			case 2: wsprintf(cAdvert, "Server-Info: MIDDLELAND NO TIENE PITS (SOLO SE USA EN CRUSADE).");
 				break;
-			case 3: wsprintf(cAdvert, "Server-Info: Lista de Drops y dem�s guias en la Web!.");
+			case 3: wsprintf(cAdvert, "Server-Info: Lista de Drops y demï¿½s guias en la Web!.");
 				break;
 			case 4: wsprintf(cAdvert, "Server-Info: Max Barrack lvl 200 || PL: No Max lvl!.");
 				break;
@@ -4431,7 +4386,7 @@ void CGame::OnTimer(char /*cType*/) {
 				break;
 			case 9: wsprintf(cAdvert, "Server-Info: Drop List and other Guides in the Website!.");
 				break;
-			case 10: wsprintf(cAdvert, "SERVER-Info: Pedimos disculpas a todos los afectados por la caida del primer d�a!.");
+			case 10: wsprintf(cAdvert, "SERVER-Info: Pedimos disculpas a todos los afectados por la caida del primer dï¿½a!.");
 				break;
 		}
 		for (q = 1; q < DEF_MAXCLIENTS; q++) // Check all clients
@@ -5837,7 +5792,7 @@ void CGame::PartyOperationResultHandler(char *pData) {
 	char * cp, cResult, cName[12];
 	uint16_t * wp;
 	int i;
-	CClient &client;
+	int iClientH;
 	int iPartyID;
 	int iTotal;
 	cp = (char *) (pData + 4);
@@ -5856,7 +5811,7 @@ void CGame::PartyOperationResultHandler(char *pData) {
 			wp = (uint16_t *) cp;
 			iPartyID = (int) *wp;
 			cp += 2;
-			PartyOperationResult_Create(iClientH, cName, cResult, iPartyID);
+			m_pClientList[iClientH]->PartyOperationResult_Create(cName, cResult, iPartyID);
 			break;
 		case 2:
 			wp = (uint16_t *) cp;
@@ -5872,24 +5827,24 @@ void CGame::PartyOperationResultHandler(char *pData) {
 			memcpy(cName, cp, 10);
 			cp += 10;
 			if ((iClientH < 0) && (iClientH > DEF_MAXCLIENTS)) return;
-			if (client.markedForDeletion_) return;
-			if (strcmp(client.m_cCharName, cName) != 0) return;
+			if (m_pClientList[iClientH]->markedForDeletion_) return;
+			if (strcmp(m_pClientList[iClientH]->m_cCharName, cName) != 0) return;
 			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)
-				if (m_stPartyInfo[client.m_iPartyID].iIndex[i] == iClientH) {
-					m_stPartyInfo[client.m_iPartyID].iIndex[i] = 0;
-					m_stPartyInfo[client.m_iPartyID].iTotalMembers--;
+				if (m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i] == iClientH) {
+					m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i] = 0;
+					m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers--;
 					goto PORH_LOOPBREAK1;
 				}
 PORH_LOOPBREAK1:
 			;
 			for (i = 0; i < DEF_MAXPARTYMEMBERS - 1; i++)
-				if ((m_stPartyInfo[client.m_iPartyID].iIndex[i] == 0) && (m_stPartyInfo[client.m_iPartyID].iIndex[i + 1] != 0)) {
-					m_stPartyInfo[client.m_iPartyID].iIndex[i] = m_stPartyInfo[client.m_iPartyID].iIndex[i + 1];
-					m_stPartyInfo[client.m_iPartyID].iIndex[i + 1] = 0;
+				if ((m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i] == 0) && (m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i + 1] != 0)) {
+					m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i] = m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i + 1];
+					m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i + 1] = 0;
 				}
-			client.m_iPartyID = 0;
-			client.m_iPartyStatus = DEF_PARTYSTATUS_NULL;
-			client.SendNotifyMsg(0, DEF_NOTIFY_PARTY, 8, 0, 0, nullptr);
+			m_pClientList[iClientH]->m_iPartyID = 0;
+			m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
+			m_pClientList[iClientH]->SendNotifyMsg(0, DEF_NOTIFY_PARTY, 8, 0, 0, nullptr);
 			break;
 		case 4:
 			cResult = *cp;
@@ -5903,7 +5858,7 @@ PORH_LOOPBREAK1:
 			wp = (uint16_t *) cp;
 			iPartyID = (int) *wp;
 			cp += 2;
-			PartyOperationResult_Join(iClientH, cName, cResult, iPartyID);
+			m_pClientList[iClientH]->PartyOperationResult_Join(cName, cResult, iPartyID);
 			break;
 		case 5:
 			wp = (uint16_t *) cp;
@@ -5915,7 +5870,7 @@ PORH_LOOPBREAK1:
 			wp = (uint16_t *) cp;
 			iTotal = (int) *wp;
 			cp += 2;
-			PartyOperationResult_Info(iClientH, cName, iTotal, cp);
+			m_pClientList[iClientH]->PartyOperationResult_Info(cName, iTotal, cp);
 			break;
 		case 6:
 			cResult = *cp;
@@ -5929,7 +5884,7 @@ PORH_LOOPBREAK1:
 			wp = (uint16_t *) cp;
 			iPartyID = (int) *wp;
 			cp += 2;
-			PartyOperationResult_Dismiss(iClientH, cName, cResult, iPartyID);
+			m_pClientList[iClientH]->PartyOperationResult_Dismiss(cName, cResult, iPartyID);
 			break;
 	}
 }
@@ -6123,74 +6078,6 @@ short itemeq;
 				28h 40
 		}
 }*/
-void CGame::_CheckFarmingAction(short sAttackerH, short sTargetH, bool bType) {
-	char cCropType;
-	int iItemID;
-	class CItem * pItem;
-	iItemID = 0;
-	cCropType = 0;
-	cCropType = m_pNpcList[sTargetH]->m_cCropType;
-	switch (cCropType) {
-		case 1: GetExp(sAttackerH, iDice(3, 10));
-			iItemID = 820;
-			break; // WaterMelon
-		case 2: GetExp(sAttackerH, iDice(3, 10));
-			iItemID = 821;
-			break; // Pumpkin
-		case 3: GetExp(sAttackerH, iDice(4, 10));
-			iItemID = 822;
-			break; // Garlic
-		case 4: GetExp(sAttackerH, iDice(4, 10));
-			iItemID = 823;
-			break; // Barley
-		case 5: GetExp(sAttackerH, iDice(5, 10));
-			iItemID = 824;
-			break; // Carrot
-		case 6: GetExp(sAttackerH, iDice(5, 10));
-			iItemID = 825;
-			break; // Radish
-		case 7: GetExp(sAttackerH, iDice(6, 10));
-			iItemID = 826;
-			break; // Corn
-		case 8: GetExp(sAttackerH, iDice(6, 10));
-			iItemID = 827;
-			break; // ChineseBellflower
-		case 9: GetExp(sAttackerH, iDice(7, 10));
-			iItemID = 828;
-			break; // Melone
-		case 10: GetExp(sAttackerH, iDice(7, 10));
-			iItemID = 829;
-			break; // Tommato
-		case 11: GetExp(sAttackerH, iDice(8, 10));
-			iItemID = 830;
-			break; // Grapes
-		case 12: GetExp(sAttackerH, iDice(8, 10));
-			iItemID = 831;
-			break; // BlueGrapes
-		case 13: GetExp(sAttackerH, iDice(9, 10));
-			iItemID = 832;
-			break; // Mushroom
-		default: GetExp(sAttackerH, iDice(10, 10));
-			iItemID = 721;
-			break; // Ginseng
-	}
-	pItem = new class CItem;
-	if (_bInitItemAttr(*pItem, iItemID) == false) {
-		delete pItem;
-	}
-	if (bType == 0) {
-		m_pClientList[sAttackerH]->map_->bSetItem(m_pClientList[sAttackerH]->m_sX, m_pClientList[sAttackerH]->m_sY, pItem);
-		m_pClientList[sAttackerH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
-				  m_pClientList[sAttackerH]->m_sX, m_pClientList[sAttackerH]->m_sY, pItem->m_sSprite,
-				  pItem->m_sSpriteFrame, pItem->m_cItemColor, false);
-	} else if (bType == 1) {
-		m_pNpcList[sTargetH]->map_->bSetItem(m_pNpcList[sTargetH]->m_sX, m_pNpcList[sTargetH]->m_sY, pItem);
-		m_pNpcList[sTargetH]->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
-				  m_pNpcList[sTargetH]->m_sX, m_pNpcList[sTargetH]->m_sY, pItem->m_sSprite,
-				  pItem->m_sSpriteFrame, pItem->m_cItemColor, false);
-	}
-}
-
 void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char cTargetType, char cAttackerType, int iArmorType) {
 	short sItemIndex;
 	int iDownValue = 1, iHammerChance = 100;
@@ -6610,7 +6497,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			iTargetDefenseRatio = m_pClientList[sTargetH]->m_iDefenseRatio;
 			m_pClientList[sTargetH]->m_dwLogoutHackCheck = dwTime;
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsSafeAttackMode == true)) {
-				iSideCondition = iGetPlayerRelationship(sAttackerH, sTargetH);
+				iSideCondition = m_pClientList[sAttackerH]->iGetPlayerRelationship(sTargetH);
 				if ((iSideCondition == 7) || (iSideCondition == 2) || (iSideCondition == 6)) {
 					iAP_SM = iAP_SM / 2;
 					iAP_L = iAP_L / 2;
@@ -6708,20 +6595,20 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 									m_pNpcList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 									//sub_4B67E0
 									m_pClientList[sAttackerH]->CalculateSSN_SkillIndex(2, cFarmingSkill <= cCropSkill + 10);
-									_CheckFarmingAction(sAttackerH, sTargetH, 1);
+									m_pClientList[sAttackerH]->_CheckFarmingAction(*m_pNpcList[sTargetH], 1);
 									m_pNpcList[sTargetH]->DeleteNpc();
 									return 0;
 								case 8:
 									m_pNpcList[sTargetH]->m_sAppr2 = 3;
 									m_pNpcList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 									m_pClientList[sAttackerH]->CalculateSSN_SkillIndex(2, cFarmingSkill <= cCropSkill + 10);
-									_CheckFarmingAction(sAttackerH, sTargetH, 0);
+									m_pClientList[sAttackerH]->_CheckFarmingAction(*m_pNpcList[sTargetH], 0);
 									break;
 								case 18:
 									m_pNpcList[sTargetH]->m_sAppr2 = 2;
 									m_pNpcList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 									m_pClientList[sAttackerH]->CalculateSSN_SkillIndex(2, cFarmingSkill <= cCropSkill + 10);
-									_CheckFarmingAction(sAttackerH, sTargetH, 0);
+									m_pClientList[sAttackerH]->_CheckFarmingAction(*m_pNpcList[sTargetH], 0);
 									break;
 							}
 							break;
@@ -6787,7 +6674,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 						m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_cArrowIndex]->m_dwCount--;
 					if (m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_cArrowIndex]->m_dwCount <= 0) {
 						m_pClientList[sAttackerH]->ItemDepleteHandler(m_pClientList[sAttackerH]->m_cArrowIndex, false, true);
-						m_pClientList[sAttackerH]->m_cArrowIndex = _iGetArrowItemIndex(sAttackerH);
+						m_pClientList[sAttackerH]->m_cArrowIndex = m_pClientList[sAttackerH]->_iGetArrowItemIndex();
 					} else {
 						m_pClientList[sAttackerH]->SendNotifyMsg(0, DEF_NOTIFY_SETITEMCOUNT, m_pClientList[sAttackerH]->m_cArrowIndex, m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_cArrowIndex]->m_dwCount, false, nullptr);
 						m_pClientList[sAttackerH]->iCalcTotalWeight();
@@ -6857,7 +6744,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			m_pClientList[sAttackerH]->m_iComboAttackCount++;
 			if (m_pClientList[sAttackerH]->m_iComboAttackCount < 0) m_pClientList[sAttackerH]->m_iComboAttackCount = 0;
 			if (m_pClientList[sAttackerH]->m_iComboAttackCount > 4) m_pClientList[sAttackerH]->m_iComboAttackCount = 1;
-			iWeaponSkill = _iGetWeaponSkillType(sAttackerH);
+			iWeaponSkill = m_pClientList[sAttackerH]->_iGetWeaponSkillType();
 			iComboBonus = iGetComboAttackBonus(iWeaponSkill, m_pClientList[sAttackerH]->m_iComboAttackCount);
 			if ((m_pClientList[sAttackerH]->m_iComboAttackCount > 1) && (m_pClientList[sAttackerH]->m_iAddCD != 0))
 				iComboBonus += m_pClientList[sAttackerH]->m_iAddCD;
@@ -6883,7 +6770,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 				iAP_SM += iAP_SM / 3;
 				iAP_L += iAP_L / 3;
 			}
-			if (bCheckHeldenianMap(sAttackerH, m_iBTFieldMapIndex, DEF_OWNERTYPE_PLAYER) == 1) {
+			if (m_pClientList[sAttackerH]->bCheckHeldenianMap() == 1) {
 				iAP_SM += iAP_SM / 3;
 				iAP_L += iAP_L / 3;
 			}
@@ -6902,7 +6789,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 		}
 		switch (cTargetType) {
 			case DEF_OWNERTYPE_PLAYER:
-				ClearSkillUsingStatus(sTargetH);
+				m_pClientList[sTargetH]->ClearSkillUsingStatus();
 				if ((dwTime - m_pClientList[sTargetH]->m_dwTime) > DEF_RAGPROTECTIONTIME) {
 					return 0;
 				} else {
@@ -7415,7 +7302,7 @@ CAE_SKIPCOUNTERATTACK:
 									iExp += (int) dTmp3;
 								}
 								if ((m_bIsCrusadeMode) && (iExp > 10)) iExp = 10;
-								GetExp(sAttackerH, iExp);
+								m_pClientList[sAttackerH]->GetExp(iExp);
 								m_pNpcList[sTargetH]->DeleteNpc();
 								return false;
 							}
@@ -7729,7 +7616,7 @@ void CGame::MeteorStrikeMsgHandler(char cAttackerSide) {
 } // _bDecodeNpcItemConfigFileContents()*/
 bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
 	int iResult;
-	// NPC를 삭제할때 특수 아이템을 발생시킬 것인지의 여부를 계산한다.
+	// NPCë¥¼ ì‚­ì œí• ë•Œ íŠ¹ìˆ˜ ì•„ì�´í…œì�„ ë°œìƒ�ì‹œí‚¬ ê²ƒì�¸ì§€ì�˜ ì—¬ë¶€ë¥¼ ê³„ì‚°í•œë‹¤.
 	switch (sNpcType) {
 		case 49: // Hellclaw
 			iResult = iDice(1, 20000);
@@ -8174,67 +8061,6 @@ void CGame::_CreateHeldenianGUID(uint32_t dwHeldenianGUID, int iWinnerSide) {
 		PutLogList(cTxt);
 	}
 	if (pFile != nullptr) fclose(pFile);
-}
-
-/*********************************************************************************************************************
- **  bool CGame::bCheckHeldenianMap(int sAttackerH, int iMapIndex, char cType)										**
- **  description			:: checks if the player is in the specified map												**
- **  last updated		:: November 22, 2004; 6:19 PM; Hypnotoad													**
- **	return value		:: bool																						**
- **  commentary			::	-	translated from scratch using IDA Pro												**
- **						::	-	changed pTile->m_cOwner to m_iOccupyStatus											**
- **						::	-	added check to prevent access violation if pTile == nullptr							**
- **						::	-	removed 4 return(s) after "iRet = 1;" and placed at end								**
- *********************************************************************************************************************/
-bool CGame::bCheckHeldenianMap(int sAttackerH, int iMapIndex, char cType) {
-	short tX;
-	short tY;
-	int iRet;
-	class CTile * pTile;
-	iRet = 0;
-	if (m_pClientList[sAttackerH] == nullptr) return 0;
-	if ((m_bIsHeldenianMode == 1) || (m_cHeldenianModeType == 1)) {
-		if (cType == DEF_OWNERTYPE_PLAYER) {
-			if ((m_pClientList[sAttackerH]->map_ != nullptr) && (m_pClientList[sAttackerH]->m_cSide > 0)) {
-				tX = m_pClientList[sAttackerH]->m_sX;
-				tY = m_pClientList[sAttackerH]->m_sY;
-				if ((tX < 0) || (tX >= m_pClientList[sAttackerH]->map_->m_sSizeX) ||
-						  (tY < 0) || (tY >= m_pClientList[sAttackerH]->map_->m_sSizeY)) return 0;
-				pTile = (class CTile *)(m_pClientList[sAttackerH]->map_->m_pTile + tX + tY * m_pClientList[sAttackerH]->map_->m_sSizeY);
-				if (pTile == nullptr) return 0;
-				if (pTile->m_iOccupyStatus != 0) {
-					if (pTile->m_iOccupyStatus < 0) {
-						if (m_pClientList[sAttackerH]->m_cSide == 1) {
-							iRet = 1;
-						}
-					} else if (pTile->m_iOccupyStatus > 0) {
-						if (m_pClientList[sAttackerH]->m_cSide == 2) {
-							iRet = 1;
-						}
-					}
-				}
-			}
-		} else if (cType == DEF_OWNERTYPE_NPC) {
-			if ((m_pNpcList[sAttackerH]->map_ != nullptr) && (iMapIndex != -1) && (m_pNpcList[sAttackerH]->m_cSide > 0)) {
-				tX = m_pNpcList[sAttackerH]->m_sX;
-				tY = m_pNpcList[sAttackerH]->m_sY;
-				pTile = (class CTile *)(m_pNpcList[sAttackerH]->map_->m_pTile + tX + tY * m_pNpcList[sAttackerH]->map_->m_sSizeY);
-				if (pTile == nullptr) return 0;
-				if (pTile->m_iOccupyStatus != 0) {
-					if (pTile->m_iOccupyStatus < 0) {
-						if (m_pNpcList[sAttackerH]->m_cSide == 1) {
-							iRet = 1;
-						}
-					} else if (pTile->m_iOccupyStatus > 0) {
-						if (m_pNpcList[sAttackerH]->m_cSide == 2) {
-							iRet = 1;
-						}
-					}
-				}
-			}
-		}
-	}
-	return iRet;
 }
 
 void CGame::HeldenianWarStarter() {

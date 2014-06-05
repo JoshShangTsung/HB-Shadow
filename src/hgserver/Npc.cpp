@@ -1124,7 +1124,7 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 		this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
 				  this->m_sX, this->m_sY,
 				  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
-		game_._bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, 0, pItem);
+		this->_bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, pItem);
 	}
 }
 
@@ -1890,7 +1890,7 @@ void CNpc::DeleteNpc() {
 					this->map_->bSetItem(ItemPositions[j].x, ItemPositions[j].y, pItem);
 					this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
 							  ItemPositions[j].x, ItemPositions[j].y, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
-					game_._bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, this->m_cNpcName, pItem);
+					this->_bItemLog(DEF_ITEMLOG_NEWGENDROP, this->m_cNpcName, pItem);
 					pItem = nullptr;
 				}
 			}
@@ -1907,7 +1907,7 @@ void CNpc::DeleteNpc() {
 				this->map_->bSetItem(this->m_sX, this->m_sY, pItem);
 				this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
 						  this->m_sX, this->m_sY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor);
-				game_._bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, this->m_cNpcName, pItem);
+				this->_bItemLog(DEF_ITEMLOG_NEWGENDROP, this->m_cNpcName, pItem);
 			}
 		}
 		if (iDice(1, 100000) < 10) {
@@ -1934,7 +1934,7 @@ void CNpc::DeleteNpc() {
 				this->map_->bSetItem(this->m_sX, this->m_sY, pItem2);
 				this->map_->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP,
 						  this->m_sX, this->m_sY, pItem2->m_sSprite, pItem2->m_sSpriteFrame, pItem2->m_cItemColor);
-				game_._bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, this->m_cNpcName, pItem2);
+				this->_bItemLog(DEF_ITEMLOG_NEWGENDROP, this->m_cNpcName, pItem2);
 			}
 		}
 	}
@@ -2176,7 +2176,7 @@ void CNpc::NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage)
 		}
 		// New 09/05/2004
 		//clientList[sAttackerH]->m_iExpStock += iExp;
-		game_.GetExp(sAttackerH, iExp, true);
+		clientList[sAttackerH]->GetExp(iExp, true);
 		iQuestIndex = clientList[sAttackerH]->m_iQuest;
 		if (iQuestIndex != 0) {
 			auto &questPtr = game_.m_pQuestConfigList[iQuestIndex];
@@ -2188,7 +2188,7 @@ void CNpc::NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage)
 							clientList[sAttackerH]->m_iCurQuestCount++;
 							cQuestRemain = (questPtr->m_iMaxCount - clientList[sAttackerH]->m_iCurQuestCount);
 							clientList[sAttackerH]->SendNotifyMsg(0, DEF_NOTIFY_QUESTCOUNTER, cQuestRemain, 0, 0, nullptr);
-							game_._bCheckIsQuestCompleted(sAttackerH);
+							clientList[sAttackerH]->_bCheckIsQuestCompleted();
 						}
 						break;
 				}
@@ -3215,4 +3215,111 @@ void CNpc::_sendEventToNearClient_TypeA(uint32_t dwMsgID, uint16_t wMsgType, sho
 			}
 		}
 	}
+}
+
+void CNpc::SetIceFlag(bool bStatus) {
+	if (bStatus)
+		this->m_iStatus = this->m_iStatus | 0x00000040;
+	else this->m_iStatus = this->m_iStatus & 0xFFFFFFBF;
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+}
+
+void CNpc::SetProtectionFromArrowFlag(bool bStatus) {
+	if (bStatus)
+		this->m_iStatus = this->m_iStatus | 0x08000000;
+	else this->m_iStatus = this->m_iStatus & 0xF7FFFFFF;
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+}
+
+void CNpc::SetMagicProtectionFlag(bool bStatus) {
+	if (bStatus)
+		this->m_iStatus = this->m_iStatus | 0x04000000;
+	else this->m_iStatus = this->m_iStatus & 0xFBFFFFFF;
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+
+}
+
+void CNpc::SetDefenseShieldFlag(bool bStatus) {
+	if (bStatus)
+		this->m_iStatus = this->m_iStatus | 0x02000000;
+	else this->m_iStatus = this->m_iStatus & 0xFDFFFFFF;
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+}
+
+void CNpc::SetInvisibilityFlag(bool bStatus) {
+	if (bStatus)
+		this->m_iStatus = this->m_iStatus | 0x00000010;
+	else this->m_iStatus = this->m_iStatus & 0xFFFFFFEF;
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+}
+
+void CNpc::RemoveFromTarget(int iCode) {
+	for (int i = 0; i < DEF_MAXNPCS; i++) {
+		if (game_.m_pNpcList[i] != nullptr) {
+			if ((game_.m_pNpcList[i]->m_iTargetIndex == id_) &&
+					  (game_.m_pNpcList[i]->m_cTargetType == DEF_OWNERTYPE_NPC)) {
+				switch (iCode) {
+					case DEF_MAGICTYPE_INVISIBILITY:
+						if (game_.m_pNpcList[i]->m_cSpecialAbility == 1) {
+						} else {
+							game_.m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+							game_.m_pNpcList[i]->m_iTargetIndex = 0;
+							game_.m_pNpcList[i]->m_cTargetType = 0;
+						}
+						break;
+					default:
+						game_.m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+						game_.m_pNpcList[i]->m_iTargetIndex = 0;
+						game_.m_pNpcList[i]->m_cTargetType = 0;
+						break;
+				}
+			}
+		}
+	}
+}
+
+bool CNpc::bCheckResistingPoisonSuccess() {
+	int iResist;
+	int iResult;
+	iResist = 0;
+	iResult = iDice(1, 100);
+	if (iResult >= iResist)
+		return false;
+	return true;
+}
+
+void CNpc::SetPoisonFlag(bool bStatus) {
+	if (bStatus)
+		this->m_iStatus = this->m_iStatus | 0x00000080;
+	else this->m_iStatus = this->m_iStatus & 0xFFFFFF7F;
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+}
+
+void CNpc::SetBerserkFlag(bool bStatus) {
+	if (bStatus)
+		this->m_iStatus = this->m_iStatus | 0x00000020;
+	else this->m_iStatus = this->m_iStatus & 0xFFFFFFDF;
+	this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
+
+}
+
+bool CNpc::_bItemLog(int iAction, char * cName, class CItem * pItem) {
+	if (pItem == nullptr) return false;
+	if (game_._bCheckGoodItem(pItem) == false) return false;
+	if (iAction != DEF_ITEMLOG_NEWGENDROP) {
+		if (this->markedForDeletion_) return false;
+	}
+	char cTxt[200];
+	std::memset(cTxt, 0, sizeof (cTxt));
+	switch (iAction) {
+		case DEF_ITEMLOG_NEWGENDROP:
+			if (pItem == nullptr) return false;
+			wsprintf(cTxt, "NPC(%s)\tDrop\t%s(%d %d %d %d)", cName, pItem->m_cName, pItem->m_dwCount,
+					  pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3);
+			break;
+		default:
+			return false;
+	}
+	game_.bSendMsgToLS(MSGID_GAMEITEMLOG, cTxt);
+	return true;
 }

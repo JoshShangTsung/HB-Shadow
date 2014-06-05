@@ -47,7 +47,7 @@ typedef Collection<std::unique_ptr<CItem>, DEF_MAXBANKITEMS> BankInventory;
 struct CClient;
 typedef std::shared_ptr<CClient> ClientPtr;
 typedef std::weak_ptr<CClient> ClientWPtr;
-
+struct CNpc;
 class CClient : public Unit, public std::enable_shared_from_this<CClient> {
 public:
 	CClient(CGame &game, int index, std::unique_ptr<XSocket> &&socket);
@@ -444,7 +444,6 @@ public:
 	void CheckConnectionHandler(char *pData);
 	void CancelQuestHandler();
 	void ActivateSpecialAbilityHandler();
-	void EnergySphereProcessor(bool bIsAdminCreate = false, CClient *clientPtr = 0);
 	void JoinPartyHandler(int iV1, char *pMemberName);
 	void CreateNewPartyHandler();
 	void RequestSellItemListHandler(char * pData);
@@ -585,6 +584,7 @@ public:
 	void AdminOrder_SetForceRecallTime(char* pData, uint32_t dwMsgSize);
 	void AdminOrder_UnsummonBoss();
 	bool _bCrusadeLog(int iAction,int iData, const char * cName);
+	void _CheckFarmingAction(CNpc &targetNpc, bool bType);
 	int iGetPlayerABSStatus();
 	void SetSlateFlag(short sType, bool bFlag);
 	void CheckForceRecallTime();
@@ -620,6 +620,23 @@ public:
 	void SetIceFlag(bool bStatus);
 	void SetHeroFlag(bool bStatus);
 	void SetInvisibilityFlag(bool bStatus);
+	void SetIllusionFlag(bool bStatus);
+	void SetDefenseShieldFlag(bool bStatus);
+	void SetMagicProtectionFlag(bool bStatus);
+	void SetProtectionFromArrowFlag(bool bStatus);
+	void SetIllusionMovementFlag(bool bStatus);
+	void SetBerserkFlag(bool bStatus);
+	void SetPoisonFlag(bool bStatus);
+	void SetInhibitionCastingFlag(bool bStatus);
+	bool bCheckHeldenianMap();
+	void Effect_Damage_Spot(short sTargetH, char cTargetType, short sV1, short sV2, short sV3, bool bExp, int iAttr = 0);
+	void Effect_HpUp_Spot(short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
+	void PURITYLIFE(short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
+	void Effect_Damage_Spot_DamageMove(short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
+	void Effect_SpDown_Spot(short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
+	void Effect_SpUp_Spot(short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
+	void RemoveFromTarget(int iCode);
+	bool bCheckResistingPoisonSuccess();	
 private:
 
 	CMap& _getMap() override;

@@ -21,4 +21,3 @@ bool Unit::bCheckResistingIceSuccess() {
 void Unit::SendEventToNearClient_TypeA(uint32_t dwMsgID, uint16_t wMsgType, short sV1, short sV2, short sV3) {
 	_sendEventToNearClient_TypeA(dwMsgID, wMsgType, sV1, sV2, sV3);
 }
-
