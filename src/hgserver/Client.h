@@ -701,7 +701,7 @@ struct Clients {
 		void operator++() {
 			do {
 				++index_;
-			} while (index_ < DEF_MAXCLIENTS && !clients_[index_] && clients_[index_]->markedForDeletion_);
+			} while (index_ < DEF_MAXCLIENTS && (!clients_[index_] || clients_[index_]->markedForDeletion_));
 		}
 
 		bool operator!=(const Iter &o) const {
