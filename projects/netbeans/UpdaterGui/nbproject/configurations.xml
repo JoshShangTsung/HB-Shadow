@@ -103,7 +103,7 @@
             <linkerLibLibItem>Comctl32</linkerLibLibItem>
             <linkerLibLibItem>Gdi32</linkerLibLibItem>
           </linkerLibItems>
-          <commandLine>-static</commandLine>
+          <commandLine>-static -mwindows</commandLine>
         </linkerTool>
       </compileType>
       <item path="../../../src/updatergui/updatergui.cpp"
