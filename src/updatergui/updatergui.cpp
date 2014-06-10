@@ -3,10 +3,35 @@
 #include <iomanip>
 #include <thread>
 #include <chrono>
+#include <atomic>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <Commctrl.h>
 namespace Ui {
+
+	struct Font {
+
+		Font(HWND hWnd, const char *fontName, int fontSize) {
+			HDC hdc = GetDC(hWnd);
+			LOGFONT logFont;
+			memset(&logFont, 0, sizeof (logFont));
+			logFont.lfHeight = -MulDiv(fontSize, GetDeviceCaps(hdc, LOGPIXELSY), 72);
+			logFont.lfWeight = FW_BOLD;
+			strncpy(logFont.lfFaceName, fontName, LF_FACESIZE - 1);
+
+			s_hFont = CreateFontIndirect(&logFont);
+
+			ReleaseDC(hWnd, hdc);
+		}
+
+		~Font() {
+			DeleteObject(s_hFont);
+		}
+	private:
+		friend class Widget;
+		HFONT s_hFont = NULL;
+	};
+	typedef std::weak_ptr<Font> FontPtr;
 
 	struct Window;
 	typedef std::shared_ptr<Window> WindowPtr;
@@ -20,6 +45,10 @@ namespace Ui {
 
 		void show() {
 			ShowWindow(h_, 1);
+		}
+		
+		void hide() {
+			ShowWindow(h_, 0);
 		}
 
 		WindowPtr getParent() {
@@ -39,6 +68,13 @@ namespace Ui {
 			int currentWidth = rc.right - rc.left;
 			int currentHeight = rc.bottom - rc.top;
 			SetWindowPos(h_, 0, (screenWidth - currentWidth) / 2, (screenHeight - currentHeight) / 2, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+		}
+
+		void setFont(FontPtr font) {
+			auto fnt = font.lock();
+			if (fnt) {
+				SendMessage(h_, WM_SETFONT, (WPARAM) fnt->s_hFont, (LPARAM) MAKELONG(TRUE, 0));
+			}
 		}
 	protected:
 
@@ -94,10 +130,17 @@ namespace Ui {
 	struct Window : public Widget {
 
 		void close() {
-			DestroyWindow(getHandle());
+			CloseWindow(getHandle());
+		}
+
+		FontPtr createFont(const char *name, int size) {
+			std::shared_ptr<Font> ptr = std::make_shared<Font>(getHandle(), name, size);
+			fonts_.push_back(ptr);
+			return ptr;
 		}
 	private:
 		friend class Gui;
+		std::vector<std::shared_ptr<Font> > fonts_;
 		constexpr static const char* CLASS_NAME = "Some window";
 
 		const char *getClassName() const override {
@@ -109,6 +152,7 @@ namespace Ui {
 		}
 
 		LRESULT onDestroy(WPARAM /*wParam*/, LPARAM /*lParam*/) override {
+			fonts_.clear();
 			PostQuitMessage(0);
 			return 0;
 		}
@@ -264,17 +308,20 @@ namespace Imp {
 			wnd_ = gui.createWindow("Updater", width, height, 0, 0);
 			wnd_->centerOnScreen();
 			wnd_->show();
+			auto fnt = wnd_->createFont("arial", 8);
 			int i = 4;
 			int w = width - 12;
 			int lblh = 18;
 			int h = 15;
-			int dlbl = 20;
+			int dlbl = 18;
 			int d = 40;
-			label1_ = gui.createLabel(wnd_, w, lblh, 3, i);
+			label1_ = gui.createLabel(wnd_, w, lblh, 4, i);
+			label1_->setFont(fnt);
 			i += dlbl;
 			progress1_ = gui.createProgressBar(wnd_, w, h, 3, i);
 			i += d;
-			label2_ = gui.createLabel(wnd_, w, lblh, 3, i);
+			label2_ = gui.createLabel(wnd_, w, lblh, 4, i);
+			label2_->setFont(fnt);
 			i += dlbl;
 			progress2_ = gui.createProgressBar(wnd_, w, h, 3, i);
 		}
@@ -392,7 +439,9 @@ namespace Imp {
 		}
 
 		void jobDone() override {
-			wnd_.close();
+			wnd_.setText1("Work done.");
+			wnd_.setProgress1(0);
+			//wnd_.close();
 		}
 	private:
 		UpdateWindow &wnd_;
@@ -420,7 +469,7 @@ namespace Imp {
 		void updateFile() {
 			const int currentPct = currentFileSize_ / (currentFileTotalSize_ / double(100));
 			wnd_.setProgress2(currentPct);
-			wnd_.setText2("Retrieving ", currentFileName_, " (", humanReadableSize(currentFileSize_), " of ", humanReadableSize(currentFileTotalSize_), ")");				
+			wnd_.setText2("Retrieving ", currentFileName_, " (", humanReadableSize(currentFileSize_), " of ", humanReadableSize(currentFileTotalSize_), ")");
 			updateTotals();
 		}
 	};
@@ -432,12 +481,17 @@ int main() {
 		Imp::UpdateWindow updateWindow;
 		updateWindow.init(gui);
 		Imp::MyListener listener(updateWindow);
-		std::thread th([&listener]() {
-			Updater::run(listener, "localhost", "1492");
+		std::atomic<bool> runningUpdater(true);
+		std::thread worker_thread([&runningUpdater, &listener]() mutable {
+			Updater::init(listener, "updateserver.doesntexist.com", "1492");
+			while (runningUpdater && Updater::step());
+			Updater::reset();
 		});
 		while (gui.update()) {
 			//std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		}
+		runningUpdater = false;
+		worker_thread.join();
 	} catch (std::exception &e) {
 		std::cout << "Exception " << e.what() << std::endl;
 	} catch (...) {

@@ -274,6 +274,9 @@ namespace Updater {
 	};
 
 	void run(Listener &listener, const std::string &address, const std::string &port);
+	void init(Listener &listener, const std::string &address, const std::string &port);
+	bool step();
+	void reset();
 }
 namespace UpdateServer {
 

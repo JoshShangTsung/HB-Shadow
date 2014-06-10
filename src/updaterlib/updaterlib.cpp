@@ -14,7 +14,6 @@
 
 #include <windows.h>
 
-
 bool operator==(const Timestamp &a, const Timestamp &b) {
 	return a.millisecond_ == b.millisecond_ &&
 			  a.second_ == b.second_ &&
@@ -378,6 +377,7 @@ namespace Net {
 	namespace {
 
 		struct MyNetwork : public Network {
+
 			std::size_t poll() override {
 				return service_.poll();
 			}
@@ -513,7 +513,7 @@ namespace Net {
 
 				void addServer(Network& network, uint16_t port) override {
 					asio::ip::tcp::endpoint endpoint(asio::ip::tcp::v4(), port);
-					servers_.emplace_back(*this, static_cast<MyNetwork&>(network).service_, endpoint);
+					servers_.emplace_back(*this, static_cast<MyNetwork&> (network).service_, endpoint);
 				}
 				void add(ClientPtr client);
 				void remove(ClientPtr client);
@@ -812,7 +812,7 @@ namespace Net {
 	}
 
 	ClientPtr createPacketedClient(Network& network, const char *host, const char *port) {
-		asio::io_service &io_service = static_cast<MyNetwork&>(network).service_;
+		asio::io_service &io_service = static_cast<MyNetwork&> (network).service_;
 		asio::ip::tcp::resolver resolver(io_service);
 		auto endpoint_iterator = resolver.resolve({host, port});
 		auto ret = std::make_shared<Packeted::Client::PacketedClient>(io_service);
@@ -1190,6 +1190,7 @@ namespace Updater {
 		void requestNextFile() {
 			if (toUpdate_.empty()) {
 				client_->close();
+				listener_.jobDone();
 				return;
 			}
 			std::string fileName = toUpdate_.front();
@@ -1265,29 +1266,52 @@ namespace Updater {
 
 	struct App {
 
-		App(Listener &listener, const std::string &address, const std::string &port) {
-			Net::NetworkPtr net = Net::createNetwork();
-			Cfg cfg;
-			Cache fds(cfg);
-			std::remove(cfg.oldUpdaterName_.c_str());
-			listener.loadingCache();
-			fds.load();
-			std::unique_ptr<Client> client = std::make_unique<Client>(listener, cfg, fds, Net::createPacketedClient(*net, address.c_str(), port.c_str()));
-			listener.connecting(address, port);
-			while (client->isRunning()) {
-				if (net->poll()) {
-					client->update();
-				} else {
-					std::this_thread::sleep_for(std::chrono::milliseconds(1));
-				}
-			}
-			fds.commitCache();
-			listener.jobDone();
+		App(Listener &listener, const std::string &address, const std::string &port) : listener_(listener) {
+			net_ = Net::createNetwork();
+			std::remove(cfg_.oldUpdaterName_.c_str());
+			listener_.loadingCache();
+			fds_.load();
+			client_ = std::make_unique<Client>(listener_, cfg_, fds_, Net::createPacketedClient(*net_, address.c_str(), port.c_str()));
+			listener_.connecting(address, port);
 		}
+
+		bool step() {
+			if (client_->isRunning()) {
+				if (net_->poll()) {
+					client_->update();
+				}
+				return true;
+			} else {
+				fds_.commitCache();
+				return false;
+			}
+		}
+	private:
+		Cfg cfg_;
+		Cache fds_{cfg_};
+		Listener &listener_;
+		Net::NetworkPtr net_;
+		std::unique_ptr<Client> client_;
 	};
 
 	void run(Listener &listener, const std::string &address, const std::string &port) {
 		App app(listener, address, port);
+		while (app.step());
+	}
+	namespace {
+		std::unique_ptr<App> global_app;
+	}
+
+	void init(Listener &listener, const std::string &address, const std::string &port) {
+		global_app = std::make_unique<App>(listener, address, port);
+	}
+
+	bool step() {
+		return global_app->step();
+	}
+
+	void reset() {
+		global_app.reset();
 	}
 }
 

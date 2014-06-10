@@ -50,6 +50,7 @@
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>Mswsock</linkerLibLibItem>
             <linkerLibLibItem>Comctl32</linkerLibLibItem>
+            <linkerLibLibItem>Gdi32</linkerLibLibItem>
           </linkerLibItems>
           <commandLine>-static</commandLine>
         </linkerTool>
@@ -100,6 +101,7 @@
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>Mswsock</linkerLibLibItem>
             <linkerLibLibItem>Comctl32</linkerLibLibItem>
+            <linkerLibLibItem>Gdi32</linkerLibLibItem>
           </linkerLibItems>
           <commandLine>-static</commandLine>
         </linkerTool>
