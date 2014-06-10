@@ -6958,7 +6958,7 @@ void CClient::InitPlayerData(char * pData, uint32_t dwSize) {
 	if ((this->m_iLevel > 2) && (this->m_iAdminUserLevel == 0) &&
 			  (this->m_iExp < game_.iGetLevelExp(this->m_iLevel - 1) - 3000)) {
 		this->m_iExp = game_.iGetLevelExp(this->m_iLevel - 1) - 3000;
-		wsprintf(G_cTxt, "Problema, posible editaciï¿½n: (%s) Jugador: (%s) tiene la experiencia bajo 0 - (Exp:%d).", this->m_cIPaddress, this->m_cCharName, this->m_iExp);
+		wsprintf(G_cTxt, "Problema, posible editaciÃ¯Â¿Â½n: (%s) Jugador: (%s) tiene la experiencia bajo 0 - (Exp:%d).", this->m_cIPaddress, this->m_cCharName, this->m_iExp);
 		PutHackLogFileList(G_cTxt);
 		this->DeleteClient(true, true);
 		return;
@@ -7134,7 +7134,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 							if (iTemp < 0) iTemp = 1;
 							if (this->m_pItemList[iItemIndex]->iGetItemWeight(iTemp) > this->_iCalcMaxLoad()) {
 								iTemp = 1;
-								wsprintf(G_cTxt, "(!) Playerï¿½(%s) Item (%s) too heavy for player to carry", this->m_cCharName, this->m_pItemList[iItemIndex]->m_cName);
+								wsprintf(G_cTxt, "(!) PlayerÃ¯Â¿Â½(%s) Item (%s) too heavy for player to carry", this->m_cCharName, this->m_pItemList[iItemIndex]->m_cName);
 								PutLogFileList(G_cTxt);
 								PutLogList(G_cTxt);
 							}
@@ -7265,7 +7265,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 								if ((this->m_pItemList[iItemIndex]->m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
 										  (this->m_pItemList[iItemIndex]->m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
 										  (this->m_pItemList[iItemIndex]->m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
-									wsprintf(cTxt, "(!) Â´Ã™Â¸Â¥ Â»Ã§Â¶Ã·Ã€Ã‡ Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã’Ã�Ã¶: Player(%s) Item(%s) %d %d %d - %d %d %d", this->m_cCharName, this->m_pItemList[iItemIndex]->m_cName,
+									wsprintf(cTxt, "(!) Ã‚Â´Ãƒâ„¢Ã‚Â¸Ã‚Â¥ Ã‚Â»ÃƒÂ§Ã‚Â¶ÃƒÂ·Ãƒâ‚¬Ãƒâ€¡ Ã‚Â¾Ãƒâ€ Ãƒâ‚¬ÃƒÅ’Ãƒâ€¦Ãƒâ€º Ã‚Â¼Ãƒâ€™Ãƒï¿½ÃƒÂ¶: Player(%s) Item(%s) %d %d %d - %d %d %d", this->m_cCharName, this->m_pItemList[iItemIndex]->m_cName,
 											  this->m_pItemList[iItemIndex]->m_sTouchEffectValue1,
 											  this->m_pItemList[iItemIndex]->m_sTouchEffectValue2,
 											  this->m_pItemList[iItemIndex]->m_sTouchEffectValue3,
@@ -7287,7 +7287,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 							// v1.433
 							if ((this->m_pItemList[iItemIndex]->m_wCurLifeSpan == 0) &&
 									  (this->m_pItemList[iItemIndex]->m_sItemEffectType == ItemEffectType::ALTERITEMDROP)) {
-								wsprintf(G_cTxt, "(!) Ã„Â³Â¸Â¯Ã…Ã�(%s) Â¼Ã¶Â¸Ã­ 0Ã‚Â¥Â¸Â® ÃˆÃ±Â»Ã½Â¼Â® Â¼Ã’Ã�Ã¶!", this->m_cCharName);
+								wsprintf(G_cTxt, "(!) Ãƒâ€žÃ‚Â³Ã‚Â¸Ã‚Â¯Ãƒâ€¦Ãƒï¿½(%s) Ã‚Â¼ÃƒÂ¶Ã‚Â¸ÃƒÂ­ 0Ãƒâ€šÃ‚Â¥Ã‚Â¸Ã‚Â® ÃƒË†ÃƒÂ±Ã‚Â»ÃƒÂ½Ã‚Â¼Ã‚Â® Ã‚Â¼Ãƒâ€™Ãƒï¿½ÃƒÂ¶!", this->m_cCharName);
 								PutLogFileList(G_cTxt);
 								this->m_pItemList[iItemIndex]->m_wCurLifeSpan = 1;
 							}
@@ -7600,7 +7600,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 							if (iTemp < 0) iTemp = 1;
 							if (this->m_pItemInBankList[iItemInBankIndex]->iGetItemWeight(iTemp) > this->_iCalcMaxLoad()) {
 								iTemp = 1;
-								wsprintf(G_cTxt, "(!) Ã„Â³Â¸Â¯Ã…Ã�(%s) Â¾Ã†Ã€ÃŒÃ…Ã›(%s) Â°Â³Â¼Ã¶ Â¿Ã€Â¹Ã¶Ã‡ÃƒÂ·ÃŽÂ¿Ã¬", this->m_cCharName, this->m_pItemInBankList[iItemInBankIndex]->m_cName);
+								wsprintf(G_cTxt, "(!) Ãƒâ€žÃ‚Â³Ã‚Â¸Ã‚Â¯Ãƒâ€¦Ãƒï¿½(%s) Ã‚Â¾Ãƒâ€ Ãƒâ‚¬ÃƒÅ’Ãƒâ€¦Ãƒâ€º(%s) Ã‚Â°Ã‚Â³Ã‚Â¼ÃƒÂ¶ Ã‚Â¿Ãƒâ‚¬Ã‚Â¹ÃƒÂ¶Ãƒâ€¡ÃƒÆ’Ã‚Â·ÃƒÅ½Ã‚Â¿ÃƒÂ¬", this->m_cCharName, this->m_pItemInBankList[iItemInBankIndex]->m_cName);
 								PutLogFileList(G_cTxt);
 								PutLogList(G_cTxt);
 							}
@@ -7735,8 +7735,8 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 							int iValue = (this->m_pItemInBankList[iItemInBankIndex]->m_dwAttribute & 0xF0000000) >> 28;
 							if (iValue > 0) {
 								switch (this->m_pItemInBankList[iItemInBankIndex]->m_cCategory) {
-									case 5: // Â¹Ã¦Ã†Ã�
-									case 6: // Â¹Ã¦Â¾Ã®Â±Â¸
+									case 5: // Ã‚Â¹ÃƒÂ¦Ãƒâ€ Ãƒï¿½
+									case 6: // Ã‚Â¹ÃƒÂ¦Ã‚Â¾ÃƒÂ®Ã‚Â±Ã‚Â¸
 										this->m_pItemInBankList[iItemInBankIndex]->m_wMaxLifeSpan = this->m_pItemInBankList[iItemInBankIndex]->m_sItemSpecEffectValue1;
 										break;
 								}
@@ -7747,7 +7747,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 							// v1.433
 							if ((this->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan == 0) &&
 									  (this->m_pItemInBankList[iItemInBankIndex]->m_sItemEffectType == ItemEffectType::ALTERITEMDROP)) {
-								wsprintf(G_cTxt, "(!) Ã„Â³Â¸Â¯Ã…Ã�(%s) Â¼Ã¶Â¸Ã­ 0Ã‚Â¥Â¸Â® ÃˆÃ±Â»Ã½Â¼Â® Â¼Ã’Ã�Ã¶!", this->m_cCharName);
+								wsprintf(G_cTxt, "(!) Ãƒâ€žÃ‚Â³Ã‚Â¸Ã‚Â¯Ãƒâ€¦Ãƒï¿½(%s) Ã‚Â¼ÃƒÂ¶Ã‚Â¸ÃƒÂ­ 0Ãƒâ€šÃ‚Â¥Ã‚Â¸Ã‚Â® ÃƒË†ÃƒÂ±Ã‚Â»ÃƒÂ½Ã‚Â¼Ã‚Â® Ã‚Â¼Ãƒâ€™Ãƒï¿½ÃƒÂ¶!", this->m_cCharName);
 								PutLogFileList(G_cTxt);
 								this->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan = 1;
 							}
@@ -8661,7 +8661,7 @@ DPDC_STOP_DECODING:
 	/*
 	if ((this->m_cSkillMastery[0] >= 70) || (this->m_cSkillMastery[1] >= 70) ||
 	(this->m_cSkillMastery[12] >= 70)) {
-	wsprintf(G_cTxt, "(!) Ã‡Ã˜Ã…Â· Â¿Ã«Ã€Ã‡Ã€Ãš(%s) Â³Ã´Ã€Âº Â½ÂºÃ…Â³ (%d %d %d)", this->m_cCharName,
+	wsprintf(G_cTxt, "(!) Ãƒâ€¡ÃƒËœÃƒâ€¦Ã‚Â· Ã‚Â¿ÃƒÂ«Ãƒâ‚¬Ãƒâ€¡Ãƒâ‚¬ÃƒÅ¡(%s) Ã‚Â³ÃƒÂ´Ãƒâ‚¬Ã‚Âº Ã‚Â½Ã‚ÂºÃƒâ€¦Ã‚Â³ (%d %d %d)", this->m_cCharName,
 	this->m_cSkillMastery[0], this->m_cSkillMastery[1],
 	this->m_cSkillMastery[12]);
 	PutLogFileList(G_cTxt);
@@ -10854,11 +10854,11 @@ void CClient::ChatMsgHandler(char * pData, uint32_t dwMsgSize) {
 		while (*cp != 0) {
 			if ((cp[0] != 0) && (cp[0] != ' ') && (cp[1] != 0) && (cp[1] != ' ')) {
 				switch (iDice(1, 3)) {
-					case 1: memcpy(cp, "Â¿Ã¶", 2);
+					case 1: memcpy(cp, "Ã‚Â¿ÃƒÂ¶", 2);
 						break;
-					case 2: memcpy(cp, "Â¿Ã¬", 2);
+					case 2: memcpy(cp, "Ã‚Â¿ÃƒÂ¬", 2);
 						break;
-					case 3: memcpy(cp, "Â¿Ã¹", 2);
+					case 3: memcpy(cp, "Ã‚Â¿ÃƒÂ¹", 2);
 						break;
 				}
 				cp += 2;
@@ -11047,7 +11047,7 @@ void CClient::RequestPurchaseItemHandler(char * pItemName, int iNum) {
 				iCost2 = iCost = ((pItem->m_wPrice * pItem->m_dwCount)*2);
 			}
 			iCost = pItem->m_wPrice * pItem->m_dwCount;
-			/* v1.3 <- Ã€ÃŒÂ°Ã‡ _bAddClientItemListÂ¿Â¡Â¼Â­ ÃƒÂ¼Ã…Â©Ã‡Ã�Â´Ã‚ Â±Ã¢Â´Ã‰Ã€ÃŒÂ¹Ã‡Â·ÃŽ ÂµÃŽÂ¹Ã¸Ã‡Ã’ Ã‡ÃŠÂ¿Ã¤Â°Â¡ Â¾Ã¸Â´Ã™.
+			/* v1.3 <- Ãƒâ‚¬ÃƒÅ’Ã‚Â°Ãƒâ€¡ _bAddClientItemListÃ‚Â¿Ã‚Â¡Ã‚Â¼Ã‚Â­ ÃƒÆ’Ã‚Â¼Ãƒâ€¦Ã‚Â©Ãƒâ€¡Ãƒï¿½Ã‚Â´Ãƒâ€š Ã‚Â±ÃƒÂ¢Ã‚Â´Ãƒâ€°Ãƒâ‚¬ÃƒÅ’Ã‚Â¹Ãƒâ€¡Ã‚Â·ÃƒÅ½ Ã‚ÂµÃƒÅ½Ã‚Â¹ÃƒÂ¸Ãƒâ€¡Ãƒâ€™ Ãƒâ€¡ÃƒÅ Ã‚Â¿ÃƒÂ¤Ã‚Â°Ã‚Â¡ Ã‚Â¾ÃƒÂ¸Ã‚Â´Ãƒâ„¢.
 			if ((pItem->m_cItemType == ItemType::CONSUME) || (pItem->m_cItemType == ItemType::ARROW))
 				iItemWeight = (pItem->m_wWeight * pItem->m_dwCount);
 			else iItemWeight = pItem->m_wWeight;
@@ -15947,7 +15947,7 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 				iTemp = iDice(1, item.m_sItemSpecEffectValue1);
 				if (iTemp == iDice(1, item.m_sItemSpecEffectValue1)) {
 				} else {
-					// Â²ÃŽ!
+					// Ã‚Â²ÃƒÅ½!
 				}
 				break;
 			case ItemEffectType::SLATES:
@@ -16346,7 +16346,7 @@ bool CClient::bCheckTotalSkillMasteryPoints(int iSkill) {
 			if (this->m_iDownSkillIndex != -1) {
 				switch (this->m_iDownSkillIndex) {
 					case 3:
-						/* Ã€ÃŒ Â½ÂºÃ…Â³ÂµÂµ 0Ã€Â¸Â·ÃŽ ÂµÃˆÂ´Ã™.
+						/* Ãƒâ‚¬ÃƒÅ’ Ã‚Â½Ã‚ÂºÃƒâ€¦Ã‚Â³Ã‚ÂµÃ‚Âµ 0Ãƒâ‚¬Ã‚Â¸Ã‚Â·ÃƒÅ½ Ã‚ÂµÃƒË†Ã‚Â´Ãƒâ„¢.
 						case 4:
 						case 5:
 						case 7:
@@ -16494,7 +16494,7 @@ void CClient::UseSkillHandler(int iV1, int /*iV2*/, int /*iV3*/) {
 	if (iV1 != 19) {
 		this->m_iAbuseCount++;
 		if ((this->m_iAbuseCount % 30) == 0) {
-			wsprintf(G_cTxt, "(!) Ã‡Ã˜Ã…Â· Â¿Ã«Ã€Ã‡Ã€Ãš(%s) Skill(%d) Tries(%d)",this->m_cCharName,
+			wsprintf(G_cTxt, "(!) Ãƒâ€¡ÃƒËœÃƒâ€¦Ã‚Â· Ã‚Â¿ÃƒÂ«Ãƒâ‚¬Ãƒâ€¡Ãƒâ‚¬ÃƒÅ¡(%s) Skill(%d) Tries(%d)",this->m_cCharName,
 																						 iV1, this->m_iAbuseCount);
 			PutLogFileList(G_cTxt);
 		}
@@ -18002,7 +18002,7 @@ void CClient::AdminOrder_SummonDemon() {
 		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) this->m_sX;
 		tY = (int) this->m_sY;
-		if (this->map_->bCreateNewNpc(cNpcName, cName, 0, (rand() % 9),
+		if (this->map_->bCreateNewNpc(cNpcName, cName, 0, game_._cGetSpecialAbility(9),
 				  DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, false) == false) {
 			this->map_->SetNamingValueEmpty(iNamingValue);
 		} else {
@@ -18036,7 +18036,7 @@ void CClient::AdminOrder_SummonDeath() {
 		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) this->m_sX;
 		tY = (int) this->m_sY;
-		if (this->map_->bCreateNewNpc(cNpcName, cName, 0, (rand() % 9),
+		if (this->map_->bCreateNewNpc(cNpcName, cName, 0, game_._cGetSpecialAbility(9),
 				  DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, false) == false) {
 			this->map_->SetNamingValueEmpty(iNamingValue);
 		} else {
@@ -18252,7 +18252,7 @@ void CClient::AdminOrder_CreateFish(char * pData, uint32_t dwMsgSize) {
 			return;
 		}
 		std::memset(cItemName, 0, sizeof (cItemName));
-		strcpy(cItemName, "Â¹Â°Â°Ã­Â±Ã¢");
+		strcpy(cItemName, "Ã‚Â¹Ã‚Â°Ã‚Â°ÃƒÂ­Ã‚Â±ÃƒÂ¢");
 		if (game_._bInitItemAttr(*pItem, cItemName) == true) {
 			game_.iCreateFish(this->map_, tX, tY, iType, pItem, 1, 60000 * 20);
 		} else delete pItem;
@@ -19372,7 +19372,7 @@ void CClient::NpcTalkHandler(int iWho) {
 			strcpy(cRewardName, game_.m_pItemConfigList[iRewardType]->m_cName);
 		} else {
 			switch (iRewardType) {
-				case -10: strcpy(cRewardName, "ï¿½ï¿½ï¿½F-ï¿½");
+				case -10: strcpy(cRewardName, "Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½F-Ã¯Â¿Â½");
 					break;
 			}
 		}
@@ -20466,7 +20466,7 @@ int CClient::_iTalkToNpcResult_Cityhall(int * pQuestType, int * pMode, int * pRe
 					this->m_iExpStock += this->m_iQuestRewardAmount;
 					this->m_iContribution += game_.m_pQuestConfigList[this->m_iQuest]->m_iContribution;
 					this->SendNotifyMsg(0, DEF_NOTIFY_QUESTREWARD, 4, 1, this->m_iQuestRewardAmount,
-							  "Â°Ã¦Ã‡Ã¨Ã„Â¡              ", this->m_iContribution);
+							  "Ã‚Â°ÃƒÂ¦Ãƒâ€¡ÃƒÂ¨Ãƒâ€žÃ‚Â¡              ", this->m_iContribution);
 					this->_ClearQuestStatus();
 					return -5;
 				} else if (this->m_iQuestRewardType == -2) {
@@ -20477,7 +20477,7 @@ int CClient::_iTalkToNpcResult_Cityhall(int * pQuestType, int * pMode, int * pRe
 					this->m_iExpStock += iExp;
 					this->m_iContribution += game_.m_pQuestConfigList[this->m_iQuest]->m_iContribution;
 					this->SendNotifyMsg(0, DEF_NOTIFY_QUESTREWARD, 4, 1, iExp,
-							  "Â°Ã¦Ã‡Ã¨Ã„Â¡              ", this->m_iContribution);
+							  "Ã‚Â°ÃƒÂ¦Ãƒâ€¡ÃƒÂ¨Ãƒâ€žÃ‚Â¡              ", this->m_iContribution);
 					this->_ClearQuestStatus();
 					return -5;
 				} else {
@@ -21369,7 +21369,8 @@ void CClient::AdminOrder_UnsummonDemon() {
 
 void CClient::AdminOrder_Summon(char *pData, uint32_t dwMsgSize) {
 	char seps[] = "= \t\n";
-	char * token, cBuff[256], cName_Master[10], cName_Slave[10], cNpcName[256], cWaypoint[11], cSA;
+	char * token, cBuff[256], cName_Master[10], cName_Slave[10], cNpcName[256], cWaypoint[11];
+	SpecialAbility cSA;
 	int pX;
 	int pY;
 	int j;
@@ -21616,7 +21617,7 @@ void CClient::_TamingHandler(int iSkillNum, MapPtr map, int dX, int dY) {
 							case 16: iTamingLevel = 1;
 								break;
 							case 22: iTamingLevel = 2;
-								break; // Â¹Ã¬
+								break; // Ã‚Â¹ÃƒÂ¬
 							case 17:
 							case 14: iTamingLevel = 3;
 								break;
@@ -21628,7 +21629,7 @@ void CClient::_TamingHandler(int iSkillNum, MapPtr map, int dX, int dY) {
 							case 12: iTamingLevel = 6;
 								break;
 							case 28: iTamingLevel = 7;
-								break; // Ã†Â®Â·Ã‘
+								break; // Ãƒâ€ Ã‚Â®Ã‚Â·Ãƒâ€˜
 							case 13:
 							case 27: iTamingLevel = 8;
 								break;
@@ -22157,7 +22158,7 @@ bool CClient::__bSetConstructionKit(int dX, int dY, int iType, int /*iTimeCost*/
 		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) dX;
 		tY = (int) dY;
-		if (this->map_->bCreateNewNpc(cNpcName, cName, 0, (rand() % 9), DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, false) == false) {
+		if (this->map_->bCreateNewNpc(cNpcName, cName, 0, game_._cGetSpecialAbility(9), DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, false) == false) {
 			this->map_->SetNamingValueEmpty(iNamingValue);
 		} else {
 			wsprintf(G_cTxt, "Structure(%s) construction begin(%d,%d)!", cNpcName, tX, tY);
@@ -24334,7 +24335,7 @@ void CClient::Command_RedBall(char */*pData*/, uint32_t /*dwMsgSize*/) {
 			std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 			tX = (int) this->m_sX;
 			tY = (int) this->m_sY;
-			if (this->map_->bCreateNewNpc(cNpcName, cName, 0, (rand() % 9),
+			if (this->map_->bCreateNewNpc(cNpcName, cName, 0, game_._cGetSpecialAbility(9),
 					  DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, false) == false) {
 				this->map_->SetNamingValueEmpty(iNamingValue);
 			} else {
@@ -24351,7 +24352,8 @@ void CClient::Command_RedBall(char */*pData*/, uint32_t /*dwMsgSize*/) {
 }
 
 void CClient::Command_BlueBall(char */*pData*/, uint32_t /*dwMsgSize*/) {
-	char cName_Master[10], cName_Slave[10], cNpcName[256], cWaypoint[11], cSA;
+	char cName_Master[10], cName_Slave[10], cNpcName[256], cWaypoint[11];
+	SpecialAbility cSA;
 	int pX;
 	int pY;
 	int j;
