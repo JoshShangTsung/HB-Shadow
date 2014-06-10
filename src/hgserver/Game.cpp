@@ -2491,9 +2491,9 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 	}
 	pNpc->m_iExpDiceMin = npcArch.m_iExpDiceMin;
 	pNpc->m_iExpDiceMax = npcArch.m_iExpDiceMax;
-	pNpc->m_iGoldDiceMin = npcArch.m_iGoldDiceMin * 5;
-	pNpc->m_iGoldDiceMax = npcArch.m_iGoldDiceMax * 5;
-	pNpc->m_iExp = (iDice(1, (npcArch.m_iExpDiceMax - npcArch.m_iExpDiceMin)) + npcArch.m_iExpDiceMin) * 500;
+	pNpc->m_iGoldDiceMin = npcArch.m_iGoldDiceMin;
+	pNpc->m_iGoldDiceMax = npcArch.m_iGoldDiceMax;
+	pNpc->m_iExp = (iDice(1, (npcArch.m_iExpDiceMax - npcArch.m_iExpDiceMin)) + npcArch.m_iExpDiceMin);
 	pNpc->m_iHitDice = npcArch.m_iHitDice;
 	pNpc->m_iDefenseRatio = npcArch.m_iDefenseRatio;
 	pNpc->m_iHitRatio = npcArch.m_iHitRatio;
