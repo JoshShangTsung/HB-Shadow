@@ -2,7 +2,6 @@
 
 #include <windows.h>
 #include "Item.h"
-#include "DynamicObjectID.h"
 
 #define DEF_TILE_PER_ITEMS	12
 
@@ -14,28 +13,24 @@ public:
 	char m_cOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC
 	short m_sOwner;
 
-	char m_cDeadOwnerClass;
+	char m_cDeadOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC �׾��ִ� �÷��̾�� �̰��� 
 	short m_sDeadOwner;
 
 	class CItem * m_pItem[DEF_TILE_PER_ITEMS];
 	char m_cTotalItem;
 
 	uint16_t m_wDynamicObjectID;
-	DynamicObjectType m_sDynamicObjectType;
+	short m_sDynamicObjectType;
 	uint32_t m_dwDynamicObjectRegisterTime;
 
-	bool m_bIsMoveAllowed;
-	bool m_bIsTeleport;
-	bool m_bIsWater;
-	bool m_bIsFarm;
-	bool m_bIsTempMoveAllowed;
+	bool m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
 
-
-	int m_iOccupyStatus;
-	int m_iOccupyFlagIndex;
+	// ������ ǥ�ÿ� 
+	int m_iOccupyStatus; // Aresden�̸� -������, Elvine�̸� +�� �������. �� ���� �� ������ ���⼺ 
+	int m_iOccupyFlagIndex; // �� Ÿ�� ���� �� �ִ� ���ɱ���� �ε��� 
 
 	// Crusade
-	int m_iAttribute;
+	int m_iAttribute; // Ÿ���� ���� ��Ʈ: ù��° ��Ʈ(���� ��ȣ) �ι�° ��Ʈ(���� ��� ��ȣ) ����° ��Ʈ(��������)
 
 
 };

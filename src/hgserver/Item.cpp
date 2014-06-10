@@ -2,7 +2,7 @@
 #include <cstring>
 
 CItem::CItem() {
-	std::memset(m_cName, 0, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 	m_sSprite = 0;
 	m_sSpriteFrame = 0;
 
@@ -15,7 +15,7 @@ CItem::CItem() {
 	m_sItemEffectValue6 = 0;
 
 	m_dwCount = 1;
-	m_sTouchEffectType = TouchEffectType::NONE;
+	m_sTouchEffectType = 0;
 	m_sTouchEffectValue1 = 0;
 	m_sTouchEffectValue2 = 0;
 	m_sTouchEffectValue3 = 0;
@@ -35,13 +35,4 @@ CItem::CItem() {
 	m_sIDnum = 0;
 
 	m_bIsForSale = false;
-}
-
-int CItem::iGetItemWeight(int iCount) const {
-	int iWeight = (this->m_wWeight);
-	if (iCount < 0) iCount = 1;
-	iWeight = iWeight * iCount;
-	if (this->m_sIDnum == 90) iWeight = iWeight / 20;
-	if (iWeight <= 0) iWeight = 1;
-	return iWeight;
 }

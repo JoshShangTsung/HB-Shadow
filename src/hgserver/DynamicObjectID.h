@@ -1,22 +1,4 @@
 #pragma once
-enum class DynamicObjectType {
-	_0 = 0,
-	FIRE = 1,
-	FISH, // 2
-	FISHOBJECT,// 3
-	MINERAL1,// 4
-	MINERAL2,// 5
-	ARESDENFLAG1,// 6
-	ELVINEFLAG1,// 7
-	ICESTORM,// 8
-	SPIKE,// 9
-	PCLOUD_BEGIN,// 10
-	PCLOUD_LOOP,// 11
-	PCLOUD_END,// 12
-	FIRE2,// 13
-	FIRE3// 14
-};
-/*
 #define DEF_DYNAMICOBJECT_FIRE			1
 #define DEF_DYNAMICOBJECT_FISH			2
 #define DEF_DYNAMICOBJECT_FISHOBJECT	3
@@ -31,4 +13,3 @@ enum class DynamicObjectType {
 #define DEF_DYNAMICOBJECT_PCLOUD_END	12
 #define DEF_DYNAMICOBJECT_FIRE2			13
 #define DEF_DYNAMICOBJECT_FIRE3			14
-*/

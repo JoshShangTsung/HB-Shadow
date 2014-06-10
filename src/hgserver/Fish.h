@@ -1,20 +1,19 @@
 #pragma once
-#include "Map.h"
-struct CItem;
+#include "item.h"
+
 class CFish {
 public:
-	CFish(MapPtr map, short sX, short sY, short sType, class CItem * pItem, int iDifficulty);
+	CFish(char cMapIndex, short sX, short sY, short sType, class CItem * pItem, int iDifficulty);
 	virtual ~CFish();
 
-	MapPtr map_;
-	short m_sX;
-	short m_sY;
+	char m_cMapIndex;
+	short m_sX, m_sY; 
 
-	short m_sType;
-	class CItem * m_pItem;
+	short m_sType; 
+	class CItem * m_pItem; 
 
 	short m_sDynamicObjectHandle;
 
-	short m_sEngagingCount;
-	int m_iDifficulty;
+	short m_sEngagingCount; 
+	int m_iDifficulty; 
 };

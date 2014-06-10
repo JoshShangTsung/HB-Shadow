@@ -3,18 +3,11 @@
 
 void PutXSocketLogList(const char * cMsg);
 void PutXSocketLogFileList(const char * cMsg);
-void PutLogList(const char * cMsg);
-void PutLogFileList(const char * cStr);
-void PutAdminLogFileList(const char * cStr);
-void PutItemLogFileList(const char * cStr);
-void PutLogEventFileList(const char * cStr);
-void PutHackLogFileList(const char * cStr);
-void PutPvPLogFileList(const char * cStr);
-
 bool InitApplication(HINSTANCE hInstance);
 bool InitInstance(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void OnAccept();
+void PutLogList(const char * cMsg);
 void OnKeyUp(WPARAM wParam, LPARAM lParam);
 void UpdateScreen();
 int EventLoop();

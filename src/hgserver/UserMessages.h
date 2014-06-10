@@ -6,6 +6,6 @@
 #define WM_ONLOGSOCKETEVENT		WM_USER + 200
 #define WM_ONBOTSOCKETEVENT		WM_USER + 2000
 
-
+// Ŭ���̾�Ʈ�� 1100�� ���ϸ� �����ϹǷ� �� ���ķ� �޽����� ���ǵǾ�� �ȵȴ�. 
 #define WM_ONCLIENTSOCKETEVENT	WM_USER + 1100
 

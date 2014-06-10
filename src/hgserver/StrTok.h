@@ -8,8 +8,7 @@ public:
 	char * m_pData;
 	const char * m_pSeps;
 	char m_cToken[1024];
-	int m_iDataLength;
-	int m_iCurLoc;
+	int m_iDataLength, m_iCurLoc;
 
 private:
 	bool _bIsSeperator(char cData, char cNextData);

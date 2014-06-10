@@ -1,14 +1,12 @@
 #pragma once
-#include "Map.h"
 
 class CMineral {
 public:
-	CMineral(char cType, MapPtr map, int sX, int sY, int iRemain);
+	CMineral(char cType, char cMapIndex, int sX, int sY, int iRemain);
 	char m_cType;
 
-	MapPtr map_;
-	int m_sX;
-	int m_sY;
+	char m_cMapIndex;
+	int m_sX, m_sY;
 	int m_iDifficulty;
 	short m_sDynamicObjectHandle;
 
