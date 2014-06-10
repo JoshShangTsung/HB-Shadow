@@ -237,7 +237,7 @@ private:
 public:
 	// Snow BOOLean for certain maps to snow instead of rain
 	bool m_bIsSnowEnabled;
-	bool m_bIsRecallImpossible;
+	bool m_bIsRecallImpossible = false;
 	bool m_bIsApocalypseMap;
 	bool m_bIsHeldenianMap;
 	bool bGetEmptyPosition(short * pX, short * pY);
