@@ -1,30 +1,29 @@
 #include "Msg.h"
-#include <cstring>
 
 CMsg::CMsg() {
-	m_pData = nullptr;
-	m_dwSize = 0;
+	m_pData = NULL;
+	m_dwSize = NULL;
 }
 
 CMsg::~CMsg() {
-	if (m_pData != nullptr) delete m_pData;
+	if (m_pData != NULL) delete m_pData;
 }
 
-bool CMsg::bPut(char cFrom, char * pData, uint32_t dwSize, int iIndex, char cKey) {
+BOOL CMsg::bPut(char cFrom, char * pData, DWORD dwSize, int iIndex, char cKey) {
 	m_pData = new char [dwSize + 1];
-	if (m_pData == nullptr) return false;
+	if (m_pData == NULL) return FALSE;
+	ZeroMemory(m_pData, dwSize + 1);
 	memcpy(m_pData, pData, dwSize);
-	m_pData[dwSize] = 0;
 
 	m_dwSize = dwSize;
 	m_cFrom = cFrom;
 	m_iIndex = iIndex;
 	m_cKey = cKey;
 
-	return true;
+	return TRUE;
 }
 
-void CMsg::Get(char * pFrom, char * pData, uint32_t * pSize, int * pIndex, char * pKey) {
+void CMsg::Get(char * pFrom, char * pData, DWORD * pSize, int * pIndex, char * pKey) {
 	*pFrom = m_cFrom;
 	memcpy(pData, m_pData, m_dwSize);
 	*pSize = m_dwSize;

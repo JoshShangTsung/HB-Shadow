@@ -3,34 +3,34 @@
 CTile::CTile() {
 	int i;
 
-	m_bIsMoveAllowed = true;
-	m_bIsTeleport = false;
-	m_bIsWater = false;
-	m_bIsFarm = false;
+	m_bIsMoveAllowed = TRUE;
+	m_bIsTeleport = FALSE;
+	m_bIsWater = FALSE;
+	m_bIsFarm = FALSE;
 
-	m_sOwner = 0;
-	m_cOwnerClass = 0;
+	m_sOwner = NULL;
+	m_cOwnerClass = NULL;
 
-	m_sDeadOwner = 0;
-	m_cDeadOwnerClass = 0;
+	m_sDeadOwner = NULL;
+	m_cDeadOwnerClass = NULL;
 
 	for (i = 0; i < DEF_TILE_PER_ITEMS; i++)
-		m_pItem[i] = nullptr;
+		m_pItem[i] = NULL;
 	m_cTotalItem = 0;
 
-	m_wDynamicObjectID = 0;
-	m_sDynamicObjectType = 0;
+	m_wDynamicObjectID = NULL;
+	m_sDynamicObjectType = NULL;
 
-	m_bIsTempMoveAllowed = true;
+	m_bIsTempMoveAllowed = TRUE;
 
-	m_iOccupyStatus = 0;
-	m_iOccupyFlagIndex = 0;
+	m_iOccupyStatus = NULL;
+	m_iOccupyFlagIndex = NULL;
 
-	m_iAttribute = 0;
+	m_iAttribute = NULL;
 }
 
 CTile::~CTile() {
 	int i;
 	for (i = 0; i < DEF_TILE_PER_ITEMS; i++)
-		if (m_pItem[i] != nullptr) delete m_pItem[i];
+		if (m_pItem[i] != NULL) delete m_pItem[i];
 }

@@ -1,11 +1,9 @@
 #pragma once
+
+#include <windows.h>
 #include "OccupyFlag.h"
 #include "Tile.h"
 #include "StrategicPoint.h"
-#include "Game.h"
-#include "StrTok.h"
-#include "TeleportLoc.h"
-#include "GlobalDef.h"
 
 
 #define DEF_OWNERTYPE_PLAYER			1
@@ -31,6 +29,11 @@
 #define DEF_MAXHELDENIANTOWER	200
 #define DEF_PLAYER_MAX_EXPERIENCE 203484288 // juan249 - Exp negativa fix.y reemplazan los numeros 121586796 por la exp de un personaje max lvl de su servidor.
 
+#include <windows.h>
+#include "Game.h"
+#include "StrTok.h"
+#include "TeleportLoc.h"
+#include "GlobalDef.h"
 
 #define DEF_MAPTYPE_NORMAL				0
 #define DEF_MAPTYPE_NOPENALTY_NOREWARD	1
@@ -44,39 +47,40 @@ class CMap {
 public:
 
 	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);
-	bool bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner);
-	bool bGetIsFarm(short tX, short tY);
+	BOOL bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner);
+	BOOL bGetIsFarm(short tX, short tY);
 	void RestoreStrikePoints();
-	bool bRemoveCrusadeStructureInfo(short sX, short sY);
-	bool bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide);
+	BOOL bRemoveCrusadeStructureInfo(short sX, short sY);
+	BOOL bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide);
 	int iGetAttribute(int dX, int dY, int iBitMask);
 	void _SetupNoAttackArea();
 	void ClearTempSectorInfo();
 	void ClearSectorInfo();
 	int iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI);
 	int iCheckItem(short sX, short sY);
-	void SetTempMoveAllowedFlag(int dX, int dY, bool bFlag);
-	bool bGetIsWater(short dX, short dY);
+	void SetTempMoveAllowedFlag(int dX, int dY, BOOL bFlag);
+	int iAnalyze(char cType, int *pX, int *pY, int * pV1, int *pV2, int * pV3);
+	BOOL bGetIsWater(short dX, short dY);
 	void GetDeadOwner(short * pOwner, char * pOwnerClass, short sX, short sY);
-	bool bGetIsMoveAllowedTile(short dX, short dY);
+	BOOL bGetIsMoveAllowedTile(short dX, short dY);
 	void SetNamingValueEmpty(int iValue);
 	int iGetEmptyNamingValue();
-	bool bGetDynamicObject(short sX, short sY, short * pType, uint32_t * pRegisterTime, int * pIndex = nullptr);
-	void SetDynamicObject(uint16_t wID, short sType, short sX, short sY, uint32_t dwRegisterTime);
-	bool bGetIsTeleport(short dX, short dY);
-	bool bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int * pDy, char * pDir);
-	bool bInit(char * pName);
-	bool bIsValidLoc(short sX, short sY);
+	BOOL bGetDynamicObject(short sX, short sY, short * pType, DWORD * pRegisterTime, int * pIndex = NULL);
+	void SetDynamicObject(WORD wID, short sType, short sX, short sY, DWORD dwRegisterTime);
+	BOOL bGetIsTeleport(short dX, short dY);
+	BOOL bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int * pDy, char * pDir);
+	BOOL bInit(char * pName);
+	BOOL bIsValidLoc(short sX, short sY);
 	class CItem * pGetItem(short sX, short sY, short * pRemainItemSprite, short * pRemainItemSpriteFrame, char * pRemainItemColor);
-	bool bSetItem(short sX, short sY, class CItem * pItem);
+	BOOL bSetItem(short sX, short sY, class CItem * pItem);
 	void ClearDeadOwner(short sX, short sY);
 	void ClearOwner(int iDebugCode, short sOwnerH, char cOwnerType, short sX, short sY);
-	bool bGetMoveable(short dX, short dY, short * pDOtype = nullptr, short * pTopItem = nullptr);
+	BOOL bGetMoveable(short dX, short dY, short * pDOtype = NULL, short * pTopItem = NULL);
 	void GetOwner(short * pOwner, char * pOwnerClass, short sX, short sY);
 	void SetOwner(short sOwner, char cOwnerClass, short sX, short sY);
 	void SetDeadOwner(short sOwner, char cOwnerClass, short sX, short sY);
-	bool bRemoveCropsTotalSum();
-	bool bAddCropsTotalSum();
+	BOOL bRemoveCropsTotalSum();
+	BOOL bAddCropsTotalSum();
 	void SetBigOwner(short sOwner, char cOwnerClass, short sX, short sY, char cArea);
 
 	CMap(class CGame * pGame);
@@ -92,8 +96,8 @@ public:
 	//short m_sInitialPointX, m_sInitialPointY;
 	POINT m_pInitialPoint[DEF_MAXINITIALPOINT];
 
-	bool m_bNamingValueUsingStatus[1000]; // 0~999
-	bool m_bRandomMobGenerator;
+	BOOL m_bNamingValueUsingStatus[1000]; // 0~999
+	BOOL m_bRandomMobGenerator;
 	char m_cRandomMobGeneratorLevel;
 	int m_iTotalActiveObject;
 	int m_iTotalAliveObject;
@@ -101,10 +105,10 @@ public:
 
 	char m_cType; // ���� ���. 0�̸� ����. 1�̸� ��������� ���˰� �ƴϴ�.
 
-	bool m_bIsFixedDayMode; // �׻� �ְ��������: �ǹ� ���� �� 
+	BOOL m_bIsFixedDayMode; // �׻� �ְ��������: �ǹ� ���� �� 
 
 	struct {
-		bool bDefined;
+		BOOL bDefined;
 		char cType; // 1:RANDOMAREA   2:RANDOMWAYPOINT
 
 		char cWaypoint[10]; // RANDOMWAYPOINT ��
@@ -130,18 +134,18 @@ public:
 	short m_sDynamicGateCoordRectX1, m_sDynamicGateCoordRectY1, m_sDynamicGateCoordRectX2, m_sDynamicGateCoordRectY2;
 	char m_cDynamicGateCoordDestMap[11];
 	short m_sDynamicGateCoordTgtX, m_sDynamicGateCoordTgtY;
-	bool m_bIsCitizenLimit;
+	BOOL m_bIsCitizenLimit;
 	short m_sHeldenianTowerType, m_sHeldenianTowerXPos, m_sHeldenianTowerYPos;
 	char m_cHeldenianTowerSide;
 	char m_cHeldenianModeMap;
 
-	bool m_bMineralGenerator;
+	BOOL m_bMineralGenerator;
 	char m_cMineralGeneratorLevel;
 	POINT m_MineralPointList[DEF_MAXMINERALPOINT];
 	int m_iTotalMineralPoint, m_iMaxMineral, m_iCurMineral;
 
 	char m_cWhetherStatus; // ��� ����. 0�̸� ����. 1~3 �� 4~6 �� 7~9 ��ǳ 
-	uint32_t m_dwWhetherLastTime, m_dwWhetherStartTime; // ���� ����, ���� �ð� 
+	DWORD m_dwWhetherLastTime, m_dwWhetherStartTime; // ���� ����, ���� �ð� 
 
 	int m_iLevelLimit;
 	int m_iUpperLevelLimit; // ���� �� ���� 
@@ -150,9 +154,9 @@ public:
 	int m_iTotalOccupyFlags;
 
 	class CStrategicPoint * m_pStrategicPointList[DEF_MAXSTRATEGICPOINTS];
-	bool m_bIsAttackEnabled;
+	BOOL m_bIsAttackEnabled;
 
-	bool m_bIsFightZone;
+	BOOL m_bIsFightZone;
 
 	struct {
 		char cType;
@@ -169,11 +173,11 @@ public:
 
 	int m_iTotalEnergySphereGoalPoint;
 
-	bool m_bIsEnergySphereGoalEnabled;
+	BOOL m_bIsEnergySphereGoalEnabled;
 	int m_iCurEnergySphereGoalPointIndex;
 
 	struct {
-		bool m_bIsGateMap;
+		BOOL m_bIsGateMap;
 		char m_cDynamicGateMap[11];
 		int m_iDynamicGateX;
 		int m_iDynamicGateY;
@@ -228,22 +232,22 @@ public:
 	} m_stStrikePoint[DEF_MAXSTRIKEPOINTS];
 	int m_iTotalStrikePoints;
 
-	bool m_bIsDisabled; // ������� ����� ����� ��� 
+	BOOL m_bIsDisabled; // ������� ����� ����� ��� 
 	int m_iTotalAgriculture;
 
 	struct {
-		char cType; // �̰� nullptr�̸� ���ǵ��� �������� �ǹ�.
+		char cType; // �̰� NULL�̸� ���ǵ��� �������� �ǹ�.
 		char cSide; // ���̵�
 		short sX, sY; // ��ġ�� ��ġ 
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 	int m_iTotalCrusadeStructures;
-	bool m_bIsEnergySphereAutoCreation;
+	BOOL m_bIsEnergySphereAutoCreation;
 private:
-	bool _bDecodeMapDataFileContents();
+	BOOL _bDecodeMapDataFileContents();
 public:
 	// Snow BOOLean for certain maps to snow instead of rain
-	bool m_bIsSnowEnabled;
-	bool m_bIsRecallImpossible;
-	bool m_bIsApocalypseMap;
-	bool m_bIsHeldenianMap;
+	BOOL m_bIsSnowEnabled;
+	BOOL m_bIsRecallImpossible;
+	BOOL m_bIsApocalypseMap;
+	BOOL m_bIsHeldenianMap;
 };

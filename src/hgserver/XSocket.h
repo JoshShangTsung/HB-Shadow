@@ -12,7 +12,7 @@
 #include <malloc.h>
 #include "DebugDialog.h"
 #include <iostream>
-#include <sstream>
+#include <strstream>
 #include <string>
 
 #define DEF_XSOCK_LISTENSOCK			1
@@ -44,38 +44,38 @@
 class XSocket {
 public:
 	int iGetPeerAddress(char * pAddrString);
-	char * pGetRcvDataPointer(uint32_t * pMsgSize, char * pKey = nullptr);
+	char * pGetRcvDataPointer(DWORD * pMsgSize, char * pKey = NULL);
 	SOCKET iGetSocket();
-	bool bAccept(class XSocket * pXSock, unsigned int uiMsg);
-	bool bListen(char * pAddr, int iPort, unsigned int uiMsg);
-	int iSendMsg(char * cData, uint32_t dwSize, char cKey = 0);
-	bool bConnect(char * pAddr, int iPort, unsigned int uiMsg);
+	BOOL bAccept(class XSocket * pXSock, unsigned int uiMsg);
+	BOOL bListen(char * pAddr, int iPort, unsigned int uiMsg);
+	int iSendMsg(char * cData, DWORD dwSize, char cKey = NULL);
+	BOOL bConnect(char * pAddr, int iPort, unsigned int uiMsg);
 	int iOnSocketEvent(WPARAM wParam, LPARAM lParam);
-	bool bInitBufferSize(uint32_t dwBufferSize);
+	BOOL bInitBufferSize(DWORD dwBufferSize);
 	XSocket(HWND hWnd, int iBlockLimit);
 	virtual ~XSocket();
 
 	int m_WSAErr;
-	bool m_bIsAvailable;
+	BOOL m_bIsAvailable;
 
 private:
 	void _CloseConn();
 
 	int _iSendUnsentData();
 	int _iRegisterUnsentData(char * cData, int iSize);
-	int _iSend(char * cData, int iSize, bool bSaveFlag);
+	int _iSend(char * cData, int iSize, BOOL bSaveFlag);
 	int _iSend_ForInternalUse(char * cData, int iSize);
 	int _iOnRead();
 
 	char m_cType;
 	char * m_pRcvBuffer;
 	char * m_pSndBuffer;
-	uint32_t m_dwBufferSize;
+	DWORD m_dwBufferSize;
 
 	SOCKET m_Sock;
 	char m_cStatus;
-	uint32_t m_dwReadSize;
-	uint32_t m_dwTotalReadSize;
+	DWORD m_dwReadSize;
+	DWORD m_dwTotalReadSize;
 	char m_pAddr[30];
 	int m_iPortNum;
 
@@ -90,5 +90,5 @@ private:
 };
 
 
-bool _InitWinsock();
+BOOL _InitWinsock();
 void _TermWinsock();

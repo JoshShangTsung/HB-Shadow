@@ -1,8 +1,8 @@
 #include "Npc.h"
-#include <cstring>
-CNpc::CNpc(const char * pName5) {
+
+CNpc::CNpc(char * pName5) {
 	int i;
-	std::memset(m_cName, 0, sizeof(m_cName));
+	ZeroMemory(m_cName, sizeof (m_cName));
 	memcpy(m_cName, pName5, 5);
 
 	for (i = 0; i < DEF_MAXWAYPOINTS; i++)
@@ -11,19 +11,19 @@ CNpc::CNpc(const char * pName5) {
 	for (i = 0; i < DEF_MAXMAGICEFFECTS; i++)
 		m_cMagicEffectStatus[i] = 0;
 
-	m_bIsSummoned = false;
-	m_bIsPermAttackMode = false;
+	m_bIsSummoned = FALSE;
+	m_bIsPermAttackMode = FALSE;
 
-	m_dwRegenTime = 0;
-	m_bIsKilled = false;
+	m_dwRegenTime = NULL;
+	m_bIsKilled = FALSE;
 
-	m_sOriginalType = 0;
-	m_iSummonControlMode = 0;
+	m_sOriginalType = NULL;
+	m_iSummonControlMode = NULL;
 
-	m_cAttribute = 0;
-	m_iAbsDamage = 0;
-	m_iStatus = 0;
-	m_sAppr2 = 0;
+	m_cAttribute = NULL;
+	m_iAbsDamage = NULL;
+	m_iStatus = NULL;
+	m_sAppr2 = NULL;
 
 	m_iAttackRange = 1;
 	m_cSpecialAbility = 0;
@@ -32,12 +32,12 @@ CNpc::CNpc(const char * pName5) {
 
 	m_iBuildCount = 0;
 	m_iManaStock = 0;
-	m_bIsUnsummoned = false;
+	m_bIsUnsummoned = FALSE;
 	m_cCropType = 0;
 	m_cCropSkill = 0;
 
-	m_bIsMaster = false;
-	m_iGuildGUID = 0;
+	m_bIsMaster = FALSE;
+	m_iGuildGUID = NULL;
 	m_iV1 = 0;
 
 	m_iNpcItemType = 0;

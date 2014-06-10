@@ -1,5 +1,4 @@
 #include "Misc.h"
-#include <cstring>
 
 void CMisc::GetMyCursorPos(short * pX, short * pY) {
 	POINT point;
@@ -36,7 +35,7 @@ char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY) {
 
 void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * pError) {
 	register int dx, dy, x_inc, y_inc, error, index;
-	register int iResultX, iResultY;
+	register int iResultX, iResultY, iDstCnt;
 
 	if ((x0 == x1) && (y0 == y1)) {
 		*pX = x0;
@@ -48,6 +47,7 @@ void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * p
 
 	iResultX = x0;
 	iResultY = y0;
+	iDstCnt = 0;
 
 	dx = x1 - x0;
 	dy = y1 - y0;
@@ -165,59 +165,59 @@ CALC_OK:
 
 void CMisc::GetDirPoint(char cDir, int * pX, int * pY) {
 	switch (cDir) {
-		case 1: --*pY;
+		case 1: *pY--;
 			break;
-		case 2: --*pY;
-			++*pX;
+		case 2: *pY--;
+			*pX++;
 			break;
-		case 3: ++*pX;
+		case 3: *pX++;
 			break;
-		case 4: ++*pX;
-			++*pY;
+		case 4: *pX++;
+			*pY++;
 			break;
-		case 5: ++*pY;
+		case 5: *pY++;
 			break;
-		case 6: --*pX;
-			++*pY;
+		case 6: *pX--;
+			*pY++;
 			break;
-		case 7: --*pX;
+		case 7: *pX--;
 			break;
-		case 8: --*pX;
-			--*pY;
+		case 8: *pX--;
+			*pY--;
 			break;
 	}
 
 }
 
-bool CMisc::bEncode(char cKey, char *pStr) {
+BOOL CMisc::bEncode(char cKey, char *pStr) {
 	int i, iLen;
 
 	// !!
-	return true;
+	return TRUE;
 
 	iLen = strlen(pStr);
 	for (i = 0; i <= iLen - 1; i++) {
 		pStr[i] = pStr[i] ^ (cKey);
 	}
 
-	return true;
+	return TRUE;
 }
 
-bool CMisc::bDecode(char cKey, char *pStr) {
+BOOL CMisc::bDecode(char cKey, char *pStr) {
 	int i, iLen;
 
 	// !!
-	return true;
+	return TRUE;
 
 	iLen = strlen(pStr);
 	for (i = 0; i <= iLen - 1; i++) {
 		pStr[i] = pStr[i] ^ (cKey);
 	}
 
-	return true;
+	return TRUE;
 }
 
-bool CMisc::bCheckValidName(char *pStr) {
+BOOL CMisc::bCheckValidName(char *pStr) {
 	register int i, iLen;
 
 	iLen = strlen(pStr);
@@ -227,7 +227,7 @@ bool CMisc::bCheckValidName(char *pStr) {
 				  (pStr[i] == '\n') || (pStr[i] == '\t') || /*(pStr[i] == '.') ||*/
 				  (pStr[i] == '\\') || (pStr[i] == '/') || (pStr[i] == ':') ||
 				  (pStr[i] == '*') || (pStr[i] == '?') || (pStr[i] == '<') ||
-				  (pStr[i] == '>') || (pStr[i] == '|') || (pStr[i] == '"')) return false;
+				  (pStr[i] == '>') || (pStr[i] == '|') || (pStr[i] == '"')) return FALSE;
 
 		if ((i <= iLen - 2) && ((unsigned char) pStr[i] >= 128)) {
 			if (((unsigned char) pStr[i] == 164) && ((unsigned char) pStr[i + 1] >= 161) &&
@@ -239,12 +239,12 @@ bool CMisc::bCheckValidName(char *pStr) {
 					  ((unsigned char) pStr[i + 1] >= 161) && ((unsigned char) pStr[i + 1] <= 254)) {
 				// ���� 
 
-			} else return false;
+			} else return FALSE;
 			i++; // !!! �������Ѿ߸� �´�.
 		}
 	}
 
-	return true;
+	return TRUE;
 }
 
 void CMisc::Temp() {
@@ -265,7 +265,7 @@ void CMisc::Temp() {
 	for (i = 1; i <= 444; i++)
 		fread(cTemp, 1, 5240, pSrcFileB);
 
-	std::memset(cTemp, 0, sizeof(cTemp));
+	ZeroMemory(cTemp, sizeof (cTemp));
 	strcpy(cTemp, "MAPSIZEX = 824 MAPSIZEY = 824 TILESIZE = 10");
 
 	// �� ���� ��� ����.
@@ -273,42 +273,42 @@ void CMisc::Temp() {
 
 	// �� ���� ���κ�
 	for (i = 1; i <= 80; i++) {
-		std::memset(cTemp, 0, sizeof(cTemp));
+		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileA);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	std::memset(cTemp, 0, sizeof(cTemp));
+	ZeroMemory(cTemp, sizeof (cTemp));
 	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	//148
 	/*
-	std::memset(cTemp, 0, sizeof(cTemp));
+	ZeroMemory(cTemp, sizeof(cTemp));
 	for (i = 1; i <= 150; i++) fwrite(cTemp, 1, 824*10, pDestFile);
 	 */
 
 	// �� ���� �߰��κ�
 	for (i = 1; i <= 524; i++) {
-		std::memset(cTemp, 0, sizeof(cTemp));
+		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFile);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
 	// �� ���� �޺κ�
-	std::memset(cTemp, 0, sizeof(cTemp));
+	ZeroMemory(cTemp, sizeof (cTemp));
 	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	for (i = 1; i <= 80; i++) {
-		std::memset(cTemp, 0, sizeof(cTemp));
+		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileB);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	std::memset(cTemp, 0, sizeof(cTemp));
+	ZeroMemory(cTemp, sizeof (cTemp));
 	for (i = 1; i <= 2; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	/*
-	std::memset(cTemp, 0, sizeof(cTemp));
+	ZeroMemory(cTemp, sizeof(cTemp));
 	for (i = 1; i <= 150; i++) fwrite(cTemp, 1, 824*10, pDestFile);
 	 */
 

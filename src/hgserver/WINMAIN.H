@@ -1,13 +1,12 @@
 #pragma once
-#include <stdint.h>
 
-void PutXSocketLogList(const char * cMsg);
-void PutXSocketLogFileList(const char * cMsg);
-bool InitApplication(HINSTANCE hInstance);
-bool InitInstance(HINSTANCE hInstance, int nCmdShow);
+void PutXSocketLogList(char * cMsg);
+void PutXSocketLogFileList(char * cMsg);
+BOOL InitApplication(HINSTANCE hInstance);
+BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void OnAccept();
-void PutLogList(const char * cMsg);
+void PutLogList(char * cMsg);
 void OnKeyUp(WPARAM wParam, LPARAM lParam);
 void UpdateScreen();
 int EventLoop();

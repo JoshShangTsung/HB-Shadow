@@ -21,5 +21,5 @@ public:
 	char m_cTargetType;
 	int m_iV1, m_iV2, m_iV3;
 
-	uint32_t m_dwTriggerTime;
+	DWORD m_dwTriggerTime;
 };

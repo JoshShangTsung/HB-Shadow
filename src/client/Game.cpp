@@ -32013,8 +32013,8 @@ CP_SKIPMOUSEBUTTONSTATUS:
 		goto MOTION_COMMAND_PROCESS;
 	}
 
-	//if ((m_pMapData->bIsTeleportLoc(m_sPlayerX, m_sPlayerY) == TRUE) && (m_cCommandCount == 0))
-	//	RequestTeleportAndWaitData();
+	if ((m_pMapData->bIsTeleportLoc(m_sPlayerX, m_sPlayerY) == TRUE) && (m_cCommandCount == 0))
+		RequestTeleportAndWaitData();
 
 	// indexX, indexY
 	if (cLB != 0) // Mouse Left button

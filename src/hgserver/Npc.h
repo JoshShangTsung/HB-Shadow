@@ -21,7 +21,7 @@
 
 class CNpc {
 public:
-	CNpc(const char * pName5);
+	CNpc(char * pName5);
 
 	char m_pMagicConfigList[100];
 
@@ -46,10 +46,10 @@ public:
 	short m_sAppr2;
 	int m_iStatus;
 
-	uint32_t m_dwTime;
-	uint32_t m_dwActionTime;
-	uint32_t m_dwHPupTime, m_dwMPupTime;
-	uint32_t m_dwDeadTime, m_dwRegenTime;
+	DWORD m_dwTime;
+	DWORD m_dwActionTime;
+	DWORD m_dwHPupTime, m_dwMPupTime;
+	DWORD m_dwDeadTime, m_dwRegenTime;
 
 	int m_iHP; // Hit Point 
 	int m_iExp; // �׿��� ��� ��� ����ġ. ExpDice�� ���� �����ȴ�.
@@ -87,8 +87,8 @@ public:
 
 	int m_iFollowOwnerIndex; // NPC�� ��󰡰� �ִ� ��ü �ε��� 
 	char m_cFollowOwnerType; // ��󰡴� ��ü�� ���� (NPC or Player)
-	bool m_bIsSummoned; // ��ȯ�� NPC��� HP�� ������ �ʴ´�. 
-	uint32_t m_dwSummonedTime; // ��ȯ���� ��ð� 
+	BOOL m_bIsSummoned; // ��ȯ�� NPC��� HP�� ������ �ʴ´�. 
+	DWORD m_dwSummonedTime; // ��ȯ���� ��ð� 
 
 	int m_iTargetIndex; // NPC�� ��ݸ�ǥ �ε���
 	char m_cTargetType; // ��ݸ�ǥ�� ���� (NPC or Player)
@@ -99,7 +99,7 @@ public:
 	int m_iWayPointIndex[DEF_MAXWAYPOINTS + 1];
 	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS];
 
-	bool m_bIsPermAttackMode; // �� �÷��װ� Ȱ��ȭ �Ǿ� ������ ��ݵ��� ��ǥ�� �ٲ��� �ʴ´�.
+	BOOL m_bIsPermAttackMode; // �� �÷��װ� Ȱ��ȭ �Ǿ� ������ ��ݵ��� ��ǥ�� �ٲ��� �ʴ´�.
 	int m_iNoDieRemainExp; // ���� �ʰ� ���߽ÿ� ���� �� �ִ� ����ġ 
 	int m_iAttackStrategy; // ���� ���� �ΰ����� Ÿ��  
 	int m_iAILevel; // ���� ���� 
@@ -112,8 +112,8 @@ public:
 			3: ���� ��ȣ���� ��ǥ�� ���� ��ݴ�󿡼� ���� 
 	 */
 	int m_iAttackCount; // ���� ��� ���� Ƚ�� ī��Ʈ 
-	bool m_bIsKilled;
-	bool m_bIsUnsummoned;
+	BOOL m_bIsKilled;
+	BOOL m_bIsUnsummoned;
 
 	int m_iLastDamage; // ������ �ױ� �� ���� �����. ������� �ʹ� ũ�� ���ݼ� ��ᰡ �������� �ʴ´�.
 	int m_iSummonControlMode; // ��ȯ�� ���� ���: 0�̸� Free, 1 Hold 2 Tgt 
@@ -142,7 +142,7 @@ public:
 	int m_iBuildCount; // ���� Ÿ���� �������� ��� �ϼ��� ������ ���� ����� Ƚ���� �ǹ�. �ʱⰪ�� m_iMinBravery�̴�.
 	// �� ���� 0�̾�߸� ������ �Ѵ�.
 	int m_iManaStock; // �׷��� ���� ���׷������� ��� �������� 
-	bool m_bIsMaster; // ������ �������� ���� 
+	BOOL m_bIsMaster; // ������ �������� ���� 
 	int m_iGuildGUID; // ����� ����Ʈ�� ��� ��ȯ���� ��� ���̵� �Էµȴ�.
 
 	char m_cCropType;

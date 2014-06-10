@@ -1,6 +1,6 @@
 #include "DynamicObject.h"
 
-CDynamicObject::CDynamicObject(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, uint32_t dwRegisterTime, uint32_t dwLastTime, int iV1) {
+CDynamicObject::CDynamicObject(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, DWORD dwRegisterTime, DWORD dwLastTime, int iV1) {
 	m_sOwner = sOwner;
 	m_cOwnerType = cOwnerType;
 

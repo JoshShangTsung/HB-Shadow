@@ -1,8 +1,7 @@
 #include "Item.h"
-#include <cstring>
 
 CItem::CItem() {
-	std::memset(m_cName, 0, sizeof(m_cName));
+	ZeroMemory(m_cName, sizeof (m_cName));
 	m_sSprite = 0;
 	m_sSpriteFrame = 0;
 
@@ -31,8 +30,8 @@ CItem::CItem() {
 	m_wCurLifeSpan = 0;
 	m_dwAttribute = 0;
 
-	m_cCategory = 0;
+	m_cCategory = NULL;
 	m_sIDnum = 0;
 
-	m_bIsForSale = false;
+	m_bIsForSale = FALSE;
 }
