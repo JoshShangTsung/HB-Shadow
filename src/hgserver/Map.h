@@ -7,7 +7,6 @@
 #include "StrTok.h"
 #include "TeleportLoc.h"
 #include "GlobalDef.h"
-
 #define DEF_OWNERTYPE_PLAYER			1
 #define DEF_OWNERTYPE_NPC				2
 #define DEF_OWNERTYPE_PLAYER_INDIRECT	3
@@ -39,6 +38,7 @@ struct Clients;
 struct CGame;
 struct CMap;
 struct Npcs;
+enum class SpecialAbility;
 class CMap : public std::enable_shared_from_this<CMap> {
 public:
 	CMap(int id, CGame &game);
@@ -259,7 +259,7 @@ public:
 	void _CheckStrategicPointOccupyStatus();
 	void DoAbaddonThunderDamageHandler();
 	void MineralGenerator();
-	int bCreateNewNpc(const char * pNpcName, char * pName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
+	int bCreateNewNpc(const char * pNpcName, char * pName, short sClass, SpecialAbility cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
 	Npcs &npcs_;
 };
 #define DEF_MAXMAPS					100

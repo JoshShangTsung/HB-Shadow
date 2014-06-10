@@ -2,74 +2,84 @@
 #include <stdint.h>
 
 #define DEF_MAXITEMEQUIPPOS		15
-#define DEF_EQUIPPOS_NONE		0
-#define DEF_EQUIPPOS_HEAD		1	//66Ah	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD]
-#define DEF_EQUIPPOS_BODY		2	//66Ch	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY]
-#define DEF_EQUIPPOS_ARMS		3	//66Eh	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS]
-#define DEF_EQUIPPOS_PANTS		4	//670h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS]
-#define DEF_EQUIPPOS_LEGGINGS	5	//672h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS]
-#define DEF_EQUIPPOS_NECK		6   //674h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK]
-#define DEF_EQUIPPOS_LHAND		7	//676h  m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND]
-#define DEF_EQUIPPOS_RHAND		8	//678h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]
-#define DEF_EQUIPPOS_TWOHAND	9	//67Ah	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]
-#define DEF_EQUIPPOS_RFINGER	10	//67Ch
-#define DEF_EQUIPPOS_LFINGER	11	//67Eh
-#define DEF_EQUIPPOS_BACK		12  //680h
-#define DEF_EQUIPPOS_RELEASEALL	13	//682h
 
-#define DEF_ITEMTYPE_NOTUSED	-1
-#define DEF_ITEMTYPE_NONE		 0
-#define DEF_ITEMTYPE_EQUIP		 1
-#define DEF_ITEMTYPE_APPLY		 2
-#define DEF_ITEMTYPE_USE_DEPLETE 3
-#define DEF_ITEMTYPE_INSTALL	 4
-#define DEF_ITEMTYPE_CONSUME	 5
-#define DEF_ITEMTYPE_ARROW		 6
-#define DEF_ITEMTYPE_EAT		 7
-#define DEF_ITEMTYPE_USE_SKILL   8
-#define DEF_ITEMTYPE_USE_PERM    9
-#define DEF_ITEMTYPE_USE_SKILL_ENABLEDIALOGBOX	10
-#define DEF_ITEMTYPE_USE_DEPLETE_DEST			11
-#define DEF_ITEMTYPE_MATERIAL					12
+enum EquipPos {
+	NONE, // 0
+	HEAD, // 1
+	BODY, // 2
+	ARMS, // 3
+	PANTS, // 4
+	LEGGINGS, // 5
+	NECK, // 6
+	LHAND, // 7
+	RHAND, // 8
+	TWOHAND, // 9
+	RFINGER, // 10
+	LFINGER, // 11
+	BACK, // 12
+	RELEASEALL // 13
+};
 
+enum class ItemType {
+	NOTUSED = -1,
+	NONE = 0,
+	EQUIP = 1,
+	APPLY = 2,
+	USE_DEPLETE = 3,
+	INSTALL = 4,
+	CONSUME = 5,
+	ARROW = 6,
+	EAT = 7,
+	USE_SKILL = 8,
+	USE_PERM = 9,
+	USE_SKILL_ENABLEDIALOGBOX = 10,
+	USE_DEPLETE_DEST = 11,
+	MATERIAL = 12
+};
 
-#define DEF_ITEMEFFECTTYPE_NONE				0
-#define DEF_ITEMEFFECTTYPE_ATTACK			1
-#define DEF_ITEMEFFECTTYPE_DEFENSE			2
-#define DEF_ITEMEFFECTTYPE_ATTACK_ARROW		3
-#define DEF_ITEMEFFECTTYPE_HP   		    4
-#define DEF_ITEMEFFECTTYPE_MP   		    5
-#define DEF_ITEMEFFECTTYPE_SP   		    6
-#define DEF_ITEMEFFECTTYPE_HPSTOCK 		    7
-#define DEF_ITEMEFFECTTYPE_GET			    8
-#define DEF_ITEMEFFECTTYPE_STUDYSKILL		9
-#define DEF_ITEMEFFECTTYPE_SHOWLOCATION		10
-#define DEF_ITEMEFFECTTYPE_MAGIC			11
-#define DEF_ITEMEFFECTTYPE_CHANGEATTR		12
-#define DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE	13
-#define DEF_ITEMEFFECTTYPE_ADDEFFECT	    14
-#define DEF_ITEMEFFECTTYPE_MAGICDAMAGESAVE	15
-#define DEF_ITEMEFFECTTYPE_OCCUPYFLAG		16
-#define DEF_ITEMEFFECTTYPE_DYE				17
-#define DEF_ITEMEFFECTTYPE_STUDYMAGIC		18
-#define DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN	19
-#define DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE	20
-#define DEF_ITEMEFFECTTYPE_MATERIAL_ATTR	21
-#define DEF_ITEMEFFECTTYPE_FIRMSTAMINAR		22
-#define DEF_ITEMEFFECTTYPE_LOTTERY			23
-#define DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY		24
-#define DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY	25
-#define DEF_ITEMEFFECTTYPE_ALTERITEMDROP		26
-#define DEF_ITEMEFFECTTYPE_CONSTRUCTIONKIT		27
-#define DEF_ITEMEFFECTTYPE_WARM				28		// Unfreeze pot ?
-#define DEF_ITEMEFFECTTYPE_FARMING			30
-#define DEF_ITEMEFFECTTYPE_SLATES			31
-#define DEF_ITEMEFFECTTYPE_ARMORDYE			32
-#define DEF_ITEMEFFECTTYPE_ADDBALLPOINTS 33
-#define DEF_ITEMEFFECTTYPE_REPPLUS 34
-#define DEF_ITET_UNIQUE_OWNER				1
-#define DEF_ITET_ID							2
-#define DEF_ITET_DATE						3
+enum class ItemEffectType {
+	NONE, // 0
+	ATTACK, // 1
+	DEFENSE, // 2
+	ATTACK_ARROW, // 3
+	HP, // 4
+	MP, // 5
+	SP, // 6
+	HPSTOCK, // 7
+	GET, // 8
+	STUDYSKILL, // 9
+	SHOWLOCATION, // 10
+	MAGIC, // 11
+	CHANGEATTR, // 12
+	ATTACK_MANASAVE, // 13
+	ADDEFFECT, // 14
+	MAGICDAMAGESAVE, // 15
+	OCCUPYFLAG, // 16
+	DYE, // 17
+	STUDYMAGIC, // 18
+	ATTACK_MAXHPDOWN, // 19
+	ATTACK_DEFENSE, // 20
+	MATERIAL_ATTR, // 21
+	FIRMSTAMINAR, // 22
+	LOTTERY, // 23
+	ATTACK_SPECABLTY, // 24
+	DEFENSE_SPECABLTY, // 25
+	ALTERITEMDROP, // 26
+	CONSTRUCTIONKIT, // 27
+	WARM, // 28 Unfreeze pot ?
+	FARMING, // 30
+	SLATES, // 31
+	ARMORDYE, // 32
+	ADDBALLPOINTS, // 33
+	REPPLUS // 34
+};
+
+enum class TouchEffectType {
+	NONE = 0,
+	UNIQUE_OWNER = 1,
+	ID = 2,
+	DATE = 3
+};
 
 class CItem {
 public:
@@ -78,9 +88,9 @@ public:
 	char m_cName[21];
 
 	short m_sIDnum;
-	char m_cItemType;
-	char m_cEquipPos;
-	short m_sItemEffectType;
+	ItemType m_cItemType;
+	EquipPos m_cEquipPos;
+	ItemEffectType m_sItemEffectType;
 	short m_sItemEffectValue1;
 	short m_sItemEffectValue2;
 	short m_sItemEffectValue3;
@@ -110,7 +120,7 @@ public:
 	bool m_bIsForSale;
 
 	uint32_t m_dwCount;
-	short m_sTouchEffectType;
+	TouchEffectType m_sTouchEffectType;
 	short m_sTouchEffectValue1;
 	short m_sTouchEffectValue2;
 	short m_sTouchEffectValue3;
@@ -126,9 +136,7 @@ public:
 
 class CBallSystem {
 public:
-
 	short m_sBS_ID;
 	char m_cName[20];
 	int m_iReqPoints;
-
 };

@@ -29,7 +29,7 @@ CNpc::CNpc(int id, CGame &game, const char * pName5) : id_(id), game_(game) {
 	m_sAppr2 = 0;
 
 	m_iAttackRange = 1;
-	m_cSpecialAbility = 0;
+	m_cSpecialAbility = SpecialAbility::NONE;
 
 	m_iExp = 0;
 
@@ -858,7 +858,7 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 					delete pItem;
 					return;
 				}
-				if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK) {
+				if (pItem->m_sItemEffectType == ItemEffectType::ATTACK) {
 					iResult = iDice(1, 10000);
 					if ((iResult >= 1) && (iResult <= 299)) {
 						dwType = 6;
@@ -960,7 +960,7 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 						dwValue = dwValue << 8;
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
-				} else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE) {
+				} else if (pItem->m_sItemEffectType == ItemEffectType::ATTACK_MANASAVE) {
 					dwType = 10;
 					cColor = 5;
 					pItem->m_cItemColor = cColor;
@@ -1024,7 +1024,7 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 						dwValue = dwValue << 8;
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
-				} else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE) {
+				} else if (pItem->m_sItemEffectType == ItemEffectType::DEFENSE) {
 					iResult = iDice(1, 10000);
 					if ((iResult >= 1) && (iResult <= 5999)) dwType = 8;
 					else if ((iResult >= 6000) && (iResult <= 8999)) dwType = 6;
@@ -1108,7 +1108,7 @@ void CNpc::NpcDeadItemGenerator(short sAttackerH, char cAttackerType) {
 				game_._AdjustRareItemValue(*pItem);
 			}
 		}
-		pItem->m_sTouchEffectType = DEF_ITET_ID;
+		pItem->m_sTouchEffectType = TouchEffectType::ID;
 		pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 		pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 		//pItem->m_sTouchEffectValue3 = timeGetTime();
@@ -1884,7 +1884,7 @@ void CNpc::DeleteNpc() {
 						pItem->m_dwCount = iDice(10, 15000);
 					else
 						pItem->m_dwCount = dwCount;
-					pItem->m_sTouchEffectType = DEF_ITET_ID;
+					pItem->m_sTouchEffectType = TouchEffectType::ID;
 					pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 					pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 					pItem->m_sTouchEffectValue3 = (short) timeGetTime();
@@ -1901,7 +1901,7 @@ void CNpc::DeleteNpc() {
 				pItem = nullptr;
 			} else {
 				pItem->m_dwCount = dwCount;
-				pItem->m_sTouchEffectType = DEF_ITET_ID;
+				pItem->m_sTouchEffectType = TouchEffectType::ID;
 				pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 				pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 				pItem->m_sTouchEffectValue3 = (short) timeGetTime();
@@ -1928,7 +1928,7 @@ void CNpc::DeleteNpc() {
 				pItem2 = nullptr;
 			} else {
 				pItem2->m_dwCount = 1;
-				pItem2->m_sTouchEffectType = DEF_ITET_ID;
+				pItem2->m_sTouchEffectType = TouchEffectType::ID;
 				pItem2->m_sTouchEffectValue1 = iDice(1, 100000);
 				pItem2->m_sTouchEffectValue2 = iDice(1, 100000);
 				pItem2->m_sTouchEffectValue3 = (short) timeGetTime();
@@ -2345,11 +2345,11 @@ void CNpc::NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage)
 	}
 NKH_GOTOPOINT1:
 	;
-	if (this->m_cSpecialAbility == 7) {
+	if (this->m_cSpecialAbility == SpecialAbility::EXPLOSIVE) {
 		this->m_iMana = 100;
 		this->m_iMagicHitRatio = 100;
 		this->NpcMagicHandler(this->m_sX, this->m_sY, 30);
-	} else if (this->m_cSpecialAbility == 8) {
+	} else if (this->m_cSpecialAbility == SpecialAbility::HIGHLY_EXPLOSIVE) {
 		this->m_iMana = 100;
 		this->m_iMagicHitRatio = 100;
 		this->NpcMagicHandler(this->m_sX, this->m_sY, 61);
@@ -2584,7 +2584,7 @@ void CNpc::TargetSearch(short * pTarget, char * pTargetType) {
 					if ((cOwnerType == DEF_OWNERTYPE_NPC) && (cTargetSide == 0)) goto SKIP_SEARCH;
 					if (cTargetSide == this->m_cSide) goto SKIP_SEARCH;
 				}
-				if ((iInv != 0) && (this->m_cSpecialAbility != 1)) goto SKIP_SEARCH;
+				if ((iInv != 0) && (this->m_cSpecialAbility != SpecialAbility::CLAIRVOYANT)) goto SKIP_SEARCH;
 				if (abs(sX - dX) >= abs(sY - dY))
 					sTempDistance = abs(sX - dX);
 				else sTempDistance = abs(sY - dY);
@@ -3261,7 +3261,7 @@ void CNpc::RemoveFromTarget(int iCode) {
 					  (game_.m_pNpcList[i]->m_cTargetType == DEF_OWNERTYPE_NPC)) {
 				switch (iCode) {
 					case MagicType::INVISIBILITY:
-						if (game_.m_pNpcList[i]->m_cSpecialAbility == 1) {
+						if (game_.m_pNpcList[i]->m_cSpecialAbility == SpecialAbility::CLAIRVOYANT) {
 						} else {
 							game_.m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
 							game_.m_pNpcList[i]->m_iTargetIndex = 0;

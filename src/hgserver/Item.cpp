@@ -15,7 +15,7 @@ CItem::CItem() {
 	m_sItemEffectValue6 = 0;
 
 	m_dwCount = 1;
-	m_sTouchEffectType = 0;
+	m_sTouchEffectType = TouchEffectType::NONE;
 	m_sTouchEffectValue1 = 0;
 	m_sTouchEffectValue2 = 0;
 	m_sTouchEffectValue3 = 0;

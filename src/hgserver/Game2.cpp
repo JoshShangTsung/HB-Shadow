@@ -35,8 +35,8 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 		case DEF_OWNERTYPE_PLAYER:
 			if ((m_bAdminSecurity) && (m_pClientList[sAttackerH]->m_iAdminUserLevel > 0)) return;
 			if (m_pClientList[sAttackerH]->m_cHeroArmourBonus == 2) iDamage += 4;
-			if ((m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND] == -1) || (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] == -1)) {
-				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			if ((m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::LHAND] == -1) || (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND] == -1)) {
+				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::RHAND];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 861 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 862) {
 						iDamage *= (int) 1.3;
@@ -58,7 +58,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 						}
 					}
 				}
-				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
+				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::NECK];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness
 						if (cTargetType == DEF_OWNERTYPE_PLAYER) {
@@ -2843,8 +2843,8 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, uint32_t dwMsgSize)
 	return true;
 }
 
-char CGame::_cGetSpecialAbility(int iKindSA) {
-	char cSA;
+SpecialAbility CGame::_cGetSpecialAbility(int iKindSA) {
+	SpecialAbility cSA = SpecialAbility::NONE;
 	switch (iKindSA) {
 		case 1:
 			// Slime, Orc, Orge, WereWolf, YB-, Rabbit, Mountain-Giant, Stalker, Hellclaw,
@@ -2852,79 +2852,79 @@ char CGame::_cGetSpecialAbility(int iKindSA) {
 			// Abaddon, Claw-Turtle, Giant-Cray-Fish, Giant-Plant, MasterMage-Orc, Nizie,
 			// Tigerworm
 			switch (iDice(1, 2)) {
-				case 1: cSA = 3;
+				case 1: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
 					break; // Anti-Physical Damage
-				case 2: cSA = 4;
+				case 2: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
 			}
 			break;
 		case 2:
 			// Giant-Ant, Cat, Giant-Frog,
 			switch (iDice(1, 3)) {
-				case 1: cSA = 3;
+				case 1: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
 					break; // Anti-Physical Damage
-				case 2: cSA = 4;
+				case 2: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
-				case 3: cSA = 5;
+				case 3: cSA = SpecialAbility::POISONOUS;
 					break; // Poisonous
 			}
 			break;
 		case 3:
 			// Zombie, Scorpion, Amphis, Troll, Dark-Elf
 			switch (iDice(1, 4)) {
-				case 1: cSA = 3;
+				case 1: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
 					break; // Anti-Physical Damage
-				case 2: cSA = 4;
+				case 2: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
-				case 3: cSA = 5;
+				case 3: cSA = SpecialAbility::POISONOUS;
 					break; // Poisonous
-				case 4: cSA = 6;
+				case 4: cSA = SpecialAbility::EXTREMELY_POISONOUS;
 					break; // Critical Poisonous
 			}
 			break;
 		case 4:
 			// no linked Npc
 			switch (iDice(1, 3)) {
-				case 1: cSA = 3;
+				case 1: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
 					break; // Anti-Physical Damage
-				case 2: cSA = 4;
+				case 2: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
-				case 3: cSA = 7;
+				case 3: cSA = SpecialAbility::EXPLOSIVE;
 					break; // Explosive
 			}
 			break;
 		case 5:
 			// Stone-Golem, Clay-Golem, Beholder, Cannibal-Plant, Rudolph, DireBoar
 			switch (iDice(1, 4)) {
-				case 1: cSA = 3;
+				case 1: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
 					break; // Anti-Physical Damage
-				case 2: cSA = 4;
+				case 2: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
-				case 3: cSA = 7;
+				case 3: cSA = SpecialAbility::EXPLOSIVE;
 					break; // Explosive
-				case 4: cSA = 8;
+				case 4: cSA = SpecialAbility::HIGHLY_EXPLOSIVE;
 					break; // Critical-Explosive
 			}
 			break;
 		case 6:
 			// no linked Npc
 			switch (iDice(1, 3)) {
-				case 1: cSA = 3;
+				case 1: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
 					break; // Anti-Physical Damage
-				case 2: cSA = 4;
+				case 2: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
-				case 3: cSA = 5;
+				case 3: cSA = SpecialAbility::POISONOUS;
 					break; // Poisonous
 			}
 			break;
 		case 7:
 			// Orc-Mage, Unicorn
 			switch (iDice(1, 3)) {
-				case 1: cSA = 1;
+				case 1: cSA = SpecialAbility::CLAIRVOYANT;
 					break; // Clairvoyant
-				case 2: cSA = 2;
+				case 2: cSA = SpecialAbility::ANTI_MAGIC_PROT;
 					break; // Distruction of Magic Protection
-				case 3: cSA = 4;
+				case 3: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
 			}
 			break;
@@ -2932,21 +2932,37 @@ char CGame::_cGetSpecialAbility(int iKindSA) {
 			// Frost, Ice-Golem, Ettin, Gagoyle, Demon, Liche, Hellbound, Cyclops,
 			// Skeleton
 			switch (iDice(1, 5)) {
-				case 1: cSA = 1;
+				case 1: cSA = SpecialAbility::CLAIRVOYANT;
 					break; // Clairvoyant
-				case 2: cSA = 2;
+				case 2: cSA = SpecialAbility::ANTI_MAGIC_PROT;
 					break; // Distruction of Magic Protection
-				case 3: cSA = 4;
+				case 3: cSA = SpecialAbility::RESISTANT_MAG_DMG;
 					break; // Anti-Magic Damage
-				case 4: cSA = 3;
+				case 4: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
 					break; // Anti-Physical Damage
-				case 5: cSA = 8;
+				case 5: cSA = SpecialAbility::HIGHLY_EXPLOSIVE;
 					break; // Critical-Explosive
 			}
 			break;
 		case 9:
-			// no linked Npc
-			cSA = iDice(1, 8); // All abilities available
+			switch (iDice(1, 8)) {
+				case 1: cSA = SpecialAbility::CLAIRVOYANT;
+					break;
+				case 2: cSA = SpecialAbility::ANTI_MAGIC_PROT;
+					break;
+				case 3: cSA = SpecialAbility::RESISTANT_PHYS_DMG;
+					break;
+				case 4: cSA = SpecialAbility::RESISTANT_MAG_DMG;
+					break;
+				case 5: cSA = SpecialAbility::POISONOUS;
+					break;
+				case 6: cSA = SpecialAbility::EXTREMELY_POISONOUS;
+					break;
+				case 7: cSA = SpecialAbility::EXPLOSIVE;
+					break;
+				case 8: cSA = SpecialAbility::HIGHLY_EXPLOSIVE;
+					break;
+			}
 			break;
 	}
 	return cSA;
@@ -2994,7 +3010,7 @@ bool CGame::_bDecodeDupItemIDFileContents(char *pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pDupItemIDList[iIndex]->m_sTouchEffectType = atoi(token);
+							m_pDupItemIDList[iIndex]->m_sTouchEffectType = (TouchEffectType) atoi(token);
 							cReadModeB = 3;
 							break;
 						case 3:
@@ -3163,7 +3179,6 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, CClient *clientPtr) {
 	int iTemp;
 	int pX;
 	int pY;
-	char cSA;
 	char cName_Internal[31], cWaypoint[31];
 	auto ml = middlelandMap_.lock();
 	if (!bIsAdminCreate) {
@@ -3173,7 +3188,7 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, CClient *clientPtr) {
 		if (ml->m_iCurEnergySphereGoalPointIndex >= 0) return;
 		iCIndex = iDice(1, ml->m_iTotalEnergySphereCreationPoint);
 		if (ml->m_stEnergySphereCreationList[iCIndex].cType == 0) return;
-		cSA = 0;
+		SpecialAbility cSA = SpecialAbility::NONE;
 		pX = ml->m_stEnergySphereCreationList[iCIndex].sX;
 		pY = ml->m_stEnergySphereCreationList[iCIndex].sY;
 		std::memset(cWaypoint, 0, sizeof (cWaypoint));
@@ -3205,7 +3220,7 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, CClient *clientPtr) {
 		if (client.map_->m_iCurEnergySphereGoalPointIndex >= 0) return;
 		iCIndex = iDice(1, client.map_->m_iTotalEnergySphereCreationPoint);
 		if (client.map_->m_stEnergySphereCreationList[iCIndex].cType == 0) return;
-		cSA = 0;
+		SpecialAbility cSA = SpecialAbility::NONE;
 		pX = client.map_->m_stEnergySphereCreationList[iCIndex].sX;
 		pY = client.map_->m_stEnergySphereCreationList[iCIndex].sY;
 		std::memset(cWaypoint, 0, sizeof (cWaypoint));
@@ -3431,7 +3446,7 @@ void CGame::CreateCrusadeStructures() {
 						}
 						tX = (int) m_stCrusadeStructures[i].dX;
 						tY = (int) m_stCrusadeStructures[i].dY;
-						if (m_pMapList[z]->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false) == false) {
+						if (m_pMapList[z]->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false) == false) {
 							m_pMapList[z]->SetNamingValueEmpty(iNamingValue);
 						} else {
 							wsprintf(G_cTxt, "(!) Creating Crusade Structure(%s) at %s(%d, %d)", cNpcName, m_stCrusadeStructures[i].cMapName, tX, tY);
@@ -6088,7 +6103,7 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 			switch (m_pClientList[sAttackerH]->m_sUsingWeaponSkill) {
 				case 14:
 					if ((31 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4)) || (32 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4))) {
-						sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+						sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 						if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 761) { // BattleHammer
 								iDownValue = 10;
@@ -6130,7 +6145,7 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 	}
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != nullptr) {
 		if (cTargetType == DEF_OWNERTYPE_PLAYER) {
-			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 617) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 618) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 619) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 873) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 874) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 75) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 76)) {
 					m_pClientList[sAttackerH]->m_sUsingWeaponSkill = 6;
@@ -6148,7 +6163,7 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 					iHammerChance = iDice(4, (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan - m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan));
 				}
 				if ((31 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4)) || (32 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4))) {
-					sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+					sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 					if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 						if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 761) { // BattleHammer
 							iHammerChance = ((iHammerChance * 10) / 5);
@@ -6196,17 +6211,17 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 	short sAtkY;
 	short sTgtX;
 	short sTgtY;
-	uint32_t dwTime;
+	uint32_t dwTime = timeGetTime();
 	char cDamageMod[256];
-	uint16_t wWeaponType;
+	uint16_t wWeaponType = 0;
 	double dTmp1;
 	double dTmp2;
 	double dTmp3;
-	bool bKilled;
+	bool bKilled = false;
 	bool bIsAttackerBerserk;
 	int iKilledDice;
 	int iDamage;
-	int iExp;
+	int iExp = 0;
 	int iWepLifeOff;
 	int iSideCondition;
 	int iMaxSuperAttack;
@@ -6215,11 +6230,11 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 	int iTemp;
 	int iMoveDamage;
 	int iRepDamage;
-	char cAttackerSA;
-	int iAttackerSAvalue;
+	SpecialAbility cAttackerSA = SpecialAbility::NONE;
+	int iAttackerSAvalue = 0;
 	int iHitPoint;
 	char cDamageMoveDir;
-	int iPartyID;
+	int iPartyID = 0;
 	int iWarContribution;
 	int tX;
 	int tY;
@@ -6227,14 +6242,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 	int iDst2;
 	short sItemIndex;
 	short sSkillUsed;
-	dwTime = timeGetTime();
-	bKilled = false;
-	iExp = 0;
-	iPartyID = 0;
 	std::memset(cAttackerName, 0, sizeof (cAttackerName));
-	cAttackerSA = 0;
-	iAttackerSAvalue = 0;
-	wWeaponType = 0;
 	switch (cAttackerType) {
 		case DEF_OWNERTYPE_PLAYER:
 			if (m_pClientList[sAttackerH] == nullptr) return 0;
@@ -6316,7 +6324,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 				iAP_SM += 5;
 				iAP_L += 5;
 			}
-			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::RHAND];
 			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 851) || // KlonessEsterk
 						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 863) || // KlonessWand(MS.20)
@@ -6343,7 +6351,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					iAP_L += 1;
 				}
 			}
-			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 847) &&
 						  (m_cDayOrNight == 2)) {
@@ -6378,7 +6386,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					}
 				}
 			}
-			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::NECK];
 			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 				if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness
 					if (cTargetType == DEF_OWNERTYPE_PLAYER) {
@@ -6659,13 +6667,13 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			break;
 	}
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
-		if (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1) {
-			if (m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]] == nullptr) {
-				m_pClientList[sAttackerH]->m_bIsItemEquipped[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]] = false;
+		if (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1) {
+			if (m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND]] == nullptr) {
+				m_pClientList[sAttackerH]->m_bIsItemEquipped[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND]] = false;
 				m_pClientList[sAttackerH]->DeleteClient(true, true);
 				return 0;
 			}
-			if (m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_ARROW) {
+			if (m_pClientList[sAttackerH]->m_pItemList[m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND]]->m_sItemEffectType == ItemEffectType::ATTACK_ARROW) {
 				if (m_pClientList[sAttackerH]->m_cArrowIndex == -1) {
 					return 0;
 				} else {
@@ -6739,6 +6747,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 		if (iAP_L <= 0) iAP_L = 0;
 	}
 	iResult = iDice(1, 100);
+	int unknownVar = 0;
 	if (iResult <= iDestHitRatio) {
 		if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 			if (((m_pClientList[sAttackerH]->m_iHungerStatus <= 10) || (m_pClientList[sAttackerH]->m_iSP <= 0)) && (iDice(1, 10) == 5)) return false;
@@ -6760,11 +6769,11 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					}
 					break;
 				case 2:
-					cAttackerSA = 61;
+					unknownVar = 61;
 					iAttackerSAvalue = m_pClientList[sAttackerH]->m_iSpecialWeaponEffectValue * 5;
 					break;
 				case 3:
-					cAttackerSA = 62;
+					unknownVar = 62;
 					break;
 			}
 			if (m_pClientList[sAttackerH]->map_->m_bIsFightZone == true) {
@@ -6794,7 +6803,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 				if ((dwTime - m_pClientList[sTargetH]->m_dwTime) > DEF_RAGPROTECTIONTIME) {
 					return 0;
 				} else {
-					switch (cAttackerSA) {
+					switch (unknownVar) {
 						case 62:
 							if (m_pClientList[sTargetH]->m_iRating < 0) {
 								iTemp = abs(m_pClientList[sTargetH]->m_iRating) / 10;
@@ -6812,42 +6821,42 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					else if ((iTemp >= 9000) && (iTemp <= 10000)) iHitPoint = 4;
 					switch (iHitPoint) {
 						case 1:
-							if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_BODY] > 0) {
-								if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_BODY] >= 80)
+							if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::BODY] > 0) {
+								if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::BODY] >= 80)
 									dTmp1 = 80.0f;
-								else dTmp1 = (double) m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_BODY];
+								else dTmp1 = (double) m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::BODY];
 								dTmp2 = (double) iAP_SM;
 								dTmp3 = (dTmp1 / 100.0f) * dTmp2;
 								iAP_Abs_Armor = (int) dTmp3;
 							}
 							break;
 						case 2:
-							if ((m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_PANTS] +
-									  m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_LEGGINGS]) > 0) {
-								if ((m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_PANTS] +
-										  m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_LEGGINGS]) >= 80)
+							if ((m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::PANTS] +
+									  m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::LEGGINGS]) > 0) {
+								if ((m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::PANTS] +
+										  m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::LEGGINGS]) >= 80)
 									dTmp1 = 80.0f;
-								else dTmp1 = (double) (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_PANTS] + m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_LEGGINGS]);
+								else dTmp1 = (double) (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::PANTS] + m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::LEGGINGS]);
 								dTmp2 = (double) iAP_SM;
 								dTmp3 = (dTmp1 / 100.0f) * dTmp2;
 								iAP_Abs_Armor = (int) dTmp3;
 							}
 							break;
 						case 3:
-							if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_ARMS] > 0) {
-								if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_ARMS] >= 80)
+							if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::ARMS] > 0) {
+								if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::ARMS] >= 80)
 									dTmp1 = 80.0f;
-								else dTmp1 = (double) m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_ARMS];
+								else dTmp1 = (double) m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::ARMS];
 								dTmp2 = (double) iAP_SM;
 								dTmp3 = (dTmp1 / 100.0f) * dTmp2;
 								iAP_Abs_Armor = (int) dTmp3;
 							}
 							break;
 						case 4:
-							if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_HEAD] > 0) {
-								if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_HEAD] >= 80)
+							if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::HEAD] > 0) {
+								if (m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::HEAD] >= 80)
 									dTmp1 = 80.0f;
-								else dTmp1 = (double) m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_HEAD];
+								else dTmp1 = (double) m_pClientList[sTargetH]->m_iDamageAbsorption_Armor[EquipPos::HEAD];
 								dTmp2 = (double) iAP_SM;
 								dTmp3 = (dTmp1 / 100.0f) * dTmp2;
 								iAP_Abs_Armor = (int) dTmp3;
@@ -6874,7 +6883,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 							dTmp2 = (double) iAP_SM;
 							dTmp3 = (dTmp1 / 100.0f) * dTmp2;
 							iAP_Abs_Shield = (int) dTmp3;
-							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND];
+							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[EquipPos::LHAND];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != nullptr)) {
 								if ((m_pClientList[sTargetH]->m_cSide != 0) && (m_pClientList[sTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan > 0))
 									m_pClientList[sTargetH]->m_pItemList[iTemp]->m_wCurLifeSpan--;
@@ -6925,9 +6934,9 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != nullptr) && (m_pClientList[sTargetH]->m_bIsSpecialAbilityEnabled == true)) {
 						switch (m_pClientList[sTargetH]->m_iSpecialAbilityType) {
 							case 50:
-								if (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)
-									sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
-								else sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+								if (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1)
+									sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND];
+								else sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::RHAND];
 								if (sWeaponIndex != -1) m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex]->m_wCurLifeSpan = 0;
 								break;
 							case 51:
@@ -6945,36 +6954,36 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					}
 					switch (iHitPoint) {
 						case 1:
-							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
+							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[EquipPos::BODY];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != nullptr)) {
 								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							}
 							break;
 						case 2:
-							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
+							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[EquipPos::PANTS];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != nullptr)) {
 								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							} else {
-								iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS];
+								iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[EquipPos::LEGGINGS];
 								if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != nullptr)) {
 									CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 								}
 							}
 							break;
 						case 3:
-							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
+							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[EquipPos::ARMS];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != nullptr)) {
 								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							}
 							break;
 						case 4:
-							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];
+							iTemp = m_pClientList[sTargetH]->m_sItemEquipmentStatus[EquipPos::HEAD];
 							if ((iTemp != -1) && (m_pClientList[sTargetH]->m_pItemList[iTemp] != nullptr)) {
 								CalculateEnduranceDecrement(sTargetH, sAttackerH, cTargetType, cAttackerType, iTemp);
 							}
 							break;
 					}
-					if ((cAttackerSA == 2) && (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] != 0)) {
+					if ((cAttackerSA == SpecialAbility::ANTI_MAGIC_PROT) && (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] != 0)) {
 						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::PROTECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT], 0, nullptr);
 						switch (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT]) {
 							case 1:
@@ -6993,12 +7002,12 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, MagicType::PROTECT);
 					}
 					if ((m_pClientList[sTargetH]->m_bIsPoisoned == false) &&
-							  ((cAttackerSA == 5) || (cAttackerSA == 6) || (cAttackerSA == 61))) {
+							  ((cAttackerSA == SpecialAbility::POISONOUS) || (cAttackerSA == SpecialAbility::EXTREMELY_POISONOUS) || (unknownVar == 61))) {
 						if (bCheckResistingPoisonSuccess(sTargetH, DEF_OWNERTYPE_PLAYER) == false) {
 							m_pClientList[sTargetH]->m_bIsPoisoned = true;
-							if (cAttackerSA == 5) m_pClientList[sTargetH]->m_iPoisonLevel = 15;
-							else if (cAttackerSA == 6) m_pClientList[sTargetH]->m_iPoisonLevel = 40;
-							else if (cAttackerSA == 61) m_pClientList[sTargetH]->m_iPoisonLevel = iAttackerSAvalue;
+							if (cAttackerSA == SpecialAbility::POISONOUS) m_pClientList[sTargetH]->m_iPoisonLevel = 15;
+							else if (cAttackerSA == SpecialAbility::EXTREMELY_POISONOUS) m_pClientList[sTargetH]->m_iPoisonLevel = 40;
+							else if (unknownVar == 61) m_pClientList[sTargetH]->m_iPoisonLevel = iAttackerSAvalue;
 							m_pClientList[sTargetH]->m_dwPoisonTime = dwTime;
 							m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::POISON, m_pClientList[sTargetH]->m_iPoisonLevel, 0, nullptr);
 							SetPoisonFlag(sTargetH, DEF_OWNERTYPE_PLAYER, true);
@@ -7153,7 +7162,7 @@ CAE_SKIPDAMAGEMOVE:
 					else if ((m_pNpcList[sTargetH]->m_sType == 31) && (cAttackerType == 1) && (m_pClientList[sAttackerH] != nullptr) && (m_pClientList[sAttackerH]->m_iSpecialAbilityType == 7))
 						iDamage += iDice(3, 2);
 				}
-				if ((cAttackerSA == 2) && (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] != 0)) {
+				if ((cAttackerSA == SpecialAbility::ANTI_MAGIC_PROT) && (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] != 0)) {
 					switch (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT]) {
 						case 1:
 							SetProtectionFromArrowFlag(sTargetH, DEF_OWNERTYPE_NPC, false);
@@ -7352,9 +7361,9 @@ CAE_SKIPDAMAGEMOVE2:
 				break;
 		}
 		if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
-			if (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)
-				sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
-			else sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			if (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1)
+				sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND];
+			else sWeaponIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::RHAND];
 			if ((sWeaponIndex != -1) && (!bArrowUse)) {
 				if ((m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex] != nullptr) &&
 						  (m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex]->m_sIDnum != 231)) {
@@ -8190,7 +8199,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = 95;
 								cName[1] = i + 65;
-								bRet = m_pMapList[x]->bCreateNewNpc(cTmp, cName, (rand() % 3), 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypointIndex, nullptr, 0, cSide, false, false, false, true, false);
+								bRet = m_pMapList[x]->bCreateNewNpc(cTmp, cName, (rand() % 3), SpecialAbility::NONE, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypointIndex, nullptr, 0, cSide, false, false, false, true, false);
 								if (!bRet) {
 									m_pMapList[x]->SetNamingValueEmpty(iNamingValue);
 								} else {
@@ -8226,7 +8235,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = 95;
 								cName[1] = i + 65;
-								bRet = m_pMapList[x]->bCreateNewNpc(cTmp, cName, (rand() % 3), 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypointIndex, nullptr, 0, cSide, false, false, false, true, false);
+								bRet = m_pMapList[x]->bCreateNewNpc(cTmp, cName, (rand() % 3), SpecialAbility::NONE, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypointIndex, nullptr, 0, cSide, false, false, false, true, false);
 								if (!bRet) {
 									m_pMapList[x]->SetNamingValueEmpty(iNamingValue);
 								} else {

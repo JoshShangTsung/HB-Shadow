@@ -1193,7 +1193,7 @@ bool CGame::_bDecodeItemConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pItemConfigList[iItemConfigListIndex]->m_cItemType = atoi(token);
+							m_pItemConfigList[iItemConfigListIndex]->m_cItemType = (ItemType) atoi(token);
 							cReadModeB = 4;
 							break;
 						case 4:
@@ -1204,7 +1204,7 @@ bool CGame::_bDecodeItemConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pItemConfigList[iItemConfigListIndex]->m_cEquipPos = atoi(token);
+							m_pItemConfigList[iItemConfigListIndex]->m_cEquipPos = (EquipPos) atoi(token);
 							cReadModeB = 5;
 							break;
 						case 5:
@@ -1215,7 +1215,7 @@ bool CGame::_bDecodeItemConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectType = atoi(token);
+							m_pItemConfigList[iItemConfigListIndex]->m_sItemEffectType = (ItemEffectType) atoi(token);
 							cReadModeB = 6;
 							break;
 						case 6:
@@ -1739,7 +1739,7 @@ void CGame::RemoveFromTarget(short sTargetH, char cTargetType, int iCode) {
 					  (m_pNpcList[i]->m_cTargetType == cTargetType)) {
 				switch (iCode) {
 					case MagicType::INVISIBILITY:
-						if (m_pNpcList[i]->m_cSpecialAbility == 1) {
+						if (m_pNpcList[i]->m_cSpecialAbility == SpecialAbility::CLAIRVOYANT) {
 						} else {
 							m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
 							m_pNpcList[i]->m_iTargetIndex = 0;
@@ -2456,7 +2456,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 	return true;
 }
 
-bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, char cSA) {
+bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, SpecialAbility cSA) {
 	char cTmpName[21];
 	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pNpcName);
@@ -2531,7 +2531,8 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 	pNpc->m_cSpecialAbility = cSA;
 	pNpc->m_iBuildCount = npcArch.m_iMinBravery;
 	switch (pNpc->m_cSpecialAbility) {
-		case 1:
+		case SpecialAbility::NONE: break;
+		case SpecialAbility::CLAIRVOYANT:
 			dV2 = (double) pNpc->m_iExp;
 			dV3 = 25.0f / 100.0f;
 			dV1 = dV2 * dV3;
@@ -2542,7 +2543,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 				pNpc->m_iExp += (int) dV1;
 			}
 			break;
-		case 2:
+		case SpecialAbility::ANTI_MAGIC_PROT:
 			dV2 = (double) pNpc->m_iExp;
 			dV3 = 30.0f / 100.0f;
 			dV1 = dV2 * dV3;
@@ -2552,10 +2553,10 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 				pNpc->m_iExp += (int) dV1;
 			}
 			break;
-		case 3: // Absorbing Physical Damage
+		case SpecialAbility::RESISTANT_PHYS_DMG: // Absorbing Physical Damage
 			if (pNpc->m_iAbsDamage > 0) {
-				pNpc->m_cSpecialAbility = 0;
-				cSA = 0;
+				pNpc->m_cSpecialAbility = SpecialAbility::NONE;
+				cSA = SpecialAbility::NONE;
 			} else {
 				iTemp = 20 + iDice(1, 60);
 				pNpc->m_iAbsDamage -= iTemp;
@@ -2570,10 +2571,10 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 				pNpc->m_iExp += (int) dV1;
 			}
 			break;
-		case 4: // Absorbing Magical Damage
+		case SpecialAbility::RESISTANT_MAG_DMG: // Absorbing Magical Damage
 			if (pNpc->m_iAbsDamage < 0) {
-				pNpc->m_cSpecialAbility = 0;
-				cSA = 0;
+				pNpc->m_cSpecialAbility = SpecialAbility::NONE;
+				cSA = SpecialAbility::NONE;
 			} else {
 				iTemp = 20 + iDice(1, 60);
 				pNpc->m_iAbsDamage += iTemp;
@@ -2588,7 +2589,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 				pNpc->m_iExp += (int) dV1;
 			}
 			break;
-		case 5:
+		case SpecialAbility::POISONOUS:
 			dV2 = (double) pNpc->m_iExp;
 			dV3 = 15.0f / 100.0f;
 			dV1 = dV2 * dV3;
@@ -2598,8 +2599,8 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 				pNpc->m_iExp += (int) dV1;
 			}
 			break;
-		case 6:
-		case 7:
+		case SpecialAbility::EXTREMELY_POISONOUS:
+		case SpecialAbility::EXPLOSIVE:
 			dV2 = (double) pNpc->m_iExp;
 			dV3 = 20.0f / 100.0f;
 			dV1 = dV2 * dV3;
@@ -2609,7 +2610,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 				pNpc->m_iExp += (int) dV1;
 			}
 			break;
-		case 8:
+		case SpecialAbility::HIGHLY_EXPLOSIVE:
 			dV2 = (double) pNpc->m_iExp;
 			dV3 = 25.0f / 100.0f;
 			dV1 = dV2 * dV3;
@@ -2622,7 +2623,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 	}
 	pNpc->m_iNoDieRemainExp = (pNpc->m_iExp) - (pNpc->m_iExp / 3);
 	pNpc->m_iStatus = pNpc->m_iStatus & 0xFFFFF0FF;
-	sTemp = cSA;
+	sTemp = (char) cSA;
 	sTemp = sTemp << 8;
 	pNpc->m_iStatus = pNpc->m_iStatus | sTemp;
 	pNpc->m_iStatus = pNpc->m_iStatus & 0xFFFFFFF0;
@@ -3365,8 +3366,8 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 		case DEF_OWNERTYPE_PLAYER:
 			if ((m_bAdminSecurity == true) && (m_pClientList[sAttackerH]->m_iAdminUserLevel > 0)) return;
 			if (m_pClientList[sAttackerH]->m_cHeroArmourBonus == 2) iDamage += 4;
-			if ((m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND] == -1) || (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] == -1)) {
-				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			if ((m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::LHAND] == -1) || (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::TWOHAND] == -1)) {
+				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::RHAND];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 861 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 862) {
 						float damageTemp = (float) iDamage;
@@ -3390,7 +3391,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 						}
 					}
 				}
-				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
+				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[EquipPos::NECK];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != nullptr)) {
 					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness
 						if (cTargetType == DEF_OWNERTYPE_PLAYER) {
@@ -3929,7 +3930,7 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 void CGame::MobGenerator() {
 	register int i, x, j, iNamingValue, iResult, iTotalMob;
 	char cNpcName[21], cName_Master[11], cName_Slave[11], cWaypoint[11];
-	char cSA;
+	SpecialAbility cSA;
 	int pX;
 	int pY;
 	int iMapLevel;
@@ -4943,7 +4944,7 @@ void CGame::MobGenerator() {
 						iKindSA = 1;
 						break;
 				}
-				cSA = 0;
+				cSA = SpecialAbility::NONE;
 				if (iDice(1, 100) <= iProbSA) {
 					cSA = _cGetSpecialAbility(iKindSA);
 				}
@@ -5130,7 +5131,7 @@ void CGame::MobGenerator() {
 					wsprintf(cName_Slave, "XX%d", iNamingValue);
 					cName_Slave[0] = 95; // original '_';
 					cName_Slave[1] = i + 65;
-					cSA = 0;
+					cSA = SpecialAbility::NONE;
 					if (iDice(1, 100) <= iProbSA) {
 						cSA = _cGetSpecialAbility(iKindSA);
 					}
@@ -5421,7 +5422,7 @@ void CGame::MobGenerator() {
 						wsprintf(cName_Master, "XX%d", iNamingValue);
 						cName_Master[0] = 95; // original '_';
 						cName_Master[1] = i + 65;
-						cSA = 0;
+						cSA = SpecialAbility::NONE;
 						if ((m_pMapList[i]->m_stSpotMobGenerator[j].iMobType != 34) && (iDice(1, 100) <= iProbSA)) {
 							cSA = _cGetSpecialAbility(iKindSA);
 						}

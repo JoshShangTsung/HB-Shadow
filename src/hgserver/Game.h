@@ -224,7 +224,7 @@ public:
 	bool _bCheckDupItemID(class CItem * pItem);
 	bool _bDecodeDupItemIDFileContents(char * pData, uint32_t dwMsgSize);
 	int iGetPlayerABSStatus(int iWhatH, int iRecvH);
-	char _cGetSpecialAbility(int iKindSA);
+	SpecialAbility _cGetSpecialAbility(int iKindSA);
 	bool _bDecodeBuildItemConfigFileContents(char * pData, uint32_t dwMsgSize);
 	bool _bCheckSubLogSocketIndex();
 	void OnSubLogRead(int iIndex);
@@ -286,7 +286,7 @@ public:
 	void GuildNotifyHandler(char * pData, uint32_t dwMsgSize);
 	void CalculateGuildEffect(int iVictimH, char cVictimType, short sAttackerH);
 	void OnStartGameSignal();
-	bool _bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, char cSA);
+	bool _bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, SpecialAbility cSA);
 	bool _bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize);
 	void ResponseDisbandGuildHandler(char * pData, uint32_t dwMsgSize);
 	void ResponseCreateNewGuildHandler(char * pData, uint32_t dwMsgSize);

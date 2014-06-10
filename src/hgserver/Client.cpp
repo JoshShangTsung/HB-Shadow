@@ -1719,7 +1719,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 		iCheckHeroCape = this->iUpgradeHeroCapeRequirements(iItemIndex);
 		if (iCheckHeroCape > 0) {
 			this->SendNotifyMsg(0, DEF_NOTIFY_UPGRADEHEROCAPE, iItemIndex,
-					  item.m_cItemType,
+					  (uint32_t) item.m_cItemType,
 					  item.m_wCurLifeSpan,
 					  item.m_cName,
 					  item.m_sSprite,
@@ -1745,7 +1745,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 	}
 	switch (item.m_cCategory) {
 		case 46: // Pendants are category 46
-			if (item.m_cItemType != 1) {
+			if (item.m_cItemType != ItemType::EQUIP) {
 				this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 				return; // Pendants are type 1
 			}
@@ -1753,7 +1753,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 				this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 				return; // Pendants are left finger or more
 			}
-			if (item.m_sItemEffectType != 14) {
+			if (item.m_sItemEffectType != ItemEffectType::ADDEFFECT) {
 				this->SendNotifyMsg(0, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, nullptr);
 				return; // Pendants are EffectType 14
 			}
@@ -1870,7 +1870,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -1879,7 +1879,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -1899,7 +1899,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -1909,7 +1909,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
 						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  item.m_cItemType,
+								  (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -1929,7 +1929,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -1939,7 +1939,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
 						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  item.m_cItemType,
+								  (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -1957,7 +1957,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						item.m_dwAttribute = dwTemp | (iValue << 28);
 						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  item.m_cItemType,
+								  (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -1977,7 +1977,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -1987,7 +1987,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
 						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  item.m_cItemType,
+								  (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -2007,7 +2007,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -2017,7 +2017,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
 						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  item.m_cItemType,
+								  (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -2035,7 +2035,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						item.m_dwAttribute = dwTemp | (iValue << 28);
 						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  item.m_cItemType,
+								  (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -2352,7 +2352,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 					this->m_iGizonItemUpgradeLeft -= sItemUpgrade;
 					this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMUPGRADELEFT, this->m_iGizonItemUpgradeLeft, 0, 0, nullptr);
 					if (iValue == 0) {
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -2367,7 +2367,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -2376,7 +2376,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan, item.m_cName,
 								  item.m_sSprite,
 								  item.m_sSpriteFrame,
@@ -2396,7 +2396,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 							this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 							return;
 						}
-						item.m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						item.m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 						item.m_sTouchEffectValue1 = this->m_sCharIDnum1;
 						item.m_sTouchEffectValue2 = this->m_sCharIDnum2;
 						item.m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -2405,7 +2405,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						dwTemp = item.m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						item.m_dwAttribute = dwTemp | (iValue << 28);
-						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, item.m_cItemType,
+						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan, item.m_cName,
 								  item.m_sSprite,
 								  item.m_sSpriteFrame,
@@ -2424,7 +2424,7 @@ void CClient::RequestItemUpgradeHandler(int iItemIndex) {
 						item.m_dwAttribute = dwTemp | (iValue << 28);
 						this->SendNotifyMsg(0, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, item.m_dwAttribute, 0, nullptr);
 						this->SendNotifyMsg(0, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  item.m_cItemType,
+								  (uint32_t) item.m_cItemType,
 								  item.m_wCurLifeSpan,
 								  item.m_cName,
 								  item.m_sSprite,
@@ -2492,11 +2492,11 @@ void CClient::ItemDepleteHandler(short sItemIndex, bool bIsUseItemResult, bool b
 	if (!itemPtr) return;
 	auto &item = *itemPtr;
 	if ((bIsItemUsed) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_EAT) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_MATERIAL) ||
+			  (item.m_cItemType == ItemType::CONSUME) ||
+			  (item.m_cItemType == ItemType::EAT) ||
+			  (item.m_cItemType == ItemType::USE_DEPLETE) ||
+			  (item.m_cItemType == ItemType::USE_DEPLETE_DEST) ||
+			  (item.m_cItemType == ItemType::MATERIAL) ||
 			  (item.m_sIDnum == 380) ||
 			  (item.m_sIDnum == 381) ||
 			  (item.m_sIDnum == 382)) {
@@ -2521,20 +2521,19 @@ int CClient::iCalcTotalWeight() {
 		auto &itemPtr = this->m_pItemList[sItemIndex];
 		if (itemPtr != nullptr) {
 			auto &item = *itemPtr;
-			switch (item.m_sItemEffectType) {
-				case DEF_ITEMEFFECTTYPE_ALTERITEMDROP:
-					if (item.m_wCurLifeSpan > 0) {
-						this->m_iAlterItemDropIndex = sItemIndex;
-					}
-					break;
+			if(item.m_sItemEffectType == ItemEffectType::ALTERITEMDROP) {
+				if (item.m_wCurLifeSpan > 0) {
+					this->m_iAlterItemDropIndex = sItemIndex;
+				}
 			}
 		}
 	}
 	iWeight = 0;
-	for (i = 0; i < DEF_MAXITEMS; i++)
+	for (i = 0; i < DEF_MAXITEMS; i++) {
 		if (this->m_pItemList[i] != nullptr) {
 			iWeight += this->m_pItemList[i]->iGetItemWeight(this->m_pItemList[i]->m_dwCount);
 		}
+	}
 	this->m_iCurWeightLoad = iWeight;
 	return iWeight;
 }
@@ -2567,7 +2566,7 @@ bool CClient::bSetItemToBankItem(short sItemIndex) {
 		dwp = (uint32_t *) cp;
 		*dwp = item.m_dwCount;
 		cp += 4;
-		*cp = item.m_cItemType;
+		*cp = (char) item.m_cItemType;
 		cp++;
 		*cp = item.m_cEquipPos;
 		cp++;
@@ -2642,7 +2641,7 @@ bool CClient::bSetItemToBankItem(CItem * pItem) {
 		dwp = (uint32_t *) cp;
 		*dwp = pItem->m_dwCount;
 		cp += 4;
-		*cp = pItem->m_cItemType;
+		*cp = (char) pItem->m_cItemType;
 		cp++;
 		*cp = pItem->m_cEquipPos;
 		cp++;
@@ -2764,17 +2763,17 @@ void CClient::CalculateSSN_ItemIndex(short sWeaponIndex, int iValue) {
 				break;
 		}
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1) {
+			if (this->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1) {
 
-				iWeaponIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+				iWeaponIndex = this->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
 
 					this->m_iHitRatio++;
 				}
 			}
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) {
+			if (this->m_sItemEquipmentStatus[EquipPos::RHAND] != -1) {
 
-				iWeaponIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+				iWeaponIndex = this->m_sItemEquipmentStatus[EquipPos::RHAND];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
 
 					this->m_iHitRatio++;
@@ -2861,14 +2860,14 @@ void CClient::CalculateSSN_SkillIndex(short sSkillIndex, int iValue) {
 				break;
 		}
 		if (this->m_iSkillSSN[sSkillIndex] == 0) {
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1) {
-				iWeaponIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+			if (this->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1) {
+				iWeaponIndex = this->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
 					this->m_iHitRatio++;
 				}
 			}
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) {
-				iWeaponIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			if (this->m_sItemEquipmentStatus[EquipPos::RHAND] != -1) {
+				iWeaponIndex = this->m_sItemEquipmentStatus[EquipPos::RHAND];
 				if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sSkillIndex) {
 					this->m_iHitRatio++;
 				}
@@ -2996,7 +2995,7 @@ void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
 	CItem *pItem = new class CItem;
 	if (pItem == nullptr) return;
 	if (game_._bInitItemAttr(*pItem, cItemName) == true) {
-		pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+		pItem->m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 		pItem->m_sTouchEffectValue1 = this->m_sCharIDnum1;
 		pItem->m_sTouchEffectValue2 = this->m_sCharIDnum2;
 		pItem->m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -3016,7 +3015,7 @@ void CClient::GetAngelHandler(char * pData, uint32_t /*dwMsgSize*/) {
 			dwp = (uint32_t *) cp;
 			*dwp = pItem->m_dwCount;
 			cp += 4;
-			*cp = pItem->m_cItemType;
+			*cp = (char) pItem->m_cItemType;
 			cp++;
 			*cp = pItem->m_cEquipPos;
 			cp++;
@@ -3716,11 +3715,11 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 	uint32_t dwSWEType;
 	uint32_t dwSWEValue;
 	short sTemp;
-	if ((this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) &&
-			  (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)) {
-		if (this->m_pItemList[this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]] != nullptr) {
-			this->m_bIsItemEquipped[this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]] = false;
-			this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] = -1;
+	if ((this->m_sItemEquipmentStatus[EquipPos::RHAND] != -1) &&
+			  (this->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1)) {
+		if (this->m_pItemList[this->m_sItemEquipmentStatus[EquipPos::RHAND]] != nullptr) {
+			this->m_bIsItemEquipped[this->m_sItemEquipmentStatus[EquipPos::RHAND]] = false;
+			this->m_sItemEquipmentStatus[EquipPos::RHAND] = -1;
 		}
 	}
 	this->m_iAngelicStr = 0;
@@ -3774,12 +3773,10 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 		auto &itemPtr = this->m_pItemList[sItemIndex];
 		if (this->m_pItemList[sItemIndex] != nullptr) {
 			auto &item = *itemPtr;
-			switch (item.m_sItemEffectType) {
-				case DEF_ITEMEFFECTTYPE_ALTERITEMDROP:
-					if (item.m_wCurLifeSpan > 0) {
-						this->m_iAlterItemDropIndex = sItemIndex;
-					}
-					break;
+			if(item.m_sItemEffectType == ItemEffectType::ALTERITEMDROP) {
+				if (item.m_wCurLifeSpan > 0) {
+					this->m_iAlterItemDropIndex = sItemIndex;
+				}
 			}
 		}
 	}
@@ -3790,14 +3787,14 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 			auto &item = *itemPtr;
 			cEquipPos = item.m_cEquipPos;
 			switch (item.m_sItemEffectType) {
-				case DEF_ITEMEFFECTTYPE_MAGICDAMAGESAVE:
+				case ItemEffectType::MAGICDAMAGESAVE:
 					this->m_iMagicDamageSaveItemIndex = sItemIndex;
 					break;
-				case DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY:
-				case DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE:
-				case DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE:
-				case DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN:
-				case DEF_ITEMEFFECTTYPE_ATTACK:
+				case ItemEffectType::ATTACK_SPECABLTY:
+				case ItemEffectType::ATTACK_DEFENSE:
+				case ItemEffectType::ATTACK_MANASAVE:
+				case ItemEffectType::ATTACK_MAXHPDOWN:
+				case ItemEffectType::ATTACK:
 					this->m_cAttackDiceThrow_SM = item.m_sItemEffectValue1;
 					this->m_cAttackDiceRange_SM = item.m_sItemEffectValue2;
 					this->m_cAttackBonus_SM = item.m_sItemEffectValue3;
@@ -3915,26 +3912,28 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 						}
 					}
 					switch (item.m_sItemEffectType) {
-						case DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN:
+						case ItemEffectType::ATTACK_MAXHPDOWN:
 							this->m_iSideEffect_MaxHPdown = item.m_sSpecialEffect;
 							break;
-						case DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE:
+						case ItemEffectType::ATTACK_MANASAVE:
 							this->m_iManaSaveRatio += item.m_sItemEffectValue4;
 							if (this->m_iManaSaveRatio > 80) this->m_iManaSaveRatio = 80;
 							break;
-						case DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE:
-							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_BODY] += item.m_sSpecialEffect;
+						case ItemEffectType::ATTACK_DEFENSE:
+							this->m_iDamageAbsorption_Armor[EquipPos::BODY] += item.m_sSpecialEffect;
 							break;
-						case DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY:
+						case ItemEffectType::ATTACK_SPECABLTY:
 							this->m_iSpecialAbilityType = item.m_sSpecialEffect;
 							this->m_iSpecialAbilityLastSec = item.m_sSpecialEffectValue1;
 							this->m_iSpecialAbilityEquipPos = (int) cEquipPos;
 							if ((bNotify == true) && (iEquipItemID == (int) sItemIndex))
 								this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 2, this->m_iSpecialAbilityType, this->m_iSpecialAbilityTime, nullptr);
 							break;
+						default:
+							break;
 					}
 					break;
-				case DEF_ITEMEFFECTTYPE_ADDEFFECT:
+				case ItemEffectType::ADDEFFECT:
 					switch (item.m_sItemEffectValue1) {
 						case 1:
 							this->m_iAddResistMagic += item.m_sItemEffectValue2;
@@ -3987,10 +3986,10 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 							break;
 						case 30: // Magin Sapphire	Phisical damage decreased(% applied) by the purity formula.
 							iTemp = (item.m_sItemSpecEffectValue2 / 10);
-							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_HEAD] += iTemp;
-							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_BODY] += iTemp;
-							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_ARMS] += iTemp;
-							this->m_iDamageAbsorption_Armor[DEF_EQUIPPOS_PANTS] += iTemp;
+							this->m_iDamageAbsorption_Armor[EquipPos::HEAD] += iTemp;
+							this->m_iDamageAbsorption_Armor[EquipPos::BODY] += iTemp;
+							this->m_iDamageAbsorption_Armor[EquipPos::ARMS] += iTemp;
+							this->m_iDamageAbsorption_Armor[EquipPos::PANTS] += iTemp;
 							break;
 							/*Functions rates confirm.
 							Magic Diamond: Completion rate / 5 = Functions rate. ? Maximum 20. (not%)
@@ -4024,7 +4023,7 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 							break;
 					}
 					break;
-				case DEF_ITEMEFFECTTYPE_ATTACK_ARROW:
+				case ItemEffectType::ATTACK_ARROW:
 					if ((this->m_cArrowIndex != -1) &&
 							  (this->m_pItemList[this->m_cArrowIndex] == nullptr)) {
 						this->m_cArrowIndex = this->_iGetArrowItemIndex();
@@ -4047,8 +4046,8 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 					}
 					this->m_iHitRatio += this->m_cSkillMastery[item.m_sRelatedSkill];
 					break;
-				case DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY:
-				case DEF_ITEMEFFECTTYPE_DEFENSE:
+				case ItemEffectType::DEFENSE_SPECABLTY:
+				case ItemEffectType::DEFENSE:
 					this->m_iDefenseRatio += item.m_sItemEffectValue1;
 					if ((item.m_dwAttribute & 0x00000001) != 0) {
 						this->m_iCustomItemValue_Defense += item.m_sItemSpecEffectValue2;
@@ -4123,7 +4122,7 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 						}
 					}
 					switch (cEquipPos) {
-						case DEF_EQUIPPOS_LHAND:
+						case EquipPos::LHAND:
 							this->m_iDamageAbsorption_Shield = (item.m_sItemEffectValue1) - (item.m_sItemEffectValue1) / 3;
 							break;
 						default:
@@ -4131,14 +4130,18 @@ void CClient::CalcTotalItemEffect(int iEquipItemID, bool bNotify) {
 							break;
 					}
 					switch (item.m_sItemEffectType) {
-						case DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY:
+						case ItemEffectType::DEFENSE_SPECABLTY:
 							this->m_iSpecialAbilityType = item.m_sSpecialEffect;
 							this->m_iSpecialAbilityLastSec = item.m_sSpecialEffectValue1;
 							this->m_iSpecialAbilityEquipPos = (int) cEquipPos;
 							if ((bNotify == true) && (iEquipItemID == (int) sItemIndex))
 								this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYSTATUS, 2, this->m_iSpecialAbilityType, this->m_iSpecialAbilityTime, nullptr);
 							break;
+						default:
+							break;
 					}
+					break;
+				default:
 					break;
 			}
 		}
@@ -4240,20 +4243,20 @@ RCPH_LOOPBREAK:
 			if (this->m_pItemList[sItemIndex[i]] == nullptr) return;
 			if (this->m_pItemList[sItemIndex[i]]->m_dwCount < sItemNumber[i]) return;
 			sItemPurity[i] = this->m_pItemList[sItemIndex[i]]->m_sItemSpecEffectValue2;
-			if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_NONE)
+			if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::NONE)
 					  && (this->m_pItemList[sItemIndex[i]]->m_sSprite == 6)
 					  && (this->m_pItemList[sItemIndex[i]]->m_sSpriteFrame == 129)) {
 				sItemPurity[i] = 100; // Merien stones considered 100% purity.
 			}
-			if (this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) {
+			if (this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::CONSUME) {
 				sItemPurity[i] = -1; // Diamonds / Emeralds.etc.. never have purity
 			}
 			if (sItemNumber[i] > 1) // No purity for stacked items
 			{
 				sItemPurity[i] = -1;
 			}
-			if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_EQUIP)
-					  && (this->m_pItemList[sItemIndex[i]]->m_cEquipPos == DEF_EQUIPPOS_NECK)) {
+			if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::EQUIP)
+					  && (this->m_pItemList[sItemIndex[i]]->m_cEquipPos == EquipPos::NECK)) {
 				iNeededContrib = 10; // Necks Crafting requires 10 contrib
 			}
 		}
@@ -4320,14 +4323,14 @@ RCPH_LOOPBREAK:
 		if (pItem == nullptr) return;
 		for (i = 0; i < 6; i++)
 			if (sItemIndex[i] != -1) { // Deplete any Merien Stone
-				if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_NONE)
+				if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::NONE)
 						  && (this->m_pItemList[sItemIndex[i]]->m_sSprite == 6)
 						  && (this->m_pItemList[sItemIndex[i]]->m_sSpriteFrame == 129)) {
 					this->ItemDepleteHandler(sItemIndex[i], false, false);
 				} else
-					// Risk to deplete any other items (not stackable ones) // DEF_ITEMTYPE_CONSUME
-					if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_EQUIP)
-						  || (this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_MATERIAL)) {
+					// Risk to deplete any other items (not stackable ones) // ItemType::CONSUME
+					if ((this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::EQUIP)
+						  || (this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::MATERIAL)) {
 					if (iDice(1, 100) < iRiskLevel) {
 						this->ItemDepleteHandler(sItemIndex[i], false, false);
 					}
@@ -4367,7 +4370,7 @@ RCPH_LOOPBREAK:
 		if (pItem == nullptr) return;
 		for (i = 0; i < 6; i++) {
 			if (sItemIndex[i] != -1) {
-				if (this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) {
+				if (this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::CONSUME) {
 					this->SetItemCount(sItemIndex[i],
 							  this->m_pItemList[sItemIndex[i]]->m_dwCount - sItemNumber[i]);
 				} else // So if item is not Type 5 (stackable items), you deplete item
@@ -4387,7 +4390,7 @@ RCPH_LOOPBREAK:
 				pItem->m_sItemSpecEffectValue2 = iPurity;
 				pItem->m_dwAttribute = 1;
 			}
-			pItem->m_sTouchEffectType = DEF_ITET_ID;
+			pItem->m_sTouchEffectType = TouchEffectType::ID;
 			pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 			pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 			// pItem->m_sTouchEffectValue3 = timeGetTime();
@@ -4419,7 +4422,7 @@ RCPH_LOOPBREAK:
 				dwp = (uint32_t *) cp;
 				*dwp = pItem->m_dwCount;
 				cp += 4;
-				*cp = pItem->m_cItemType;
+				*cp = (char) pItem->m_cItemType;
 				cp++;
 				*cp = pItem->m_cEquipPos;
 				cp++;
@@ -4845,7 +4848,7 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 		delete pItem;
 		return;
 	} else {
-		pItem->m_sTouchEffectType = DEF_ITET_ID;
+		pItem->m_sTouchEffectType = TouchEffectType::ID;
 		pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 		pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 		pItem->m_sTouchEffectValue3 = (short) timeGetTime();
@@ -4866,7 +4869,7 @@ void CClient::ReqCreateSlateHandler(char* pData) {
 			dwp = (uint32_t *) cp;
 			*dwp = pItem->m_dwCount;
 			cp += 4;
-			*cp = pItem->m_cItemType;
+			*cp = (char) pItem->m_cItemType;
 			cp++;
 			*cp = pItem->m_cEquipPos;
 			cp++;
@@ -5077,54 +5080,54 @@ void CClient::ArmorLifeDecrement(int iTargetH, char cOwnerType, int /*iValue*/) 
 	if (target.m_cMagicEffectStatus[MagicType::PROTECT] != 0) return;
 
 	struct Damage {
-		std::size_t position_;
+		EquipPos position_;
 		std::size_t minEndurance_;
 	};
 	std::vector<Damage> damages[] = {
 		{
-			{DEF_EQUIPPOS_BODY, 380}
+			{EquipPos::BODY, 380}
 		},
 		{
-			{DEF_EQUIPPOS_PANTS, 250}
+			{EquipPos::PANTS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_LEGGINGS, 250}
+			{EquipPos::LEGGINGS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_ARMS, 250}
+			{EquipPos::ARMS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_HEAD, 250}
+			{EquipPos::HEAD, 250}
 		},
 		{
-			{DEF_EQUIPPOS_HEAD, 250},
-			{DEF_EQUIPPOS_LEGGINGS, 250}
+			{EquipPos::HEAD, 250},
+			{EquipPos::LEGGINGS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_LEGGINGS, 250},
-			{DEF_EQUIPPOS_PANTS, 250}
+			{EquipPos::LEGGINGS, 250},
+			{EquipPos::PANTS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_PANTS, 250},
-			{DEF_EQUIPPOS_ARMS, 250}
+			{EquipPos::PANTS, 250},
+			{EquipPos::ARMS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_ARMS, 250}
+			{EquipPos::ARMS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_ARMS, 250},
-			{DEF_EQUIPPOS_BODY, 250}
+			{EquipPos::ARMS, 250},
+			{EquipPos::BODY, 250}
 		},
 		{
-			{DEF_EQUIPPOS_BODY, 250},
-			{DEF_EQUIPPOS_LEGGINGS, 250}
+			{EquipPos::BODY, 250},
+			{EquipPos::LEGGINGS, 250}
 		},
 		{
-			{DEF_EQUIPPOS_BODY, 250}
+			{EquipPos::BODY, 250}
 		},
 		{
-			{DEF_EQUIPPOS_BODY, 250},
-			{DEF_EQUIPPOS_PANTS, 250}
+			{EquipPos::BODY, 250},
+			{EquipPos::PANTS, 250}
 		}
 	};
 	constexpr size_t numItems = sizeof (damages) / sizeof (damages[0]);
@@ -5156,12 +5159,12 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 	auto &itemPtr = this->m_pItemList[sItemIndex];
 	if (itemPtr == nullptr) return;
 	auto &item = *itemPtr;
-	if (item.m_cItemType != DEF_ITEMTYPE_EQUIP) return;
+	if (item.m_cItemType != ItemType::EQUIP) return;
 	if (this->m_bIsItemEquipped[sItemIndex] == false) return;
 	char cHeroArmorType = this->_cCheckHeroItemEquipped();
 	if (cHeroArmorType != 0x0FFFFFFFF) this->m_cHeroArmourBonus = 0;
-	char cEquipPos = item.m_cEquipPos;
-	if (cEquipPos == DEF_EQUIPPOS_RHAND) {
+	EquipPos cEquipPos = item.m_cEquipPos;
+	if (cEquipPos == EquipPos::RHAND) {
 		if (this->m_pItemList[sItemIndex] != nullptr) {
 			if ((item.m_sIDnum == 865) || (item.m_sIDnum == 866)) {
 				this->m_cMagicMastery[94] = false;
@@ -5170,7 +5173,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 		}
 	}
 	switch (cEquipPos) {
-		case DEF_EQUIPPOS_RHAND:
+		case EquipPos::RHAND:
 			sTemp = this->m_sAppr2;
 			sTemp = sTemp & 0xF00F;
 			this->m_sAppr2 = sTemp;
@@ -5181,7 +5184,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFFFFFFF0;
 			this->m_iStatus = iTemp;
 			break;
-		case DEF_EQUIPPOS_LHAND:
+		case EquipPos::LHAND:
 			sTemp = this->m_sAppr2;
 			sTemp = sTemp & 0xFFF0;
 			this->m_sAppr2 = sTemp;
@@ -5189,7 +5192,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xF0FFFFFF;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_TWOHAND:
+		case EquipPos::TWOHAND:
 			sTemp = this->m_sAppr2;
 			sTemp = sTemp & 0xF00F;
 			this->m_sAppr2 = sTemp;
@@ -5197,7 +5200,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0x0FFFFFFF;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_BODY:
+		case EquipPos::BODY:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0x0FFF;
 			this->m_sAppr3 = sTemp;
@@ -5208,7 +5211,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFF0FFFFF;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_BACK:
+		case EquipPos::BACK:
 			sTemp = this->m_sAppr4;
 			sTemp = sTemp & 0xF0FF;
 			this->m_sAppr4 = sTemp;
@@ -5216,7 +5219,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFFF0FFFF;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_ARMS:
+		case EquipPos::ARMS:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0xFFF0;
 			this->m_sAppr3 = sTemp;
@@ -5224,7 +5227,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFFFF0FFF;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_PANTS:
+		case EquipPos::PANTS:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0xF0FF;
 			this->m_sAppr3 = sTemp;
@@ -5232,7 +5235,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFFFFF0FF;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_LEGGINGS:
+		case EquipPos::LEGGINGS:
 			sTemp = this->m_sAppr4;
 			sTemp = sTemp & 0x0FFF;
 			this->m_sAppr4 = sTemp;
@@ -5240,7 +5243,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFFFFFF0F;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_HEAD:
+		case EquipPos::HEAD:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0xFF0F;
 			this->m_sAppr3 = sTemp;
@@ -5248,7 +5251,7 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFFFFFFF0;
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_RELEASEALL:
+		case EquipPos::RELEASEALL:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0x0FFF;
 			this->m_sAppr3 = sTemp;
@@ -5256,11 +5259,13 @@ void CClient::ReleaseItemHandler(short sItemIndex, bool bNotice) {
 			iTemp = iTemp & 0xFFF0FFFF;
 			this->m_iApprColor = iTemp;
 			break;
+		default:
+			break;
 	}
-	if (item.m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) {
+	if (item.m_sItemEffectType == ItemEffectType::ATTACK_SPECABLTY) {
 		this->m_sAppr4 = this->m_sAppr4 & 0xFFF3;
 	}
-	if (item.m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY) {
+	if (item.m_sItemEffectType == ItemEffectType::DEFENSE_SPECABLTY) {
 		this->m_sAppr4 = this->m_sAppr4 & 0xFFFC;
 	}
 	this->m_bIsItemEquipped[sItemIndex] = false;
@@ -5409,7 +5414,7 @@ void CClient::update(uint32_t dwTime) {
 			this->SendNotifyMsg(0, DEF_NOTIFY_SPECIALABILITYENABLED, 0, 0, 0, nullptr);
 			// New 25/05/2004
 			// After the time up, add magic back
-			sItemIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+			sItemIndex = this->m_sItemEquipmentStatus[EquipPos::RHAND];
 			if (sItemIndex != -1) {
 				if ((this->m_pItemList[sItemIndex]->m_sIDnum == 865) || (this->m_pItemList[sItemIndex]->m_sIDnum == 866)) {
 					if ((this->m_iInt + this->m_iAngelicInt) > 99 && (this->m_iMag + this->m_iAngelicMag) > 99) {
@@ -7147,7 +7152,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 								delete pStrTok;
 								return false;
 							}
-							this->m_pItemList[iItemIndex]->m_sTouchEffectType = atoi(token);
+							this->m_pItemList[iItemIndex]->m_sTouchEffectType = (TouchEffectType) atoi(token);
 							cReadModeB = 4;
 							break;
 						case 4:
@@ -7256,7 +7261,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 								return false;
 							}
 							this->m_pItemList[iItemIndex]->m_dwAttribute = atoi(token);
-							if (this->m_pItemList[iItemIndex]->m_sTouchEffectType == DEF_ITET_UNIQUE_OWNER) {
+							if (this->m_pItemList[iItemIndex]->m_sTouchEffectType == TouchEffectType::UNIQUE_OWNER) {
 								if ((this->m_pItemList[iItemIndex]->m_sTouchEffectValue1 != this->m_sCharIDnum1) ||
 										  (this->m_pItemList[iItemIndex]->m_sTouchEffectValue2 != this->m_sCharIDnum2) ||
 										  (this->m_pItemList[iItemIndex]->m_sTouchEffectValue3 != this->m_sCharIDnum3)) {
@@ -7281,12 +7286,12 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 								this->m_pItemList[iItemIndex]->m_wCurLifeSpan = this->m_pItemList[iItemIndex]->m_wMaxLifeSpan;
 							// v1.433
 							if ((this->m_pItemList[iItemIndex]->m_wCurLifeSpan == 0) &&
-									  (this->m_pItemList[iItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP)) {
+									  (this->m_pItemList[iItemIndex]->m_sItemEffectType == ItemEffectType::ALTERITEMDROP)) {
 								wsprintf(G_cTxt, "(!) Ã„Â³Â¸Â¯Ã…Ã�(%s) Â¼Ã¶Â¸Ã­ 0Ã‚Â¥Â¸Â® ÃˆÃ±Â»Ã½Â¼Â® Â¼Ã’Ã�Ã¶!", this->m_cCharName);
 								PutLogFileList(G_cTxt);
 								this->m_pItemList[iItemIndex]->m_wCurLifeSpan = 1;
 							}
-							if (this->m_pItemList[iItemIndex]->m_cItemType == DEF_ITEMTYPE_NOTUSED) {
+							if (this->m_pItemList[iItemIndex]->m_cItemType == ItemType::NOTUSED) {
 								iNotUsedItemPrice += this->m_pItemList[iItemIndex]->m_wPrice;
 								this->m_pItemList[iItemIndex].reset();
 								// v1.41
@@ -7364,7 +7369,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 						for (i = 0; i < DEF_MAXITEMS; i++) {
 							wsprintf(cTxt, "%d", token[i]);
 							if ((token[i] == '1') && (this->m_pItemList[i] != nullptr)) {
-								if (this->m_pItemList[i]->m_cItemType == DEF_ITEMTYPE_EQUIP)
+								if (this->m_pItemList[i]->m_cItemType == ItemType::EQUIP)
 									this->m_bIsItemEquipped[i] = true;
 								else this->m_bIsItemEquipped[i] = false;
 							} else this->m_bIsItemEquipped[i] = false;
@@ -7613,7 +7618,7 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 								delete pStrTok;
 								return false;
 							}
-							this->m_pItemInBankList[iItemInBankIndex]->m_sTouchEffectType = atoi(token);
+							this->m_pItemInBankList[iItemInBankIndex]->m_sTouchEffectType = (TouchEffectType) atoi(token);
 							cReadModeB = 4;
 							break;
 						case 4:
@@ -7741,12 +7746,12 @@ bool CClient::_bDecodePlayerDatafileContents(char * pData, uint32_t dwSize) {
 								this->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan = this->m_pItemInBankList[iItemInBankIndex]->m_wMaxLifeSpan;
 							// v1.433
 							if ((this->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan == 0) &&
-									  (this->m_pItemInBankList[iItemInBankIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP)) {
+									  (this->m_pItemInBankList[iItemInBankIndex]->m_sItemEffectType == ItemEffectType::ALTERITEMDROP)) {
 								wsprintf(G_cTxt, "(!) Ã„Â³Â¸Â¯Ã…Ã�(%s) Â¼Ã¶Â¸Ã­ 0Ã‚Â¥Â¸Â® ÃˆÃ±Â»Ã½Â¼Â® Â¼Ã’Ã�Ã¶!", this->m_cCharName);
 								PutLogFileList(G_cTxt);
 								this->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan = 1;
 							}
-							if (this->m_pItemInBankList[iItemInBankIndex]->m_cItemType == DEF_ITEMTYPE_NOTUSED) {
+							if (this->m_pItemInBankList[iItemInBankIndex]->m_cItemType == ItemType::NOTUSED) {
 								iNotUsedItemPrice += this->m_pItemInBankList[iItemInBankIndex]->m_wPrice;
 								this->m_pItemInBankList[iItemInBankIndex].reset();
 							} else
@@ -8998,7 +9003,7 @@ int CClient::_iComposePlayerDataFileContents(char * pData) {
 			itoa(this->m_pItemList[i]->m_dwCount, cTxt, 10);
 			strcat(pData, cTxt);
 			strcat(pData, " ");
-			itoa(this->m_pItemList[i]->m_sTouchEffectType, cTxt, 10);
+			itoa((int) this->m_pItemList[i]->m_sTouchEffectType, cTxt, 10);
 			strcat(pData, cTxt);
 			strcat(pData, " ");
 			itoa(this->m_pItemList[i]->m_sTouchEffectValue1, cTxt, 10);
@@ -9046,7 +9051,7 @@ int CClient::_iComposePlayerDataFileContents(char * pData) {
 			itoa(this->m_pItemInBankList[i]->m_dwCount, cTxt, 10);
 			strcat(pData, cTxt);
 			strcat(pData, " ");
-			itoa(this->m_pItemInBankList[i]->m_sTouchEffectType, cTxt, 10);
+			itoa((int) this->m_pItemInBankList[i]->m_sTouchEffectType, cTxt, 10);
 			strcat(pData, cTxt);
 			strcat(pData, " ");
 			itoa(this->m_pItemInBankList[i]->m_sTouchEffectValue1, cTxt, 10);
@@ -9109,7 +9114,7 @@ int CClient::_iComposePlayerDataFileContents(char * pData) {
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (this->m_pItemList[i] != nullptr) {
 			if ((this->m_bIsItemEquipped[i] == true) &&
-					  (this->m_pItemList[i]->m_cItemType == DEF_ITEMTYPE_EQUIP)) {
+					  (this->m_pItemList[i]->m_cItemType == ItemType::EQUIP)) {
 				cTxt[iEP] = '1';
 			}
 			iEP++;
@@ -9712,7 +9717,7 @@ void CClient::RequestInitDataHandler(char * pData, char cKey) {
 		dwp = (uint32_t *) cp;
 		*dwp = this->m_pItemList[i]->m_dwCount;
 		cp += 4;
-		*cp = this->m_pItemList[i]->m_cItemType;
+		*cp = (char) this->m_pItemList[i]->m_cItemType;
 		cp++;
 		*cp = this->m_pItemList[i]->m_cEquipPos;
 		cp++;
@@ -9766,7 +9771,7 @@ void CClient::RequestInitDataHandler(char * pData, char cKey) {
 		dwp = (uint32_t *) cp;
 		*dwp = this->m_pItemInBankList[i]->m_dwCount;
 		cp += 4;
-		*cp = this->m_pItemInBankList[i]->m_cItemType;
+		*cp = (char) this->m_pItemInBankList[i]->m_cItemType;
 		cp++;
 		*cp = this->m_pItemInBankList[i]->m_cEquipPos;
 		cp++;
@@ -10149,7 +10154,7 @@ int CClient::iClientMotion_Attack_Handler(short sX, short sY, short dX, short dY
 	sAbsY = abs(sY - dY);
 	if ((wType != 2) && (wType < 20)) {
 		if (var_AC == false) {
-			sItemIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+			sItemIndex = this->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 			if (sItemIndex != -1) {
 				if (this->m_pItemList[sItemIndex] == nullptr) return 0;
 				if (this->m_pItemList[sItemIndex]->m_sIDnum == 845) {
@@ -10161,7 +10166,7 @@ int CClient::iClientMotion_Attack_Handler(short sX, short sY, short dX, short dY
 				if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
 			}
 		} else if (var_AC != false) {
-			sItemIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+			sItemIndex = this->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 			if (sItemIndex != -1) {
 				if (this->m_pItemList[sItemIndex] == nullptr) return 0;
 				if (this->m_pItemList[sItemIndex]->m_sIDnum == 845) {
@@ -10188,7 +10193,7 @@ int CClient::iClientMotion_Attack_Handler(short sX, short sY, short dX, short dY
 	if (sOwner != 0) {
 		if ((wType != 0) && ((dwTime - this->m_dwRecentAttackTime) > 100)) {
 			if ((this->m_pIsProcessingAllowed == false) && (this->m_bIsInsideOwnTown == false)) {
-				sItemIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+				sItemIndex = this->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 				if (sItemIndex != -1 && this->m_pItemList[sItemIndex] != nullptr) {
 					if (this->m_pItemList[sItemIndex]->m_sIDnum == 874) { // Directional bow
 						iErr = 0;
@@ -11043,7 +11048,7 @@ void CClient::RequestPurchaseItemHandler(char * pItemName, int iNum) {
 			}
 			iCost = pItem->m_wPrice * pItem->m_dwCount;
 			/* v1.3 <- Ã€ÃŒÂ°Ã‡ _bAddClientItemListÂ¿Â¡Â¼Â­ ÃƒÂ¼Ã…Â©Ã‡Ã�Â´Ã‚ Â±Ã¢Â´Ã‰Ã€ÃŒÂ¹Ã‡Â·ÃŽ ÂµÃŽÂ¹Ã¸Ã‡Ã’ Ã‡ÃŠÂ¿Ã¤Â°Â¡ Â¾Ã¸Â´Ã™.
-			if ((pItem->m_cItemType == DEF_ITEMTYPE_CONSUME) || (pItem->m_cItemType == DEF_ITEMTYPE_ARROW))
+			if ((pItem->m_cItemType == ItemType::CONSUME) || (pItem->m_cItemType == ItemType::ARROW))
 				iItemWeight = (pItem->m_wWeight * pItem->m_dwCount);
 			else iItemWeight = pItem->m_wWeight;
 			if ( (iItemWeight + this->m_iCurWeightLoad) > this->_iCalcMaxLoad()) {
@@ -11115,7 +11120,7 @@ void CClient::RequestPurchaseItemHandler(char * pItemName, int iNum) {
 				dwp = (uint32_t *) cp;
 				*dwp = pItem->m_dwCount;
 				cp += 4;
-				*cp = pItem->m_cItemType;
+				*cp = (char) pItem->m_cItemType;
 				cp++;
 				*cp = pItem->m_cEquipPos;
 				cp++;
@@ -11197,8 +11202,8 @@ void CClient::GiveItemHandler(short sItemIndex, int iAmount, short dX, short dY,
 		return;
 	}
 	std::memset(cCharName, 0, sizeof (cCharName));
-	if (((this->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-			  (this->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) &&
+	if (((this->m_pItemList[sItemIndex]->m_cItemType == ItemType::CONSUME) ||
+			  (this->m_pItemList[sItemIndex]->m_cItemType == ItemType::ARROW)) &&
 			  (this->m_pItemList[sItemIndex]->m_dwCount > (uint32_t) iAmount)) {
 		pItem = new class CItem;
 		if (game_._bInitItemAttr(*pItem, this->m_pItemList[sItemIndex]->m_cName) == false) {
@@ -11253,7 +11258,7 @@ void CClient::GiveItemHandler(short sItemIndex, int iAmount, short dX, short dY,
 					dwp = (uint32_t *) cp;
 					*dwp = pItem->m_dwCount;
 					cp += 4;
-					*cp = pItem->m_cItemType;
+					*cp = (char) pItem->m_cItemType;
 					cp++;
 					*cp = pItem->m_cEquipPos;
 					cp++;
@@ -11346,7 +11351,7 @@ void CClient::GiveItemHandler(short sItemIndex, int iAmount, short dX, short dY,
 		}
 	} else {
 		this->ReleaseItemHandler(sItemIndex, true);
-		if (this->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)
+		if (this->m_pItemList[sItemIndex]->m_cItemType == ItemType::ARROW)
 			this->m_cArrowIndex = -1;
 		this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 		if (wObjectID != 0) {
@@ -11430,7 +11435,7 @@ void CClient::GiveItemHandler(short sItemIndex, int iAmount, short dX, short dY,
 					dwp = (uint32_t *) cp;
 					*dwp = pItem->m_dwCount;
 					cp += 4;
-					*cp = pItem->m_cItemType;
+					*cp = (char) pItem->m_cItemType;
 					cp++;
 					*cp = pItem->m_cEquipPos;
 					cp++;
@@ -11907,13 +11912,13 @@ void CClient::PlayerMagicHandler(int dX, int dY, short sType, bool bItemEffect, 
 		this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, 0, -1, 0);
 		return;
 	}
-	if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) {
+	if (this->m_sItemEquipmentStatus[EquipPos::RHAND] != -1) {
 		wWeaponType = ((this->m_sAppr2 & 0x0FF0) >> 4);
 		if ((wWeaponType >= 34) && (wWeaponType <= 39)) {
 		} else return;
 	}
-	if ((this->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND] != -1) ||
-			  (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)) return;
+	if ((this->m_sItemEquipmentStatus[EquipPos::LHAND] != -1) ||
+			  (this->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1)) return;
 	if ((this->m_iSpellCount > 1) && (bItemEffect == false)) {
 		wsprintf(G_cTxt, "TSearch Spell Hack: (%s) Player: (%s) - casting magic without precasting.", this->m_cIPaddress, this->m_cCharName);
 		PutHackLogFileList(G_cTxt);
@@ -11930,7 +11935,7 @@ void CClient::PlayerMagicHandler(int dX, int dY, short sType, bool bItemEffect, 
 		return;
 	}*/
 	if (game_.m_pMagicConfigList[sType]->m_sType == MagicType::RESURRECTION) { // Invisiblity
-		sEqStatus = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+		sEqStatus = this->m_sItemEquipmentStatus[EquipPos::RHAND];
 		if ((sEqStatus != -1) && (this->m_pItemList[sEqStatus] != nullptr)) {
 			if ((this->m_pItemList[sEqStatus]->m_sIDnum == 865) || (this->m_pItemList[sEqStatus]->m_sIDnum == 866)) {
 				bItemEffect = true;
@@ -13229,7 +13234,7 @@ void CClient::PlayerMagicHandler(int dX, int dY, short sType, bool bItemEffect, 
 							case 14: strcpy(cNpcName, "Bar-Elvine");
 								break;
 						}
-						if (this->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypoint, nullptr, 0, this->m_cSide, false, true) == false) {
+						if (this->map_->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypoint, nullptr, 0, this->m_cSide, false, true) == false) {
 							this->map_->SetNamingValueEmpty(iNamingValue);
 						} else {
 							std::memset(cName_Master, 0, sizeof (cName_Master));
@@ -13259,7 +13264,7 @@ void CClient::PlayerMagicHandler(int dX, int dY, short sType, bool bItemEffect, 
 						break;
 				}
 				game_._bInitItemAttr(*pItem, cItemName);
-				pItem->m_sTouchEffectType = DEF_ITET_ID;
+				pItem->m_sTouchEffectType = TouchEffectType::ID;
 				pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 				pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 				pItem->m_sTouchEffectValue3 = (short) timeGetTime();
@@ -13628,7 +13633,7 @@ void CClient::PlayerMagicHandler(int dX, int dY, short sType, bool bItemEffect, 
 						dwp = (uint32_t *) cp;
 						*dwp = pItem->m_dwCount;
 						cp += 4;
-						*cp = pItem->m_cItemType;
+						*cp = (char) pItem->m_cItemType;
 						cp++;
 						*cp = pItem->m_cEquipPos;
 						cp++;
@@ -13946,8 +13951,8 @@ void CClient::PlayerMagicHandler(int dX, int dY, short sType, bool bItemEffect, 
 				this->map_->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (game_.m_pClientList[sOwnerH] != nullptr) {
 					// GM's can ressurect ne1, and players must be on same side to ressurect
-					/*if ((this->m_pItemList[this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]]->m_sIDnum != 865) ||
-						(this->m_pItemList[this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]]->m_sIDnum != 866)) {
+					/*if ((this->m_pItemList[this->m_sItemEquipmentStatus[EquipPos::RHAND]]->m_sIDnum != 865) ||
+						(this->m_pItemList[this->m_sItemEquipmentStatus[EquipPos::RHAND]]->m_sIDnum != 866)) {
 						wsprintf(G_cTxt, "(!!!) Hack: Player(%s) cast resurrect without wand!", this->m_cCharName);
 						PutLogList(G_cTxt);
 						this->DeleteClient(true, true, true, true);
@@ -14003,13 +14008,13 @@ void CClient::DropItemHandler(short sItemIndex, int iAmount, char * pItemName, b
 	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return;
 	if (this->m_pItemList[sItemIndex] == nullptr) return;
 	if ((iAmount != -1) && (iAmount < 0)) return;
-	if (((this->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-			  (this->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) &&
+	if (((this->m_pItemList[sItemIndex]->m_cItemType == ItemType::CONSUME) ||
+			  (this->m_pItemList[sItemIndex]->m_cItemType == ItemType::ARROW)) &&
 			  (iAmount == -1))
 		iAmount = this->m_pItemList[sItemIndex]->m_dwCount;
 	if (memcmp(this->m_pItemList[sItemIndex]->m_cName, pItemName, 20) != 0) return;
-	if (((this->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-			  (this->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) &&
+	if (((this->m_pItemList[sItemIndex]->m_cItemType == ItemType::CONSUME) ||
+			  (this->m_pItemList[sItemIndex]->m_cItemType == ItemType::ARROW)) &&
 			  (((int) this->m_pItemList[sItemIndex]->m_dwCount - iAmount) > 0)) {
 		pItem = new class CItem;
 		if (game_._bInitItemAttr(*pItem, this->m_pItemList[sItemIndex]->m_cName) == false) {
@@ -14044,7 +14049,7 @@ void CClient::DropItemHandler(short sItemIndex, int iAmount, char * pItemName, b
 		if (this->m_bIsItemEquipped[sItemIndex] == true)
 			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, this->m_pItemList[sItemIndex]->m_cEquipPos, sItemIndex, 0, nullptr);
 		// v1.432
-		if ((this->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP) &&
+		if ((this->m_pItemList[sItemIndex]->m_sItemEffectType == ItemEffectType::ALTERITEMDROP) &&
 				  (this->m_pItemList[sItemIndex]->m_wCurLifeSpan == 0)) {
 			this->m_pItemList[sItemIndex].reset();
 		} else {
@@ -14118,7 +14123,7 @@ int CClient::iClientMotion_GetItem_Handler(short sX, short sY, char cDir) {
 			dwp = (uint32_t *) cp;
 			*dwp = pItem->m_dwCount;
 			cp += 4;
-			*cp = pItem->m_cItemType;
+			*cp = (char) pItem->m_cItemType;
 			cp++;
 			*cp = pItem->m_cEquipPos;
 			cp++;
@@ -14198,14 +14203,14 @@ bool CClient::_bAddClientItemList(class CItem * pItem, int * pDelReq) {
 	register int i;
 	if (this->markedForDeletion_) return false;
 	if (pItem == nullptr) return false;
-	if ((pItem->m_cItemType == DEF_ITEMTYPE_CONSUME) || (pItem->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+	if ((pItem->m_cItemType == ItemType::CONSUME) || (pItem->m_cItemType == ItemType::ARROW)) {
 		if ((this->m_iCurWeightLoad + pItem->iGetItemWeight(pItem->m_dwCount)) > this->_iCalcMaxLoad())
 			return false;
 	} else {
 		if ((this->m_iCurWeightLoad + pItem->iGetItemWeight(1)) > this->_iCalcMaxLoad())
 			return false;
 	}
-	if ((pItem->m_cItemType == DEF_ITEMTYPE_CONSUME) || (pItem->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+	if ((pItem->m_cItemType == ItemType::CONSUME) || (pItem->m_cItemType == ItemType::ARROW)) {
 		for (i = 0; i < DEF_MAXITEMS; i++)
 			if ((this->m_pItemList[i] != nullptr) &&
 					  (memcmp(this->m_pItemList[i]->m_cName, pItem->m_cName, 20) == 0)) {
@@ -14222,7 +14227,7 @@ bool CClient::_bAddClientItemList(class CItem * pItem, int * pDelReq) {
 			this->m_ItemPosList[i].x = 40;
 			this->m_ItemPosList[i].y = 30;
 			*pDelReq = 0;
-			if (pItem->m_cItemType == DEF_ITEMTYPE_ARROW)
+			if (pItem->m_cItemType == ItemType::ARROW)
 				this->m_cArrowIndex = this->_iGetArrowItemIndex();
 			this->iCalcTotalWeight();
 			return true;
@@ -14231,7 +14236,6 @@ bool CClient::_bAddClientItemList(class CItem * pItem, int * pDelReq) {
 }
 
 bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
-	char cEquipPos;
 	char cHeroArmorType;
 	short sSpeed;
 	short sTemp;
@@ -14239,7 +14243,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 	if (this->markedForDeletion_) return false;
 	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return false;
 	if (this->m_pItemList[sItemIndex] == nullptr) return false;
-	if (this->m_pItemList[sItemIndex]->m_cItemType != DEF_ITEMTYPE_EQUIP) return false;
+	if (this->m_pItemList[sItemIndex]->m_cItemType != ItemType::EQUIP) return false;
 	if (this->m_pItemList[sItemIndex]->m_wCurLifeSpan == 0) return false;
 	if (((this->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000001) == 0) &&
 			  (this->m_pItemList[sItemIndex]->m_sLevelLimit > this->m_iLevel)) return false;
@@ -14258,9 +14262,9 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 		}
 	}
 	if (this->m_pItemList[sItemIndex]->iGetItemWeight(1) > (this->m_iStr + this->m_iAngelicStr)*100) return false;
-	cEquipPos = this->m_pItemList[sItemIndex]->m_cEquipPos;
-	if ((cEquipPos == DEF_EQUIPPOS_BODY) || (cEquipPos == DEF_EQUIPPOS_LEGGINGS) ||
-			  (cEquipPos == DEF_EQUIPPOS_ARMS) || (cEquipPos == DEF_EQUIPPOS_HEAD)) {
+	EquipPos cEquipPos = this->m_pItemList[sItemIndex]->m_cEquipPos;
+	if ((cEquipPos == EquipPos::BODY) || (cEquipPos == EquipPos::LEGGINGS) ||
+			  (cEquipPos == EquipPos::ARMS) || (cEquipPos == EquipPos::HEAD)) {
 		switch (this->m_pItemList[sItemIndex]->m_sItemEffectValue4) {
 			case 10:
 				if ((this->m_iStr + this->m_iAngelicStr) < this->m_pItemList[sItemIndex]->m_sItemEffectValue5) {
@@ -14306,7 +14310,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 				break;
 		}
 	}
-	if (cEquipPos == DEF_EQUIPPOS_TWOHAND) {
+	if (cEquipPos == EquipPos::TWOHAND) {
 		// Stormbringer
 		if (this->m_pItemList[sItemIndex]->m_sIDnum == 845) {
 			if ((this->m_iInt + this->m_iInt) < 65) {
@@ -14316,7 +14320,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			}
 		}
 	}
-	if (cEquipPos == DEF_EQUIPPOS_RHAND) {
+	if (cEquipPos == EquipPos::RHAND) {
 		// Resurrection wand(MS.10) or Resurrection wand(MS.20)
 		if ((this->m_pItemList[sItemIndex]->m_sIDnum == 865) || (this->m_pItemList[sItemIndex]->m_sIDnum == 866)) {
 			if ((this->m_iInt + this->m_iAngelicInt) > 99 && (this->m_iMag + this->m_iAngelicMag) > 99 && this->m_iSpecialAbilityTime < 1) {
@@ -14325,8 +14329,8 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			}
 		}
 	}
-	if ((this->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) ||
-			  (this->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) {
+	if ((this->m_pItemList[sItemIndex]->m_sItemEffectType == ItemEffectType::ATTACK_SPECABLTY) ||
+			  (this->m_pItemList[sItemIndex]->m_sItemEffectType == ItemEffectType::DEFENSE_SPECABLTY)) {
 		if ((this->m_iSpecialAbilityType != 0)) {
 			if (this->m_pItemList[sItemIndex]->m_cEquipPos != this->m_iSpecialAbilityEquipPos) {
 				this->SendNotifyMsg(0, DEF_NOTIFY_ITEMRELEASED, this->m_iSpecialAbilityEquipPos, this->m_sItemEquipmentStatus[this->m_iSpecialAbilityEquipPos], 0, nullptr);
@@ -14334,51 +14338,51 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			}
 		}
 	}
-	if (cEquipPos == DEF_EQUIPPOS_NONE) return false;
-	if (cEquipPos == DEF_EQUIPPOS_TWOHAND) {
+	if (cEquipPos == EquipPos::NONE) return false;
+	if (cEquipPos == EquipPos::TWOHAND) {
 		if (this->m_sItemEquipmentStatus[cEquipPos] != -1)
 			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[cEquipPos], false);
 		else {
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1)
-				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND], false);
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND] != -1)
-				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND], false);
+			if (this->m_sItemEquipmentStatus[EquipPos::RHAND] != -1)
+				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::RHAND], false);
+			if (this->m_sItemEquipmentStatus[EquipPos::LHAND] != -1)
+				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::LHAND], false);
 		}
 	} else {
-		if ((cEquipPos == DEF_EQUIPPOS_LHAND) || (cEquipPos == DEF_EQUIPPOS_RHAND)) {
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)
-				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND], false);
+		if ((cEquipPos == EquipPos::LHAND) || (cEquipPos == EquipPos::RHAND)) {
+			if (this->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1)
+				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::TWOHAND], false);
 		}
 		if (this->m_sItemEquipmentStatus[cEquipPos] != -1)
 			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[cEquipPos], false);
 	}
-	if (cEquipPos == DEF_EQUIPPOS_RELEASEALL) {
+	if (cEquipPos == EquipPos::RELEASEALL) {
 		if (this->m_sItemEquipmentStatus[cEquipPos] != -1) {
 			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[cEquipPos], false);
 		}
-		if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD] != -1) {
-			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD], false);
+		if (this->m_sItemEquipmentStatus[EquipPos::HEAD] != -1) {
+			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::HEAD], false);
 		}
-		if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY] != -1) {
-			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY], false);
+		if (this->m_sItemEquipmentStatus[EquipPos::BODY] != -1) {
+			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::BODY], false);
 		}
-		if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS] != -1) {
-			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS], false);
+		if (this->m_sItemEquipmentStatus[EquipPos::ARMS] != -1) {
+			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::ARMS], false);
 		}
-		if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS] != -1) {
-			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS], false);
+		if (this->m_sItemEquipmentStatus[EquipPos::LEGGINGS] != -1) {
+			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::LEGGINGS], false);
 		}
-		if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS] != -1) {
-			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS], false);
+		if (this->m_sItemEquipmentStatus[EquipPos::PANTS] != -1) {
+			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::PANTS], false);
 		}
-		if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_BACK] != -1) {
-			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_BACK], false);
+		if (this->m_sItemEquipmentStatus[EquipPos::BACK] != -1) {
+			this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::BACK], false);
 		}
 	} else {
-		if (cEquipPos == DEF_EQUIPPOS_HEAD || cEquipPos == DEF_EQUIPPOS_BODY || cEquipPos == DEF_EQUIPPOS_ARMS ||
-				  cEquipPos == DEF_EQUIPPOS_LEGGINGS || cEquipPos == DEF_EQUIPPOS_PANTS || cEquipPos == DEF_EQUIPPOS_BACK) {
-			if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RELEASEALL] != -1) {
-				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RELEASEALL], false);
+		if (cEquipPos == EquipPos::HEAD || cEquipPos == EquipPos::BODY || cEquipPos == EquipPos::ARMS ||
+				  cEquipPos == EquipPos::LEGGINGS || cEquipPos == EquipPos::PANTS || cEquipPos == EquipPos::BACK) {
+			if (this->m_sItemEquipmentStatus[EquipPos::RELEASEALL] != -1) {
+				this->ReleaseItemHandler(this->m_sItemEquipmentStatus[EquipPos::RELEASEALL], false);
 			}
 		}
 		if (this->m_sItemEquipmentStatus[cEquipPos] != -1)
@@ -14387,7 +14391,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 	this->m_sItemEquipmentStatus[cEquipPos] = sItemIndex;
 	this->m_bIsItemEquipped[sItemIndex] = true;
 	switch (cEquipPos) {
-		case DEF_EQUIPPOS_HEAD:
+		case EquipPos::HEAD:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0xFF0F;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue) << 4);
@@ -14397,7 +14401,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp | ((this->m_pItemList[sItemIndex]->m_cItemColor));
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_PANTS:
+		case EquipPos::PANTS:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0xF0FF;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue) << 8);
@@ -14407,7 +14411,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp | ((this->m_pItemList[sItemIndex]->m_cItemColor) << 8);
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_LEGGINGS:
+		case EquipPos::LEGGINGS:
 			sTemp = this->m_sAppr4;
 			sTemp = sTemp & 0x0FFF;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue) << 12);
@@ -14417,7 +14421,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp | ((this->m_pItemList[sItemIndex]->m_cItemColor) << 4);
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_BODY:
+		case EquipPos::BODY:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0x0FFF;
 			if (this->m_pItemList[sItemIndex]->m_cApprValue < 100) {
@@ -14435,7 +14439,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp | ((this->m_pItemList[sItemIndex]->m_cItemColor) << 20);
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_ARMS:
+		case EquipPos::ARMS:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0xFFF0;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue));
@@ -14445,7 +14449,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp | ((this->m_pItemList[sItemIndex]->m_cItemColor) << 12);
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_LHAND:
+		case EquipPos::LHAND:
 			sTemp = this->m_sAppr2;
 			sTemp = sTemp & 0xFFF0;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue));
@@ -14455,7 +14459,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp | ((this->m_pItemList[sItemIndex]->m_cItemColor) << 24);
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_RHAND:
+		case EquipPos::RHAND:
 			sTemp = this->m_sAppr2;
 			sTemp = sTemp & 0xF00F;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue) << 4);
@@ -14473,7 +14477,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			this->m_iStatus = iTemp;
 			this->m_iComboAttackCount = 0;
 			break;
-		case DEF_EQUIPPOS_TWOHAND:
+		case EquipPos::TWOHAND:
 			sTemp = this->m_sAppr2;
 			sTemp = sTemp & 0xF00F;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue) << 4);
@@ -14491,7 +14495,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			this->m_iStatus = iTemp;
 			this->m_iComboAttackCount = 0;
 			break;
-		case DEF_EQUIPPOS_BACK:
+		case EquipPos::BACK:
 			sTemp = this->m_sAppr4;
 			sTemp = sTemp & 0xF0FF;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue) << 8);
@@ -14501,7 +14505,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp | ((this->m_pItemList[sItemIndex]->m_cItemColor) << 16);
 			this->m_iApprColor = iTemp;
 			break;
-		case DEF_EQUIPPOS_RELEASEALL:
+		case EquipPos::RELEASEALL:
 			sTemp = this->m_sAppr3;
 			sTemp = sTemp & 0x0FFF;
 			sTemp = sTemp | ((this->m_pItemList[sItemIndex]->m_cApprValue) << 12);
@@ -14510,8 +14514,10 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 			iTemp = iTemp & 0xFFF0FFFF;
 			this->m_iApprColor = iTemp;
 			break;
+		default:
+			break;
 	}
-	if (this->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) {
+	if (this->m_pItemList[sItemIndex]->m_sItemEffectType == ItemEffectType::ATTACK_SPECABLTY) {
 		this->m_sAppr4 = this->m_sAppr4 & 0xFFF3;
 		switch (this->m_pItemList[sItemIndex]->m_sSpecialEffect) {
 			case 0: break;
@@ -14526,7 +14532,7 @@ bool CClient::bEquipItemHandler(short sItemIndex, bool bNotify) {
 				break;
 		}
 	}
-	if (this->m_pItemList[sItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY) {
+	if (this->m_pItemList[sItemIndex]->m_sItemEffectType == ItemEffectType::DEFENSE_SPECABLTY) {
 		this->m_sAppr4 = this->m_sAppr4 & 0xFFFC;
 		switch (this->m_pItemList[sItemIndex]->m_sSpecialEffect) {
 			case 0:
@@ -15293,8 +15299,8 @@ void CClient::RequestRetrieveItemHandler(char *pData) {
 			}
 			return;
 		}
-		if ((this->m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-				  (this->m_pItemInBankList[cBankItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+		if ((this->m_pItemInBankList[cBankItemIndex]->m_cItemType == ItemType::CONSUME) ||
+				  (this->m_pItemInBankList[cBankItemIndex]->m_cItemType == ItemType::ARROW)) {
 			for (i = 0; i < DEF_MAXITEMS; i++)
 				if ((this->m_pItemList[i] != nullptr) &&
 						  (this->m_pItemList[i]->m_cItemType == this->m_pItemInBankList[cBankItemIndex]->m_cItemType) &&
@@ -15626,7 +15632,7 @@ void CClient::_PenaltyItemDrop(int iTotal, bool bIsSAattacked) {
 	if (this->m_bIsInitComplete == false) return;
 	if ((this->m_iAlterItemDropIndex != -1) && (this->m_pItemList[this->m_iAlterItemDropIndex] != nullptr)) {
 		// Testcode
-		if (this->m_pItemList[this->m_iAlterItemDropIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP) {
+		if (this->m_pItemList[this->m_iAlterItemDropIndex]->m_sItemEffectType == ItemEffectType::ALTERITEMDROP) {
 			if (this->m_pItemList[this->m_iAlterItemDropIndex]->m_wCurLifeSpan > 0)
 				this->m_pItemList[this->m_iAlterItemDropIndex]->m_wCurLifeSpan--;
 			this->DropItemHandler(this->m_iAlterItemDropIndex, -1, this->m_pItemList[this->m_iAlterItemDropIndex]->m_cName);
@@ -15635,7 +15641,7 @@ void CClient::_PenaltyItemDrop(int iTotal, bool bIsSAattacked) {
 			// v2.04 testcode
 			PutLogFileList("Alter Drop Item Index Error1");
 			for (i = 0; i < DEF_MAXITEMS; i++)
-				if ((this->m_pItemList[i] != nullptr) && (this->m_pItemList[i]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP)) {
+				if ((this->m_pItemList[i] != nullptr) && (this->m_pItemList[i]->m_sItemEffectType == ItemEffectType::ALTERITEMDROP)) {
 					this->m_iAlterItemDropIndex = i;
 					if (this->m_pItemList[this->m_iAlterItemDropIndex]->m_wCurLifeSpan > 0)
 						this->m_pItemList[this->m_iAlterItemDropIndex]->m_wCurLifeSpan--;
@@ -15659,7 +15665,7 @@ PID_DROP:
 			}
 		if (iRemainItem == 0) return;
 		cItemIndex = cItemIndexList[iDice(1, iRemainItem) - 1];
-		if ((this->m_pItemList[cItemIndex]->m_sTouchEffectType != 0) &&
+		if ((this->m_pItemList[cItemIndex]->m_sTouchEffectType != TouchEffectType::NONE) &&
 				  (this->m_pItemList[cItemIndex]->m_sTouchEffectValue1 == this->m_sCharIDnum1) &&
 				  (this->m_pItemList[cItemIndex]->m_sTouchEffectValue2 == this->m_sCharIDnum2) &&
 				  (this->m_pItemList[cItemIndex]->m_sTouchEffectValue3 == this->m_sCharIDnum3)) {
@@ -15667,8 +15673,8 @@ PID_DROP:
 				  (this->m_pItemList[cItemIndex]->m_sIDnum >= 400) &&
 				  (this->m_pItemList[cItemIndex]->m_sIDnum != 402) &&
 				  (this->m_pItemList[cItemIndex]->m_sIDnum <= 428)) {
-		} else if (((this->m_pItemList[cItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) ||
-				  (this->m_pItemList[cItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) &&
+		} else if (((this->m_pItemList[cItemIndex]->m_sItemEffectType == ItemEffectType::ATTACK_SPECABLTY) ||
+				  (this->m_pItemList[cItemIndex]->m_sItemEffectType == ItemEffectType::DEFENSE_SPECABLTY)) &&
 				  (bIsSAattacked == false)) {
 		} else if ((this->m_bIsLuckyEffect == true) && (iDice(1, 10) == 5)) {
 		} else this->DropItemHandler(cItemIndex, -1, this->m_pItemList[cItemIndex]->m_cName);
@@ -15717,7 +15723,7 @@ void CClient::GetRewardMoneyHandler() {
 		dwp = (uint32_t *) cp;
 		*dwp = pItem->m_dwCount;
 		cp += 4;
-		*cp = pItem->m_cItemType;
+		*cp = (char) pItem->m_cItemType;
 		cp++;
 		*cp = pItem->m_cEquipPos;
 		cp++;
@@ -15884,7 +15890,7 @@ int CClient::_iGetArrowItemIndex() {
 	if (this->markedForDeletion_) return -1;
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (this->m_pItemList[i] != nullptr) {
-			if ((this->m_pItemList[i]->m_cItemType == DEF_ITEMTYPE_ARROW) &&
+			if ((this->m_pItemList[i]->m_cItemType == ItemType::ARROW) &&
 					  (this->m_pItemList[i]->m_dwCount > 0))
 				return i;
 		}
@@ -15915,17 +15921,17 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 	auto &itemPtr = this->m_pItemList[sItemIndex];
 	if (!itemPtr) return;
 	CItem &item = *itemPtr;
-	if ((item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_USE_PERM) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_ARROW) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_EAT) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_USE_SKILL) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST)) {
+	if ((item.m_cItemType == ItemType::USE_DEPLETE) ||
+			  (item.m_cItemType == ItemType::USE_PERM) ||
+			  (item.m_cItemType == ItemType::ARROW) ||
+			  (item.m_cItemType == ItemType::EAT) ||
+			  (item.m_cItemType == ItemType::USE_SKILL) ||
+			  (item.m_cItemType == ItemType::USE_DEPLETE_DEST)) {
 	} else return;
-	if ((item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
-			  (item.m_cItemType == DEF_ITEMTYPE_EAT)) {
+	if ((item.m_cItemType == ItemType::USE_DEPLETE) ||
+			  (item.m_cItemType == ItemType::EAT)) {
 		switch (item.m_sItemEffectType) {
-			case DEF_ITEMEFFECTTYPE_WARM:
+			case ItemEffectType::WARM:
 
 				if (this->m_cMagicEffectStatus[MagicType::ICE] == 1) {
 					//	this->SetIceFlag(false);
@@ -15937,14 +15943,14 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 				}
 				this->m_dwWarmEffectTime = dwTime;
 				break;
-			case DEF_ITEMEFFECTTYPE_LOTTERY:
+			case ItemEffectType::LOTTERY:
 				iTemp = iDice(1, item.m_sItemSpecEffectValue1);
 				if (iTemp == iDice(1, item.m_sItemSpecEffectValue1)) {
 				} else {
 					// Â²ÃŽ!
 				}
 				break;
-			case DEF_ITEMEFFECTTYPE_SLATES:
+			case ItemEffectType::SLATES:
 			{
 				// Full Ancient Slate ??
 				if (item.m_sIDnum == 867) {
@@ -15991,7 +15997,7 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 				}
 			}
 				break;
-			case DEF_ITEMEFFECTTYPE_HP:
+			case ItemEffectType::HP:
 				iMax = this->iGetMaxHP();
 				if (this->m_iHP < iMax) {
 					if (item.m_sItemSpecEffectValue1 == 0) {
@@ -16009,7 +16015,7 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 					iEffectResult = 1;
 				}
 				break;
-			case DEF_ITEMEFFECTTYPE_MP:
+			case ItemEffectType::MP:
 				iMax = this->iGetMaxMP();
 				if (this->m_iMP < iMax) {
 					if (item.m_sItemSpecEffectValue1 == 0) {
@@ -16027,7 +16033,7 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 					iEffectResult = 2;
 				}
 				break;
-			case DEF_ITEMEFFECTTYPE_SP:
+			case ItemEffectType::SP:
 				iMax = this->iGetMaxSP();
 				if (this->m_iSP < iMax) {
 					if (item.m_sItemSpecEffectValue1 == 0) {
@@ -16050,7 +16056,7 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 					this->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::POISON, 0, 0, nullptr);
 				}
 				break;
-			case DEF_ITEMEFFECTTYPE_HPSTOCK:
+			case ItemEffectType::HPSTOCK:
 				iV1 = item.m_sItemEffectValue1;
 				iV2 = item.m_sItemEffectValue2;
 				iV3 = item.m_sItemEffectValue3;
@@ -16061,12 +16067,12 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 				if (this->m_iHungerStatus > 100) this->m_iHungerStatus = 100;
 				if (this->m_iHungerStatus < 0) this->m_iHungerStatus = 0;
 				break;
-			case DEF_ITEMEFFECTTYPE_REPPLUS:
+			case ItemEffectType::REPPLUS:
 				iMax = 10000;
 				if (this->m_iRating < iMax) this->m_iRating += 1;
 				iEffectResult = 7;
 				break;
-			case DEF_ITEMEFFECTTYPE_STUDYSKILL:
+			case ItemEffectType::STUDYSKILL:
 				iV1 = item.m_sItemEffectValue1;
 				iV2 = item.m_sItemEffectValue2;
 				iSEV1 = item.m_sItemSpecEffectValue1;
@@ -16076,23 +16082,23 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 					TrainSkillResponse(true, iV1, iSEV1);
 				}
 				break;
-			case DEF_ITEMEFFECTTYPE_STUDYMAGIC:
+			case ItemEffectType::STUDYMAGIC:
 				iV1 = item.m_sItemEffectValue1;
 				if (game_.m_pMagicConfigList[iV1] != nullptr)
 					RequestStudyMagicHandler(game_.m_pMagicConfigList[iV1]->m_cName, false);
 				break;
-			case DEF_ITEMEFFECTTYPE_ADDBALLPOINTS:
+			case ItemEffectType::ADDBALLPOINTS:
 				char cInfoString[56];
 				iV1 = item.m_sItemEffectValue1;
 				this->m_iBallPoints += iV1;
 				wsprintf(cInfoString, "%d Ball Points added. Total Amount: %d ", iV1, this->m_iBallPoints);
 				this->SendNotifyMsg(0, DEF_NOTIFY_IPACCOUNTINFO, 0, 0, 0, cInfoString);
 				break;
-				/*case DEF_ITEMEFFECTTYPE_LOTTERY:
+				/*case ItemEffectType::LOTTERY:
 					iLottery = iDice(1, item.
 					break;*/
 				// New 15/05/2004 Changed
-			case DEF_ITEMEFFECTTYPE_MAGIC:
+			case ItemEffectType::MAGIC:
 				if ((this->m_iStatus & 0x10) != 0) {
 					if (this->m_iAdminUserLevel == 0) {
 						SetInvisibilityFlag(false);
@@ -16167,11 +16173,11 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 						break;
 				}
 				break;
-			case DEF_ITEMEFFECTTYPE_FIRMSTAMINAR:
+			case ItemEffectType::FIRMSTAMINAR:
 				this->m_iTimeLeft_FirmStaminar += item.m_sItemEffectValue1;
 				if (this->m_iTimeLeft_FirmStaminar > 20 * 30) this->m_iTimeLeft_FirmStaminar = 20 * 30;
 				break;
-			case DEF_ITEMEFFECTTYPE_CHANGEATTR:
+			case ItemEffectType::CHANGEATTR:
 				switch (item.m_sItemEffectValue1) {
 					case 1:
 						this->m_cHairColor++;
@@ -16229,6 +16235,8 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 				}
 				this->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 				break;
+			default:
+				break;
 		}
 		this->ItemDepleteHandler(sItemIndex, true, true);
 		switch (iEffectResult) {
@@ -16258,14 +16266,14 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 				ShowClientMsg(cRepMessage);
 				break;
 		}
-	} else if (item.m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST) {
+	} else if (item.m_cItemType == ItemType::USE_DEPLETE_DEST) {
 		if (_bDepleteDestTypeItemUseEffect(dX, dY, sItemIndex, sDestItemID) == true)
 			this->ItemDepleteHandler(sItemIndex, true, true);
-	} else if (item.m_cItemType == DEF_ITEMTYPE_ARROW) {
+	} else if (item.m_cItemType == ItemType::ARROW) {
 		this->m_cArrowIndex = _iGetArrowItemIndex();
-	} else if (item.m_cItemType == DEF_ITEMTYPE_USE_PERM) {
+	} else if (item.m_cItemType == ItemType::USE_PERM) {
 		switch (item.m_sItemEffectType) {
-			case DEF_ITEMEFFECTTYPE_SHOWLOCATION:
+			case ItemEffectType::SHOWLOCATION:
 				iV1 = item.m_sItemEffectValue1;
 				switch (iV1) {
 					case 1:
@@ -16293,8 +16301,10 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 						break;
 				}
 				break;
+			default:
+				break;
 		}
-	} else if (item.m_cItemType == DEF_ITEMTYPE_USE_SKILL) {
+	} else if (item.m_cItemType == ItemType::USE_SKILL) {
 		if ((this->m_pItemList[sItemIndex] == nullptr) ||
 				  (item.m_wCurLifeSpan <= 0) ||
 				  (this->m_bSkillUsingStatus[item.m_sRelatedSkill] == true)) {
@@ -16303,7 +16313,7 @@ void CClient::UseItemHandler(short sItemIndex, short dX, short dY, short sDestIt
 			if (item.m_wMaxLifeSpan != 0) {
 				item.m_wCurLifeSpan--;
 				if (item.m_wCurLifeSpan <= 0) {
-					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, DEF_EQUIPPOS_NONE, sItemIndex, 0, nullptr);
+					this->SendNotifyMsg(0, DEF_NOTIFY_ITEMLIFESPANEND, EquipPos::NONE, sItemIndex, 0, nullptr);
 				} else {
 					int iSkillUsingTimeID = (int) timeGetTime();
 					game_.delayEvents_.add(DelayEventType::USEITEM_SKILL, item.m_sRelatedSkill,
@@ -16379,15 +16389,15 @@ bool CClient::bCheckTotalSkillMasteryPoints(int iSkill) {
 				this->m_cSkillMastery[sDownSkillIndex] -= iDownPoint; // v1.4
 				this->m_iSkillSSN[sDownSkillIndex] = game_.m_iSkillSSNpoint[this->m_cSkillMastery[sDownSkillIndex] + 1] - 1;
 				iRemainPoint -= iDownPoint; // v1.4
-				if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1) {
-					iWeaponIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+				if (this->m_sItemEquipmentStatus[EquipPos::TWOHAND] != -1) {
+					iWeaponIndex = this->m_sItemEquipmentStatus[EquipPos::TWOHAND];
 					if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sDownSkillIndex) {
 						this->m_iHitRatio -= iDownPoint; // v1.4
 						if (this->m_iHitRatio < 0) this->m_iHitRatio = 0;
 					}
 				}
-				if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) {
-					iWeaponIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+				if (this->m_sItemEquipmentStatus[EquipPos::RHAND] != -1) {
+					iWeaponIndex = this->m_sItemEquipmentStatus[EquipPos::RHAND];
 					if (this->m_pItemList[iWeaponIndex]->m_sRelatedSkill == sDownSkillIndex) {
 						this->m_iHitRatio -= iDownPoint; // v1.4
 						if (this->m_iHitRatio < 0) this->m_iHitRatio = 0;
@@ -16886,8 +16896,8 @@ void CClient::ReqSellItemConfirmHandler(char cItemID, int iNum, char * /*pString
 			if (iPrice > 1000000) iPrice = 1000000; // New 06/05/2004
 			this->SendNotifyMsg(0, DEF_NOTIFY_ITEMSOLD, cItemID, 0, 0, nullptr);
 			_bItemLog(DEF_ITEMLOG_SELL, nullptr, & * this->m_pItemList[cItemID]);
-			if ((this->m_pItemList[cItemID]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-					  (this->m_pItemList[cItemID]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+			if ((this->m_pItemList[cItemID]->m_cItemType == ItemType::CONSUME) ||
+					  (this->m_pItemList[cItemID]->m_cItemType == ItemType::ARROW)) {
 				// v1.41 !!!
 				this->SetItemCount(cItemID, this->m_pItemList[cItemID]->m_dwCount - iNum);
 			} else this->ItemDepleteHandler(cItemID, false, false);
@@ -16901,8 +16911,8 @@ void CClient::ReqSellItemConfirmHandler(char cItemID, int iNum, char * /*pString
 		if (iPrice > 1000000) iPrice = 1000000; // New 06/05/2004
 		this->SendNotifyMsg(0, DEF_NOTIFY_ITEMSOLD, cItemID, 0, 0, nullptr);
 		_bItemLog(DEF_ITEMLOG_SELL, nullptr, & * this->m_pItemList[cItemID]);
-		if ((this->m_pItemList[cItemID]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-				  (this->m_pItemList[cItemID]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+		if ((this->m_pItemList[cItemID]->m_cItemType == ItemType::CONSUME) ||
+				  (this->m_pItemList[cItemID]->m_cItemType == ItemType::ARROW)) {
 			// v1.41 !!!
 			this->SetItemCount(cItemID, this->m_pItemList[cItemID]->m_dwCount - iNum);
 		} else this->ItemDepleteHandler(cItemID, false, true);
@@ -16926,7 +16936,7 @@ void CClient::ReqSellItemConfirmHandler(char cItemID, int iNum, char * /*pString
 		dwp = (uint32_t *) cp;
 		*dwp = gold->m_dwCount;
 		cp += 4;
-		*cp = gold->m_cItemType;
+		*cp = (char) gold->m_cItemType;
 		cp++;
 		*cp = gold->m_cEquipPos;
 		cp++;
@@ -17578,7 +17588,7 @@ bool CClient::bAnalyzeCriminalAction(short dX, short dY, bool bIsCheck) {
 				cName[1] = this->map_->id_ + 65;
 				tX = (int) this->m_sX;
 				tY = (int) this->m_sY;
-				if (this->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_RANDOM,
+				if (this->map_->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, DEF_MOVETYPE_RANDOM,
 						  &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, true) == false) {
 					this->map_->SetNamingValueEmpty(iNamingValue);
 				} else {
@@ -17806,7 +17816,7 @@ void CClient::AdminOrder_CallGuard(char * pData, uint32_t dwMsgSize) {
 					cName[1] = game_.m_pClientList[i]->map_->id_ + 65;
 					tX = (int) game_.m_pClientList[i]->m_sX;
 					tY = (int) game_.m_pClientList[i]->m_sY;
-					if (game_.m_pClientList[i]->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_RANDOM,
+					if (game_.m_pClientList[i]->map_->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, DEF_MOVETYPE_RANDOM,
 							  &tX, &tY, cNpcWaypoint, nullptr, 0, -1, false, true) == false) {
 						game_.m_pClientList[i]->map_->SetNamingValueEmpty(iNamingValue);
 					} else {
@@ -18956,7 +18966,7 @@ RCPH_LOOPBREAK:
 		if (pItem == nullptr) return;
 		for (i = 0; i < 6; i++)
 			if (sItemIndex[i] != -1) {
-				if (this->m_pItemList[sItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME)
+				if (this->m_pItemList[sItemIndex[i]]->m_cItemType == ItemType::CONSUME)
 					// v1.41 !!!
 					this->SetItemCount(sItemIndex[i], //     this->m_pItemList[sItemIndex[i]]->m_cName,
 						  this->m_pItemList[sItemIndex[i]]->m_dwCount - sItemNumber[i]);
@@ -18979,7 +18989,7 @@ RCPH_LOOPBREAK:
 				dwp = (uint32_t *) cp;
 				*dwp = pItem->m_dwCount;
 				cp += 4;
-				*cp = pItem->m_cItemType;
+				*cp = (char) pItem->m_cItemType;
 				cp++;
 				*cp = pItem->m_cEquipPos;
 				cp++;
@@ -19453,7 +19463,7 @@ bool CClient::_bDepleteDestTypeItemUseEffect(int dX, int dY, short sItemIndex, s
 	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return false;
 	if (this->m_pItemList[sItemIndex] == nullptr) return false;
 	switch (this->m_pItemList[sItemIndex]->m_sItemEffectType) {
-		case DEF_ITEMEFFECTTYPE_OCCUPYFLAG:
+		case ItemEffectType::OCCUPYFLAG:
 			bRet = this->map_->__bSetOccupyFlag(dX, dY,
 					  this->m_pItemList[sItemIndex]->m_sItemEffectValue1,
 					  0, this->id_, 0);
@@ -19464,7 +19474,7 @@ bool CClient::_bDepleteDestTypeItemUseEffect(int dX, int dY, short sItemIndex, s
 			}
 			return bRet;
 			// crusade
-		case DEF_ITEMEFFECTTYPE_CONSTRUCTIONKIT:
+		case ItemEffectType::CONSTRUCTIONKIT:
 			bRet = this->__bSetConstructionKit(dX, dY,
 					  this->m_pItemList[sItemIndex]->m_sItemEffectValue1,
 					  this->m_pItemList[sItemIndex]->m_sItemEffectValue2);
@@ -19472,7 +19482,7 @@ bool CClient::_bDepleteDestTypeItemUseEffect(int dX, int dY, short sItemIndex, s
 			} else {
 			}
 			return bRet;
-		case DEF_ITEMEFFECTTYPE_DYE:
+		case ItemEffectType::DYE:
 			if ((sDestItemID >= 0) && (sDestItemID < DEF_MAXITEMS)) {
 				if (this->m_pItemList[sDestItemID] != nullptr) {
 					if ((this->m_pItemList[sDestItemID]->m_cCategory == 11) ||
@@ -19487,7 +19497,7 @@ bool CClient::_bDepleteDestTypeItemUseEffect(int dX, int dY, short sItemIndex, s
 				}
 			}
 			break;
-		case DEF_ITEMEFFECTTYPE_ARMORDYE:
+		case ItemEffectType::ARMORDYE:
 			if ((sDestItemID >= 0) && (sDestItemID < DEF_MAXITEMS)) {
 				if (this->m_pItemList[sDestItemID] != nullptr) {
 					if (this->m_pItemList[sDestItemID]->m_cCategory == 6) {
@@ -19501,7 +19511,7 @@ bool CClient::_bDepleteDestTypeItemUseEffect(int dX, int dY, short sItemIndex, s
 				}
 			}
 			break;
-		case DEF_ITEMEFFECTTYPE_FARMING:
+		case ItemEffectType::FARMING:
 			bRet = this->bPlantSeedBag(dX, dY, this->m_pItemList[sItemIndex]->m_sItemEffectValue1, this->m_pItemList[sItemIndex]->m_sItemEffectValue2);
 			return bRet;
 		default:
@@ -19627,7 +19637,7 @@ void CClient::GetOccupyFlagHandler() {
 				dwp = (uint32_t *) cp;
 				*dwp = pItem->m_dwCount;
 				cp += 4;
-				*cp = pItem->m_cItemType;
+				*cp = (char) pItem->m_cItemType;
 				cp++;
 				*cp = pItem->m_cEquipPos;
 				cp++;
@@ -19719,7 +19729,7 @@ void CClient::GetFightzoneTicketHandler() {
 	if (this->_bAddClientItemList(pItem, &iEraseReq) == true) {
 		if (this->m_iCurWeightLoad < 0) this->m_iCurWeightLoad = 0;
 		this->m_iFightZoneTicketNumber = this->m_iFightZoneTicketNumber - 1;
-		pItem->m_sTouchEffectType = DEF_ITET_DATE;
+		pItem->m_sTouchEffectType = TouchEffectType::DATE;
 		iMonth = this->m_iReserveTime / 10000;
 		iDay = (this->m_iReserveTime - iMonth * 10000) / 100;
 		iHour = this->m_iReserveTime - iMonth * 10000 - iDay * 100;
@@ -19742,7 +19752,7 @@ void CClient::GetFightzoneTicketHandler() {
 		dwp = (uint32_t *) cp;
 		*dwp = pItem->m_dwCount;
 		cp += 4;
-		*cp = pItem->m_cItemType;
+		*cp = (char) pItem->m_cItemType;
 		cp++;
 		*cp = pItem->m_cEquipPos;
 		cp++;
@@ -19905,7 +19915,7 @@ void CClient::GetHeroMantleHandler(int iItemID, char */*pString*/) {
 				if (this->m_iCurWeightLoad < 0) this->m_iCurWeightLoad = 0;
 				wsprintf(G_cTxt, "(*) Get HeroItem : Char(%s) Player-EK(%d) Player-Contr(%d) Hero Obtained(%s)", this->m_cCharName, this->m_iEnemyKillCount, this->m_iContribution, cItemName);
 				PutLogFileList(G_cTxt);
-				pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+				pItem->m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 				pItem->m_sTouchEffectValue1 = this->m_sCharIDnum1;
 				pItem->m_sTouchEffectValue2 = this->m_sCharIDnum2;
 				pItem->m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -19921,7 +19931,7 @@ void CClient::GetHeroMantleHandler(int iItemID, char */*pString*/) {
 				dwp = (uint32_t *) cp;
 				*dwp = pItem->m_dwCount;
 				cp += 4;
-				*cp = pItem->m_cItemType;
+				*cp = (char) pItem->m_cItemType;
 				cp++;
 				*cp = pItem->m_cEquipPos;
 				cp++;
@@ -20011,7 +20021,7 @@ void CClient::CheckUniqueItemEquipment() {
 	if (this->markedForDeletion_) return;
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (this->m_pItemList[i] != nullptr) {
-			if ((this->m_pItemList[i]->m_sTouchEffectType == DEF_ITET_UNIQUE_OWNER) &&
+			if ((this->m_pItemList[i]->m_sTouchEffectType == TouchEffectType::UNIQUE_OWNER) &&
 					  (this->m_bIsItemEquipped[i] == true)) {
 				if ((this->m_pItemList[i]->m_sTouchEffectValue1 == this->m_sCharIDnum1) &&
 						  (this->m_pItemList[i]->m_sTouchEffectValue2 == this->m_sCharIDnum2) &&
@@ -20213,8 +20223,8 @@ void CClient::ConfirmExchangeItem() {
 						return;
 					}
 					for (int i = 0; i < this->iExchangeCount; i++) {
-						if ((this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-								  (this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+						if ((this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::CONSUME) ||
+								  (this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::ARROW)) {
 							if (this->m_iExchangeItemAmount[i] > this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_dwCount) {
 								this->_ClearExchangeStatus();
 								with->_ClearExchangeStatus();
@@ -20237,8 +20247,8 @@ void CClient::ConfirmExchangeItem() {
 						}
 					}
 					for (int i = 0; i < with->iExchangeCount; i++) {
-						if ((with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-								  (with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+						if ((with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::CONSUME) ||
+								  (with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::ARROW)) {
 							if (with->m_iExchangeItemAmount[i] > with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_dwCount) {
 								this->_ClearExchangeStatus();
 								with->_ClearExchangeStatus();
@@ -20265,8 +20275,8 @@ void CClient::ConfirmExchangeItem() {
 						game_._bItemLog(DEF_ITEMLOG_EXCHANGE, with->id_, this->id_, pItemBcopy[i]);
 						delete pItemBcopy[i];
 						pItemBcopy[i] = nullptr;
-						if ((with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-								  (with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+						if ((with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::CONSUME) ||
+								  (with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::ARROW)) {
 							//
 							iAmountLeft = (int) with->m_pItemList[with->m_cExchangeItemIndex[i]]->m_dwCount - with->m_iExchangeItemAmount[i];
 							if (iAmountLeft < 0) iAmountLeft = 0;
@@ -20285,8 +20295,8 @@ void CClient::ConfirmExchangeItem() {
 						game_._bItemLog(DEF_ITEMLOG_EXCHANGE, this->id_, with->id_, pItemAcopy[i]);
 						delete pItemAcopy[i];
 						pItemAcopy[i] = nullptr;
-						if ((this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
-								  (this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+						if ((this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::CONSUME) ||
+								  (this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_cItemType == ItemType::ARROW)) {
 							//
 							iAmountLeft = (int) this->m_pItemList[this->m_cExchangeItemIndex[i]]->m_dwCount - this->m_iExchangeItemAmount[i];
 							if (iAmountLeft < 0) iAmountLeft = 0;
@@ -20352,7 +20362,7 @@ bool CClient::bAddItem(CItem * pItem, char /*cMode*/) {
 		dwp = (uint32_t *) cp;
 		*dwp = pItem->m_dwCount;
 		cp += 4;
-		*cp = pItem->m_cItemType;
+		*cp = (char) pItem->m_cItemType;
 		cp++;
 		*cp = pItem->m_cEquipPos;
 		cp++;
@@ -20716,7 +20726,7 @@ void CClient::SendItemNotifyMsg(uint16_t wMsgType, CItem *pItem, int iV1) {
 			dwp = (uint32_t *) cp;
 			*dwp = pItem->m_dwCount;
 			cp += 4;
-			*cp = pItem->m_cItemType;
+			*cp = (char) pItem->m_cItemType;
 			cp++;
 			*cp = pItem->m_cEquipPos;
 			cp++;
@@ -20760,7 +20770,7 @@ void CClient::SendItemNotifyMsg(uint16_t wMsgType, CItem *pItem, int iV1) {
 			dwp = (uint32_t *) cp;
 			*dwp = pItem->m_dwCount;
 			cp += 4;
-			*cp = pItem->m_cItemType;
+			*cp = (char) pItem->m_cItemType;
 			cp++;
 			*cp = pItem->m_cEquipPos;
 			cp++;
@@ -20799,7 +20809,7 @@ bool CClient::_bCheckItemReceiveCondition(CItem *pItem) {
 	int i;
 	if (this->markedForDeletion_) return false;
 	/*
-	if ((pItem->m_cItemType == DEF_ITEMTYPE_CONSUME) || (pItem->m_cItemType == DEF_ITEMTYPE_ARROW)) {
+	if ((pItem->m_cItemType == ItemType::CONSUME) || (pItem->m_cItemType == ItemType::ARROW)) {
 
 		if ((this->m_iCurWeightLoad + (pItem->m_wWeight * pItem->m_dwCount)) > (uint32_t)this->_iCalcMaxLoad())
 			return false;
@@ -20941,10 +20951,10 @@ BIH_LOOPBREAK:
 				dwTemp = dwTemp & 0xFFFFFFFE;
 				dwTemp = dwTemp | 0x00000001;
 				pItem->m_dwAttribute = dwTemp;
-				if (pItem->m_cItemType == DEF_ITEMTYPE_MATERIAL) {
+				if (pItem->m_cItemType == ItemType::MATERIAL) {
 					iTemp = iDice(1, (iPlayerSkillLevel / 2) + 1) - 1;
 					pItem->m_sItemSpecEffectValue2 = (iPlayerSkillLevel / 2) + iTemp;
-					pItem->m_sTouchEffectType = DEF_ITET_ID;
+					pItem->m_sTouchEffectType = TouchEffectType::ID;
 					pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 					pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 					pItem->m_sTouchEffectValue3 = timeGetTime();
@@ -20972,7 +20982,7 @@ BIH_LOOPBREAK:
 					dV1 = (dV2 / 100.0f) * dV3;
 					iTemp = (int) pItem->m_wMaxLifeSpan;
 					iTemp += (int) dV1;
-					pItem->m_sTouchEffectType = DEF_ITET_ID;
+					pItem->m_sTouchEffectType = TouchEffectType::ID;
 					pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 					pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 					pItem->m_sTouchEffectValue3 = timeGetTime();
@@ -20984,7 +20994,7 @@ BIH_LOOPBREAK:
 						pItem->m_sItemSpecEffectValue1 = (short) wTemp;
 						pItem->m_wCurLifeSpan = pItem->m_wMaxLifeSpan;
 					} else pItem->m_sItemSpecEffectValue1 = (short) pItem->m_wMaxLifeSpan;
-					if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK) {
+					if (pItem->m_sItemEffectType == ItemEffectType::ATTACK) {
 						iResult = iDice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 299)) {
 							dwType = 10;
@@ -21047,7 +21057,7 @@ BIH_LOOPBREAK:
 						dwValue = dwValue << 16;
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
-					if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE) {
+					if (pItem->m_sItemEffectType == ItemEffectType::DEFENSE) {
 						iResult = iDice(1, 10000); //AQUI OGEID
 						if ((iResult >= 1) && (iResult <= 5999)) dwType = 8;
 						else if ((iResult >= 8100) && (iResult <= 8999)) dwType = 6;
@@ -21151,7 +21161,7 @@ BIH_LOOPBREAK:
 				wsprintf(G_cTxt, "Custom-Item(%s) Value(%d) Life(%d/%d)", pItem->m_cName, pItem->m_sItemSpecEffectValue2, pItem->m_wCurLifeSpan, pItem->m_wMaxLifeSpan);
 				PutLogList(G_cTxt);
 				this->bAddItem(pItem, 0);
-				this->SendNotifyMsg(0, DEF_NOTIFY_BUILDITEMSUCCESS, pItem->m_sItemSpecEffectValue2, pItem->m_cItemType, 0, nullptr);
+				this->SendNotifyMsg(0, DEF_NOTIFY_BUILDITEMSUCCESS, pItem->m_sItemSpecEffectValue2, (uint32_t) pItem->m_cItemType, 0, nullptr);
 #ifdef DEF_TAIWANLOG
 				_bItemLog(DEF_ITEMLOG_MAKE, (int) - 1, pItem);
 #endif
@@ -21235,7 +21245,7 @@ BIH_LOOPBREAK:;
 				delete pItem;
 				return;
 			}
-			if (pItem->m_cItemType == DEF_ITEMTYPE_MATERIAL) {
+			if (pItem->m_cItemType == ItemType::MATERIAL) {
 				pItem->m_sItemSpecEffectValue1 = iDice(1, iPlayerSkillLevel);
 				if (pItem->m_sItemSpecEffectValue1 < (iPlayerSkillLevel/2))
 					pItem->m_sItemSpecEffectValue1 = (iPlayerSkillLevel/2);
@@ -21391,7 +21401,7 @@ void CClient::AdminOrder_Summon(char *pData, uint32_t dwMsgSize) {
 	else iNum = 1;
 	if (iNum <= 0) iNum = 1;
 	if (iNum >= 50) iNum = 50;
-	cSA = 0;
+	cSA = SpecialAbility::NONE;
 	pX = this->m_sX;
 	pY = this->m_sY;
 	wsprintf(G_cTxt, "(!) Admin Order: Summon(%s)-(%d)", cNpcName, iNum);
@@ -21528,7 +21538,7 @@ void CClient::CheckSpecialEvent() {
 				if (this->m_iCurWeightLoad < 0) this->m_iCurWeightLoad = 0;
 				wsprintf(G_cTxt, "(*) Get MemorialRing  : Char(%s)", this->m_cCharName);
 				PutLogFileList(G_cTxt);
-				pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+				pItem->m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 				pItem->m_sTouchEffectValue1 = this->m_sCharIDnum1;
 				pItem->m_sTouchEffectValue2 = this->m_sCharIDnum2;
 				pItem->m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -21848,7 +21858,7 @@ void CClient::AdminOrder_CreateItem(char *pData, uint32_t dwMsgSize) {
 			else pItem->m_dwAttribute = 0;
 		}// close if (pItem->m_dwAttribute == 1) {
 		else {
-			if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK) {
+			if (pItem->m_sItemEffectType == ItemEffectType::ATTACK) {
 				switch ((pItem->m_dwAttribute & 0xF00000) >> 20) {
 					case 6: pItem->m_cItemColor = 2;
 						break;
@@ -21867,13 +21877,13 @@ void CClient::AdminOrder_CreateItem(char *pData, uint32_t dwMsgSize) {
 					case 9: pItem->m_cItemColor = 8;
 						break;
 				} // close switch ((pItem->m_dwAttribute & 0xF00000) >> 20) {
-			}// close if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK) {
-			else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE) {
+			}// close if (pItem->m_sItemEffectType == ItemEffectType::ATTACK) {
+			else if (pItem->m_sItemEffectType == ItemEffectType::ATTACK_MANASAVE) {
 				switch ((pItem->m_dwAttribute & 0xF00000) >> 20) {
 					case 10: pItem->m_cItemColor = 5;
 						break;
 				} // close switch ((pItem->m_dwAttribute & 0xF00000) >> 20) {
-			} // close else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE) {
+			} // close else if (pItem->m_sItemEffectType == ItemEffectType::ATTACK_MANASAVE) {
 		} // close else {
 	} // close if (strlen(cAttribute) != 0) {
 	// if the item id is
@@ -21888,14 +21898,14 @@ void CClient::AdminOrder_CreateItem(char *pData, uint32_t dwMsgSize) {
 		case 533: // ArenaTicket(8)
 		case 534: // ArenaTicket(9)
 			GetLocalTime(&SysTime);
-			pItem->m_sTouchEffectType = DEF_ITET_DATE;
+			pItem->m_sTouchEffectType = TouchEffectType::DATE;
 			pItem->m_sTouchEffectValue1 = (short) SysTime.wMonth;
 			pItem->m_sTouchEffectValue2 = (short) SysTime.wDay;
 			pItem->m_sTouchEffectValue3 = 24;
 			break;
 		default:
 			GetLocalTime(&SysTime);
-			pItem->m_sTouchEffectType = DEF_ITET_ID;
+			pItem->m_sTouchEffectType = TouchEffectType::ID;
 			pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 			pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 			std::memset(cTemp, 0, sizeof (cTemp));
@@ -21917,7 +21927,7 @@ void CClient::AdminOrder_CreateItem(char *pData, uint32_t dwMsgSize) {
 		dwp = (uint32_t *) cp;
 		*dwp = pItem->m_dwCount;
 		cp += 4;
-		*cp = pItem->m_cItemType;
+		*cp = (char) pItem->m_cItemType;
 		cp++;
 		*cp = pItem->m_cEquipPos;
 		cp++;
@@ -22439,9 +22449,9 @@ RSWU_LOOPBREAK:
 				return;
 			}
 			if (cMode == 0) {
-				bRet = this->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_FOLLOW, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, this->m_iGuildGUID);
+				bRet = this->map_->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, DEF_MOVETYPE_FOLLOW, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, this->m_iGuildGUID);
 				game_.bSetNpcFollowMode(cName, this->m_cCharName, DEF_OWNERTYPE_PLAYER);
-			} else bRet = this->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_GUARD, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, this->m_iGuildGUID);
+			} else bRet = this->map_->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, DEF_MOVETYPE_GUARD, &tX, &tY, cNpcWayPoint, nullptr, 0, -1, false, false, false, false, this->m_iGuildGUID);
 			if (!bRet) {
 				this->map_->SetNamingValueEmpty(iNamingValue);
 			} else {
@@ -24485,7 +24495,7 @@ void CClient::Command_BlueBall(char */*pData*/, uint32_t /*dwMsgSize*/) {
 					break;
 			}
 			iNum = 10;
-			cSA = 0;
+			cSA = SpecialAbility::NONE;
 			pX = this->m_sX;
 			pY = this->m_sY;
 			/*std::memset(cBallMessage, 0, sizeof(cBallMessage));
@@ -25054,10 +25064,10 @@ char CClient::_cCheckHeroItemEquipped() {
 	short sHeroArmor;
 	short sHeroHelm;
 	if (this->markedForDeletion_) return 0;
-	sHeroHelm = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];
-	sHeroArmor = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
-	sHeroHauberk = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
-	sHeroLeggings = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
+	sHeroHelm = this->m_sItemEquipmentStatus[EquipPos::HEAD];
+	sHeroArmor = this->m_sItemEquipmentStatus[EquipPos::BODY];
+	sHeroHauberk = this->m_sItemEquipmentStatus[EquipPos::ARMS];
+	sHeroLeggings = this->m_sItemEquipmentStatus[EquipPos::PANTS];
 	if ((sHeroHelm < 0) || (sHeroLeggings < 0) || (sHeroArmor < 0) || (sHeroHauberk < 0)) return 0;
 	if (this->m_pItemList[sHeroHelm] == nullptr) return 0;
 	if (this->m_pItemList[sHeroLeggings] == nullptr) return 0;
@@ -25135,7 +25145,7 @@ bool CClient::bPlantSeedBag(int dX, int dY, int iItemEffectValue1, int iItemEffe
 			std::memset(cNpcWaypointIndex, 0, sizeof (cNpcWaypointIndex));
 			tX = dX;
 			tY = dY;
-			bRet = this->map_->bCreateNewNpc(cNpcName, cName, 0, 0, DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypointIndex, nullptr, 0, 0, false, true);
+			bRet = this->map_->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypointIndex, nullptr, 0, 0, false, true);
 			if (!bRet) {
 				this->map_->SetNamingValueEmpty(iNamingValue);
 			} else {
@@ -25194,9 +25204,9 @@ void CClient::StormBringer(short dX, short dY) {
 	int iV2;
 	int iV3;
 	//Stormbringer
-	if (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) {
+	if (this->m_sItemEquipmentStatus[EquipPos::RHAND] != -1) {
 		this->map_->GetOwner(&sOwner, &cOwnerType, dX, dY);
-		iTemp = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+		iTemp = this->m_sItemEquipmentStatus[EquipPos::RHAND];
 		sAppr2 = (short) ((this->m_sAppr2 & 0xF000) >> 12);
 		if (memcmp(this->m_pItemList[iTemp]->m_cName, "StormBringer", 12) == 0) {
 			switch (cOwnerType) {
@@ -25591,7 +25601,7 @@ void CClient::RequestHeldenianScroll(char * pData, uint32_t /*dwMsgSize*/) {
 	pItem = new class CItem;
 	if (pItem == nullptr) return;
 	if ((game_._bInitItemAttr(*pItem, cItemName) == true)) {
-		pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+		pItem->m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 		pItem->m_sTouchEffectValue1 = this->m_sCharIDnum1;
 		pItem->m_sTouchEffectValue2 = this->m_sCharIDnum2;
 		pItem->m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -25609,7 +25619,7 @@ void CClient::RequestHeldenianScroll(char * pData, uint32_t /*dwMsgSize*/) {
 			dwp = (uint32_t *) cp;
 			*dwp = pItem->m_dwCount;
 			cp += 4;
-			*cp = pItem->m_cItemType;
+			*cp = (char) pItem->m_cItemType;
 			cp++;
 			*cp = pItem->m_cEquipPos;
 			cp++;
@@ -25722,7 +25732,7 @@ void CClient::GetDkSet() {
 		if (iItemID != -1) //if any error occures, dont crash character
 		{
 			game_._bInitItemAttr(*pItem, iItemID);
-			pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+			pItem->m_sTouchEffectType = TouchEffectType::UNIQUE_OWNER;
 			pItem->m_sTouchEffectValue1 = this->m_sCharIDnum1;
 			pItem->m_sTouchEffectValue2 = this->m_sCharIDnum2;
 			pItem->m_sTouchEffectValue3 = this->m_sCharIDnum3;
@@ -25894,7 +25904,7 @@ void CClient::GetTradeEKMantleHandler(int iItemID, char */*pString*/) {
 				dwp = (uint32_t *) cp;
 				*dwp = pItem->m_dwCount;
 				cp += 4;
-				*cp = pItem->m_cItemType;
+				*cp = (char) pItem->m_cItemType;
 				cp++;
 				*cp = pItem->m_cEquipPos;
 				cp++;
@@ -26311,7 +26321,7 @@ void CClient::RequestBallItem(char *pData, uint32_t dwMsgSize) {
 						dwp = (uint32_t *) cp;
 						*dwp = pItem->m_dwCount;
 						cp += 4;
-						*cp = pItem->m_cItemType;
+						*cp = (char) pItem->m_cItemType;
 						cp++;
 						*cp = pItem->m_cEquipPos;
 						cp++;
@@ -26468,7 +26478,7 @@ void CClient::_TradeItem(char *pData, uint32_t dwMsgSize) {
 		dwp = (uint32_t *) cp;
 		*dwp = pItem->m_dwCount;
 		cp += 4;
-		*cp = pItem->m_cItemType;
+		*cp = (char) pItem->m_cItemType;
 		cp++;
 		*cp = pItem->m_cEquipPos;
 		cp++;
@@ -26810,8 +26820,8 @@ void CClient::Effect_Damage_Spot(short sTargetH, char cTargetType, short sV1, sh
 	if (iDamage <= 0) iDamage = 0;
 	if ((game_.m_bAdminSecurity == true) && (this->m_iAdminUserLevel > 0)) return;
 	if (this->m_cHeroArmourBonus == 2) iDamage += 4;
-	if ((this->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND] == -1) || (this->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] == -1)) {
-		sItemIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
+	if ((this->m_sItemEquipmentStatus[EquipPos::LHAND] == -1) || (this->m_sItemEquipmentStatus[EquipPos::TWOHAND] == -1)) {
+		sItemIndex = this->m_sItemEquipmentStatus[EquipPos::RHAND];
 		if ((sItemIndex != -1) && (this->m_pItemList[sItemIndex] != nullptr)) {
 			if (this->m_pItemList[sItemIndex]->m_sIDnum == 861 || this->m_pItemList[sItemIndex]->m_sIDnum == 862) {
 				float damageTemp = (float) iDamage;
@@ -26835,7 +26845,7 @@ void CClient::Effect_Damage_Spot(short sTargetH, char cTargetType, short sV1, sh
 				}
 			}
 		}
-		sItemIndex = this->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
+		sItemIndex = this->m_sItemEquipmentStatus[EquipPos::NECK];
 		if ((sItemIndex != -1) && (this->m_pItemList[sItemIndex] != nullptr)) {
 			if (this->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness
 				if (cTargetType == DEF_OWNERTYPE_PLAYER) {
@@ -27732,7 +27742,7 @@ void CClient::RemoveFromTarget(int iCode) {
 					  (npcIter.m_cTargetType == DEF_OWNERTYPE_PLAYER)) {
 				switch (iCode) {
 					case MagicType::INVISIBILITY:
-						if (npcIter.m_cSpecialAbility == 1) {
+						if (npcIter.m_cSpecialAbility == SpecialAbility::CLAIRVOYANT) {
 						} else {
 							npcIter.m_cBehavior = DEF_BEHAVIOR_MOVE;
 							npcIter.m_iTargetIndex = 0;

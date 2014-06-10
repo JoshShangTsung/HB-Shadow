@@ -21,6 +21,17 @@
 
 struct Npcs;
 struct CGame;
+enum class SpecialAbility {
+	NONE, // 0
+	CLAIRVOYANT, // 1
+	ANTI_MAGIC_PROT, // 2 destruction of magic protection
+	RESISTANT_PHYS_DMG, // 3 anti-physical
+	RESISTANT_MAG_DMG, // 4 anti magic damage
+	POISONOUS, // 5
+	EXTREMELY_POISONOUS, // 6 critical poisonous
+	EXPLOSIVE, // 7
+	HIGHLY_EXPLOSIVE // 8 critical explosive
+};
 class CNpc: public Unit, public std::enable_shared_from_this<CNpc> {
 public:
 	CNpc(int id, CGame &game, const char * pName5);
@@ -125,7 +136,7 @@ public:
 	int m_iItemRatio;
 	int m_iAssignedItem;
 
-	char m_cSpecialAbility;
+	SpecialAbility m_cSpecialAbility;
 
 	/*
 	case 0: break;

@@ -1161,7 +1161,7 @@ bool CMap::__bReadMapInfo() {
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = cNamePrefix;
 								cName[1] = id_ + 65;
-								if (this->bCreateNewNpc(cNpcName, cName, 0, 0, cNpcMoveType, nullptr, nullptr, cNpcWaypointIndex, nullptr, 0, -1, false) == false) {
+								if (this->bCreateNewNpc(cNpcName, cName, 0, SpecialAbility::NONE, cNpcMoveType, nullptr, nullptr, cNpcWaypointIndex, nullptr, 0, -1, false) == false) {
 									this->SetNamingValueEmpty(iNamingValue);
 								}
 							}
@@ -3078,7 +3078,7 @@ void CMap::DoAbaddonThunderDamageHandler() {
 	}
 }
 
-int CMap::bCreateNewNpc(const char * pNpcName, char * pName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
+int CMap::bCreateNewNpc(const char * pNpcName, char * pName, short sClass, SpecialAbility cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
 	int t, j, k;
 	char cTxt[120];
 	short sX;
