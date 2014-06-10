@@ -1606,7 +1606,7 @@ void CGame::NpcProcess() {
 				}
 				if (dwActionTime < 600) dwActionTime = 600;
 			} else dwActionTime = m_pNpcList[i]->m_dwActionTime;
-			if (m_pNpcList[i]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] != 0)
+			if (m_pNpcList[i]->m_cMagicEffectStatus[MagicType::ICE] != 0)
 				dwActionTime += (dwActionTime / 2);
 		}
 		if ((m_pNpcList[i] != nullptr) && ((dwTime - m_pNpcList[i]->m_dwTime) > dwActionTime)) {
@@ -1738,7 +1738,7 @@ void CGame::RemoveFromTarget(short sTargetH, char cTargetType, int iCode) {
 			if ((m_pNpcList[i]->m_iTargetIndex == sTargetH) &&
 					  (m_pNpcList[i]->m_cTargetType == cTargetType)) {
 				switch (iCode) {
-					case DEF_MAGICTYPE_INVISIBILITY:
+					case MagicType::INVISIBILITY:
 						if (m_pNpcList[i]->m_cSpecialAbility == 1) {
 						} else {
 							m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
@@ -2820,7 +2820,7 @@ bool CGame::_bDecodeMagicConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pMagicConfigList[iMagicConfigListIndex]->m_sType = atoi(token);
+							m_pMagicConfigList[iMagicConfigListIndex]->m_sType = (MagicType) atoi(token);
 							cReadModeB = 4;
 							break;
 						case 4:
@@ -3543,7 +3543,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 					  (iDice(1, 10) == 5) && (m_pClientList[sTargetH]->m_iHP <= iDamage)) {
 				iDamage = m_pClientList[sTargetH]->m_iHP - 1;
 			}
-			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] == 2)
 				iDamage = iDamage / 2;
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sTargetH]->m_bIsSpecialAbilityEnabled == true)) {
 				switch (m_pClientList[sTargetH]->m_iSpecialAbilityType) {
@@ -3578,10 +3578,10 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 						m_pClientList[sTargetH]->map_->ClearOwner(0, sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 						m_pClientList[sTargetH]->map_->SetOwner(sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 					}
-					if (m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) {
-						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], 0, nullptr);
-						m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+					if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
+						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT], 0, nullptr);
+						m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, MagicType::HOLDOBJECT);
 					}
 				}
 			}
@@ -3667,7 +3667,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 				iDamage = (int) dTmp2;
 				if (iDamage < 0) iDamage = 1;
 			}
-			if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+			if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] == 2)
 				iDamage = iDamage / 2;
 			m_pNpcList[sTargetH]->m_iHP -= iDamage;
 			if (m_pNpcList[sTargetH]->m_iHP < 0) {
@@ -3692,9 +3692,9 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 					m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 					m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
 					m_pNpcList[sTargetH]->m_dwTime = dwTime;
-					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) {
-						m_pNpcList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
+					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
+						m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, MagicType::HOLDOBJECT);
 					}
 					if ((m_pNpcList[sTargetH]->m_iNoDieRemainExp > 0) && (m_pNpcList[sTargetH]->m_bIsSummoned != true) &&
 							  (cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != nullptr)) {
@@ -3796,21 +3796,21 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 			// Removes the aura after time
 			switch (ev.m_cTargetType) {
 				case DEF_OWNERTYPE_PLAYER:
-					if (m_pClientList[ ev.m_iTargetH ] == nullptr) break;
+					if (m_pClientList[ev.m_iTargetH] == nullptr) break;
 					m_pClientList[ev.m_iTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF,
-							  ev.effectType_, m_pClientList[ ev.m_iTargetH ]->m_cMagicEffectStatus[ ev.effectType_ ], 0, nullptr);
-					m_pClientList[ ev.m_iTargetH ]->m_cMagicEffectStatus[ ev.effectType_ ] = 0;
+							  ev.effectType_, m_pClientList[ev.m_iTargetH]->m_cMagicEffectStatus[ev.effectType_], 0, nullptr);
+					m_pClientList[ev.m_iTargetH]->m_cMagicEffectStatus[ev.effectType_] = 0;
 					// Inbitition casting
-					if (ev.effectType_ == DEF_MAGICTYPE_INHIBITION)
+					if (ev.effectType_ == MagicType::INHIBITION)
 						m_pClientList[ev.m_iTargetH]->m_bInhibition = false;
 
-					if (ev.effectType_ == DEF_MAGICTYPE_INVISIBILITY)
+					if (ev.effectType_ == MagicType::INVISIBILITY)
 						SetInvisibilityFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 
-					if (ev.effectType_ == DEF_MAGICTYPE_BERSERK)
+					if (ev.effectType_ == MagicType::BERSERK)
 						SetBerserkFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 					// Confusion
-					if (ev.effectType_ == DEF_MAGICTYPE_CONFUSE)
+					if (ev.effectType_ == MagicType::CONFUSE)
 						switch (ev.v1_) {
 							case 3: SetIllusionFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 								break;
@@ -3818,7 +3818,7 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 								break;
 						}
 					// Protection Magic
-					if (ev.effectType_ == DEF_MAGICTYPE_PROTECT) {
+					if (ev.effectType_ == MagicType::PROTECT) {
 						switch (ev.v1_) {
 							case 1:
 								SetProtectionFromArrowFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
@@ -3834,36 +3834,36 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 						}
 					}
 
-					if (ev.effectType_ == DEF_MAGICTYPE_POLYMORPH) {
+					if (ev.effectType_ == MagicType::POLYMORPH) {
 						m_pClientList[ev.m_iTargetH]->m_sType = m_pClientList[ev.m_iTargetH]->m_sOriginalType;
 						m_pClientList[ev.m_iTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 					}
 
-					if (ev.effectType_ == DEF_MAGICTYPE_ICE)
+					if (ev.effectType_ == MagicType::ICE)
 						SetIceFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 					break;
 					/*case DelayEventType::MAGICRELEASE:
 					// Removes the aura after time
 					switch (ev.m_cTargetType) {
 					case DEF_OWNERTYPE_PLAYER:
-						if (m_pClientList[ ev.m_iTargetH ] == nullptr) break;
+						if (m_pClientList[ev.m_iTargetH] == nullptr) break;
 						m_pClientList[ev.m_iTargetH]->SendNotifyMsg(0,DEF_NOTIFY_MAGICEFFECTOFF,
-										 ev.m_iEffectType, m_pClientList[ ev.m_iTargetH ]->m_cMagicEffectStatus[ ev.m_iEffectType ], 0, nullptr);
-						m_pClientList[ ev.m_iTargetH ]->m_cMagicEffectStatus[ ev.m_iEffectType ] = nullptr;
+										 ev.m_iEffectType, m_pClientList[ev.m_iTargetH]->m_cMagicEffectStatus[ev.m_iEffectType], 0, nullptr);
+						m_pClientList[ev.m_iTargetH]->m_cMagicEffectStatus[ev.m_iEffectType] = nullptr;
 						// Inhibition Casting
-						if (ev.m_iEffectType == DEF_MAGICTYPE_INHIBITION)
+						if (ev.m_iEffectType == MagicType::INHIBITION)
 							m_pClientList[ev.m_iTargetH]->m_bInhibition = false;
 
-						if (ev.m_iEffectType == DEF_MAGICTYPE_INVISIBILITY)
+						if (ev.m_iEffectType == MagicType::INVISIBILITY)
 							SetInvisibilityFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 
-						if (ev.m_iEffectType == DEF_MAGICTYPE_BERSERK)
+						if (ev.m_iEffectType == MagicType::BERSERK)
 							SetBerserkFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 						// Illusion
-						if (ev.m_iEffectType == DEF_MAGICTYPE_CONFUSE)
+						if (ev.m_iEffectType == MagicType::CONFUSE)
 							SetIllusionFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 						// Protection Magic
-						if (ev.m_iEffectType == DEF_MAGICTYPE_PROTECT) {
+						if (ev.m_iEffectType == MagicType::PROTECT) {
 							switch(ev.m_iV1){
 								case 1:
 									SetProtectionFromArrowFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
@@ -3879,32 +3879,32 @@ void CGame::processDelayedEvent(const DelayEvent &ev) {
 							}
 						}
 
-						if (ev.m_iEffectType == DEF_MAGICTYPE_POLYMORPH) {
+						if (ev.m_iEffectType == MagicType::POLYMORPH) {
 							m_pClientList[ev.m_iTargetH]->m_sType = m_pClientList[ev.m_iTargetH]->m_sOriginalType;
 							m_pClientList[ev.m_iTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 						}
 
-						if (ev.m_iEffectType == DEF_MAGICTYPE_ICE)
+						if (ev.m_iEffectType == MagicType::ICE)
 							SetIceFlag(ev.m_iTargetH, DEF_OWNERTYPE_PLAYER, false);
 						break;*/
 				case DEF_OWNERTYPE_NPC:
-					if (m_pNpcList[ ev.m_iTargetH ] == nullptr) break;
-					m_pNpcList[ ev.m_iTargetH ]->m_cMagicEffectStatus[ ev.effectType_ ] = 0;
-					if (ev.effectType_ == DEF_MAGICTYPE_INVISIBILITY)
+					if (m_pNpcList[ev.m_iTargetH] == nullptr) break;
+					m_pNpcList[ev.m_iTargetH]->m_cMagicEffectStatus[ev.effectType_] = 0;
+					if (ev.effectType_ == MagicType::INVISIBILITY)
 						SetInvisibilityFlag(ev.m_iTargetH, DEF_OWNERTYPE_NPC, false);
-					if (ev.effectType_ == DEF_MAGICTYPE_BERSERK)
+					if (ev.effectType_ == MagicType::BERSERK)
 						SetBerserkFlag(ev.m_iTargetH, DEF_OWNERTYPE_NPC, false);
-					if (ev.effectType_ == DEF_MAGICTYPE_POLYMORPH) {
+					if (ev.effectType_ == MagicType::POLYMORPH) {
 						m_pNpcList[ev.m_iTargetH]->m_sType = m_pNpcList[ev.m_iTargetH]->m_sOriginalType;
 						m_pNpcList[ev.m_iTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 					}
-					if (ev.effectType_ == DEF_MAGICTYPE_ICE)
+					if (ev.effectType_ == MagicType::ICE)
 						SetIceFlag(ev.m_iTargetH, DEF_OWNERTYPE_NPC, false);
 					// Illusion
-					if (ev.effectType_ == DEF_MAGICTYPE_CONFUSE)
+					if (ev.effectType_ == MagicType::CONFUSE)
 						SetIllusionFlag(ev.m_iTargetH, DEF_OWNERTYPE_NPC, false);
 					// Protection Magic
-					if (ev.effectType_ == DEF_MAGICTYPE_PROTECT) {
+					if (ev.effectType_ == MagicType::PROTECT) {
 						switch (ev.v1_) {
 							case 1:
 								SetProtectionFromArrowFlag(ev.m_iTargetH, DEF_OWNERTYPE_NPC, false);

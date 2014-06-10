@@ -19,7 +19,7 @@ CTile::CTile() {
 	m_cTotalItem = 0;
 
 	m_wDynamicObjectID = 0;
-	m_sDynamicObjectType = 0;
+	m_sDynamicObjectType = DynamicObjectType::_0;
 
 	m_bIsTempMoveAllowed = true;
 

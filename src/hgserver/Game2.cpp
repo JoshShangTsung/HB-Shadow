@@ -205,9 +205,9 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 				iDamage -= (iDice(1, m_pClientList[sTargetH]->m_iVit / 10) - 1);
 				if (iDamage <= 0) iDamage = 0;
 			}
-			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] == 2)
 				iDamage = iDamage / 2;
-			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5) break;
+			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] == 5) break;
 			if ((m_pClientList[sTargetH]->m_bIsLuckyEffect == true) &&
 					  (iDice(1, 10) == 5) && (m_pClientList[sTargetH]->m_iHP <= iDamage)) {
 				iDamage = m_pClientList[sTargetH]->m_iHP - 1;
@@ -270,10 +270,10 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 						m_pClientList[sTargetH]->map_->ClearOwner(0, sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 						m_pClientList[sTargetH]->map_->SetOwner(sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 					}
-					if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], 0, nullptr);
-						m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+					if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
+						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT], 0, nullptr);
+						m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, MagicType::HOLDOBJECT);
 					}
 				}
 			}
@@ -307,7 +307,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 				iDamage = (int) dTmp2;
 				if (iDamage < 0) iDamage = 1;
 			}
-			if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+			if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] == 2)
 				iDamage = iDamage / 2;
 			m_pNpcList[sTargetH]->m_iHP -= iDamage;
 			if (m_pNpcList[sTargetH]->m_iHP < 0) {
@@ -332,9 +332,9 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 					m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 					m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
 					m_pNpcList[sTargetH]->m_dwTime = dwTime;
-					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-						m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
+					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
+						m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, MagicType::HOLDOBJECT);
 					}
 					if ((m_pNpcList[sTargetH]->m_iNoDieRemainExp > 0) && (m_pNpcList[sTargetH]->m_bIsSummoned != true) && (cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] != nullptr)) {
 						if (m_pNpcList[sTargetH]->m_iNoDieRemainExp > iDamage) {
@@ -556,7 +556,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 				iDamage -= (iDice(1, m_pClientList[sTargetH]->m_iVit / 10) - 1);
 				if (iDamage <= 0) iDamage = 0;
 			}
-			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+			if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] == 2)
 				iDamage = iDamage / 2;
 			if ((m_pClientList[sTargetH]->m_bIsLuckyEffect == true) &&
 					  (iDice(1, 10) == 5) && (m_pClientList[sTargetH]->m_iHP <= iDamage)) {
@@ -630,12 +630,12 @@ EDSD_SKIPDAMAGEMOVE:
 						m_pClientList[sTargetH]->map_->ClearOwner(0, sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 						m_pClientList[sTargetH]->map_->SetOwner(sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 					}
-					if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
+					if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
 						// 1: Hold-Person
 						// 2: Paralize
-						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], 0, nullptr);
-						m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT], 0, nullptr);
+						m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, MagicType::HOLDOBJECT);
 					}
 				}
 			}
@@ -673,7 +673,7 @@ EDSD_SKIPDAMAGEMOVE:
 				iDamage = (int) dTmp2;
 				if (iDamage < 0) iDamage = 1;
 			}
-			if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
+			if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] == 2)
 				iDamage = iDamage / 2;
 			m_pNpcList[sTargetH]->m_iHP -= iDamage;
 			if (m_pClientList[sAttackerH] != nullptr) {
@@ -705,9 +705,9 @@ EDSD_SKIPDAMAGEMOVE:
 					m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 					m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
 					m_pNpcList[sTargetH]->m_dwTime = dwTime;
-					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-						m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
+					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
+						m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, MagicType::HOLDOBJECT);
 					}
 					//Crusade
 					int iExp;
@@ -877,12 +877,12 @@ bool CGame::bCheckResistingMagicSuccess(char cAttackerDir, short sTargetH, char 
 			if ((m_pClientList[sTargetH]->m_iMag + m_pClientList[sTargetH]->m_iAngelicMag) > 50)
 				iTargetMagicResistRatio += ((m_pClientList[sTargetH]->m_iMag + m_pClientList[sTargetH]->m_iAngelicMag) - 50);
 			iTargetMagicResistRatio += m_pClientList[sTargetH]->m_iAddResistMagic;
-			cProtect = m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT];
+			cProtect = m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT];
 			break;
 		case DEF_OWNERTYPE_NPC:
 			if (m_pNpcList[sTargetH] == nullptr) return false;
 			iTargetMagicResistRatio = m_pNpcList[sTargetH]->m_cResistMagic;
-			cProtect = m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT];
+			cProtect = m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT];
 			break;
 	}
 	if (cProtect == 5) return true;
@@ -1045,11 +1045,12 @@ void CGame::OnKeyUp(WPARAM wParam, LPARAM /*lParam*/) {
 int CGame::iGetFollowerNumber(short sOwnerH, char cOwnerType) {
 	register int i, iTotal;
 	iTotal = 0;
-	for (i = 1; i < DEF_MAXNPCS; i++)
+	for (i = 1; i < DEF_MAXNPCS; i++) {
 		if ((m_pNpcList[i] != nullptr) && (m_pNpcList[i]->m_cMoveType == DEF_MOVETYPE_FOLLOW)) {
 			if ((m_pNpcList[i]->m_iFollowOwnerIndex == sOwnerH) && (m_pNpcList[i]->m_cFollowOwnerType == cOwnerType))
 				iTotal++;
 		}
+	}
 	return iTotal;
 }
 
@@ -1325,10 +1326,10 @@ int CGame::iCreateFish(MapPtr map, short sX, short sY, short sType, class CItem 
 				case 575:
 				case 576:
 				case 577:
-					iDynamicHandle = dynamicObjects_.iAddDynamicObjectList(i, 0, DEF_DYNAMICOBJECT_FISH, map, sX, sY, dwLastTime);
+					iDynamicHandle = dynamicObjects_.iAddDynamicObjectList(i, 0, DynamicObjectType::FISH, map, sX, sY, dwLastTime);
 					break;
 				default:
-					iDynamicHandle = dynamicObjects_.iAddDynamicObjectList(i, 0, DEF_DYNAMICOBJECT_FISHOBJECT, map, sX, sY, dwLastTime);
+					iDynamicHandle = dynamicObjects_.iAddDynamicObjectList(i, 0, DynamicObjectType::FISHOBJECT, map, sX, sY, dwLastTime);
 					break;
 			}
 			if (iDynamicHandle == 0) {
@@ -1352,8 +1353,8 @@ bool CGame::bDeleteFish(int iHandle, int iDelMode) {
 	auto &dynObjPtr = dynamicObjects_[iH];
 	if (dynObjPtr) {
 		auto &dynObj = *dynObjPtr;
-		dynObj.map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, dynObj.m_sX, dynObj.m_sY, dynObj.m_sType, iH, 0);
-		dynObj.map_->SetDynamicObject(0, 0, dynObj.m_sX, dynObj.m_sY, dwTime);
+		dynObj.map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, dynObj.m_sX, dynObj.m_sY, (short) dynObj.m_sType, iH, 0);
+		dynObj.map_->SetDynamicObject(0, DynamicObjectType::_0, dynObj.m_sX, dynObj.m_sY, dwTime);
 		dynObj.map_->m_iCurFish--;
 		dynObjPtr.reset();
 	}
@@ -1865,8 +1866,8 @@ bool CGame::bDeleteMineral(int iIndex) {
 	if (dynamicObjects_[iDynamicIndex] == nullptr) return false;
 	dynamicObjects_[iDynamicIndex]->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT,
 			  dynamicObjects_[iDynamicIndex]->m_sX, dynamicObjects_[iDynamicIndex]->m_sY,
-			  dynamicObjects_[iDynamicIndex]->m_sType, iDynamicIndex, 0);
-	dynamicObjects_[iDynamicIndex]->map_->SetDynamicObject(0, 0, dynamicObjects_[iDynamicIndex]->m_sX, dynamicObjects_[iDynamicIndex]->m_sY, dwTime);
+			  (short) dynamicObjects_[iDynamicIndex]->m_sType, iDynamicIndex, 0);
+	dynamicObjects_[iDynamicIndex]->map_->SetDynamicObject(0, DynamicObjectType::_0, dynamicObjects_[iDynamicIndex]->m_sX, dynamicObjects_[iDynamicIndex]->m_sY, dwTime);
 	m_pMineral[iIndex]->map_->SetTempMoveAllowedFlag(dynamicObjects_[iDynamicIndex]->m_sX, dynamicObjects_[iDynamicIndex]->m_sY, true);
 	m_pMineral[iIndex]->map_->m_iCurMineral--;
 	delete m_pMineral[iIndex];
@@ -6243,8 +6244,8 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			if ((!m_bIsCrusadeMode) && (m_pClientList[sAttackerH]->m_bIsPlayerCivil == true) && (cTargetType == DEF_OWNERTYPE_PLAYER)) return 0;
 			if ((m_pClientList[sAttackerH]->m_iStatus & 0x10) != 0) {
 				SetInvisibilityFlag(sAttackerH, DEF_OWNERTYPE_PLAYER, false);
-				delayEvents_.remove(sAttackerH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_INVISIBILITY);
-				m_pClientList[sAttackerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_INVISIBILITY] = 0;
+				delayEvents_.remove(sAttackerH, DEF_OWNERTYPE_PLAYER, MagicType::INVISIBILITY);
+				m_pClientList[sAttackerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = 0;
 			}
 			if ((m_pClientList[sAttackerH]->m_sAppr2 & 0xF000) == 0) return 0;
 			iAP_SM = 0;
@@ -6391,7 +6392,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			}
 			cAttackerDir = m_pClientList[sAttackerH]->m_cDir;
 			strcpy(cAttackerName, m_pClientList[sAttackerH]->m_cCharName);
-			if (m_pClientList[sAttackerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] != 0)
+			if (m_pClientList[sAttackerH]->m_cMagicEffectStatus[MagicType::BERSERK] != 0)
 				bIsAttackerBerserk = true;
 			else bIsAttackerBerserk = false;
 			if ((!bArrowUse) && (m_pClientList[sAttackerH]->m_iSuperAttackLeft > 0) && (iAttackMode >= 20)) {
@@ -6460,8 +6461,8 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			if (m_pNpcList[sAttackerH]->map_->m_bIsAttackEnabled == false) return 0;
 			if ((m_pNpcList[sAttackerH]->m_iStatus & 0x10) != 0) {
 				SetInvisibilityFlag(sAttackerH, DEF_OWNERTYPE_NPC, false);
-				delayEvents_.remove(sAttackerH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_INVISIBILITY);
-				m_pNpcList[sAttackerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_INVISIBILITY] = 0;
+				delayEvents_.remove(sAttackerH, DEF_OWNERTYPE_NPC, MagicType::INVISIBILITY);
+				m_pNpcList[sAttackerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = 0;
 			}
 			cAttackerSide = m_pNpcList[sAttackerH]->m_cSide;
 			iAP_SM = 0;
@@ -6471,7 +6472,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			iAttackerHitRatio = m_pNpcList[sAttackerH]->m_iHitRatio;
 			cAttackerDir = m_pNpcList[sAttackerH]->m_cDir;
 			memcpy(cAttackerName, m_pNpcList[sAttackerH]->m_cNpcName, 20);
-			if (m_pNpcList[sAttackerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] != 0)
+			if (m_pNpcList[sAttackerH]->m_cMagicEffectStatus[MagicType::BERSERK] != 0)
 				bIsAttackerBerserk = true;
 			else bIsAttackerBerserk = false;
 			cAttackerSA = m_pNpcList[sAttackerH]->m_cSpecialAbility;
@@ -6651,10 +6652,10 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 	if (iAttackerHitRatio < 0) iAttackerHitRatio = 0;
 	switch (cTargetType) {
 		case DEF_OWNERTYPE_PLAYER:
-			cProtect = m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT];
+			cProtect = m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT];
 			break;
 		case DEF_OWNERTYPE_NPC:
-			cProtect = m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT];
+			cProtect = m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT];
 			break;
 	}
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
@@ -6895,20 +6896,20 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 								if (iAP_SM <= 0) iAP_SM = 1;
 								break;
 							case 2:
-								if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_ICE] == 0) {
-									m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_ICE] = 1;
+								if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::ICE] == 0) {
+									m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::ICE] = 1;
 									SetIceFlag(sTargetH, DEF_OWNERTYPE_PLAYER, true);
-									delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + 30000,
+									delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::ICE, dwTime + 30000,
 											  sTargetH, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
-									m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, 0, nullptr);
+									m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::ICE, 1, 0, nullptr);
 								}
 								break;
 							case 3:
-								if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] == 0) {
-									m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 2;
-									delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_HOLDOBJECT, dwTime + 10000,
+								if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] == 0) {
+									m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 2;
+									delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::HOLDOBJECT, dwTime + 10000,
 											  sTargetH, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 10, 0, 0);
-									m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_HOLDOBJECT, 10, 0, nullptr);
+									m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::HOLDOBJECT, 10, 0, nullptr);
 								}
 								break;
 							case 4:
@@ -6973,9 +6974,9 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 							}
 							break;
 					}
-					if ((cAttackerSA == 2) && (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] != 0)) {
-						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_PROTECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT], 0, nullptr);
-						switch (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT]) {
+					if ((cAttackerSA == 2) && (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] != 0)) {
+						m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::PROTECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT], 0, nullptr);
+						switch (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT]) {
 							case 1:
 								SetProtectionFromArrowFlag(sTargetH, DEF_OWNERTYPE_PLAYER, false);
 								break;
@@ -6988,8 +6989,8 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 								SetDefenseShieldFlag(sTargetH, DEF_OWNERTYPE_PLAYER, false);
 								break;
 						}
-						m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_PROTECT);
+						m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, MagicType::PROTECT);
 					}
 					if ((m_pClientList[sTargetH]->m_bIsPoisoned == false) &&
 							  ((cAttackerSA == 5) || (cAttackerSA == 6) || (cAttackerSA == 61))) {
@@ -6999,7 +7000,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 							else if (cAttackerSA == 6) m_pClientList[sTargetH]->m_iPoisonLevel = 40;
 							else if (cAttackerSA == 61) m_pClientList[sTargetH]->m_iPoisonLevel = iAttackerSAvalue;
 							m_pClientList[sTargetH]->m_dwPoisonTime = dwTime;
-							m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_POISON, m_pClientList[sTargetH]->m_iPoisonLevel, 0, nullptr);
+							m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::POISON, m_pClientList[sTargetH]->m_iPoisonLevel, 0, nullptr);
 							SetPoisonFlag(sTargetH, DEF_OWNERTYPE_PLAYER, true);
 						}
 					}
@@ -7084,10 +7085,10 @@ CAE_SKIPDAMAGEMOVE:
 								if (iDice(1, 10000) >= iProb)
 									m_pClientList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iAP_SM, sAttackerWeapon, 0);
 							}
-							if (m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] == 1) {
-								m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], 0, nullptr);
-								m_pClientList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-								delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+							if (m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] == 1) {
+								m_pClientList[sTargetH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT], 0, nullptr);
+								m_pClientList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+								delayEvents_.remove(sTargetH, DEF_OWNERTYPE_PLAYER, MagicType::HOLDOBJECT);
 							}
 							m_pClientList[sTargetH]->m_iSuperAttackCount++;
 							if (m_pClientList[sTargetH]->m_iSuperAttackCount > 14) {
@@ -7152,8 +7153,8 @@ CAE_SKIPDAMAGEMOVE:
 					else if ((m_pNpcList[sTargetH]->m_sType == 31) && (cAttackerType == 1) && (m_pClientList[sAttackerH] != nullptr) && (m_pClientList[sAttackerH]->m_iSpecialAbilityType == 7))
 						iDamage += iDice(3, 2);
 				}
-				if ((cAttackerSA == 2) && (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] != 0)) {
-					switch (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT]) {
+				if ((cAttackerSA == 2) && (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] != 0)) {
+					switch (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT]) {
 						case 1:
 							SetProtectionFromArrowFlag(sTargetH, DEF_OWNERTYPE_NPC, false);
 							break;
@@ -7166,8 +7167,8 @@ CAE_SKIPDAMAGEMOVE:
 							SetDefenseShieldFlag(sTargetH, DEF_OWNERTYPE_NPC, false);
 							break;
 					}
-					m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] = 0;
-					delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_PROTECT);
+					m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::PROTECT] = 0;
+					delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, MagicType::PROTECT);
 				}
 				switch (m_pNpcList[sTargetH]->m_cActionLimit) {
 					case 0:
@@ -7312,13 +7313,13 @@ CAE_SKIPDAMAGEMOVE2:
 					} else {
 						m_pNpcList[sTargetH]->SendEventToNearClient_TypeA(MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, sAttackerWeapon, 0);
 					}
-					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] == 1) {
-						m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
-					} else if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] == 2) {
+					if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] == 1) {
+						m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, MagicType::HOLDOBJECT);
+					} else if (m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] == 2) {
 						if ((m_pNpcList[sTargetH]->m_iHitDice > 50) && (iDice(1, 10) == 5)) {
-							m_pNpcList[sTargetH]->m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-							delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, DEF_MAGICTYPE_HOLDOBJECT);
+							m_pNpcList[sTargetH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+							delayEvents_.remove(sTargetH, DEF_OWNERTYPE_NPC, MagicType::HOLDOBJECT);
 						}
 					}
 					if ((m_pNpcList[sTargetH]->m_iNoDieRemainExp > 0) && (m_pNpcList[sTargetH]->m_bIsSummoned != true) &&

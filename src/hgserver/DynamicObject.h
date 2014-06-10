@@ -3,14 +3,15 @@
 #include <array>
 #include <memory>
 #include "Map.h"
+#include "DynamicObjectID.h"
 class CDynamicObject {
 public:
-	CDynamicObject(short sOwner, char cOwnerType, short sType, MapPtr map, short sX, short sY, uint32_t dwRegisterTime, uint32_t dwLastTime, int iV1);
+	CDynamicObject(short sOwner, char cOwnerType, DynamicObjectType sType, MapPtr map, short sX, short sY, uint32_t dwRegisterTime, uint32_t dwLastTime, int iV1);
 
 	short m_sOwner;
 	char m_cOwnerType;
 
-	short m_sType;
+	DynamicObjectType m_sType;
 	MapPtr map_;
 	short m_sX;
 	short m_sY;
@@ -34,7 +35,7 @@ struct DynamicObjects {
 	DynamicObjects(CGame &game, Maps &maps, Clients &clients);
 	void DynamicObjectEffectProcessor();
 	void CheckDynamicObjectList();
-	int iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, MapPtr map, short sX, short sY, uint32_t dwLastTime, int iV1 = 0);
+	int iAddDynamicObjectList(short sOwner, char cOwnerType, DynamicObjectType sType, MapPtr map, short sX, short sY, uint32_t dwLastTime, int iV1 = 0);
 
 	void clear() {
 		m_pDynamicObjectList = {

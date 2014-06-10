@@ -96,7 +96,7 @@
       <compileType>
         <ccTool>
           <standard>8</standard>
-          <commandLine>-Wall -Wextra -Wno-char-subscripts</commandLine>
+          <commandLine>-Wall -Wextra -Wno-char-subscripts -Wno-sign-compare</commandLine>
         </ccTool>
         <linkerTool>
           <output>../../../bin/hgserver</output>

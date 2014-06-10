@@ -61,8 +61,8 @@ public:
 	bool bGetIsMoveAllowedTile(short dX, short dY);
 	void SetNamingValueEmpty(int iValue);
 	int iGetEmptyNamingValue();
-	bool bGetDynamicObject(short sX, short sY, short * pType, uint32_t * pRegisterTime, int * pIndex = nullptr);
-	void SetDynamicObject(uint16_t wID, short sType, short sX, short sY, uint32_t dwRegisterTime);
+	bool bGetDynamicObject(short sX, short sY, DynamicObjectType * pType, uint32_t * pRegisterTime, int * pIndex = nullptr);
+	void SetDynamicObject(uint16_t wID, DynamicObjectType sType, short sX, short sY, uint32_t dwRegisterTime);
 	bool bGetIsTeleport(short dX, short dY);
 	bool bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int * pDy, char * pDir);
 	bool bInit(char * pName);
@@ -71,7 +71,7 @@ public:
 	bool bSetItem(short sX, short sY, class CItem * pItem);
 	void ClearDeadOwner(short sX, short sY);
 	void ClearOwner(int iDebugCode, short sOwnerH, char cOwnerType, short sX, short sY);
-	bool bGetMoveable(short dX, short dY, short * pDOtype = nullptr, short * pTopItem = nullptr);
+	bool bGetMoveable(short dX, short dY, DynamicObjectType * pDOtype = nullptr, short * pTopItem = nullptr);
 	void GetOwner(short * pOwner, char * pOwnerClass, short sX, short sY);
 	void SetOwner(short sOwner, char cOwnerClass, short sX, short sY);
 	void SetDeadOwner(short sOwner, char cOwnerClass, short sX, short sY);

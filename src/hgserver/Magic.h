@@ -1,6 +1,41 @@
 #pragma once
 #include <stdint.h>
 
+enum MagicType {
+	DAMAGE_SPOT = 1,
+	HPUP_SPOT, // 2
+	DAMAGE_AREA, // 3
+	SPDOWN_SPOT, // 4
+	SPDOWN_AREA, // 5
+	SPUP_SPOT, // 6
+	SPUP_AREA, // 7
+	TELEPORT, // 8
+	SUMMON, // 9
+	CREATE, // 10
+	PROTECT, // 11
+	HOLDOBJECT, // 12
+	INVISIBILITY, // 13
+	CREATE_DYNAMIC, // 14
+	POSSESSION, // 15
+	CONFUSE, // 16
+	POISON, // 17
+	BERSERK, // 18
+	DAMAGE_LINEAR, // 19
+	POLYMORPH, // 20
+	DAMAGE_AREA_NOSPOT, // 21
+	TREMOR, // 22
+	ICE, // 23
+	PURITYLIFE_SPOT, // 24
+	DAMAGE_AREA_NOSPOT_SPDOWN, // 25
+	ICE_LINEAR, // 26
+	DAMAGE_AREA_ARMOR_BREAK, // 27
+	CANCELLATION, // 28
+	DAMAGE_LINEAR_SPDOWN, // 29
+	INHIBITION, // 30
+	RESURRECTION, // 31
+	SCAN // 32
+};
+/*
 #define DEF_MAGICTYPE_DAMAGE_SPOT				1
 #define DEF_MAGICTYPE_HPUP_SPOT					2
 #define DEF_MAGICTYPE_DAMAGE_AREA				3
@@ -35,7 +70,7 @@
 #define DEF_MAGICTYPE_INHIBITION				31 // Inhibition-Casting
 #define DEF_MAGICTYPE_RESURRECTION				32 // Resurrection
 #define DEF_MAGICTYPE_SCAN						33 // Scan
-
+*/
 #define DEF_MAXMAGICEFFECTS			100
 
 class CMagic {
@@ -44,7 +79,7 @@ public:
 
 	char m_cName[31];
 
-	short m_sType;
+	MagicType m_sType;
 	uint32_t m_dwDelayTime;
 	uint32_t m_dwLastTime;
 	short m_sValue1;

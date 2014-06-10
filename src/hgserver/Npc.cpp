@@ -128,14 +128,14 @@ bool CNpc::_bNpcBehavior_Detector() {
 			if ((cSide != 0) && (cSide != this->m_cSide)) {
 				switch (cOwnerType) {
 					case DEF_OWNERTYPE_PLAYER:
-						if (clientList[sOwnerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_INVISIBILITY] != 0) {
-							clientList[sOwnerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_INVISIBILITY] = 0;
+						if (clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] != 0) {
+							clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = 0;
 							game_.SetInvisibilityFlag(sOwnerH, cOwnerType, false);
 						}
 						break;
 					case DEF_OWNERTYPE_NPC:
-						if (npcList[sOwnerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_INVISIBILITY] != 0) {
-							npcList[sOwnerH]->m_cMagicEffectStatus[DEF_MAGICTYPE_INVISIBILITY] = 0;
+						if (npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] != 0) {
+							npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = 0;
 							game_.SetInvisibilityFlag(sOwnerH, cOwnerType, false);
 						}
 						break;
@@ -1212,7 +1212,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 	if (magicCfg->m_dwDelayTime == 0) {
 
 		switch (magicCfg->m_sType) {
-			case DEF_MAGICTYPE_INVISIBILITY:
+			case MagicType::INVISIBILITY:
 				switch (magicCfg->m_sValue4) {
 					case 1:
 
@@ -1220,25 +1220,25 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (clientList[sOwnerH] == nullptr) goto NMH_NOEFFECT;
-								if (clientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] != 0) goto NMH_NOEFFECT;
-								clientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = (char) magicCfg->m_sValue4;
+								if (clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] != 0) goto NMH_NOEFFECT;
+								clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = (char) magicCfg->m_sValue4;
 								game_.SetInvisibilityFlag(sOwnerH, cOwnerType, true);
 								game_.RemoveFromTarget(sOwnerH, DEF_OWNERTYPE_PLAYER);
 								break;
 							case DEF_OWNERTYPE_NPC:
 								if (npcList[sOwnerH] == nullptr) goto NMH_NOEFFECT;
-								if (npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] != 0) goto NMH_NOEFFECT;
-								npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = (char) magicCfg->m_sValue4;
+								if (npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] != 0) goto NMH_NOEFFECT;
+								npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = (char) magicCfg->m_sValue4;
 								game_.SetInvisibilityFlag(sOwnerH, cOwnerType, true);
 
 								game_.RemoveFromTarget(sOwnerH, DEF_OWNERTYPE_NPC);
 								break;
 						}
 
-						game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_INVISIBILITY, dwTime + (magicCfg->m_dwLastTime * 1000),
+						game_.delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::INVISIBILITY, dwTime + (magicCfg->m_dwLastTime * 1000),
 								  sOwnerH, cOwnerType, 0, 0, 0, magicCfg->m_sValue4, 0, 0);
 						if (cOwnerType == DEF_OWNERTYPE_PLAYER)
-							clientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_INVISIBILITY, magicCfg->m_sValue4, 0, nullptr);
+							clientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::INVISIBILITY, magicCfg->m_sValue4, 0, nullptr);
 						break;
 					case 2:
 
@@ -1249,21 +1249,21 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 									switch (cOwnerType) {
 										case DEF_OWNERTYPE_PLAYER:
 											if (clientList[sOwnerH] == nullptr) goto NMH_NOEFFECT;
-											if (clientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] != 0) {
+											if (clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] != 0) {
 												if (clientList[sOwnerH]->m_sType != 66) {
-													clientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = 0;
+													clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = 0;
 													game_.SetInvisibilityFlag(sOwnerH, cOwnerType, false);
-													game_.delayEvents_.remove(sOwnerH, cOwnerType, DEF_MAGICTYPE_INVISIBILITY);
+													game_.delayEvents_.remove(sOwnerH, cOwnerType, MagicType::INVISIBILITY);
 												}
 											}
 											break;
 										case DEF_OWNERTYPE_NPC:
 											if (npcList[sOwnerH] == nullptr) goto NMH_NOEFFECT;
-											if (npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] != 0) {
+											if (npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] != 0) {
 												if (clientList[sOwnerH]->m_sType != 66) {
-													npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = 0;
+													npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::INVISIBILITY] = 0;
 													game_.SetInvisibilityFlag(sOwnerH, cOwnerType, false);
-													game_.delayEvents_.remove(sOwnerH, cOwnerType, DEF_MAGICTYPE_INVISIBILITY);
+													game_.delayEvents_.remove(sOwnerH, cOwnerType, MagicType::INVISIBILITY);
 												}
 											}
 											break;
@@ -1273,33 +1273,33 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 						break;
 				}
 				break;
-			case DEF_MAGICTYPE_HOLDOBJECT:
+			case MagicType::HOLDOBJECT:
 
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false) {
 					switch (cOwnerType) {
 						case DEF_OWNERTYPE_PLAYER:
 							if (clientList[sOwnerH] == nullptr) goto NMH_NOEFFECT;
-							if (clientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) goto NMH_NOEFFECT;
+							if (clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) goto NMH_NOEFFECT;
 							if (clientList[sOwnerH]->m_iAddPR >= 500) goto NMH_NOEFFECT;
-							clientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = (char) magicCfg->m_sValue4;
+							clientList[sOwnerH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = (char) magicCfg->m_sValue4;
 							break;
 						case DEF_OWNERTYPE_NPC:
 							if (npcList[sOwnerH] == nullptr) goto NMH_NOEFFECT;
 							if (npcList[sOwnerH]->m_cMagicLevel >= 6) goto NMH_NOEFFECT;
-							if (npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) goto NMH_NOEFFECT;
-							npcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = (char) magicCfg->m_sValue4;
+							if (npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) goto NMH_NOEFFECT;
+							npcList[sOwnerH]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] = (char) magicCfg->m_sValue4;
 							break;
 					}
 
-					game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_HOLDOBJECT, dwTime + (magicCfg->m_dwLastTime * 1000),
+					game_.delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::HOLDOBJECT, dwTime + (magicCfg->m_dwLastTime * 1000),
 							  sOwnerH, cOwnerType, 0, 0, 0, magicCfg->m_sValue4, 0, 0);
 
 					if (cOwnerType == DEF_OWNERTYPE_PLAYER)
-						clientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_HOLDOBJECT, magicCfg->m_sValue4, 0, nullptr);
+						clientList[sOwnerH]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::HOLDOBJECT, magicCfg->m_sValue4, 0, nullptr);
 				}
 				break;
-			case DEF_MAGICTYPE_DAMAGE_LINEAR:
+			case MagicType::DAMAGE_LINEAR:
 
 				sX = this->m_sX;
 				sY = this->m_sY;
@@ -1383,7 +1383,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 						game_.Effect_Damage_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6 + iWhetherBonus, false, iMagicAttr);
 				}
 				break;
-			case DEF_MAGICTYPE_DAMAGE_SPOT:
+			case MagicType::DAMAGE_SPOT:
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 					game_.Effect_Damage_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6 + iWhetherBonus, true, iMagicAttr);
@@ -1394,16 +1394,16 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 						game_.Effect_Damage_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6 + iWhetherBonus, true, iMagicAttr);
 				}
 				break;
-			case DEF_MAGICTYPE_HPUP_SPOT:
+			case MagicType::HPUP_SPOT:
 
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				game_.Effect_HpUp_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6);
 				break;
-			case DEF_MAGICTYPE_PURITYLIFE_SPOT:
+			case MagicType::PURITYLIFE_SPOT:
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				game_.PURITYLIFE(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6);
 				break;
-			case DEF_MAGICTYPE_DAMAGE_AREA:
+			case MagicType::DAMAGE_AREA:
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
 					game_.Effect_Damage_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue4, magicCfg->m_sValue5, magicCfg->m_sValue6 + iWhetherBonus, true, iMagicAttr);
@@ -1428,7 +1428,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 						}
 					}
 				break;
-			case DEF_MAGICTYPE_DAMAGE_AREA_NOSPOT:
+			case MagicType::DAMAGE_AREA_NOSPOT:
 
 				for (iy = dY - magicCfg->m_sValue3; iy <= dY + magicCfg->m_sValue3; iy++)
 					for (ix = dX - magicCfg->m_sValue2; ix <= dX + magicCfg->m_sValue2; ix++) {
@@ -1444,7 +1444,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 						}
 					}
 				break;
-			case DEF_MAGICTYPE_SPDOWN_AREA:
+			case MagicType::SPDOWN_AREA:
 
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (game_.bCheckResistingMagicSuccess(this->m_cDir, sOwnerH, cOwnerType, iResult) == false)
@@ -1458,7 +1458,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 							game_.Effect_SpDown_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue7, magicCfg->m_sValue8, magicCfg->m_sValue9);
 					}
 				break;
-			case DEF_MAGICTYPE_SPUP_AREA:
+			case MagicType::SPUP_AREA:
 
 				this->map_->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 
@@ -1472,6 +1472,7 @@ void CNpc::NpcMagicHandler(short dX, short dY, short sType) {
 						game_.Effect_SpUp_Spot(id_, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, magicCfg->m_sValue7, magicCfg->m_sValue8, magicCfg->m_sValue9);
 					}
 				break;
+			default:break;
 		}
 	} else {
 
@@ -1955,13 +1956,13 @@ void CNpc::CalcNextWayPointDestination() {
 			this->m_cCurWaypoint++;
 			if (this->m_cCurWaypoint >= this->m_cTotalWaypoint)
 				this->m_cCurWaypoint = 1;
-			this->m_dX = (short) (this->map_->m_WaypointList[ this->m_iWayPointIndex[ this->m_cCurWaypoint ] ].x);
-			this->m_dY = (short) (this->map_->m_WaypointList[ this->m_iWayPointIndex[ this->m_cCurWaypoint ] ].y);
+			this->m_dX = (short) (this->map_->m_WaypointList[this->m_iWayPointIndex[this->m_cCurWaypoint]].x);
+			this->m_dY = (short) (this->map_->m_WaypointList[this->m_iWayPointIndex[this->m_cCurWaypoint]].y);
 			break;
 		case DEF_MOVETYPE_RANDOMWAYPOINT:
 			this->m_cCurWaypoint = (short) ((rand() % (this->m_cTotalWaypoint - 1)) + 1);
-			this->m_dX = (short) (this->map_->m_WaypointList[ this->m_iWayPointIndex[ this->m_cCurWaypoint ] ].x);
-			this->m_dY = (short) (this->map_->m_WaypointList[ this->m_iWayPointIndex[ this->m_cCurWaypoint ] ].y);
+			this->m_dX = (short) (this->map_->m_WaypointList[this->m_iWayPointIndex[this->m_cCurWaypoint]].x);
+			this->m_dY = (short) (this->map_->m_WaypointList[this->m_iWayPointIndex[this->m_cCurWaypoint]].y);
 			break;
 		case DEF_MOVETYPE_RANDOMAREA:
 			sRange = (short) (this->m_rcRandomArea.right - this->m_rcRandomArea.left);
@@ -2005,17 +2006,17 @@ CNW_GET_VALIDLOC_SUCCESS:
 int CNpc::iGetDangerValue(short dX, short dY) {
 	register int ix, iy, iDangerValue;
 	short sOwner;
-	short sDOType;
 	char cOwnerType;
 	uint32_t dwRegisterTime;
 	iDangerValue = 0;
 	auto &clientList = game_.m_pClientList;
 	auto &npcList = game_.m_pNpcList;
+	DynamicObjectType sDOType;
 	for (ix = dX - 2; ix <= dX + 2; ix++)
 		for (iy = dY - 2; iy <= dY + 2; iy++) {
 			this->map_->GetOwner(&sOwner, &cOwnerType, ix, iy);
 			this->map_->bGetDynamicObject(ix, iy, &sDOType, &dwRegisterTime);
-			if (sDOType == 1) iDangerValue++;
+			if (sDOType == DynamicObjectType::FIRE) iDangerValue++;
 			switch (cOwnerType) {
 				case 0:
 					break;
@@ -2171,7 +2172,7 @@ void CNpc::NpcKilledHandler(short sAttackerH, char cAttackerType, short sDamage)
 		if (game_.m_bIsCrusadeMode == true) {
 			if (iExp > 10) iExp = iExp / 3;
 		}
-		if (this->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] == 1) {
+		if (this->m_cMagicEffectStatus[MagicType::BERSERK] == 1) {
 			iExp *= 2;
 		}
 		// New 09/05/2004
@@ -2385,7 +2386,7 @@ void CNpc::NpcBehavior_Move() {
 	if (this->m_bIsKilled == true) return;
 	if ((this->m_bIsSummoned == true) &&
 			  (this->m_iSummonControlMode == 1)) return;
-	if (this->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) return;
+	if (this->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) return;
 
 	switch (this->m_cActionLimit) {
 		case 2:
@@ -2551,7 +2552,7 @@ void CNpc::TargetSearch(short * pTarget, char * pTargetType) {
 							dY = clientList[sOwner]->m_sY;
 							cTargetSide = clientList[sOwner]->m_cSide;
 							iPKCount = clientList[sOwner]->m_iPKCount;
-							iInv = clientList[sOwner]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ];
+							iInv = clientList[sOwner]->m_cMagicEffectStatus[MagicType::INVISIBILITY];
 						}
 						break;
 					case DEF_OWNERTYPE_NPC:
@@ -2562,7 +2563,7 @@ void CNpc::TargetSearch(short * pTarget, char * pTargetType) {
 							dY = npcList[sOwner]->m_sY;
 							cTargetSide = npcList[sOwner]->m_cSide;
 							iPKCount = 0;
-							iInv = npcList[sOwner]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ];
+							iInv = npcList[sOwner]->m_cMagicEffectStatus[MagicType::INVISIBILITY];
 							if (this->m_sType == 21) {
 								if (npcList[sOwner]->map_->_iCalcPlayerNum(dX, dY, 2) != 0) {
 									sOwner = 0;
@@ -2609,7 +2610,7 @@ void CNpc::NpcBehavior_Attack() {
 	short dY;
 	char cDir;
 	uint32_t dwTime = timeGetTime();
-	if (this->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) return;
+	if (this->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) return;
 	if (this->m_bIsKilled == true) return;
 	switch (this->m_cActionLimit) {
 		case 1:
@@ -2845,7 +2846,7 @@ void CNpc::NpcBehavior_Attack() {
 				if (this->m_iAILevel >= 2) {
 					switch (this->m_cTargetType) {
 						case DEF_OWNERTYPE_PLAYER:
-							if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] == 2) {
+							if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::PROTECT] == 2) {
 
 								if ((abs(sX - dX) > this->m_iAttackRange) || (abs(sY - dY) > this->m_iAttackRange)) {
 									this->m_sBehaviorTurnCount = 0;
@@ -2854,10 +2855,10 @@ void CNpc::NpcBehavior_Attack() {
 								} else goto NBA_CHASE;
 							}
 
-							if ((iMagicType == 35) && (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
+							if ((iMagicType == 35) && (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0)) goto NBA_CHASE;
 							break;
 						case DEF_OWNERTYPE_NPC:
-							if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] == 2) {
+							if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::PROTECT] == 2) {
 
 								if ((abs(sX - dX) > this->m_iAttackRange) || (abs(sY - dY) > this->m_iAttackRange)) {
 									this->m_sBehaviorTurnCount = 0;
@@ -2866,7 +2867,7 @@ void CNpc::NpcBehavior_Attack() {
 								} else goto NBA_CHASE;
 							}
 
-							if ((iMagicType == 35) && (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
+							if ((iMagicType == 35) && (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0)) goto NBA_CHASE;
 							break;
 					}
 				}
@@ -2932,14 +2933,14 @@ void CNpc::NpcBehavior_Attack() {
 									this->NpcMagicHandler(dX, dY, 57);
 								if ((clientList[this->m_iTargetIndex]->m_iHP > 0) &&
 										  (this->bCheckResistingIceSuccess() == false)) {
-									if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
-										clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
+									if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] == 0) {
+										clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, true);
 
-										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
+										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
 
-										clientList[this->m_iTargetIndex]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, 0, nullptr);
+										clientList[this->m_iTargetIndex]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::ICE, 1, 0, nullptr);
 									}
 								}
 								break;
@@ -2949,11 +2950,11 @@ void CNpc::NpcBehavior_Attack() {
 									this->NpcMagicHandler(dX, dY, 57);
 								if ((npcList[this->m_iTargetIndex]->m_iHP > 0) &&
 										  (this->bCheckResistingIceSuccess() == false)) {
-									if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
-										npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
+									if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] == 0) {
+										npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_NPC, true);
 
-										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
+										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_NPC, 0, 0, 0, 1, 0, 0);
 									}
 								}
@@ -2965,14 +2966,14 @@ void CNpc::NpcBehavior_Attack() {
 								if (clientList[this->m_iTargetIndex] == nullptr) goto NBA_BREAK1;
 								if ((clientList[this->m_iTargetIndex]->m_iHP > 0) &&
 										  (this->bCheckResistingIceSuccess() == false)) {
-									if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
-										clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
+									if (clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] == 0) {
+										clientList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, true);
 
-										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
+										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_PLAYER, 0, 0, 0, 1, 0, 0);
 
-										clientList[this->m_iTargetIndex]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_ICE, 1, 0, nullptr);
+										clientList[this->m_iTargetIndex]->SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTON, MagicType::ICE, 1, 0, nullptr);
 									}
 								}
 								break;
@@ -2980,11 +2981,11 @@ void CNpc::NpcBehavior_Attack() {
 								if (npcList[this->m_iTargetIndex] == nullptr) goto NBA_BREAK1;
 								if ((npcList[this->m_iTargetIndex]->m_iHP > 0) &&
 										  (this->bCheckResistingIceSuccess() == false)) {
-									if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
-										npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
+									if (npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] == 0) {
+										npcList[this->m_iTargetIndex]->m_cMagicEffectStatus[MagicType::ICE] = 1;
 										game_.SetIceFlag(this->m_iTargetIndex, DEF_OWNERTYPE_NPC, true);
 
-										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, DEF_MAGICTYPE_ICE, dwTime + (5 * 1000),
+										game_.delayEvents_.add(DelayEventType::MAGICRELEASE, MagicType::ICE, dwTime + (5 * 1000),
 												  this->m_iTargetIndex, DEF_OWNERTYPE_NPC, 0, 0, 0, 1, 0, 0);
 									}
 								}
@@ -3259,7 +3260,7 @@ void CNpc::RemoveFromTarget(int iCode) {
 			if ((game_.m_pNpcList[i]->m_iTargetIndex == id_) &&
 					  (game_.m_pNpcList[i]->m_cTargetType == DEF_OWNERTYPE_NPC)) {
 				switch (iCode) {
-					case DEF_MAGICTYPE_INVISIBILITY:
+					case MagicType::INVISIBILITY:
 						if (game_.m_pNpcList[i]->m_cSpecialAbility == 1) {
 						} else {
 							game_.m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;

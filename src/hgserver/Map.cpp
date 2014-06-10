@@ -256,7 +256,7 @@ void CMap::GetDeadOwner(short * pOwner, char * pOwnerClass, short sX, short sY) 
 	*pOwnerClass = pTile->m_cDeadOwnerClass;
 }
 
-bool CMap::bGetMoveable(short dX, short dY, short * pDOtype, short * pTopItem) {
+bool CMap::bGetMoveable(short dX, short dY, DynamicObjectType * pDOtype, short * pTopItem) {
 	class CTile * pTile;
 
 	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return false;
@@ -556,7 +556,7 @@ bool CMap::bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int *
 	return false;
 }
 
-void CMap::SetDynamicObject(uint16_t wID, short sType, short sX, short sY, uint32_t dwRegisterTime) {
+void CMap::SetDynamicObject(uint16_t wID, DynamicObjectType sType, short sX, short sY, uint32_t dwRegisterTime) {
 	class CTile * pTile;
 
 
@@ -569,7 +569,7 @@ void CMap::SetDynamicObject(uint16_t wID, short sType, short sX, short sY, uint3
 	pTile->m_dwDynamicObjectRegisterTime = dwRegisterTime;
 }
 
-bool CMap::bGetDynamicObject(short sX, short sY, short *pType, uint32_t *pRegisterTime, int * pIndex) {
+bool CMap::bGetDynamicObject(short sX, short sY, DynamicObjectType *pType, uint32_t *pRegisterTime, int * pIndex) {
 	class CTile * pTile;
 
 
@@ -902,7 +902,7 @@ void CMap::CheckFireBluring(int sX, int sY) {
 					char cItemColor;
 					CItem *pItem = this->pGetItem(ix, iy, &sSpr, &sSprFrame, &cItemColor);
 					if (pItem != nullptr) delete pItem;
-					game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_FIRE, shared_from_this(), ix, iy, 6000);
+					game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DynamicObjectType::FIRE, shared_from_this(), ix, iy, 6000);
 					this->SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_SETITEM,
 							  ix, iy, sSpr, sSprFrame, cItemColor);
 				}
@@ -2617,8 +2617,8 @@ void CMap::RemoveOccupyFlags() {
 		if (dynObj == 0) return;
 		dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT,
 				  dynObj->m_sX, dynObj->m_sY,
-				  dynObj->m_sType, iDynamicObjectIndex, 0);
-		dynObj->map_->SetDynamicObject(0, 0, dynObj->m_sX, dynObj->m_sY, dwTime);
+				  (short) dynObj->m_sType, iDynamicObjectIndex, 0);
+		dynObj->map_->SetDynamicObject(0, DynamicObjectType::_0, dynObj->m_sX, dynObj->m_sY, dwTime);
 		if (dynObj == 0) {
 			for (ix = dX - 2; ix <= dX + 2; ix++)
 				for (iy = dY - 2; iy <= dY + 2; iy++) {
@@ -2698,7 +2698,7 @@ void CMap::MeteorStrikeHandler() {
 				} else {
 					game_.m_stMeteorStrikeResult.iStructureDamageAmount += (2 - iTotalESG);
 					iEffect = iDice(1, 5) - 1;
-					game_.dynamicObjects_.iAddDynamicObjectList(0, DEF_OWNERTYPE_PLAYER_INDIRECT, DEF_DYNAMICOBJECT_FIRE2, self, this->m_stStrikePoint[iTargetIndex].iEffectX[iEffect] +(iDice(1, 3) - 2), this->m_stStrikePoint[iTargetIndex].iEffectY[iEffect] +(iDice(1, 3) - 2), 60 * 1000 * 50);
+					game_.dynamicObjects_.iAddDynamicObjectList(0, DEF_OWNERTYPE_PLAYER_INDIRECT, DynamicObjectType::FIRE2, self, this->m_stStrikePoint[iTargetIndex].iEffectX[iEffect] +(iDice(1, 3) - 2), this->m_stStrikePoint[iTargetIndex].iEffectY[iEffect] +(iDice(1, 3) - 2), 60 * 1000 * 50);
 				}
 			}
 MSH_SKIP_STRIKE:
@@ -2749,10 +2749,10 @@ void CMap::DoMeteorStrikeDamageHandler() {
 			else iDamage = clientIter.m_iLevel * 2 + iDice(1, 10);
 			iDamage = iDice(1, clientIter.m_iLevel) + clientIter.m_iLevel;
 			if (iDamage > 255) iDamage = 255;
-			if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2) {
+			if (clientIter.m_cMagicEffectStatus[MagicType::PROTECT] == 2) {
 				iDamage = (iDamage / 2) - 2;
 			}
-			if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5) {
+			if (clientIter.m_cMagicEffectStatus[MagicType::PROTECT] == 5) {
 				iDamage = 0;
 			}
 			if (clientIter.m_iAdminUserLevel > 0) {
@@ -2770,10 +2770,10 @@ void CMap::DoMeteorStrikeDamageHandler() {
 						clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 						clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 					}
-					if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-						clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT], 0, nullptr);
-						clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
-						game_.delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
+					if (clientIter.m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
+						clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::HOLDOBJECT, clientIter.m_cMagicEffectStatus[MagicType::HOLDOBJECT], 0, nullptr);
+						clientIter.m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
+						game_.delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, MagicType::HOLDOBJECT);
 					}
 				}
 			}
@@ -2819,8 +2819,8 @@ void CMap::_DeleteRandomOccupyFlag() {
 				auto &dynObj = game_.dynamicObjects_[iDynamicObjectIndex];
 				dynObj->map_->SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT,
 						  dynObj->m_sX, dynObj->m_sY,
-						  dynObj->m_sType, iDynamicObjectIndex, 0);
-				dynObj->map_->SetDynamicObject(0, 0, dynObj->m_sX, dynObj->m_sY, dwTime);
+						  (short) dynObj->m_sType, iDynamicObjectIndex, 0);
+				dynObj->map_->SetDynamicObject(0, DynamicObjectType::_0, dynObj->m_sX, dynObj->m_sY, dwTime);
 				delete this->m_pOccupyFlag[i];
 				this->m_pOccupyFlag[i] = nullptr;
 				pTile->m_iOccupyFlagIndex = 0;
@@ -2889,9 +2889,9 @@ bool CMap::__bSetOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iClientH,
 		return false;
 	}
 	switch (iSide) {
-		case 1: iDynamicObjectIndex = game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_ARESDENFLAG1, shared_from_this(), dX, dY, 0, 0);
+		case 1: iDynamicObjectIndex = game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DynamicObjectType::ARESDENFLAG1, shared_from_this(), dX, dY, 0, 0);
 			break;
-		case 2: iDynamicObjectIndex = game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_ELVINEFLAG1, shared_from_this(), dX, dY, 0, 0);
+		case 2: iDynamicObjectIndex = game_.dynamicObjects_.iAddDynamicObjectList(0, 0, DynamicObjectType::ELVINEFLAG1, shared_from_this(), dX, dY, 0, 0);
 			break;
 		default: iDynamicObjectIndex = 0;
 	}
@@ -2958,14 +2958,14 @@ int CMap::iCreateMineral(int tX, int tY, char cLevel) {
 				case 2:
 				case 3:
 				case 4:
-					iDynamicHandle = dynObjects.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_MINERAL1, self, tX, tY, 0, i);
+					iDynamicHandle = dynObjects.iAddDynamicObjectList(0, 0, DynamicObjectType::MINERAL1, self, tX, tY, 0, i);
 					break;
 				case 5:
 				case 6:
-					iDynamicHandle = dynObjects.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_MINERAL2, self, tX, tY, 0, i);
+					iDynamicHandle = dynObjects.iAddDynamicObjectList(0, 0, DynamicObjectType::MINERAL2, self, tX, tY, 0, i);
 					break;
 				default:
-					iDynamicHandle = dynObjects.iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_MINERAL1, self, tX, tY, 0, i);
+					iDynamicHandle = dynObjects.iAddDynamicObjectList(0, 0, DynamicObjectType::MINERAL1, self, tX, tY, 0, i);
 					break;
 			}
 			if (iDynamicHandle == 0) {
@@ -3052,8 +3052,8 @@ void CMap::DoAbaddonThunderDamageHandler() {
 			}
 			if (clientIter.m_iAdminUserLevel > 0) continue;
 			iResult = iDice(1, 20) + 100;
-			if ((clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 2)
-					  || (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_PROTECT] == 5)) {
+			if ((clientIter.m_cMagicEffectStatus[MagicType::PROTECT] == 2)
+					  || (clientIter.m_cMagicEffectStatus[MagicType::PROTECT] == 5)) {
 				iResult /= 2;
 			}
 			// Not for v3.51: clientIter.SendNotifyMsg(0,DEF_NOTIFY_0BE5, 0, 0, 0, nullptr);
@@ -3068,10 +3068,10 @@ void CMap::DoAbaddonThunderDamageHandler() {
 					clientIter.map_->ClearOwner(0, clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 					clientIter.map_->SetOwner(clientIter.id_, DEF_OWNERTYPE_PLAYER, clientIter.m_sX, clientIter.m_sY);
 				}
-				if (clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] != 0) {
-					clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, 2, 0, nullptr);
-					game_.delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, DEF_MAGICTYPE_HOLDOBJECT);
-					clientIter.m_cMagicEffectStatus[DEF_MAGICTYPE_HOLDOBJECT] = 0;
+				if (clientIter.m_cMagicEffectStatus[MagicType::HOLDOBJECT] != 0) {
+					clientIter.SendNotifyMsg(0, DEF_NOTIFY_MAGICEFFECTOFF, MagicType::HOLDOBJECT, 2, 0, nullptr);
+					game_.delayEvents_.remove(clientIter.id_, DEF_OWNERTYPE_PLAYER, MagicType::HOLDOBJECT);
+					clientIter.m_cMagicEffectStatus[MagicType::HOLDOBJECT] = 0;
 				}
 			}
 		}
@@ -3183,13 +3183,13 @@ GET_VALIDLOC_SUCCESS:
 					break;
 				case DEF_MOVETYPE_SEQWAYPOINT:
 					npcs_[i]->m_cCurWaypoint = 1;
-					npcs_[i]->m_dX = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].x;
-					npcs_[i]->m_dY = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].y;
+					npcs_[i]->m_dX = (short) this->m_WaypointList[npcs_[i]->m_iWayPointIndex[npcs_[i]->m_cCurWaypoint]].x;
+					npcs_[i]->m_dY = (short) this->m_WaypointList[npcs_[i]->m_iWayPointIndex[npcs_[i]->m_cCurWaypoint]].y;
 					break;
 				case DEF_MOVETYPE_RANDOMWAYPOINT:
 					npcs_[i]->m_cCurWaypoint = (rand() % (npcs_[i]->m_cTotalWaypoint - 1)) + 1;
-					npcs_[i]->m_dX = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].x;
-					npcs_[i]->m_dY = (short) this->m_WaypointList[ npcs_[i]->m_iWayPointIndex[ npcs_[i]->m_cCurWaypoint ] ].y;
+					npcs_[i]->m_dX = (short) this->m_WaypointList[npcs_[i]->m_iWayPointIndex[npcs_[i]->m_cCurWaypoint]].x;
+					npcs_[i]->m_dY = (short) this->m_WaypointList[npcs_[i]->m_iWayPointIndex[npcs_[i]->m_cCurWaypoint]].y;
 					break;
 				case DEF_MOVETYPE_RANDOMAREA:
 					npcs_[i]->m_cCurWaypoint = 0;
@@ -3279,7 +3279,7 @@ GET_VALIDLOC_SUCCESS:
 			if (bIsSummoned == true)
 				npcs_[i]->m_dwSummonedTime = timeGetTime();
 			if (bFirmBerserk == true) {
-				npcs_[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] = 1;
+				npcs_[i]->m_cMagicEffectStatus[MagicType::BERSERK] = 1;
 				npcs_[i]->m_iStatus = npcs_[i]->m_iStatus | 0x20;
 				//iExpRoll = iDice(npcs_[i]->m_iExpDiceMin, npcs_[i]->m_iExpDiceMax);
 				//iExpRoll *= 2;
