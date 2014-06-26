@@ -4622,7 +4622,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize) {
 		}
 	}
 
-	PlayerOrder_GetSkills(iClientH);
+	//PlayerOrder_GetSkills(iClientH);
 
 	return;
 }
@@ -9116,10 +9116,10 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 				return;
 			}
 
-			if (memcmp(cp, "/dkset", 6) == 0) {
+			/*if (memcmp(cp, "/dkset", 6) == 0) {
 				GetDkSet(iClientH);
 				return;
-			}
+			}*/
 
 			//criticals by MihD
 			if (memcmp(cp, "/criticals", 10) == 0) {
@@ -16704,9 +16704,9 @@ BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char
 				if (pNpc->m_iHP == 0) pNpc->m_iHP = 1;
 
 				pNpc->m_iExpDiceMin = m_pNpcConfigList[i]->m_iExpDiceMin;
-				pNpc->m_iExpDiceMax = m_pNpcConfigList[i]->m_iExpDiceMax;
-				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin * 5;
-				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax * 5;
+				pNpc->m_iExpDiceMax = m_pNpcConfigList[i]->m_iExpDiceMax; //can change exp rate here
+				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin / 3; //gold rate
+				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax / 3; //gold rate
 				pNpc->m_iExp = (iDice(1, (m_pNpcConfigList[i]->m_iExpDiceMax - m_pNpcConfigList[i]->m_iExpDiceMin)) + m_pNpcConfigList[i]->m_iExpDiceMin) * 500;
 				pNpc->m_iHitDice = m_pNpcConfigList[i]->m_iHitDice;
 				pNpc->m_iDefenseRatio = m_pNpcConfigList[i]->m_iDefenseRatio;
@@ -58523,7 +58523,7 @@ void CGame::CheckDenialServiceAttack(int iClientH, DWORD dwClientTime) {
 	}
 }
 
-//50Cent - 100% Skill
+/*50Cent - 100% Skill
 
 void CGame::PlayerOrder_GetSkills(int iClientH) {
 	int i;
@@ -58532,4 +58532,4 @@ void CGame::PlayerOrder_GetSkills(int iClientH) {
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, i, m_pClientList[iClientH]->m_cSkillMastery[i], NULL, NULL);
 	}
 	ShowClientMsg(iClientH, "Enjoy your new skills!");
-}
+}*/
