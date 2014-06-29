@@ -16705,8 +16705,8 @@ BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char
 
 				pNpc->m_iExpDiceMin = m_pNpcConfigList[i]->m_iExpDiceMin;
 				pNpc->m_iExpDiceMax = m_pNpcConfigList[i]->m_iExpDiceMax; //can change exp rate here
-				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin / 3; //gold rate
-				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax / 3; //gold rate
+				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin / 5; //gold rate
+				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax / 5; //gold rate
 				pNpc->m_iExp = (iDice(1, (m_pNpcConfigList[i]->m_iExpDiceMax - m_pNpcConfigList[i]->m_iExpDiceMin)) + m_pNpcConfigList[i]->m_iExpDiceMin) * 500;
 				pNpc->m_iHitDice = m_pNpcConfigList[i]->m_iHitDice;
 				pNpc->m_iDefenseRatio = m_pNpcConfigList[i]->m_iDefenseRatio;
@@ -45428,14 +45428,14 @@ void CGame::GetExp(int iClientH, int iExp, BOOL bIsAttackerOwn) {
 		dV3 = (double) iExp;
 		dV1 = (dV2 + 1.025f) * dV3;
 		iExp = (int) dV1;
-                iExp = (iExp / 50);
+                iExp = (iExp / 64);
 	} else { //Lower exp
 		if ((m_pClientList[iClientH]->m_iLevel >= 100) &&((strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "aresden") == 0)
 				  || (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "elvine") == 0))) {
-			iExp = (iExp / 50);
+			iExp = (iExp / 64);
 		} else if ((strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "aresden") == 0)
 				  || (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "elvine") == 0)) {
-			iExp = (iExp / 50);
+			iExp = (iExp / 64);
 		}
 	}
 
@@ -45511,21 +45511,21 @@ void CGame::GetExp(int iClientH, int iExp, BOOL bIsAttackerOwn) {
 					//Exp gain based on lvl
 					if ((m_pClientList[iH]->m_iStatus & 0x10000) != 0)
 						iUnitValue *= 3;
-					m_pClientList[iH]->m_iExpStock += (iUnitValue / 50);
+					m_pClientList[iH]->m_iExpStock += (iUnitValue / 64);
 					iUnitValue = (int) dV3;
 				}
 			}
 		} else {
 			if ((m_pClientList[iClientH]->m_iStatus & 0x10000) != 0)
 				iExp *= 3;
-			m_pClientList[iClientH]->m_iExpStock += (iExp / 50);
+			m_pClientList[iClientH]->m_iExpStock += (iExp / 64);
 		}
 	} else {
 		if ((m_pClientList[iClientH]->m_iStatus & 0x10000) != 0)
 			iExp *= 3;
 
 		//Add exp to player
-		m_pClientList[iClientH]->m_iExpStock += (iExp / 50);
+		m_pClientList[iClientH]->m_iExpStock += (iExp / 64);
 	}
 }
 
