@@ -27,7 +27,7 @@ public:
 
 	char m_cNpcName[21]; // NPC�� �̸�. ��� �̸����� ��
 
-	char m_sAreaSize;
+	char m_sAreaSize = 0;
 
 	char m_cName[6]; // �� �̸��� ���α׷��� ���� �ĺ�����
 	char m_cMapIndex;
