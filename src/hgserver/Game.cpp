@@ -5267,6 +5267,12 @@ BOOL CGame::bReadCrusadeStructureConfigFile(char * cFn) {
 	return TRUE;
 }
 
+void logPlayerDataError(int line, const char *playerName) {
+	char cTxt[120];
+	wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format @ %d- Connection closed. ", playerName, line);
+	PutLogList(cTxt);
+}
+
 BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwSize) {
 	char * pContents, * token, * pOriginContents, cTmpName[11], cTxt[120];
 	char seps[] = "= \t\n";
@@ -5331,8 +5337,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 2:
 					// ÇÃ·¹ÀÌ¾îÀÇ ¸Ê»óÀÇ À§Ä¡ X
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5344,8 +5349,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 3:
 					// ÇÃ·¹ÀÌ¾îÀÇ ¸Ê»óÀÇ À§Ä¡ Y
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5358,8 +5362,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 					// ÇÃ·¹ÀÌ¾îÀÇ °è�?¤ »óÅÂ¸¦ ¾ò´Â´Ù. <- ÀÌ ±â´ÉÀº ÇöÀç ¾²�?ö ¾Ê´Â´Ù. °è�?¤�?¤º¸´Â º°µµ·Î Àü´ÞµÇ¹Ç·Î
 					/*
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-					wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-					PutLogList(cTxt);
+					logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 					delete pContents;
 					delete pStrTok;
 					return FALSE;
@@ -5405,8 +5408,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 2:
 							// m_dwCount
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5434,8 +5436,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 3:
 							// m_sTouchEffectType
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5447,8 +5448,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 4:
 							// m_sTouchEffectValue1
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5460,8 +5460,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 5:
 							// m_sTouchEffectValue2
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5473,8 +5472,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 6:
 							// m_sTouchEffectValue3
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5486,8 +5484,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 7:
 							// m_cItemColor
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5499,8 +5496,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 8:
 							// m_sItemSpecEffectValue1
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5512,8 +5508,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 9:
 							// m_sItemSpecEffectValue2
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5525,8 +5520,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 10:
 							// m_sItemSpecEffectValue3
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5538,8 +5532,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 11:
 							// m_wCurLifeSpan
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5552,21 +5545,65 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 12:
 							// m_dwAttribute
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
 							}
 							m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = atoi(token);
+							cReadModeB = 13;
+							break;
+						case 13:
+							// x
+							if (_bGetIsStringIsNumber(token) == FALSE) {
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
+								delete pContents;
+								delete pStrTok;
+								return FALSE;
+							}
+							m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = atoi(token);
+							if(m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x < -10) m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = -10;
+							cReadModeB = 14;
+							break;
+						case 14:
+							// y
+							if (_bGetIsStringIsNumber(token) == FALSE) {
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
+								delete pContents;
+								delete pStrTok;
+								return FALSE;
+							}
+							m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = atoi(token);
+							if(m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y < -10) m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = -10;
+							cReadModeB = 15;
+							break;
+						case 15:
+							// equipped
+							if (_bGetIsStringIsNumber(token) == FALSE) {
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
+								delete pContents;
+								delete pStrTok;
+								return FALSE;
+							}
+							if ((atoi(token)) && (m_pClientList[iClientH]->m_pItemList[iItemIndex] != NULL)) {
+								
+								if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType == DEF_ITEMTYPE_EQUIP)
+									m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = TRUE;
+								else m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = FALSE;
+							} else m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = FALSE;
 
-							// v1.4 °³ÀÎ °íÀ¯ ¾ÆÀÌÅÛÀ» È®ÀÎÇÑ´Ù.
+							if ((m_pClientList[iClientH] != NULL) && (m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] == TRUE)) {
+								
+								if (bEquipItemHandler(iClientH, i) == FALSE) // FALSE
+									m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = FALSE; 
+							}
+							
 							if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType == DEF_ITET_UNIQUE_OWNER) {
 								if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 != m_pClientList[iClientH]->m_sCharIDnum1) ||
 										  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 != m_pClientList[iClientH]->m_sCharIDnum2) ||
 										  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 != m_pClientList[iClientH]->m_sCharIDnum3)) {
-									// ÀÚ½ÅÀÇ °�?ÀÌ ¾Æ´Ñ ¾ÆÀÌÅÛÀ» °®°í ÀÖ´Ù.
-									wsprintf(cTxt, "(!) ´Ù¸¥ »ç¶÷ÀÇ ¾ÆÀÌÅÛ ¼Ò�?ö: Player(%s) Item(%s) %d %d %d - %d %d %d", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
+									
+									wsprintf(cTxt, "(!) ´Ù¸¥ »ç¶÷ÀÇ ¾ÆÀÌÅÛ ¼Ò�?ö: Player(%s) Item(%s) %d %d %d - %d %d %d", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
 											  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1,
 											  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2,
 											  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3,
@@ -5598,8 +5635,8 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 							// v1.433
 							if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan == 0) &&
 									  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP)) {
-								// ·Î±× ³²±ä´Ù.
-								wsprintf(G_cTxt, "(!) Ä³¸¯Å�?(%s) ¼ö¸í 0Â¥¸® Èñ»ý¼® ¼Ò�?ö!", m_pClientList[iClientH]->m_cCharName);
+								
+								wsprintf(G_cTxt, "(!) Ä³¸¯Å�?(%s) ¼ö¸í 0Â¥¸® Èñ»ý¼® ¼Ò�?ö!", m_pClientList[iClientH]->m_cCharName);
 								PutLogFileList(G_cTxt);
 								// ¼ö¸í 1·Î È¯¿ø
 								m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan = 1;
@@ -5632,8 +5669,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 6:
 					// Ä³¸¯Å�?ÀÇ ¼ºº°
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5645,8 +5681,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 7:
 					// Ä³¸¯Å�?ÀÇ ÇÇºÎ»ö
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5658,8 +5693,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 8:
 					// Ä³¸¯Å�?ÀÇ Çì¾î ½ºÅ¸À�?
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5671,8 +5705,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 9:
 					// Ä³¸¯Å�?ÀÇ ¸Ó¸®»ö
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5684,8 +5717,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 10:
 					// Ä³¸¯Å�?ÀÇ ¼Ó¿Ê»ö
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5738,8 +5770,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 13:
 					// ±æµå ·©Å©
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5751,8 +5782,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 14:
 					// HP
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5764,8 +5794,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 15:
 					// DefenseRatio »ç¿ëÇ�?�?ö ¾Ê´Â´Ù. ¹«ÀÇ¹ÌÇØ �?ü
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5778,8 +5807,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 16:
 					// HitRatio  »ç¿ëÇ�?�?ö ¾Ê´Â´Ù. ¹«ÀÇ¹ÌÇØ �?ü
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5792,8 +5820,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 17:
 					// Level
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5805,8 +5832,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 18:
 					// Str
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5818,8 +5844,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 19:
 					// Int
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5831,8 +5856,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 20:
 					// Vit
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5844,8 +5868,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 21:
 					// Dex
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5857,8 +5880,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 22:
 					// Mag
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5870,8 +5892,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 23:
 					// Charisma
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5883,8 +5904,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 24:
 					// Luck
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5896,8 +5916,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 25:
 					// Exp
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5917,8 +5936,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 27:
 					// Skill-Mastery ¼³�?¤ÇÑ´Ù.
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -5965,8 +5983,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 2:
 							// m_dwCount
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -5979,7 +5996,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 							// ¸¸¾à °¡�?ú ¼ö ÀÖ´Â �?ß·®ÀÌ ÃÊ°úµÈ ¾ÆÀÌÅÛÀÌ ÀÖ´Ù¸é 1°³·Î �?ÙÀÎ´Ù.
 							if (iGetItemWeight(m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex], iTemp) > _iCalcMaxLoad(iClientH)) {
 								iTemp = 1;
-								wsprintf(G_cTxt, "(!) Ä³¸¯Å�?(%s) ¾ÆÀÌÅÛ(%s) °³¼ö ¿À¹öÇÃ·Î¿ì", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_cName);
+								wsprintf(G_cTxt, "(!) Ä³¸¯Å�?(%s) ¾ÆÀÌÅÛ(%s) °³¼ö ¿À¹öÇÃ·Î¿ì", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_cName);
 								PutLogFileList(G_cTxt);
 								PutLogList(G_cTxt);
 							}
@@ -5995,8 +6012,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 3:
 							// m_sTouchEffectType
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6008,8 +6024,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 4:
 							// m_sTouchEffectValue1
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6021,8 +6036,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 5:
 							// m_sTouchEffectValue2
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6034,8 +6048,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 6:
 							// m_sTouchEffectValue3
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6047,8 +6060,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 7:
 							// m_cItemColor
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6060,8 +6072,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 8:
 							// m_sItemSpecEffectValue1
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6073,8 +6084,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 9:
 							// m_sItemSpecEffectValue2
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6086,8 +6096,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 10:
 							// m_sItemSpecEffectValue3
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6099,8 +6108,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 11:
 							// m_wCurLifeSpan
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6114,8 +6122,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 12:
 							// m_dwAttribute
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6155,8 +6162,8 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 							// v1.433
 							if ((m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan == 0) &&
 									  (m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP)) {
-								// ·Î±× ³²±ä´Ù.
-								wsprintf(G_cTxt, "(!) Ä³¸¯Å�?(%s) ¼ö¸í 0Â¥¸® Èñ»ý¼® ¼Ò�?ö!", m_pClientList[iClientH]->m_cCharName);
+								
+								wsprintf(G_cTxt, "(!) Ä³¸¯Å�?(%s) ¼ö¸í 0Â¥¸® Èñ»ý¼® ¼Ò�?ö!", m_pClientList[iClientH]->m_cCharName);
 								PutLogFileList(G_cTxt);
 								// ¼ö¸í 1·Î È¯¿ø
 								m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan = 1;
@@ -6201,8 +6208,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 30:
 					// m_iMP
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6214,8 +6220,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 31:
 					// m_iSP
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6227,8 +6232,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 32:
 					// m_cLU_Pool
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6240,8 +6244,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 					case 33:
 						// m_cLU_Vit
 						if (_bGetIsStringIsNumber(token) == FALSE) {
-							wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-							PutLogList(cTxt);
+							logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 							delete pContents;
 							delete pStrTok;
 							return FALSE;
@@ -6253,8 +6256,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 					case 34:
 						// m_cLU_Dex
 						if (_bGetIsStringIsNumber(token) == FALSE) {
-							wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-							PutLogList(cTxt);
+							logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 							delete pContents;
 							delete pStrTok;
 							return FALSE;
@@ -6266,8 +6268,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 					case 35:
 						// m_cLU_Int
 						if (_bGetIsStringIsNumber(token) == FALSE) {
-							wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-							PutLogList(cTxt);
+							logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 							delete pContents;
 							delete pStrTok;
 							return FALSE;
@@ -6279,8 +6280,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 					case 36:
 						// m_cLU_Mag
 						if (_bGetIsStringIsNumber(token) == FALSE) {
-							wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-							PutLogList(cTxt);
+							logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 							delete pContents;
 							delete pStrTok;
 							return FALSE;
@@ -6292,8 +6292,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 					case 37:
 						// m_cLU_Char
 						if (_bGetIsStringIsNumber(token) == FALSE) {
-							wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-							PutLogList(cTxt);
+							logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 							delete pContents;
 							delete pStrTok;
 							return FALSE;
@@ -6305,8 +6304,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 38:
 					// m_iEnemyKillCount
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6318,8 +6316,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 39:
 					// m_iPKCount
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6331,8 +6328,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 40:
 					// m_iRewardGold
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6344,8 +6340,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 41:
 					// Skill-SSN ¼³�?¤ÇÑ´Ù.
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6370,8 +6365,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 43:
 					// Hunger-Status ¼³�?¤ÇÑ´Ù.
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6383,8 +6377,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 44:
 					// AdminUserLevel
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6407,8 +6400,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 					/*case 44:
 					// AdminUserLevel
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6432,8 +6424,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 45:
 					// TimeLeft_ShutUp
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6445,8 +6436,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 46:
 					// TimeLeft_Rating
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6458,8 +6448,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 47:
 					// Rating
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6471,8 +6460,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 48:
 					// Guild GUID: ÀÌÀü¿¡ »ý¼ºµÇ¾ú´ø ±æµåµéÀº ¸ðµÎ -1ÀÌ µÇ ¹ö¸± °�?ÀÌ´Ù.
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6484,8 +6472,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 				case 49:
 					// Down Skill Index
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6496,8 +6483,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 50:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6514,8 +6500,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 51:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6533,8 +6518,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 52:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6546,8 +6530,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 53:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6559,8 +6542,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 54:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6575,8 +6557,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 1:
 							// Penalty Block Year
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6589,8 +6570,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 2:
 							// Penalty Block Month
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6603,8 +6583,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 3:
 							// Penalty Block day
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6619,8 +6598,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 56:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6632,8 +6610,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 57:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6649,8 +6626,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 59:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6662,8 +6638,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 60:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6675,8 +6650,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 61:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6688,8 +6662,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 62:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6701,8 +6674,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 63:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6714,8 +6686,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 64:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6727,8 +6698,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 65:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6740,8 +6710,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 66:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6757,8 +6726,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 1:
 							// FightZone Number
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6771,8 +6739,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 2:
 							// ¿¹¾àÇÑ ½Ã°£
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6785,8 +6752,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 						case 3:
 							// ³²Àº Æ¼Ä�?¼ýÀÚ
 							if (_bGetIsStringIsNumber(token) == FALSE) {
-								wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-								PutLogList(cTxt);
+								logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 								delete pContents;
 								delete pStrTok;
 								return FALSE;
@@ -6802,8 +6768,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 70:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6815,8 +6780,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 71:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6828,8 +6792,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 72:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6841,8 +6804,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 73:
 					if (strlen(token) > 10) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6854,8 +6816,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 74:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6867,8 +6828,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 75:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6880,8 +6840,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 76:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6893,8 +6852,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 77:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6906,8 +6864,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 78:
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6919,8 +6876,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 79: // v2.06 12-4
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -6933,8 +6889,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 				case 80: // v2.15 �?ö�?¸¾ÆÀÌÅÛ¾÷±×·¹ÀÌµå
 					if (_bGetIsStringIsNumber(token) == FALSE) {
-						wsprintf(cTxt, "(!!!) Player(%s) data file error! wrong Data format - Connection closed. ", m_pClientList[iClientH]->m_cCharName);
-						PutLogList(cTxt);
+						logPlayerDataError(__LINE__, m_pClientList[iClientH]->m_cCharName);
 						delete pContents;
 						delete pStrTok;
 						return FALSE;
@@ -7725,6 +7680,15 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 			strcat(pData, cTxt);
 			strcat(pData, " ");
 			itoa(m_pClientList[iClientH]->m_pItemList[i]->m_dwAttribute, cTxt, 10);
+			strcat(pData, cTxt);
+			strcat(pData, " ");
+			itoa(m_pClientList[iClientH]->m_ItemPosList[i].x, cTxt, 10);
+			strcat(pData, cTxt);
+			strcat(pData, " ");
+			itoa(m_pClientList[iClientH]->m_ItemPosList[i].y, cTxt, 10);
+			strcat(pData, cTxt);
+			strcat(pData, " ");
+			itoa(m_pClientList[iClientH]->m_bIsItemEquipped[i], cTxt, 10);
 			strcat(pData, cTxt);
 			strcat(pData, "\n");
 		}
@@ -13302,7 +13266,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 			// °¡°�?À» °è»êÇÑ´Ù.
 			iCost = pItem->m_wPrice * pItem->m_dwCount;
 
-			/* v1.3 <- ÀÌ°Ç _bAddClientItemList¿¡¼­ Ã¼Å©Ç�?´Â ±â´ÉÀÌ¹Ç·Î µÎ¹øÇÒ ÇÊ¿ä°¡ ¾ø´Ù.
+			/* v1.3 <- ÀÌ°Ç _bAddClientItemList¿¡¼­ Ã¼Å©Ç�?´Â ±â´ÉÀÌ¹Ç·Î µÎ¹øÇÒ ÇÊ¿ä°¡ ¾ø´Ù.
 			if ((pItem->m_cItemType == DEF_ITEMTYPE_CONSUME) || (pItem->m_cItemType == DEF_ITEMTYPE_ARROW))
 				iItemWeight = (pItem->m_wWeight * pItem->m_dwCount);
 			else iItemWeight = pItem->m_wWeight;
@@ -30562,7 +30526,7 @@ BOOL CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill) {
 	return FALSE;
 }
 
-/* ¹®�?¦ÀÇ ¹«ÇÑ·çÇ�?
+/* ¹®�?¦ÀÇ ¹«ÇÑ·çÇ�?
 
 BOOL CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill)
 {
@@ -47036,36 +47000,36 @@ void CGame::OnTimer(char cType) {
 
 
 	if ((dwTime - m_dwGameTime7) > 100000) { //Timer
-		switch (iDice(1, 19)) { //Pick a random advert
+		// switch (iDice(1, 19)) { //Pick a random advert
 				//Change these to whatever you want to display
-			case 1: wsprintf(cAdvert, "Server-Info: Criticals: Ctrl + C (300 Criticals = 5000 Gold).");
-				break;
-			case 2: wsprintf(cAdvert, "Server-Info: MIDDLELAND NO TIENE PITS (SOLO SE USA EN CRUSADE).");
-				break;
-			case 3: wsprintf(cAdvert, "Server-Info: Lista de Drops y dem�s guias en la Web!.");
-				break;
-			case 4: wsprintf(cAdvert, "Server-Info: Max Barrack lvl 200 || PL: No Max lvl!.");
-				break;
-			case 5: wsprintf(cAdvert, "Server-Info: Druncian PITS: HC,TW,Dark-Elf,Liche,Uni,Barlog & G.Lizard.");
-				break;
-			case 6: wsprintf(cAdvert, "Server-Info: MIDDLELAND DON'T HAVE PITS!. (ONLY USED IN CRUSADE).");
-				break;
-			case 7: wsprintf(cAdvert, "Server-Info: PL PITS: Ettin,Demon,Gargoyle,Orges,Ice-Golems,Wyverns & Abbaddon.");
-				break;
-			case 8: wsprintf(cAdvert, "Server-Info: City PITS: Cyclops, WereWolf, Scorp, Clay Golems & Hellhound.");
-				break;
-			case 9: wsprintf(cAdvert, "Server-Info: Drop List and other Guides in the Website!.");
-				break;
-			case 10: wsprintf(cAdvert, "SERVER-Info: Pedimos disculpas a todos los afectados por la caida del primer d�a!.");
-				break;
-		}
-		for (q = 1; q < DEF_MAXCLIENTS; q++) // Check all clients
-		{
-			if ((m_pClientList[q] != NULL)) // Check if client is active
-			{ //Send message to server.
-				SendNotifyMsg(NULL, q, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cAdvert);
-			}
-		}
+			// case 1: wsprintf(cAdvert, "Server-Info: Criticals: Ctrl + C (300 Criticals = 5000 Gold).");
+				// break;
+			// case 2: wsprintf(cAdvert, "Server-Info: MIDDLELAND NO TIENE PITS (SOLO SE USA EN CRUSADE).");
+				// break;
+			// case 3: wsprintf(cAdvert, "Server-Info: Lista de Drops y demas guias en la Web!.");
+				// break;
+			// case 4: wsprintf(cAdvert, "Server-Info: Max Barrack lvl 200 || PL: No Max lvl!.");
+				// break;
+			// case 5: wsprintf(cAdvert, "Server-Info: Druncian PITS: HC,TW,Dark-Elf,Liche,Uni,Barlog & G.Lizard.");
+				// break;
+			// case 6: wsprintf(cAdvert, "Server-Info: MIDDLELAND DON'T HAVE PITS!. (ONLY USED IN CRUSADE).");
+				// break;
+			// case 7: wsprintf(cAdvert, "Server-Info: PL PITS: Ettin,Demon,Gargoyle,Orges,Ice-Golems,Wyverns & Abbaddon.");
+				// break;
+			// case 8: wsprintf(cAdvert, "Server-Info: City PITS: Cyclops, WereWolf, Scorp, Clay Golems & Hellhound.");
+				// break;
+			// case 9: wsprintf(cAdvert, "Server-Info: Drop List and other Guides in the Website!.");
+				// break;
+			// case 10: wsprintf(cAdvert, "SERVER-Info: Pedimos disculpas a todos los afectados por la caida del primer dia!.");
+				// break;
+		// }
+		// for (q = 1; q < DEF_MAXCLIENTS; q++) // Check all clients
+		// {
+			// if ((m_pClientList[q] != NULL)) // Check if client is active
+			// { //Send message to server.
+				// SendNotifyMsg(NULL, q, DEF_NOTIFY_NOTICEMSG, NULL, NULL, NULL, cAdvert);
+			// }
+		// }
 		m_dwGameTime7 = dwTime; //Reset timer so it doesn't spam :D
 	}
 
@@ -58533,3 +58497,4 @@ void CGame::PlayerOrder_GetSkills(int iClientH) {
 	}
 	ShowClientMsg(iClientH, "Enjoy your new skills!");
 }*/
+
