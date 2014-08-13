@@ -1743,7 +1743,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	}
 
 	// Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤ Ã­Å¡Â?Ã¬Â§Å¡Ã¬Â¨ËœÃ¬Â¨Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤
-	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(pBuffer, 6 + 1 + iTotalItemA * 44 + iTotalItemB * 43 + DEF_MAXMAGICTYPE + DEF_MAXSKILLTYPE);
+	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(pBuffer, 6 + 1 + iTotalItemA * 44 + 1 + iTotalItemB * 43 + DEF_MAXMAGICTYPE + DEF_MAXSKILLTYPE);
 	switch (iRet) {
 		case DEF_XSOCKEVENT_QUENEFULL:
 		case DEF_XSOCKEVENT_SOCKETERROR:
