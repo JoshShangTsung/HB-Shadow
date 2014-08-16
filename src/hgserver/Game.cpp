@@ -48021,7 +48021,7 @@ BOOL CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 }
 
 // 05/21/2004 - Hypnotoad - Balances to drop status
-
+// Primary Drops
 void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType) {
 	class CItem * pItem;
 	char cColor, cItemName[21];
@@ -48271,7 +48271,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						// 70% the Weapon is Melee
 						switch (iGenLevel) {
 
-							case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
+	case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
 								switch (iDice(1, 3)) {
 									case 1: iItemID = 1;
 										break; // Dagger
@@ -48323,78 +48323,86 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 								break;
 
 							case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
-								switch (iDice(1, 3)) {
+								switch (iDice(1, 4)) {
 									case 1: iItemID = 31;
 										break; // Esterk
 									case 2: iItemID = 34;
 										break; // Rapier
 									case 3: iItemID = 71;
 										break; // WarAxe
+                                                                        case 4: iItemID = 50;
+                                                                                break; // greatsword
 								}
 								break;
 
-							case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem
+							case 6: // Orge, WereWolf, Dark-Elf, Ice-Golem, minatours
 								switch (iDice(1, 3)) {
-									case 1: iItemID = 617;
-										break; // CompositeBow
+									case 1: iItemID = 54;
+										break; // Flameberge
 									case 2: iItemID = 615;
 										break; // Giant Sword
-									case 3: iItemID = 560;
-										break; // Battle Axe
+									//case 3: iItemID = 560;
+									//	break; // Battle Axe
+                                                                        case 3: iItemID = 51;
+										break; // Great Sword
 								}
 								break;
 
 							case 7: // Liche, Frost
-								switch (iDice(1, 2)) {
+								switch (iDice(1,4)) {
 									case 1: iItemID = 54;
-										break; // Flamebergr
-									case 2: iItemID = 761;
-										break; // Battle Hammer
+										break; // Flameberge
+									case 2: iItemID = 760;
+										break; // Hammer
+                                                                    case 3: iItemID = 51;
+                                                                            break; // Great Sword
+                                                                    case 4: iItemID = 615;
+                                                                    break; // Giant Sword
 								}
 								break;
 
 							case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
-								switch (iDice(1, 3)) {
+								switch (iDice(1, 4)) {
 									case 1: iItemID = 844;
 										break; // Black Shadow Sword
-									case 2: iItemID = 843;
-										break; // Barbarian Hammer
+									case 2: iItemID = 615;
+										break; // Giant Sword
 									case 3: iItemID = 560;
 										break; // BattleAxe
+                                                                    case 4: iItemID = 760;  
+                                                                    break; //Hammer
 								}
 								break;
 
 							case 9: // MountainGiant
-								switch (iDice(1, 6)) {
-									case 1: iItemID = 23;
-										break; // Sabre
-									case 2: iItemID = 25;
-										break; // Scimitar
-									case 3: iItemID = 28;
+								switch (iDice(1, 2)) {
+									case 1: iItemID = 761;
+										break; // Battle Hammer
+									case 2: iItemID = 760;
+										break; // Hammer
+									/*case 3: iItemID = 28;
 										break; // Falchion
 									case 4: iItemID = 31;
 										break; // Esterk
 									case 5: iItemID = 34;
 										break; // Rapier
 									case 6: iItemID = 760;
-										break; // Hammer
+										break; // Hammer*/
 								}
 								break;
 
 							case 10: // Ettin
-								switch (iDice(1, 4)) {
+								switch (iDice(1, 3)) {
 									case 1: iItemID = 844;
 										break; // Black Shadow Sword
 									case 2: iItemID = 761;
-										break; // GiantHammer
-									case 3: iItemID = 843;
-										break; // Barbarian Hammer
-									case 4: iItemID = 560;
-										break; // BattleAxe
+										break; // BattleHammer
+									//case 3: iItemID = 843;
+									//	break; // Barbarian Hammer
+									case 3: iItemID = 760;
+										break; // Hammer
 								}
 								break;
-
-
 						}
 					} else {
 						// 30% the weapon is a Wand
@@ -48423,6 +48431,31 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					switch (iGenLevel) {
 
 						case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
+                                                    switch (iDice(1,11)) {
+                                                        case 1: iItemID = 453;
+                                                                break; // Shirt M
+                                                        case 2: iItemID = 471;
+                                                                break; // Shirt W
+                                                        case 3: iItemID = 459;
+                                                                break; // Trousers M
+                                                        case 4: iItemID = 480;
+                                                                break; // Trousers W
+                                                        case 5: iItemID = 460;
+                                                                break; // Knee Trousers M
+                                                        case 6: iItemID = 481;
+                                                                break; // Knee Trousers W
+                                                        case 7: iItemID = 470;
+                                                                break; // Chemise W
+                                                        case 8: iItemID = 473;
+                                                                break; // Bodice W
+                                                        case 9: iItemID = 474;
+                                                                break; // Long Bodice W
+                                                        case 10: iItemID = 479;
+                                                                break; // Skirt W
+                                                        case 11: iItemID = 484;
+                                                                break; // Tunic M
+                                                    }
+                                                    break;
 						case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie
 							switch (iDice(1, 2)) {
 								case 1: iItemID = 79;
@@ -48433,25 +48466,48 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							break;
 
 						case 3: switch (iDice(1, 2)) {// Stone-Golem, Clay-Golem
-								case 1: iItemID = 450;
-									break; // Shoes
-								case 2: iItemID = 402;
-									break; // Cape
+								case 1: iItemID = 79;
+									break; // WoodShield
+								case 2: iItemID = 81;
+									break; // TargeShield
 							}
 							break;
 
 						case 4: // Hellbound, Rudolph
-							switch (iDice(1, 3)) {
+							switch (iDice(1, 6)) {
 								case 1: iItemID = 450; // Shoes
-								case 2: iItemID = 402; // Cape
-								case 3: iItemID = 84;
-									break; // IronShield
-							}
+                                                                break;
+								case 2: iItemID = 454; // Hauberk M
+                                                                break;
+								case 3: iItemID = 84;// IronShield
+								break;
+                                                            case 4: iItemID = 472; // Hauberk W
+                                                            break;
+                                                            case 5: iItemID = 461; // ChainHose M
+                                                            break;
+                                                            case 6: iItemID = 482; // ChainHose W
+                                                            break;
+                                                        }
 							break;
 
 						case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
-							switch (iDice(1, 12)) {
-								case 1: iItemID = 916;
+							//switch (iDice(1, 12)) {
+                                                            switch (iDice(1, 7)) {
+								case 1: iItemID = 454; // Hauberk M
+                                                                break;
+								case 2: iItemID = 85;// LagiShield
+								break;
+                                                            case 3: iItemID = 472; // Hauberk W
+                                                            break;
+                                                            case 4: iItemID = 461; // ChainHose M
+                                                            break;
+                                                            case 5: iItemID = 482; // ChainHose W
+                                                            break;
+                                                                case 6: iItemID = 600; // Helm M
+                                                                break;
+                                                                case 7: iItemID = 602; // Helm W
+                                                                break;
+								/*case 1: iItemID = 916;
 									break; // Dream Plate (M)
 								case 2: iItemID = 917;
 									break; // Dream Plate (W
@@ -48474,13 +48530,32 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 								case 11: iItemID = 926;
 									break; // Dream Helm (M)
 								case 12: iItemID = 927;
-									break; // Dream Helm (W)
+									break; // Dream Helm (W)*/
 
 							}
 							break;
 
 						case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem
-							switch (iDice(1, 12)) {
+                                                            switch (iDice(1, 9)) {
+								case 1: iItemID = 454; // Hauberk M
+                                                                break;
+								case 2: iItemID = 85;// LagiShield
+								break;
+                                                            case 3: iItemID = 472; // Hauberk W
+                                                            break;
+                                                            case 4: iItemID = 461; // ChainHose M
+                                                            break;
+                                                            case 5: iItemID = 482; // ChainHose W
+                                                            break;
+                                                                case 6: iItemID = 600; // Helm M
+                                                                break;
+                                                                case 7: iItemID = 602; // Helm W
+                                                                break;
+                                                                case 8: iItemID = 752; // Wizard Cap M
+                                                                break;
+                                                                case 9: iItemID = 756; // Wizard Cap W
+                                                                break;
+                                                    /*switch (iDice(1, 12)) {
 								case 1: iItemID = 934;
 									break; // ExtasisMail(M)
 								case 2: iItemID = 935;
@@ -48504,13 +48579,36 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 								case 11: iItemID = 930;
 									break; // ExtasisChainHose(M)
 								case 12: iItemID = 931;
-									break; // ExtasisChainHose(W)
+									break; // ExtasisChainHose(W)*/
 
 							}
 							break;
 
 						case 7: // Liche, Frost, Ettin & Lizards
-							switch (iDice(1, 12)) {
+                                                    switch (iDice(1, 11)) {
+								case 1: iItemID = 454; // Hauberk M
+                                                                break;
+								case 2: iItemID = 751;// Wings-Helm M
+								break;
+                                                                case 3: iItemID = 472; // Hauberk W
+                                                                break;
+                                                                case 4: iItemID = 461; // ChainHose M
+                                                                break;
+                                                                case 5: iItemID = 482; // ChainHose W
+                                                                break;
+                                                                case 6: iItemID = 600; // Helm M
+                                                                break;
+                                                                case 7: iItemID = 602; // Helm W
+                                                                break;
+                                                                case 8: iItemID = 752; // Wizard Cap M
+                                                                break;
+                                                                case 9: iItemID = 756; // Wizard Cap W
+                                                                break;
+                                                                case 10: iItemID = 755; // Wings-Helm W
+                                                                break;
+                                                                case 11: iItemID = 87; // TowerShield
+                                                                break;
+							/*switch (iDice(1, 12)) {
 								case 1: iItemID = 944;
 									break; // RuneHauberk(M)
 								case 2: iItemID = 945;
@@ -48534,17 +48632,82 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 								case 11: iItemID = 946;
 									break; //Rune Chain Mail(M)
 								case 12: iItemID = 947;
-									break; // Rune Chain Mail (W)
+									break; // Rune Chain Mail (W)*/
 							}
 							break;
 
-						case 8: switch (iDice(1, 2)) {// Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
+						case 8: switch (iDice(1, 23)) {// Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
 								case 1: iItemID = 402; // Cape
+                                                                break;
 								case 2: iItemID = 450; //Shoes.
+                                                                break;
+                                                                case 3: iItemID = 87; // TowerShield
+                                                                break;
+                                                                case 4: iItemID = 458; // PlateMail M
+                                                                        break;
+                                                                case 5: iItemID = 478; // PlateMail W
+                                                                break;
+                                                                case 6: iItemID = 456; // ChainMail M
+                                                                break;
+                                                                case 7: iItemID = 476; // ChainMail W
+                                                                break;
+                                                    case 8: iItemID = 601; // FullHelm M
+                                                    break;
+                                                    case 9: iItemID = 603; // FullHelm W
+                                                    break;
+                                                    case 10: iItemID = 753; // Wizard Hat M
+                                                    break;
+                                                    case 11: iItemID = 757; // Wizard Hat W
+                                                    break;
+                                                    case 12: iItemID = 750; // Horned Helm M
+                                                    break;
+                                                    case 13: iItemID = 754; // Horned Helm W
+                                                    break;
+                                                                case 14: iItemID = 454; // Hauberk M
+                                                                break;
+								case 15: iItemID = 751;// Wings-Helm M
+								break;
+                                                                case 16: iItemID = 472; // Hauberk W
+                                                                break;
+                                                                case 17: iItemID = 461; // ChainHose M
+                                                                break;
+                                                                case 18: iItemID = 482; // ChainHose W
+                                                                break;
+                                                                case 19: iItemID = 600; // Helm M
+                                                                break;
+                                                                case 20: iItemID = 602; // Helm W
+                                                                break;
+                                                                case 21: iItemID = 752; // Wizard Cap M
+                                                                break;
+                                                                case 22: iItemID = 756; // Wizard Cap W
+                                                                break;
+                                                                case 23: iItemID = 755; // Wings-Helm W
+                                                                break;
 							}
 							break;
 
-						case 9: switch (iDice(1, 12)) { //M-G only.
+						case 9: switch (iDice(1, 10)) {
+								case 1: iItemID = 454; // Hauberk M
+                                                                break;
+								case 2: iItemID = 601;// Full-Helm M
+								break;
+                                                                case 3: iItemID = 472; // Hauberk W
+                                                                break;
+                                                                case 4: iItemID = 461; // ChainHose M
+                                                                break;
+                                                                case 5: iItemID = 482; // ChainHose W
+                                                                break;
+                                                                case 6: iItemID = 600; // Helm M
+                                                                break;
+                                                                case 7: iItemID = 602; // Helm W
+                                                                break;
+                                                                case 8: iItemID = 752; // Wizard Cap M
+                                                                break;
+                                                                case 9: iItemID = 756; // Wizard Cap W
+                                                                break;
+                                                                case 10: iItemID = 603; // Full-Helm W
+                                                                break;
+                                                    /*switch (iDice(1, 12)) { //M-G only.
 								case 1: iItemID = 944;
 									break; // RuneHauberk(M)
 								case 2: iItemID = 945;
@@ -48568,11 +48731,39 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 								case 11: iItemID = 946;
 									break; //Rune Chain Mail(M)
 								case 12: iItemID = 947;
-									break; // Rune Chain Mail (W)
+									break; // Rune Chain Mail (W)*/
 							}
 							break;
 
-						case 10: switch (iDice(1, 12)) { //Master Mage ORc..
+						case 10: switch (iDice(1, 10)) {
+								case 1: iItemID = 454; // Hauberk M
+                                                                break;
+								case 2: iItemID = 601;// Full-Helm M
+								break;
+                                                                case 3: iItemID = 472; // Hauberk W
+                                                                break;
+                                                                case 4: iItemID = 461; // ChainHose M
+                                                                break;
+                                                                case 5: iItemID = 482; // ChainHose W
+                                                                break;
+                                                                case 6: iItemID = 600; // Helm M
+                                                                break;
+                                                                case 7: iItemID = 602; // Helm W
+                                                                break;
+                                                                case 8: iItemID = 752; // Wizard Cap M
+                                                                break;
+                                                                case 9: iItemID = 756; // Wizard Cap W
+                                                                break;
+                                                                case 10: iItemID = 603; // Full-Helm W
+                                                                break;
+                                                                   case 11: iItemID = 87; // TowerShield
+                                                                break;
+                                                                case 12: iItemID = 456; // ChainMail M
+                                                                break;
+                                                                case 13: iItemID = 476; // ChainMail W
+                                                                break;
+                                                                //HElm,FullHelm,TowerShield,Chainhose,ChainMail,Berk,WizCap,WingsHelm
+                                                    /*switch (iDice(1, 12)) { //Master Mage ORc..
 								case 1: iItemID = 944;
 									break; // RuneHauberk(M)
 								case 2: iItemID = 945;
@@ -48596,24 +48787,24 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 								case 11: iItemID = 946;
 									break; //Rune Chain Mail(M)
 								case 12: iItemID = 947;
-									break; // Rune Chain Mail (W)
+									break; // Rune Chain Mail (W)*/
 							}
 							break;
 					}
 				}
-				// 0-None 1-Ã­â€¢â€žÃ¬â€šÂ´ÃªÂ¸Â°Ã«Å’â‚¬Ã«Â¯Â¸Ã¬Â§â‚¬Ã¬Â¶â€?ÃªÂ°â‚¬ 2-Ã¬Â¤â€˜Ã«Â?â€¦Ã­Å¡Â¨ÃªÂ³Â¼ 3-Ã¬Â â€¢Ã¬Â?ËœÃ¬Â?Ëœ  
-				// 5-Ã«Â¯Â¼Ã¬Â²Â©Ã¬Â?Ëœ 6-ÃªÂ°â‚¬Ã«Â²Â¼Ã¬Å¡Â´ 7-Ã¬ËœË†Ã«Â¦Â¬Ã­â€¢Å“ 8-ÃªÂ°â€¢Ã­â„¢â€?Ã«Â?Å“ 9-ÃªÂ³Â Ã«Å’â‚¬Ã«Â¬Â¸Ã«Âªâ€¦Ã¬Â?Ëœ 10-Ã«Â§Ë†Ã«Â²â€¢ Ã¬â€žÂ±ÃªÂ³ÂµÃ¬Â?Ëœ
-				// Ã¬â€¢â€žÃ¬Â?Â´Ã­â€¦Å“Ã¬Â?â€ž Ã«Â§Å’Ã«â€œÂ¤ÃªÂ³Â  
+				// 0-None 1-í•„ì‚´ê¸°ëŒ€ë¯¸ì§€ì¶�?ê°€ 2-ì¤‘ë�?…íš¨ê³¼ 3-ì •ì�?˜ì�?˜  
+				// 5-ë¯¼ì²©ì�?˜ 6-ê°€ë²¼ìš´ 7-ì˜ˆë¦¬í•œ 8-ê°•í™�?ë�?œ 9-ê³ ëŒ€ë¬¸ëª…ì�?˜ 10-ë§ˆë²• ì„±ê³µì�?˜
+				// ì•„ì�?´í…œì�?„ ë§Œë“¤ê³  
 				pItem = new class CItem;
-				// ÃªÂ¸Â°Ã«Â³Â¸ Ã­Å Â¹Ã¬â€žÂ±Ã¬Å“Â¼Ã«Â¡Å“ Ã¬â€¢â€žÃ¬Â?Â´Ã­â€¦Å“ Ã¬Æ’Â?Ã¬â€žÂ± 
+				// ê¸°ë³¸ íŠ¹ì„±ìœ¼ë¡œ ì•„ì�?´í…œ ìƒ�?ì„± 
 				if (_bInitItemAttr(pItem, iItemID) == FALSE) {
 					delete pItem;
 					return;
 				}
 
 				if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK) {
-					// Â°Ã¸Â°Ã? Â¹Â«Â±Ã¢Â·Ã¹Â¿Â¡ ÂºÃ™Ã€Â» Â¼Ã¶ Ã€Ã–Â´Ã‚ Ã?Â¢ÂµÃŽÂ»Ã§Â¸Â¦ Â¼Â±Ã…Ãƒ 
-					// Â°Â¡ÂºÂ­Â¿Ã®(3%) Â°Â­ÃˆÂ­ÂµÃˆ(7%) Ã‡ÃŠÂ»Ã¬Ã€Ã‡(15%) Â¹ÃŽÃƒÂ¸Ã€Ã‡(20%) Ã?Â¤Ã€Ã‡Ã€Ã‡(20%) Ã?ÃŸÂµÂ¶Ã€Ã‡(16%) Â¿Â¹Â¸Â®Ã‡Ã‘(16%) Â°Ã­Â´Ã«Â¹Â®Â¸Ã­Ã€Ã‡(3%)
+					// °ø°�? ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â �?¢µÎ»ç¸¦ ¼±ÅÃ 
+					// °¡º­¿î(3%) °­È­µÈ(7%) ÇÊ»ìÀÇ(15%) ¹ÎÃ¸ÀÇ(20%) �?¤ÀÇÀÇ(20%) �?ßµ¶ÀÇ(16%) ¿¹¸®ÇÑ(16%) °í´ë¹®¸íÀÇ(3%)
 					iResult = iDice(1, 10000);
 					if ((iResult >= 1) && (iResult <= 299)) {
 						dwType = 6;
@@ -48641,13 +48832,13 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						cColor = 8;
 					}
 
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Â»Ã¶Â»Ã³ Ã€Ã�?Â·Ã‚ 
+					// ¾ÆÀÌÅÛ »ö»ó ÀÔ·Â 
 					pItem->m_cItemColor = cColor;
 
-					// Â°Â¡ÂºÂ­Â¿Ã®, Â°Â­ÃˆÂ­ÂµÃˆ, Ã‡ÃŠÂ»Ã¬Ã€Ã‡, Â¹ÃŽÃƒÂ¸Ã€Ã‡, Ã?Â¤Ã€Ã‡Ã€Ã‡, Ã?ÃŸÂµÂ¶Ã€Ã‡, Â¿Â¹Â¸Â®Ã‡Ã‘, Â°Ã­Â´Ã«Â¹Â®Â¸Ã­Ã€Ã‡
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Main Ã†Â¯Â¼ÂºÃ„Â¡ Ã?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚ 
+					// °¡º­¿î, °­È­µÈ, ÇÊ»ìÀÇ, ¹ÎÃ¸ÀÇ, �?¤ÀÇÀÇ, �?ßµ¶ÀÇ, ¿¹¸®ÇÑ, °í´ë¹®¸íÀÇ
+					// ¾ÆÀÌÅÛ Main Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚ 
+					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 					iResult = iDice(1, 30000);
 					if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 					else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -48664,46 +48855,46 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
-					// Â¹Â«Â±Ã¢Ã€Ã‡ Main Ã†Â¯Â¼ÂºÃ„Â¡Â¿Â¡ ÂµÃ»Â¶Ã³ Â¼Ã¶Ã„Â¡ ÂºÂ¸Ã?Â¤ 
+					// ¹«±âÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 					switch (dwType) {
-						case 1: // Ã‡ÃŠÂ»Ã¬ Ã…Â¸Â°Ã? ÃƒÃ–Ã€Ãº +5
+						case 1: // ÇÊ»ì Å¸°�? ÃÖÀú +5
 							if (dwValue <= 5) dwValue = 5;
 							break;
-						case 2: // Ã?ÃŸÂµÂ¶ Ã…Â¸Â°Ã? ÃƒÃ–Ã€Ãº +20
+						case 2: // �?ßµ¶ Å¸°�? ÃÖÀú +20
 							if (dwValue <= 4) dwValue = 4;
 							break;
-						case 6: // Â°Ã¦Â·Â®ÃˆÂ­ ÃƒÃ–Ã€Ãº  +16%
+						case 6: // °æ·®È­ ÃÖÀú  +16%
 							if (dwValue <= 4) dwValue = 4;
 							break;
-						case 8: // Â¼Ã¶Â¸Ã­ ÃƒÃ–Ã€Ãº +14%					
+						case 8: // ¼ö¸í ÃÖÀú +14%					
 							if (dwValue <= 2) dwValue = 2;
 							break;
 					}
-					// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶Ã?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡Ã?Ã€Ã?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
+					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Main Ã†Â¯Â¼ÂºÃ„Â¡, Â°Âª Ã€Ã�?Â·Ã‚
+					// ¾ÆÀÌÅÛ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
 					pItem->m_dwAttribute = NULL;
 					dwType = dwType << 20;
 					dwValue = dwValue << 16;
 					pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã�?Â·Ã‚ÂµÃ‰ ÃˆÂ®Â·Ã¼Ã€Âº 40%
+					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (iDice(1, 10000) >= 6000) {
 
-						// ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ÃˆÂ¿Â°Ãº Ã?Â¾Â·Ã¹: 
-						//ÃƒÃŸÂ°Â¡ ÂµÂ¶Â¼ÂºÃ€ÃºÃ‡Ã—(1), ÃƒÃŸÂ°Â¡ Â¸Ã­Ã?ÃŸÂ°Âª(2), ÃƒÃŸÂ°Â¡ Â¹Ã¦Â¾Ã®Â°Âª(3), HP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(4), SP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(5)
-						//MP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(6), ÃƒÃŸÂ°Â¡ Â¸Â¶Â¹Ã½Ã€ÃºÃ‡Ã—(7), Â¹Â°Â¸Â® Â´Ã«Â¹ÃŒÃ?Ã¶ ÃˆÃ­Â¼Ã¶(8), Â¸Â¶Â¹Ã½ Â´Ã«Â¹ÃŒÃ?Ã¶ ÃˆÃ­Â¼Ã¶(9)
-						//Â¿Â¬Ã…Â¸ Â´Ã«Â¹ÃŒÃ?Ã¶ ÃƒÃŸÂ°Â¡(10), Â´Ãµ Â¸Â¹Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡(11), Â´ÃµÂ¸Â¹Ã€Âº Gold(12)
+						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
+						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
+						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
+						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
 
-						// Â¹Â«Â±Ã¢Â·Ã¹Ã€ÃŒÂ±Ã¢ Â¶Â§Â¹Â®Â¿Â¡ Â°Ã¸Â°Ã? Â¸Ã­Ã?ÃŸ ÃƒÃŸÂ°Â¡(50%), Â¿Â¬Ã…Â¸ Ã…Â¸Â°Ã?Ã„Â¡ Ã?ÃµÂ°Â¡(35%), Â´Ãµ Â¸Â¹Ã€Âº Gold(10%), Â´Ãµ Â¸Â¹Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡(5%)
+						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°�? ¸í�?ß Ãß°¡(50%), ¿¬Å¸ Å¸°�?Ä¡ �?õ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
 						iResult = iDice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 4999)) dwType = 2;
 						else if ((iResult >= 5000) && (iResult <= 8499)) dwType = 10;
 						else if ((iResult >= 8500) && (iResult <= 9499)) dwType = 12;
 						else if ((iResult >= 9500) && (iResult <= 10000)) dwType = 11;
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚ 
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 						else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -48720,37 +48911,37 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
-						// Â¹Â«Â±Ã¢Ã€Ã‡ Sub Ã†Â¯Â¼ÂºÃ„Â¡Â¿Â¡ ÂµÃ»Â¶Ã³ Â¼Ã¶Ã„Â¡ ÂºÂ¸Ã?Â¤ 
+						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 						switch (dwType) {
-							case 2: // Â°Ã¸Â°Ã?Â¸Ã­Ã?ÃŸ ÃƒÃ–Ã€Ãº +21%
+							case 2: // °ø°�?¸í�?ß ÃÖÀú +21%
 								if (dwValue <= 3) dwValue = 3;
 								break;
-							case 10: // Â¿Â¬Â¼Ã“ Ã…Â¸Â°Ã? ÃƒÃ–Ã€Ãº +1 ÃƒÃ–Â´Ã« 7
+							case 10: // ¿¬¼Ó Å¸°�? ÃÖÀú +1 ÃÖ´ë 7
 								if (dwValue > 7) dwValue = 7;
 								break;
-							case 11: // ExpÂ´Ã‚ Â¹Â«Ã?Â¶Â°Ã‡ +20%
+							case 11: // Exp´Â ¹«�?¶°Ç +20%
 								dwValue = 2;
 								break;
-							case 12: // GoldÂ´Ã‚ Â¹Â«Ã?Â¶Â°Ã‡ +50%
+							case 12: // Gold´Â ¹«�?¶°Ç +50%
 								dwValue = 5;
 								break;
 						}
-						// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶Ã?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡Ã?Ã€Ã?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
+						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã�?Â·Ã‚
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ ÀÔ·Â
 						dwType = dwType << 12;
 						dwValue = dwValue << 8;
 
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
 				} else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE) {
-					// Â¸Â¶Â¹Ã½ Â°Ã¸Â°Ã? Â¹Â«Â±Ã¢Â·Ã¹Â¿Â¡ ÂºÃ™Ã€Â» Â¼Ã¶ Ã€Ã–Â´Ã‚ Ã?Â¢ÂµÃŽÂ»Ã§Â¸Â¦ Â¼Â±Ã…Ãƒ 10, 11
-					// Â¸Â¶Â¹Ã½ Â¼ÂºÂ°Ã¸Ã€Ã‡(100%) <- Ã‡Ã¶Ã€Ã§ Â¸Â¶Â¹Ã½ Ã?Ã¶Ã†ÃŽÃ€ÃŒÂ¿Â¡ ÂºÃ™Ã€Â» Â¼Ã¶ Ã€Ã–Â´Ã‚ Â¿Ã¤Â¼Ã’Â°Â¡ Ã€ÃŒÂ°Ã… Â¹Ã›Â¿Â¡ Â¾Ã¸Â´Ã™.
+					// ¸¶¹ý °ø°�? ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â �?¢µÎ»ç¸¦ ¼±ÅÃ 10, 11
+					// ¸¶¹ý ¼º°øÀÇ(100%) <- ÇöÀç ¸¶¹ý �?öÆÎÀÌ¿¡ ºÙÀ» ¼ö ÀÖ´Â ¿ä¼Ò°¡ ÀÌ°Å ¹Û¿¡ ¾ø´Ù.
 					dwType = 10;
 					cColor = 5;
 
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Â»Ã¶Â»Ã³ Ã€Ã�?Â·Ã‚ 
+					// ¾ÆÀÌÅÛ »ö»ó ÀÔ·Â 
 					pItem->m_cItemColor = cColor;
 
 					iResult = iDice(1, 30000);
@@ -48769,31 +48960,31 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
-					// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶Ã?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡Ã?Ã€Ã?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
+					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-					// Â¹Ã¦Â¾Ã®Â±Â¸ Main Ã†Â¯Â¼ÂºÃ„Â¡, Â°Âª Ã€Ã�?Â·Ã‚
+					// ¹æ¾î±¸ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
 					pItem->m_dwAttribute = NULL;
 					dwType = dwType << 20;
 					dwValue = dwValue << 16;
 					pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã�?Â·Ã‚ÂµÃ‰ ÃˆÂ®Â·Ã¼Ã€Âº 40%
+					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (iDice(1, 10000) >= 6000) {
 
-						// ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ÃˆÂ¿Â°Ãº Ã?Â¾Â·Ã¹: 
-						//ÃƒÃŸÂ°Â¡ ÂµÂ¶Â¼ÂºÃ€ÃºÃ‡Ã—(1), ÃƒÃŸÂ°Â¡ Â¸Ã­Ã?ÃŸÂ°Âª(2), ÃƒÃŸÂ°Â¡ Â¹Ã¦Â¾Ã®Â°Âª(3), HP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(4), SP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(5)
-						//MP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(6), ÃƒÃŸÂ°Â¡ Â¸Â¶Â¹Ã½Ã€ÃºÃ‡Ã—(7), Â¹Â°Â¸Â® Â´Ã«Â¹ÃŒÃ?Ã¶ ÃˆÃ­Â¼Ã¶(8), Â¸Â¶Â¹Ã½ Â´Ã«Â¹ÃŒÃ?Ã¶ ÃˆÃ­Â¼Ã¶(9)
-						//Â¿Â¬Ã…Â¸ Â´Ã«Â¹ÃŒÃ?Ã¶ ÃƒÃŸÂ°Â¡(10), Â´Ãµ Â¸Â¹Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡(11), Â´ÃµÂ¸Â¹Ã€Âº Gold(12)
+						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
+						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
+						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
+						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
 
-						// Â¹Â«Â±Ã¢Â·Ã¹Ã€ÃŒÂ±Ã¢ Â¶Â§Â¹Â®Â¿Â¡ Â°Ã¸Â°Ã? Â¸Ã­Ã?ÃŸ ÃƒÃŸÂ°Â¡(50%), Â¿Â¬Ã…Â¸ Ã…Â¸Â°Ã?Ã„Â¡ Ã?ÃµÂ°Â¡(35%), Â´Ãµ Â¸Â¹Ã€Âº Gold(10%), Â´Ãµ Â¸Â¹Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡(5%)
+						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°�? ¸í�?ß Ãß°¡(50%), ¿¬Å¸ Å¸°�?Ä¡ �?õ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
 						iResult = iDice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 4999)) dwType = 2;
 						else if ((iResult >= 5000) && (iResult <= 8499)) dwType = 10;
 						else if ((iResult >= 8500) && (iResult <= 9499)) dwType = 12;
 						else if ((iResult >= 9500) && (iResult <= 10000)) dwType = 11;
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚ 
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 						else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -48810,41 +49001,41 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
-						// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶Ã?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡Ã?Ã€Ã?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
+						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-						// Â¹Â«Â±Ã¢Ã€Ã‡ Sub Ã†Â¯Â¼ÂºÃ„Â¡Â¿Â¡ ÂµÃ»Â¶Ã³ Â¼Ã¶Ã„Â¡ ÂºÂ¸Ã?Â¤ 
+						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 						switch (dwType) {
-							case 2: // Â°Ã¸Â°Ã?Â¸Ã­Ã?ÃŸ ÃƒÃ–Ã€Ãº +21%
+							case 2: // °ø°�?¸í�?ß ÃÖÀú +21%
 								if (dwValue <= 3) dwValue = 3;
 								break;
-							case 10: // Â¿Â¬Â¼Ã“ Ã…Â¸Â°Ã? ÃƒÃ–Ã€Ãº +1 ÃƒÃ–Â´Ã« 7
+							case 10: // ¿¬¼Ó Å¸°�? ÃÖÀú +1 ÃÖ´ë 7
 								if (dwValue > 7) dwValue = 7;
 								break;
-							case 11: // ExpÂ´Ã‚ Â¹Â«Ã?Â¶Â°Ã‡ +20%
+							case 11: // Exp´Â ¹«�?¶°Ç +20%
 								dwValue = 2;
 								break;
-							case 12: // GoldÂ´Ã‚ Â¹Â«Ã?Â¶Â°Ã‡ +50%
+							case 12: // Gold´Â ¹«�?¶°Ç +50%
 								dwValue = 5;
 								break;
 						}
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã�?Â·Ã‚
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ ÀÔ·Â
 						dwType = dwType << 12;
 						dwValue = dwValue << 8;
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
 				} else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE) {
-					// Â¹Ã¦Â¾Ã®Â±Â¸Â¿Â¡ Â¸Ã‚Â´Ã‚ Ã?Â¢ÂµÃŽÂ»Ã§Â¿Ã? Ã†Â¯Â¼ÂºÃ„Â¡Â¸Â¦ Â¼Â±Ã…Ãƒ, Ã‡Ã’Â´Ã§Ã‡Ã‘Â´Ã™.
+					// ¹æ¾î±¸¿¡ ¸Â´Â �?¢µÎ»ç¿�? Æ¯¼ºÄ¡¸¦ ¼±ÅÃ, ÇÒ´çÇÑ´Ù.
 
-					// Â°Â­ÃˆÂ­ÂµÃˆ(60%) Â°Â¡ÂºÂ­Â¿Ã® (30%) Â¸Â¶Â³Âª ÂºÂ¯ÃˆÂ¯Ã€Ã‡(5%) Ã‡ÃŠÂ»Ã¬ ÃƒÃ¦Ã€Ã¼Ã€Ã‡(5%)
+					// °­È­µÈ(60%) °¡º­¿î (30%) ¸¶³ª º¯È¯ÀÇ(5%) ÇÊ»ì ÃæÀüÀÇ(5%)
 					iResult = iDice(1, 10000);
 					if ((iResult >= 1) && (iResult <= 5999)) dwType = 8;
 					else if ((iResult >= 6000) && (iResult <= 8999)) dwType = 6;
 					else if ((iResult >= 9000) && (iResult <= 9554)) dwType = 11; //dwType = 11;
 					else if ((iResult >= 9555) && (iResult <= 10000)) dwType = 12; //dwType = 12;
 
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚ 
+					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 					iResult = iDice(1, 30000);
 					if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 					else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -48861,12 +49052,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
-					// Â¹Ã¦Â¾Ã®Â±Â¸Ã€Ã‡ Main Ã†Â¯Â¼ÂºÃ„Â¡Â¿Â¡ ÂµÃ»Â¶Ã³ Â¼Ã¶Ã„Â¡ ÂºÂ¸Ã?Â¤ 
+					// ¹æ¾î±¸ÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 					switch (dwType) {
-						case 6: // Â°Ã¦Â·Â®ÃˆÂ­ ÃƒÃ–Ã€Ãº +16%
+						case 6: // °æ·®È­ ÃÖÀú +16%
 							if (dwValue <= 4) dwValue = 4;
 							break;
-						case 8: // Â¼Ã¶Â¸Ã­ ÃƒÃ–Ã€Ãº +14%
+						case 8: // ¼ö¸í ÃÖÀú +14%
 							if (dwValue <= 2) dwValue = 2;
 							break;
 
@@ -48878,26 +49069,26 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							if ((iGenLevel <= 3) && (dwValue > 2)) dwValue = 2;
 							break;
 					}
-					// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶Ã?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡Ã?Ã€Ã?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
+					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-					// Â¹Ã¦Â¾Ã®Â±Â¸ Main Ã†Â¯Â¼ÂºÃ„Â¡, Â°Âª Ã€Ã�?Â·Ã‚
+					// ¹æ¾î±¸ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
 					pItem->m_dwAttribute = NULL;
 					dwType = dwType << 20;
 					dwValue = dwValue << 16;
 					pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 
-					// Â¹Ã¦Â¾Ã®Â±Â¸ Sub Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã�?Â·Ã‚ÂµÃ‰ ÃˆÂ®Â·Ã¼Ã€Âº 40%
+					// ¹æ¾î±¸ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (iDice(1, 10000) >= 6000) {
 
-						// ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ÃˆÂ¿Â°Ãº Ã?Â¾Â·Ã¹: 
-						//ÃƒÃŸÂ°Â¡ ÂµÂ¶Â¼ÂºÃ€ÃºÃ‡Ã—(1), ÃƒÃŸÂ°Â¡ Â¸Ã­Ã?ÃŸÂ°Âª(2), ÃƒÃŸÂ°Â¡ Â¹Ã¦Â¾Ã®Â°Âª(3), HP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(4), SP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(5)
-						//MP ÃˆÂ¸ÂºÂ¹Â·Â® ÃƒÃŸÂ°Â¡(6), ÃƒÃŸÂ°Â¡ Â¸Â¶Â¹Ã½Ã€ÃºÃ‡Ã—(7), Â¹Â°Â¸Â® Â´Ã«Â¹ÃŒÃ?Ã¶ ÃˆÃ­Â¼Ã¶(8), Â¸Â¶Â¹Ã½ Â´Ã«Â¹ÃŒÃ?Ã¶ ÃˆÃ­Â¼Ã¶(9)
-						//Â¿Â¬Ã…Â¸ Â´Ã«Â¹ÃŒÃ?Ã¶ ÃƒÃŸÂ°Â¡(10), Â´Ãµ Â¸Â¹Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡(11), Â´ÃµÂ¸Â¹Ã€Âº Gold(12)
+						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
+						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
+						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
+						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
 
-						// Â¹Ã¦Â¾Ã®Â±Â¸ Ã€ÃŒÂ±Ã¢ Â¶Â§Â¹Â®Â¿Â¡ 
-						// ÃƒÃŸÂ°Â¡Â¹Ã¦Â¾Ã®Â°Âª(10%) ÃƒÃŸÂ°Â¡ÂµÂ¶Â¼ÂºÃ€ÃºÃ‡Ã—(30%)    SPÃˆÂ¸ÂºÂ¹ÃƒÃŸÂ°Â¡(15%)  HPÃˆÂ¸ÂºÂ¹ÃƒÃŸÂ°Â¡(10%) 
-						// MPÃˆÂ¸ÂºÂ¹ ÃƒÃŸÂ°Â¡(10%) ÃƒÃŸÂ°Â¡Â¸Â¶Â¹Ã½Ã€ÃºÃ‡Ã—(15%) Â¹Â°Â¸Â®Â´Ã«Â¹ÃŒÃ?Ã¶ÃˆÃ­Â¼Ã¶(3%) Â¸Â¶Â¹Ã½Â´Ã«Â¹ÃŒÃ?Ã¶ÃˆÃ­Â¼Ã¶(3%)
+						// ¹æ¾î±¸ ÀÌ±â ¶§¹®¿¡ 
+						// Ãß°¡¹æ¾î°ª(10%) Ãß°¡µ¶¼ºÀúÇ×(30%)    SPÈ¸º¹Ãß°¡(15%)  HPÈ¸º¹Ãß°¡(10%) 
+						// MPÈ¸º¹ Ãß°¡(10%) Ãß°¡¸¶¹ýÀúÇ×(15%) ¹°¸®´ë¹Ì�?öÈí¼ö(3%) ¸¶¹ý´ë¹Ì�?öÈí¼ö(3%)
 						iResult = iDice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 999)) dwType = 3;
 						else if ((iResult >= 1000) && (iResult <= 3999)) dwType = 1;
@@ -48908,7 +49099,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 9400) && (iResult <= 9799)) dwType = 8;
 						else if ((iResult >= 9800) && (iResult <= 10000)) dwType = 9;
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚ 
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 						else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -48925,37 +49116,37 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
-						// Â¹Ã¦Â¾Ã®Â±Â¸Ã€Ã‡ Sub Ã†Â¯Â¼ÂºÃ„Â¡Â¿Â¡ ÂµÃ»Â¶Ã³ Â¼Ã¶Ã„Â¡ ÂºÂ¸Ã?Â¤ 
+						// ¹æ¾î±¸ÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 						switch (dwType) {
-							case 1: // ÂµÂ¶Â¼ÂºÃ€ÃºÃ‡Ã— ÃƒÃ–Ã€Ãº +21%
-							case 3: // Â¹Â°Â¸Â®Â¹Ã¦Â¾Ã® ÃƒÃ–Ã€Ãº +21%
-							case 7: // Â¸Â¶Â¹Ã½ Ã€ÃºÃ‡Ã— ÃƒÃ–Ã€Ãº +21%
-							case 8: // Â¹Â°Â¸Â®ÃˆÃ­Â¼Ã¶ ÃƒÃ–Ã€Ãº +9%
-							case 9: // Â¸Â¶Â¹Ã½ÃˆÃ­Â¼Ã¶ ÃƒÃ–Ã€Ãº +9%
+							case 1: // µ¶¼ºÀúÇ× ÃÖÀú +21%
+							case 3: // ¹°¸®¹æ¾î ÃÖÀú +21%
+							case 7: // ¸¶¹ý ÀúÇ× ÃÖÀú +21%
+							case 8: // ¹°¸®Èí¼ö ÃÖÀú +9%
+							case 9: // ¸¶¹ýÈí¼ö ÃÖÀú +9%
 								if (dwValue <= 3) dwValue = 3;
 								break;
 						}
-						// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶Ã?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡Ã?Ã€Ã?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
+						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã�?Â·Ã‚
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ ÀÔ·Â
 						dwType = dwType << 12;
 						dwValue = dwValue << 8;
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
 				}
 
-				// Ã«Â§Ë†Ã¬Â§â‚¬Ã«Â§â€°Ã¬Å“Â¼Ã«Â¡Å“ Ã­Å Â¹Ã¬â€žÂ±Ã¬Â¹ËœÃ«Â¥Â¼ Ã­Å Â¹Ã¬Ë†Ëœ Ã¬â€¢â€žÃ¬Â?Â´Ã­â€¦Å“Ã¬â€�?Â? Ã«Â§Å¾ÃªÂ²Å’Ã«Â?â€? Ã«Â³â‚¬ÃªÂ²Â½ 
+				// ë§ˆì§€ë§‰ìœ¼ë¡œ íŠ¹ì„±ì¹˜ë¥¼ íŠ¹ìˆ˜ ì•„ì�?´í…œì—�? ë§žê²Œë�?�? ë³€ê²½ 
 				_AdjustRareItemValue(pItem);
 			}
 		}
 
-		// Ã¬â€¢â€žÃ¬Â?Â´Ã­â€¦Å“Ã¬â€�?Â? ÃªÂ³Â Ã¬Å“Â  Ã¬Â½â€?Ã«â€œÅ“ Ã¬Å¾â€¦Ã«Â Â¥ 
+		// ì•„ì�?´í…œì—�? ê³ ìœ  ì½�?ë“œ ìž…ë ¥ 
 		pItem->m_sTouchEffectType = DEF_ITET_ID;
 		pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 		pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 		//pItem->m_sTouchEffectValue3 = timeGetTime();
-		// Ã«Â§Ë†Ã¬Â§â‚¬Ã«Â§â€° Ã¬Ë†Â«Ã¬Å¾Â?Ã«Å â€? Ã¬â€¢â€žÃ¬Â?Â´Ã­â€¦Å“ Ã¬Æ’Â?Ã¬â€žÂ± Ã¬â€ºâ€?, Ã¬Â?Â¼	
+		// ë§ˆì§€ë§‰ ìˆ«ìž�?ëŠ�? ì•„ì�?´í…œ ìƒ�?ì„± ì›�?, ì�?¼	
 		SYSTEMTIME SysTime;
 		char cTemp[256];
 		GetLocalTime(&SysTime);
@@ -48963,17 +49154,17 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		wsprintf(cTemp, "%d%2d", (short) SysTime.wMonth, (short) SysTime.wDay);
 		pItem->m_sTouchEffectValue3 = atoi(cTemp);
 
-		// Ã¬â€¢â€žÃ¬Â?Â´Ã­â€¦Å“Ã¬Â?â€ž Ã¬â€žÅ“Ã¬Å¾Ë†Ã«Å â€? Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â? Ã«â€“Â¨Ã¬â€“Â´Ã«Å“Â¨Ã«Â¦Â°Ã«â€¹Â¤. 
+		// ì•„ì�?´í…œì�?„ ì„œìžˆëŠ�? ìœ„ì¹˜ì—�? ë–¨ì–´ëœ¨ë¦°ë‹¤. 
 		m_pMapList[ m_pNpcList[iNpcH]->m_cMapIndex ]->bSetItem(m_pNpcList[iNpcH]->m_sX,
 				  m_pNpcList[iNpcH]->m_sY,
 				  pItem);
 
-		// Ã«â€¹Â¤Ã«Â¥Â¸ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã¬â€�?Â?ÃªÂ²Å’ Ã¬â€¢â€žÃ¬Â?Â´Ã­â€¦Å“Ã¬Â?Â´ Ã«â€“Â¨Ã¬â€“Â´Ã¬Â§â€ž ÃªÂ²Æ’Ã¬Â?â€ž Ã¬â€¢Å’Ã«Â¦Â°Ã«â€¹Â¤. 
+		// ë‹¤ë¥¸ í�?´ë�?¼ì�?´ì–¸íŠ¸ì—�?ê²Œ ì•„ì�?´í…œì�?´ ë–¨ì–´ì§„ ê²ƒì�?„ ì•Œë¦°ë‹¤. 
 		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pNpcList[iNpcH]->m_cMapIndex,
 				  m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY,
 				  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
 
-		// Ã«Â¡Å“ÃªÂ·Â¸ Ã«â€šÂ¨ÃªÂ¸Â´Ã«â€¹Â¤.
+		// ë¡œê·¸ ë‚¨ê¸´ë‹¤.
 		_bItemLog(DEF_ITEMLOG_NEWGENDROP, NULL, NULL, pItem);
 	}
 }
