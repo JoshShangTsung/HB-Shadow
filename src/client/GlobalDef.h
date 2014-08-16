@@ -1,10 +1,10 @@
 #define NAME_WORLDNAME1			"WS1" // Name for default (1st) server
-#define MSG_WORLDNAME1			"HB RevolutioN" // Long name for 1st server...
-#define MSG_HOMEPAGE			"http://www.hbrevolution.tk"
+#define MSG_WORLDNAME1			"HB Shadow" // Long name for 1st server...
+#define MSG_HOMEPAGE			"http://www.hbshadow.com"
 #define DEF_UPPERVERSION		3
 #define DEF_LOWERVERSION		82
-//#define DEF_SERVER_IP			"217.160.6.42"
-#define DEF_SERVER_IP			"127.0.0.1"
+#define DEF_SERVER_IP			"31.186.251.51"
+//#define DEF_SERVER_IP			"127.0.0.1"
 #define DEF_SERVER_PORT			2848
 #define DEF_MAXSTATS			200
 #define DEF_UPPERVERSION_FANTASMA				 3

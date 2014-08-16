@@ -1,4 +1,4 @@
-﻿#include "Game.h"
+#include "Game.h"
 
 class CDebugWindow *DbgWnd;
 extern void PutLogList(char * cMsg);
@@ -824,8 +824,8 @@ void CGame::GayDave(char cDave[350], char cInput[350]) {
 	memcpy(wdap, " ", 1);
 	pDisplay++;
 	wdap = (char *) pDisplay;
-	memcpy(wdap, "                                                           ********** Helbreath Revolution made by Gigia  [v3.3] **********               ", 160);
-	pDisplay++; //Server Files & Source by Gigia. Thanks to www.comunidadmh.com !!.
+	memcpy(wdap, "                                                           ********** Helbreath Shadow made by Gigia  [v3.3] **********               ", 160);
+	pDisplay++;
 	return;
 }
 
