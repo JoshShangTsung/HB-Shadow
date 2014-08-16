@@ -684,7 +684,7 @@
 #define	GET_OFFICIAL_MAP_NAME32	"Silent Wood"
 #define	GET_OFFICIAL_MAP_NAME33	"Aresden Mining Sanctuary"
 #define	GET_OFFICIAL_MAP_NAME34	"Elvine Mining Sanctuary"
-#define	GET_OFFICIAL_MAP_NAME35	"Mining Sanctuary"
+#define	GET_OFFICIAL_MAP_NAME35	"Aresden Cityhall"
 #define	GET_OFFICIAL_MAP_NAME36	"Elvine Cityhall"
 #define	GET_OFFICIAL_MAP_NAME37	"Aresden Guildhall"
 #define	GET_OFFICIAL_MAP_NAME38	"Elvine Guildhall"
