@@ -5594,7 +5594,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 
 							if ((m_pClientList[iClientH] != NULL) && (m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] == TRUE)) {
 								
-								if (bEquipItemHandler(iClientH, i) == FALSE) // FALSE
+								if (bEquipItemHandler(iClientH, iItemIndex) == FALSE) // FALSE
 									m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = FALSE; 
 							}
 							
