@@ -23253,7 +23253,7 @@ void CGame::CreateScreenShot() { //HelShot20060307_173003_Warehouse000.jpg
 			  , LongMapName);
 	PutAlignedString(500, 600, 30, SStime, 148, 0, 211); //ScreenShot time
 	PutString_SprFont3(500, 390, " Helbreath", 20, 20, 0, TRUE, 2);
-	PutString_SprFont3(500, 405, "Revolution", 0, 20, 20, TRUE, 2);
+	PutString_SprFont3(500, 405, "Shadow", 0, 20, 20, TRUE, 2);
 
 	if (strcmp(m_cWorldServerName, NAME_WORLDNAME1) == 0)
 		PutAlignedString(500, 600, 15, MSG_WORLDNAME1, 70, 130, 180); //"ABADDON Server"
@@ -23443,7 +23443,7 @@ void CGame::UpdateScreen_OnWaitInitData() {
 	m_DDraw.ClearBackB4();
 	DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME4, 162, 125, 2);
 
-	wsprintf(G_cTxt, "Loading Revolution Data... %dsec", (dwTime - m_dwTime) / 1000);
+	wsprintf(G_cTxt, "Loading Shadow Data... %dsec", (dwTime - m_dwTime) / 1000);
 	PutString_SprFont(172 + 44, 190, G_cTxt, 7, 0, 0);
 	if ((dwTime - m_dwTime) > 7000) {
 		PutAlignedString(174, 467, 190 + 30, UPDATE_SCREEN_ON_WAIT_INIT_DATA1); //"Press ESC key during long time of no"
@@ -40938,7 +40938,7 @@ void CGame::InitDataResponseHandler(char * pData) {
 
 
 	if (memcmp(m_cCurLocation, "default", 7) == 0) {
-		SetTopMsg("Welcome to RevolutioN Server.", 5);
+		SetTopMsg("Welcome to Shadow Server.", 5);
 	}
 
 
