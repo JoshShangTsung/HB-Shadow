@@ -218,9 +218,6 @@ CGame::CGame(HWND hWnd) {
 	m_iMaxClients = 0;
 	m_iTotalMaps = 0;
 
-	m_iTotalGameServerClients = 0;
-	m_iTotalGameServerMaxClients = 0;
-
 	m_MaxUserSysTime.wHour = 0;
 	m_MaxUserSysTime.wMinute = 0;
 
@@ -586,9 +583,6 @@ BOOL CGame::bInit() {
 	m_iMaxClients = 0;
 	m_iTotalMaps = 0;
 
-	m_iTotalGameServerClients = 0;
-	m_iTotalGameServerMaxClients = 0;
-
 	m_MaxUserSysTime.wHour = 0;
 	m_MaxUserSysTime.wMinute = 0;
 
@@ -787,7 +781,7 @@ void CGame::DisplayInfo(HDC hdc) {
 	int i, iLine;
 
 	// NTÂ¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â³Â²! Ã?Ã–Ã€Ã‡
-	wsprintf(cTxt, "Server-Name(%s) Max.Level(%d) Players(%d/%d - %d/%d) Crusade(%d:%d) SLSock(%d:%d) RBT(%d)", m_cServerName, m_iPlayerMaxLevel, m_iTotalClients, m_iMaxClients, m_iTotalGameServerClients, m_iTotalGameServerMaxClients, m_dwCrusadeGUID, (int) m_bIsCrusadeMode, m_iSubLogSockActiveCount, m_iSubLogSockFailCount, m_iAutoRebootingCount);
+	wsprintf(cTxt, "Server-Name(%s) Max.Level(%d) Players(%d/%d) Crusade(%d:%d) SLSock(%d:%d) RBT(%d)", m_cServerName, m_iPlayerMaxLevel, m_iTotalClients, m_iMaxClients, m_dwCrusadeGUID, (int) m_bIsCrusadeMode, m_iSubLogSockActiveCount, m_iSubLogSockFailCount, m_iAutoRebootingCount);
 	TextOut(hdc, 5, 10, cTxt, strlen(cTxt));
 
 	//#ifdef DEF_TESTSERVER
@@ -900,7 +894,7 @@ void CGame::ClientMotionHandler(int iClientH, char * pData) {
 			// Â´ÃžÂ¸Â°Â°Ã?Â¿Â¡ Â´Ã«Ã‡Ã‘ ÃˆÂ¿Â°ÃºÂ¸Â¦ ÃƒÂ³Â¸Â®Ã‡Ã‘Â´Ã™. ÃƒÂ¼Â·Ã‚Â°Â¨Â¼Ã’ÂµÃ®ÂµÃ®
 			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 1);
 			if (iRet == 1) {
-				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
+				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
 				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTRUN, NULL, NULL, NULL);
 			}
 			if ((m_pClientList[iClientH] != NULL) && (m_pClientList[iClientH]->m_iHP <= 0)) ClientKilledHandler(iClientH, NULL, NULL, 1); // v1.4
@@ -911,7 +905,7 @@ void CGame::ClientMotionHandler(int iClientH, char * pData) {
 		case DEF_OBJECTMOVE:
 			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 2);
 			if (iRet == 1) {
-				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
+				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
 				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMOVE, NULL, NULL, NULL);
 			}
 			if ((m_pClientList[iClientH] != NULL) && (m_pClientList[iClientH]->m_iHP <= 0)) ClientKilledHandler(iClientH, NULL, NULL, 1); // v1.4
@@ -922,7 +916,7 @@ void CGame::ClientMotionHandler(int iClientH, char * pData) {
 		case DEF_OBJECTDAMAGEMOVE:
 			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 0);
 			if (iRet == 1) {
-				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
+				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
 				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGEMOVE, m_pClientList[iClientH]->m_iLastDamage, NULL, NULL);
 			}
 			if ((m_pClientList[iClientH] != NULL) && (m_pClientList[iClientH]->m_iHP <= 0)) ClientKilledHandler(iClientH, NULL, NULL, 1); // v1.4
@@ -931,7 +925,7 @@ void CGame::ClientMotionHandler(int iClientH, char * pData) {
 		case DEF_OBJECTATTACKMOVE:
 			iRet = iClientMotion_Move_Handler(iClientH, sX, sY, cDir, 0);
 			if ((iRet == 1) && (m_pClientList[iClientH] != NULL)) {
-				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
+				// Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Ã€ÃŒÂµÂ¿ Ã€ÃŒÂºÂ¥Ã†Â®Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
 				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTATTACKMOVE, NULL, NULL, NULL);
 				// Â°Ã¸Â°Ã? ÃˆÂ¿Â°ÃºÂ¸Â¦ Â°Ã¨Â»Ãª
 				iClientMotion_Attack_Handler(iClientH, m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, dX, dY, wType, cDir, wTargetObjectID, FALSE, TRUE); // v1.4
@@ -1376,7 +1370,7 @@ void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
 				//PutLogFileList(G_cTxt);
 				DeleteClient(i, TRUE, TRUE, FALSE); // 3Â¹Ã¸Ã‚Â° FALSE:Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â·ÃŽ Ã„Â«Â¿Ã®Ã†Ãƒ Â´Ã™Â¿Ã®Ã€Âº Ã‡Ã?Ã?Ã¶ Â¸Â»Â¶Ã³Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶
 			} else {
-				// v1.4 Â°Ã¨Ã?Â¤ Ã?Â¤ÂºÂ¸Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã˜Â¾ÃŸ Â·ÃŽÂ±Ã—Ã€ÃŽ Â¼Â­Â¹Ã¶Â·ÃŽ Ã…Ã«ÂºÂ¸Â°Â¡ Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
+				// v1.4 Â°Ã¨Ã?Â¤ Ã?Â¤ÂºÂ¸Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã˜Â¾ÃŸ Â·ÃŽÂ±Ã—Ã€ÃŽ Â¼Â­Â¹Ã¶Â·ÃŽ Ã…Ã«ÂºÂ¸Â°Â¡ Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
 				memcpy(m_pClientList[iClientH]->m_cCharName, cCharName, 10);
 				memcpy(m_pClientList[iClientH]->m_cAccountName, cAccountName, 10);
 				memcpy(m_pClientList[iClientH]->m_cAccountPassword, cAccountPassword, 10);
@@ -1397,7 +1391,7 @@ void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
 				//PutLogFileList(G_cTxt);
 				DeleteClient(i, TRUE, TRUE, FALSE);
 			} else {
-				// v1.4 Â°Ã¨Ã?Â¤ Ã?Â¤ÂºÂ¸Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã˜Â¾ÃŸ Â·ÃŽÂ±Ã—Ã€ÃŽ Â¼Â­Â¹Ã¶Â·ÃŽ Ã…Ã«ÂºÂ¸Â°Â¡ Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
+				// v1.4 Â°Ã¨Ã?Â¤ Ã?Â¤ÂºÂ¸Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã˜Â¾ÃŸ Â·ÃŽÂ±Ã—Ã€ÃŽ Â¼Â­Â¹Ã¶Â·ÃŽ Ã…Ã«ÂºÂ¸Â°Â¡ Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
 				memcpy(m_pClientList[iClientH]->m_cCharName, cCharName, 10);
 				memcpy(m_pClientList[iClientH]->m_cAccountName, cAccountName, 10);
 				memcpy(m_pClientList[iClientH]->m_cAccountPassword, cAccountPassword, 10);
@@ -1408,7 +1402,7 @@ void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
 			}
 		}
 
-	// Ã?Â¤ÂºÂ¸ Ã€Ã�?Â·Ã‚
+	// Ã?Â¤ÂºÂ¸ Ã€Ã�?Â·Ã‚
 	memcpy(m_pClientList[iClientH]->m_cCharName, cCharName, 10);
 	memcpy(m_pClientList[iClientH]->m_cAccountName, cAccountName, 10);
 	memcpy(m_pClientList[iClientH]->m_cAccountPassword, cAccountPassword, 10);
@@ -1448,13 +1442,13 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	ZeroMemory(cPlayerName, sizeof (cPlayerName));
 	memcpy(cPlayerName, cTxt, 10);
 
-	// ?Ã­Å¡â€˜Ã¬Â¨Â?Ã¬Â§Â ?Ã­Å¡â€˜ ?Ã­Å¡â€¢Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€¢Ã¬Â¨Ë†Ã­Å¡â€šÃ­Å¡Â?Ã¬Â²Â  Ã¬Â§Â¸Ã­Å¡Â?Ã¬Â¨Â©Ã¬Â±Å’Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢. ?Ã­Å¡â€¢Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€¢Ã­Å¡Â?Ã¬Â²Â  Ã¬Â©Â?Ã­Å¡Å½?Ã¬Â¨Â?Ã¬Â¨Â?Ã¬Â±â€¢ Ã¬Â¨Â©Ã¬Â±â€?Ã­Å¡Â?Ã¬Â§Â?Ã­Å¡â€°Ã­Å¡â€¢Ã¬Â§Â¸Ã¬Â±Â  Ã¬Â§Â¹Ã­Å¡â€™Ã­Å¡Å Ã¬Â§Â±Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// ?Ã­Å¡â€˜Ã¬Â¨Â?Ã¬Â§Â ?Ã­Å¡â€˜ ?Ã­Å¡â€¢Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€¢Ã¬Â¨Ë†Ã­Å¡â€šÃ­Å¡Â?Ã¬Â²Â  Ã¬Â§Â¸Ã­Å¡Â?Ã¬Â¨Â©Ã¬Â±Å’Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢. ?Ã­Å¡â€¢Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€¢Ã­Å¡Â?Ã¬Â²Â  Ã¬Â©Â?Ã­Å¡Å½?Ã¬Â¨Â?Ã¬Â¨Â?Ã¬Â±â€¢ Ã¬Â¨Â©Ã¬Â±â€?Ã­Å¡Â?Ã¬Â§Â?Ã­Å¡â€°Ã­Å¡â€¢Ã¬Â§Â¸Ã¬Â±Â  Ã¬Â§Â¹Ã­Å¡â€™Ã­Å¡Å Ã¬Â§Â±Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	if (memcmp(m_pClientList[iClientH]->m_cCharName, cPlayerName, 10) != 0) {
 		DeleteClient(iClientH, FALSE, TRUE);
 		return;
 	}
 
-	// Ã­Å¡â€ Ã¬Â¨â‚¬Ã¬Â¨Â?Ã¬Â§Â±Ã­Å¡â€¡Ã­Å¡â€™?Ã­Å¡â€° Ã¬Â©Â?Ã­Å¡â€¡Ã¬Â¨Â©Ã¬Â²ËœÃ­Å¡Â?Ã¬Â§Å¡Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨Â?Ã¬Â§Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// Ã­Å¡â€ Ã¬Â¨â‚¬Ã¬Â¨Â?Ã¬Â§Â±Ã­Å¡â€¡Ã­Å¡â€™?Ã­Å¡â€° Ã¬Â©Â?Ã­Å¡â€¡Ã¬Â¨Â©Ã¬Â²ËœÃ­Å¡Â?Ã¬Â§Å¡Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨Â?Ã¬Â§Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	dwp = (DWORD *) (pBuffer + DEF_INDEX4_MSGID);
 	*dwp = MSGID_PLAYERCHARACTERCONTENTS; // 0x0Fm_cHeldenianVictoryType000 = 262406144
 	wp = (WORD *) (pBuffer + DEF_INDEX2_MSGTYPE);
@@ -1584,20 +1578,20 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			// Ã¬Â¨Â?Ã­Å¡Â§Ã¬Â©Â?Ã­Å¡â€žÃ­Å¡Â?Ã¬Â²Â Ã¬Â¨Â?Ã¬Â§Â? Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨â‚¬Ã¬Â©Â?Ã¬Â¨â€¹Ã¬Â§Â  Ã¬Â©â€?Ã¬Â§â€¢Ã¬Â¨Å’Ã¬Â§Â±Ã¬Â§Â¸Ã¬Â§â€¢ Ã¬Â¨â€?Ã­Å¡Â©Ã¬Â¨Â©Ã¬Â²ÂµÃ­Å¡â€°Ã­Å¡Â©Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â±â€¢ Ã­Å¡Â?Ã¬Â§Â?Ã¬Â§Â¸Ã­Å¡â€¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+			// Ã¬Â¨Â?Ã­Å¡Â§Ã¬Â©Â?Ã­Å¡â€žÃ­Å¡Â?Ã¬Â²Â Ã¬Â¨Â?Ã¬Â§Â? Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨â‚¬Ã¬Â©Â?Ã¬Â¨â€¹Ã¬Â§Â  Ã¬Â©â€?Ã¬Â§â€¢Ã¬Â¨Å’Ã¬Â§Â±Ã¬Â§Â¸Ã¬Â§â€¢ Ã¬Â¨â€?Ã­Å¡Â©Ã¬Â¨Â©Ã¬Â²ÂµÃ­Å¡â€°Ã­Å¡Â©Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â±â€¢ Ã­Å¡Â?Ã¬Â§Â?Ã¬Â§Â¸Ã­Å¡â€¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 			DeleteClient(iClientH, TRUE, TRUE);
 			if (pBuffer != NULL) delete pBuffer;
 			return;
 	}
 
-	// Ã­Å¡â€ Ã¬Â¨â‚¬Ã¬Â¨Â?Ã¬Â§Â±Ã­Å¡â€¡Ã­Å¡â€™?Ã­Å¡â€° Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤ Ã­Å¡Â?Ã¬Â§Å¡Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨Â?Ã¬Â§Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// Ã­Å¡â€ Ã¬Â¨â‚¬Ã¬Â¨Â?Ã¬Â§Â±Ã­Å¡â€¡Ã­Å¡â€™?Ã­Å¡â€° Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤ Ã­Å¡Â?Ã¬Â§Å¡Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨Â?Ã¬Â§Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	dwp = (DWORD *) (pBuffer + DEF_INDEX4_MSGID);
 	*dwp = MSGID_PLAYERITEMLISTCONTENTS;
 	wp = (WORD *) (pBuffer + DEF_INDEX2_MSGTYPE);
 	*wp = DEF_MSGTYPE_CONFIRM;
 
 	// Ã¬Â¨Â?Ã­Å¡â€º?Ã¬Â²Â¬ Ã¬Â©Å’Ã­Å¡ËœÃ­Å¡Â?Ã¬Â²Â Ã­Å¡â€°Ã­Å¡â€¢Ã¬Â§Â¸Ã¬Â±Â  ?Ã­Å¡Å“Ã¬Â¨Ë†Ã­Å¡â€š Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤
-	// Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤?Ã­Å¡â€° Ã­Å¡â€žÃ­Å¡â€�? Ã¬Â§Â¸Ã¬Â¨â€?Ã¬Â©Å’Ã¬Â²Â 
+	// Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤?Ã­Å¡â€° Ã­Å¡â€žÃ­Å¡â€�? Ã¬Â§Â¸Ã¬Â¨â€?Ã¬Â©Å’Ã¬Â²Â 
 	bFlag = FALSE; // Kaozures - Adaptado darmart123.
 	while (bFlag == FALSE) {
 		bFlag = TRUE;
@@ -1673,7 +1667,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	}
 
 	// Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â§Â¸Ã¬Â²Â´Ã­Å¡Â?Ã­Å¡Â©?Ã­Å¡â€œ Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤
-	// Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤?Ã­Å¡â€° Ã­Å¡â€žÃ­Å¡â€�? Ã¬Â§Â¸Ã¬Â¨â€?Ã¬Â©Å’Ã¬Â²Â 
+	// Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡Â¤?Ã­Å¡â€° Ã­Å¡â€žÃ­Å¡â€�? Ã¬Â§Â¸Ã¬Â¨â€?Ã¬Â©Å’Ã¬Â²Â 
 	iTotalItemB = 0;
 	for (i = 0; i < DEF_MAXBANKITEMS; i++)
 		if (m_pClientList[iClientH]->m_pItemInBankList[i] != NULL)
@@ -1749,7 +1743,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			// Ã¬Â¨Â?Ã­Å¡Â§Ã¬Â©Â?Ã­Å¡â€žÃ­Å¡Â?Ã¬Â²Â Ã¬Â¨Â?Ã¬Â§Â? Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨â‚¬Ã¬Â©Â?Ã¬Â¨â€¹Ã¬Â§Â  Ã¬Â©â€?Ã¬Â§â€¢Ã¬Â¨Å’Ã¬Â§Â±Ã¬Â§Â¸Ã¬Â§â€¢ Ã¬Â¨â€?Ã­Å¡Â©Ã¬Â¨Â©Ã¬Â²ÂµÃ­Å¡â€°Ã­Å¡Â©Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â±â€¢ Ã­Å¡Â?Ã¬Â§Â?Ã¬Â§Â¸Ã­Å¡â€¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+			// Ã¬Â¨Â?Ã­Å¡Â§Ã¬Â©Â?Ã­Å¡â€žÃ­Å¡Â?Ã¬Â²Â Ã¬Â¨Â?Ã¬Â§Â? Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨â‚¬Ã¬Â©Â?Ã¬Â¨â€¹Ã¬Â§Â  Ã¬Â©â€?Ã¬Â§â€¢Ã¬Â¨Å’Ã¬Â§Â±Ã¬Â§Â¸Ã¬Â§â€¢ Ã¬Â¨â€?Ã­Å¡Â©Ã¬Â¨Â©Ã¬Â²ÂµÃ­Å¡â€°Ã­Å¡Â©Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â±â€¢ Ã­Å¡Â?Ã¬Â§Â?Ã¬Â§Â¸Ã­Å¡â€¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 			DeleteClient(iClientH, TRUE, TRUE);
 			if (pBuffer != NULL) delete pBuffer;
 			return;
@@ -1763,7 +1757,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		}
 	}
 
-	// Ã¬Â¨Â?Ã­Å¡Å½Ã¬Â¨â€°Ã¬Â§Å“?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡â€™Ã¬Â¨Â?Ã¬Â§Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// Ã¬Â¨Â?Ã­Å¡Å½Ã¬Â¨â€°Ã¬Â§Å“?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡â€™Ã¬Â¨Â?Ã¬Â§Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	dwp = (DWORD *) (pBuffer + DEF_INDEX4_MSGID);
 	*dwp = MSGID_RESPONSE_INITDATA;
 	wp = (WORD *) (pBuffer + DEF_INDEX2_MSGTYPE);
@@ -1771,7 +1765,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 
 	cp = (char *) (pBuffer + DEF_INDEX2_MSGTYPE + 2);
 
-	// Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤?Ã­Å¡â€° ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢Ã¬Â¨Â?Ã¬Â§Â? Ã­Å¡Å Ã¬Â§Â°Ã­Å¡Â?Ã¬Â§Å¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢. v1.41 Ã¬Â§Â¸Ã¬Â²Â´Ã¬Â¨â€¹Ã¬Â²Â¨?Ã­Å¡Â£ Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â¨â€¹Ã¬Â²ËœÃ¬Â¨Â?Ã¬Â±â€¢ Ã¬Â§Â¹Ã­Å¡Å¾?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢ Ã¬Â§Â¹Ã­Å¡Å¾Ã¬Â¨Ë†Ã¬Â±ËœÃ¬Â¨Å’Ã­Å¡â€œ Ã¬Â¨â‚¬Ã¬Â²Å“Ã¬Â¨Ë†Ã­Å¡â€šÃ¬Â¨Ë†Ã­Å¡Â¢.
+	// Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤?Ã­Å¡â€° ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢Ã¬Â¨Â?Ã¬Â§Â? Ã­Å¡Å Ã¬Â§Â°Ã­Å¡Â?Ã¬Â§Å¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢. v1.41 Ã¬Â§Â¸Ã¬Â²Â´Ã¬Â¨â€¹Ã¬Â²Â¨?Ã­Å¡Â£ Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â¨â€¹Ã¬Â²ËœÃ¬Â¨Â?Ã¬Â±â€¢ Ã¬Â§Â¹Ã­Å¡Å¾?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢ Ã¬Â§Â¹Ã­Å¡Å¾Ã¬Â¨Ë†Ã¬Â±ËœÃ¬Â¨Å’Ã­Å¡â€œ Ã¬Â¨â‚¬Ã¬Â²Å“Ã¬Â¨Ë†Ã­Å¡â€šÃ¬Â¨Ë†Ã­Å¡Â¢.
 	if (m_pClientList[iClientH]->m_bIsObserverMode == FALSE)
 		bGetEmptyPosition(&m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY, m_pClientList[iClientH]->m_cMapIndex);
 	else GetMapInitialPoint(m_pClientList[iClientH]->m_cMapIndex, &m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY);
@@ -1781,7 +1775,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	*wp = iClientH;
 	cp += 2;
 
-	// ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡Ëœ Ã¬Â¨Â?Ã­Å¡Å½ Ã¬Â¨â€°Ã¬Â§Å“?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡â€™?Ã­Å¡â€° Ã¬Â§Â¹Ã¬Â°Â½Ã­Å¡Â?Ã­Å¡Â ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢. Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤Ã¬Â¨Ë†Ã­Å¡â€š Ã¬Â§Â¹Ã¬Â°Â½Ã­Å¡Â?Ã­Å¡Â ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢ (x, y)Ã¬Â¨Å’Ã­Å¡â€œÃ¬Â¨ËœÃ­Å¡â€œÃ­Å¡â€¡Ã­Å¡â€™ (x+14, y+12)Ã¬Â©â€?Ã¬Â§â€¢ ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡Ëœ Ã¬Â¨Â?Ã­Å¡Å½ Ã¬Â¨â€°Ã¬Â§Å“?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡â€™?Ã­Å¡â€° Ã¬Â§Â¹Ã¬Â°Â½Ã­Å¡Â?Ã­Å¡Â ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢. Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤Ã¬Â¨Ë†Ã­Å¡â€š Ã¬Â§Â¹Ã¬Â°Â½Ã­Å¡Â?Ã­Å¡Â ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢ (x, y)Ã¬Â¨Å’Ã­Å¡â€œÃ¬Â¨ËœÃ­Å¡â€œÃ­Å¡â€¡Ã­Å¡â€™ (x+14, y+12)Ã¬Â©â€?Ã¬Â§â€¢ ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	sp = (short *) cp;
 	*sp = m_pClientList[iClientH]->m_sX - 14 - 5;
 	cp += 2;
@@ -1818,11 +1812,11 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	*ip = m_pClientList[iClientH]->m_iStatus;
 	cp += 4; // Original : 2
 
-	// (!) Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤Ã¬Â§Â¸Ã¬Â§â€¢ ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€¢Ã¬Â¨Ë†Ã­Å¡â€š Ã¬Â¨Â?Ã­Å¡Å½?Ã­Å¡â€˜Ã¬Â¨Â?Ã¬Â§Â ?Ã¬Â¨Â© Ã¬Â§Â¹Ã¬Â°Â½Ã¬Â¨Å’Ã­Å¡â€¢Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// (!) Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤Ã¬Â§Â¸Ã¬Â§â€¢ ?Ã¬Â§Â Ã­Å¡â€ Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€¢Ã¬Â¨Ë†Ã­Å¡â€š Ã¬Â¨Â?Ã­Å¡Å½?Ã­Å¡â€˜Ã¬Â¨Â?Ã¬Â§Â ?Ã¬Â¨Â© Ã¬Â§Â¹Ã¬Â°Â½Ã¬Â¨Å’Ã­Å¡â€¢Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	memcpy(cp, m_pClientList[iClientH]->m_cMapName, 10);
 	cp += 10;
 
-	// Ã¬Â¨Â?Ã¬Â±Â Ã­Å¡â€ Ã¬Â§Â§Ã¬Â¨Â©Ã¬Â²Ëœ?Ã­Å¡â€° Ã¬Â¨Â?Ã­Å¡Å½ ?Ã­Å¡â€˜Ã¬Â¨Â?Ã¬Â§Â ?Ã¬Â¨Â© ?Ã­Å¡Å¡Ã¬Â¨Å’Ã­Å¡â€šÃ­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// Ã¬Â¨Â?Ã¬Â±Â Ã­Å¡â€ Ã¬Â§Â§Ã¬Â¨Â©Ã¬Â²Ëœ?Ã­Å¡â€° Ã¬Â¨Â?Ã­Å¡Å½ ?Ã­Å¡â€˜Ã¬Â¨Â?Ã¬Â§Â ?Ã¬Â¨Â© ?Ã­Å¡Å¡Ã¬Â¨Å’Ã­Å¡â€šÃ­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	memcpy(cp, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, 10);
 	cp += 10;
 
@@ -1872,7 +1866,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	*cp = 0;
 	cp++;
 
-	// Ã¬Â¨Â?Ã­Å¡Å½?Ã­Å¡â€° Ã­Å¡Â?Ã¬Â§Å¡Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨Â?Ã¬Â§Â? Ã­Å¡â€žÃ­Å¡Â©Ã¬Â§Â¸Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+	// Ã¬Â¨Â?Ã­Å¡Å½?Ã­Å¡â€° Ã­Å¡Â?Ã¬Â§Å¡Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨Â?Ã¬Â§Â? Ã­Å¡â€žÃ­Å¡Â©Ã¬Â§Â¸Ã¬Â§â€¢Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	iSize = iComposeInitMapData(m_pClientList[iClientH]->m_sX - 10, m_pClientList[iClientH]->m_sY - 7, iClientH, cp);
 
 	// Ã¬Â¨Â?Ã­Å¡Â§Ã¬Â©Â?Ã­Å¡â€žÃ­Å¡Â?Ã¬Â²Â  ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤
@@ -1884,7 +1878,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			// Ã¬Â¨Â?Ã­Å¡Â§Ã¬Â©Â?Ã­Å¡â€žÃ­Å¡Â?Ã¬Â²Â Ã¬Â¨Â?Ã¬Â§Â? Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨â‚¬Ã¬Â©Â?Ã¬Â¨â€¹Ã¬Â§Â  Ã¬Â©â€?Ã¬Â§â€¢Ã¬Â¨Å’Ã¬Â§Â±Ã¬Â§Â¸Ã¬Â§â€¢ Ã¬Â¨â€?Ã­Å¡Â©Ã¬Â¨Â©Ã¬Â²ÂµÃ­Å¡â€°Ã­Å¡Â©Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â±â€¢ Ã­Å¡Â?Ã¬Â§Â?Ã¬Â§Â¸Ã­Å¡â€¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
+			// Ã¬Â¨Â?Ã­Å¡Â§Ã¬Â©Â?Ã­Å¡â€žÃ­Å¡Â?Ã¬Â²Â Ã¬Â¨Â?Ã¬Â§Â? Ã¬Â¨ËœÃ¬Â¨Â?Ã¬Â¨â‚¬Ã¬Â©Â?Ã¬Â¨â€¹Ã¬Â§Â  Ã¬Â©â€?Ã¬Â§â€¢Ã¬Â¨Å’Ã¬Â§Â±Ã¬Â§Â¸Ã¬Â§â€¢ Ã¬Â¨â€?Ã­Å¡Â©Ã¬Â¨Â©Ã¬Â²ÂµÃ­Å¡â€°Ã­Å¡Â©Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â±â€¢ Ã­Å¡Â?Ã¬Â§Â?Ã¬Â§Â¸Ã­Å¡â€¡Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 			DeleteClient(iClientH, TRUE, TRUE);
 			if (pBuffer != NULL) delete pBuffer;
 			return;
@@ -1896,7 +1890,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, NULL, NULL, NULL);
 
 	// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ù¸ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½î°¬ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
-	// v2.13 ï¿½î¿µï¿½Ú´ï¿½ ï¿½ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+	// v2.13 ï¿½î¿µï¿½Ú´ï¿½ ï¿½ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 	if ((memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) &&
 			  (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0)
 			  && (m_pClientList[iClientH]->m_iAdminUserLevel == 0)) {
@@ -1905,7 +1899,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		m_pClientList[iClientH]->m_bIsWarLocation = TRUE;
 		// v2.17 2002-7-15 ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		SetForceRecallTime(iClientH);
-	}// v2.13 ï¿½î¿µï¿½Ú´ï¿½ ï¿½ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+	}// v2.13 ï¿½î¿µï¿½Ú´ï¿½ ï¿½ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 	else if ((memcmp(m_pClientList[iClientH]->m_cLocation, "elv", 3) == 0) &&
 			  (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "aresden", 7) == 0)
 			  && (m_pClientList[iClientH]->m_iAdminUserLevel == 0)) {
@@ -1924,21 +1918,21 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		// v2.17 2002-7-15
 		if (m_pClientList[iClientH]->m_iTimeLeft_ForceRecall == 0) {
 			m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 20 * 5;
-			// ï¿½ï¿½ï¿½�?½Ã°ï¿½ï¿½ï¿½ 5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+			// ï¿½ï¿½ï¿½�?½Ã°ï¿½ï¿½ï¿½ 5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		} else if (m_pClientList[iClientH]->m_iTimeLeft_ForceRecall > 20 * 5) {
 			m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 20 * 5; // 5ï¿½ï¿½
 		}
 
 	} else if ((m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_bIsFightZone == TRUE) &&
 			  (m_iFightzoneNoForceRecall == 0) && (m_pClientList[iClientH]->m_iAdminUserLevel == 0)) {
-		// ï¿½î¿µï¿½Ú°ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â°ï¿½ì¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½.
+		// ï¿½î¿µï¿½Ú°ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â°ï¿½ì¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½.
 
 		m_pClientList[iClientH]->m_dwWarBeginTime = timeGetTime();
 		m_pClientList[iClientH]->m_bIsWarLocation = TRUE;
 
 		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½.
-		// 0 ï¿½Ãºï¿½ï¿½ï¿½ 2ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½È´ï¿½ ï¿½ï¿½ 0ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ 2ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½.
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ 2ï¿½ï¿½ ï¿½Ö´ï¿½. ï¿½ï¿½ 2ï¿½Ã°ï¿½ ï¿½Ç±ï¿½ 2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?µÈ´ï¿½.
+		// 0 ï¿½Ãºï¿½ï¿½ï¿½ 2ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½È´ï¿½ ï¿½ï¿½ 0ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ 2ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ 2ï¿½ï¿½ ï¿½Ö´ï¿½. ï¿½ï¿½ 2ï¿½Ã°ï¿½ ï¿½Ç±ï¿½ 2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?µÈ´ï¿½.
 		GetLocalTime(&SysTime);
 		m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 2 * 60 * 20 - ((SysTime.wHour % 2)*20 * 60 + SysTime.wMinute * 20) - 2 * 20;
 	} else {
@@ -2026,7 +2020,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 			m_pClientList[iClientH]->m_dwCrusadeGUID = m_dwCrusadeGUID;
 		} else if (m_pClientList[iClientH]->m_dwCrusadeGUID != m_dwCrusadeGUID) {
 			// Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦?Ã­Å¡â€˜Ã¬Â§Â¸Ã¬Â±Â  Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤?Ã­Å¡â€° GUIDÃ¬Â§Â¸Ã¬Â§â€¢ Ã­Å¡â€°Ã¬Â²Â ?Ã¬Â±Å’ Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦ Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±Â¨Ã¬Â©â€?Ã­Å¡â€™ Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â§â„¢Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Ë†Ã­Å¡â€š Ã¬Â§Â¸Ã­Å¡â€™?Ã¬Â¨Ëœ ?Ã¬Â²Â¬Ã¬Â¨â€?Ã¬Â²Â©Ã¬Â©â€?Ã¬Â§â€¢ Ã¬Â¨â€?Ã¬Â²Â¬Ã¬Â©Â?Ã¬Â±Â¤Ã­Å¡Â?Ã¬Â¨â‚¬Ã¬Â¨Ë†Ã¬Â²Â© Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦?Ã­Å¡â€° Ã¬Â§Â¸Ã¬Â°Â¼Ã¬Â§Â¸Ã¬Â²Â¬?Ã­Å¡â€˜Ã¬Â¨Ë†Ã­Å¡Â¢.
-			// ?Ã­Å¡â€˜Ã¬Â¨Å’Ã¬Â§Â¹ Ã¬Â§Â¸Ã¬Â±Ë†Ã¬Â©â€?Ã¬Â±â„¢ ?Ã¬Â²Â´Ã¬Â§Â¸Ã¬Â²Â©Ã¬Â©â€?Ã¬Â§â€¢ Ã¬Â¨â€°Ã¬Â²Â­Ã¬Â¨Â?Ã¬Â§Å“ Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Ëœ Ã¬Â©Å’Ã¬Â²Â  Ã¬Â©Â?Ã¬Â²Â©Ã¬Â¨Ë†Ã­Å¡Â¢. Ã­Å¡â€žÃ­Å¡Å“Ã¬Â©Å’Ã­Å¡ËœÃ­Å¡â€°Ã­Å¡â€�? Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦ Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â§Â¸Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â©Â?Ã¬Â¨Å’Ã¬Â°Â¼Ã¬Â¨â€°Ã­Å¡Å  Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? ?Ã¬Â²Â´Ã¬Â¨Â?Ã¬Â±â€¢?Ã¬Â²Â´?Ã­Å¡â€˜ Ã¬Â©Â?Ã­Å¡â€ž?Ã­Å¡Â¤Ã¬Â¨â€°Ã­Å¡â€°Ã¬Â§Â¹Ã¬Â°Â½ ?Ã¬Â²Â´Ã¬Â©â€?Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â§â€“Ã¬Â©Å’Ã­Å¡â„¢?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Â Ã¬Â©Â?Ã­Å¡Â© Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã¬Â©Â?Ã¬Â±Âµ?Ã¬Â¨Â© Ã¬Â©Å’Ã¬Â²Â  ?Ã­Å¡Å“Ã¬Â¨Ë†Ã­Å¡Â¢.
+			// ?Ã­Å¡â€˜Ã¬Â¨Å’Ã¬Â§Â¹ Ã¬Â§Â¸Ã¬Â±Ë†Ã¬Â©â€?Ã¬Â±â„¢ ?Ã¬Â²Â´Ã¬Â§Â¸Ã¬Â²Â©Ã¬Â©â€?Ã¬Â§â€¢ Ã¬Â¨â€°Ã¬Â²Â­Ã¬Â¨Â?Ã¬Â§Å“ Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Ëœ Ã¬Â©Å’Ã¬Â²Â  Ã¬Â©Â?Ã¬Â²Â©Ã¬Â¨Ë†Ã­Å¡Â¢. Ã­Å¡â€žÃ­Å¡Å“Ã¬Â©Å’Ã­Å¡ËœÃ­Å¡â€°Ã­Å¡â€�? Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦ Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â§Â¸Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â©Â?Ã¬Â¨Å’Ã¬Â°Â¼Ã¬Â¨â€°Ã­Å¡Å  Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? ?Ã¬Â²Â´Ã¬Â¨Â?Ã¬Â±â€¢?Ã¬Â²Â´?Ã­Å¡â€˜ Ã¬Â©Â?Ã­Å¡â€ž?Ã­Å¡Â¤Ã¬Â¨â€°Ã­Å¡â€°Ã¬Â§Â¹Ã¬Â°Â½ ?Ã¬Â²Â´Ã¬Â©â€?Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â§â€“Ã¬Â©Å’Ã­Å¡â„¢?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Â Ã¬Â©Â?Ã­Å¡Â© Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã¬Â©Â?Ã¬Â±Âµ?Ã¬Â¨Â© Ã¬Â©Å’Ã¬Â²Â  ?Ã­Å¡Å“Ã¬Â¨Ë†Ã­Å¡Â¢.
 			// ?Ã­Å¡â€˜?Ã¬Â²Â´Ã¬Â©â€?Ã¬Â§â€¢ Ã­Å¡â€°Ã­Å¡ËœÃ¬Â¨Ë†Ã¬Â±Å’Ã¬Â¨â€°Ã­Å¡â€°Ã¬Â©Â?Ã¬Â²Â¬Ã¬Â¨Ë†Ã¬Â²Â© Ã¬Â©â€?Ã¬Â§Â§Ã­Å¡â€°Ã­Å¡Ëœ, Ã¬Â§Â¸Ã­Å¡â€°Ã¬Â©Å’Ã¬Â¨â‚¬ Ã­Å¡Ë†Ã¬Â²Â¨?Ã­Å¡â€œÃ­Å¡Ë†Ã¬Â§Â°, ?Ã¬Â²Â´?Ã¬Â±Â¦ Ã¬Â§Â¸Ã¬Â²Â©Ã­Å¡â€°Ã¬Â±â€¦Ã¬Â¨â€°Ã¬Â¨â€° Ã­Å¡â€žÃ­Å¡Å½Ã¬Â§Â¹Ã¬Â°Â½Ã­Å¡Å Ã¬Â§Â¯.
 			m_pClientList[iClientH]->m_iCrusadeDuty = 0;
 			m_pClientList[iClientH]->m_iConstructionPoint = 0;
@@ -2125,11 +2119,11 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 					continue;
 				}
 
-			// @@@ !!! @@@ Ã€ÃŒÂ°Ã·Â¿Â¡ Ã?Â¶Â°Ã‡Ã€ÃŒ Ã€Ã�?Â·Ã‚ÂµÃ‡Â¾ÃŸÂ¸Â¸ Ã?Â¤ÂºÂ¸Â°Â¡ Ã€Ã¼Â´ÃžÂµÃˆÂ´Ã™!!!
+			// @@@ !!! @@@ Ã€ÃŒÂ°Ã·Â¿Â¡ Ã?Â¶Â°Ã‡Ã€ÃŒ Ã€Ã�?Â·Ã‚ÂµÃ‡Â¾ÃŸÂ¸Â¸ Ã?Â¤ÂºÂ¸Â°Â¡ Ã€Ã¼Â´ÃžÂµÃˆÂ´Ã™!!!
 			if ((pTile->m_sOwner != NULL) || (pTile->m_sDeadOwner != NULL) ||
 					  (pTile->m_pItem[0] != NULL) || (pTile->m_sDynamicObjectType != NULL)) {
 				iTileExists++;
-				// Ã€Â§Ã„Â¡Ã?Â¤ÂºÂ¸ Ã€Ã�?Â·Ã‚
+				// Ã€Â§Ã„Â¡Ã?Â¤ÂºÂ¸ Ã€Ã�?Â·Ã‚
 				sp = (short *) cp;
 				*sp = ix;
 				cp += 2;
@@ -2141,7 +2135,7 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 				// Ã‡Ã¬Â´Ãµ Ã?Â¤ÂºÂ¸Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã‘Â´Ã™.
 				ucHeader = 0;
 				if (pTile->m_sOwner != NULL) {
-					// Â°Â£ÃˆÂ¤ Ã‡ÃšÂµÃ©Ã€ÃŒ Ã€Ã–Â´Ã‚ÂµÂ¥ÂµÂµ NULLÃ€ÃŽ Â°Ã¦Â¿Ã¬Â·ÃŽ Â¿Â¡Â·Â¯Â¹ÃŸÂ»Ã½. Â¿Ã¸Ã€ÃŽÃ†Ã„Â¾Ã‡Ã?ÃŸ  Â¿Â¡Â·Â¯ ÂºÂ¸Â¿Ã? Â±Ã¢Â´Ã‰ Â»Ã°Ã€Ã�?. Â±Ã—Â·Â¯Â³Âª Â±Ã™ÂºÂ»Ã€Ã»Ã€ÃŽ
+					// Â°Â£ÃˆÂ¤ Ã‡ÃšÂµÃ©Ã€ÃŒ Ã€Ã–Â´Ã‚ÂµÂ¥ÂµÂµ NULLÃ€ÃŽ Â°Ã¦Â¿Ã¬Â·ÃŽ Â¿Â¡Â·Â¯Â¹ÃŸÂ»Ã½. Â¿Ã¸Ã€ÃŽÃ†Ã„Â¾Ã‡Ã?ÃŸ  Â¿Â¡Â·Â¯ ÂºÂ¸Â¿Ã? Â±Ã¢Â´Ã‰ Â»Ã°Ã€Ã�?. Â±Ã—Â·Â¯Â³Âª Â±Ã™ÂºÂ»Ã€Ã»Ã€ÃŽ
 					// Â¿Ã¸Ã€ÃŽÃ€Â» Â¾Ã‹Â¾Ã†Â³Â»Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 					if (pTile->m_cOwnerClass == DEF_OWNERTYPE_PLAYER) {
 						if (m_pClientList[pTile->m_sOwner] != NULL) ucHeader = ucHeader | 0x01;
@@ -2277,7 +2271,7 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 				}
 
 				if ((ucHeader & 0x02) != 0) {
-					// Ã?Ã—Ã€Âº Ã„Â³Â¸Â¯Ã…Ã? Ã?Â¤ÂºÂ¸ Â»Ã°Ã€Ã�?
+					// Ã?Ã—Ã€Âº Ã„Â³Â¸Â¯Ã…Ã? Ã?Â¤ÂºÂ¸ Â»Ã°Ã€Ã�?
 					switch (pTile->m_cDeadOwnerClass) {
 						case DEF_OWNERTYPE_PLAYER:
 							// Object ID number : 1~10000
@@ -2378,7 +2372,7 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 				}
 
 				if (pTile->m_pItem[0] != NULL) {
-					// Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤ÂºÂ¸ Â»Ã°Ã€Ã�?
+					// Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤ÂºÂ¸ Â»Ã°Ã€Ã�?
 					// Â½ÂºÃ‡Ã?Â¶Ã³Ã€ÃŒÃ†Â®
 					sp = (short *) cp;
 					*sp = pTile->m_pItem[0]->m_sSprite;
@@ -2789,7 +2783,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 					 *ipStatus = iTemp;*/
 
 					if (m_pClientList[sOwnerH]->m_cSide != m_pClientList[i]->m_cSide) {
-						if (m_pClientList[i]->m_iAdminUserLevel > 0) { //Â¾Ã®ÂµÃ¥Â¹ÃŽÂ¿Â¡Â°Ã�?Â´Ã‚ Â¹Â«Ã?Â¶Â°Ã‡ ÂºÂ¸Â³Â½Â´Ã™.
+						if (m_pClientList[i]->m_iAdminUserLevel > 0) { //Â¾Ã®ÂµÃ¥Â¹ÃŽÂ¿Â¡Â°Ã�?Â´Ã‚ Â¹Â«Ã?Â¶Â°Ã‡ ÂºÂ¸Â³Â½Â´Ã™.
 							iTemp = m_pClientList[sOwnerH]->m_iStatus;
 						} else if (i != sOwnerH) {
 							iTemp = iTemp3;
@@ -3432,7 +3426,7 @@ void CGame::CheckClientResponseTime() {
 
 			if ((dwTime - m_pClientList[i]->m_dwTime) > DEF_CLIENTTIMEOUT) {
 				if (m_pClientList[i]->m_bIsInitComplete == TRUE) {
-					// Â°Ã�?Ã€Ã“Ã?ÃŸÃ€ÃŽ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â°Â¡ Ã€Ã€Â´Ã¤Ã€ÃŒ Â¾Ã¸Ã€Â¸Â¹Ã‡Â·ÃŽ Â»Ã¨Ã?Â¦Ã‡Ã‘Â´Ã™.
+					// Â°Ã�?Ã€Ã“Ã?ÃŸÃ€ÃŽ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â°Â¡ Ã€Ã€Â´Ã¤Ã€ÃŒ Â¾Ã¸Ã€Â¸Â¹Ã‡Â·ÃŽ Â»Ã¨Ã?Â¦Ã‡Ã‘Â´Ã™.
 					//Testcode
 					wsprintf(G_cTxt, "Client Timeout: %s", m_pClientList[i]->m_cIPaddress);
 					PutLogList(G_cTxt);
@@ -3461,7 +3455,7 @@ void CGame::CheckClientResponseTime() {
 					if (m_pClientList[i]->m_iHungerStatus <= 0) m_pClientList[i]->m_iHungerStatus = 0;
 					m_pClientList[i]->m_dwHungerTime = dwTime;
 					if ((m_pClientList[i]->m_iHP > 0) && (m_pClientList[i]->m_iHungerStatus < 40)) {//50Cent - Hunger Fix
-						// Â¹Ã¨Â°ï¿½*Ã‡Ã„Ã€Â» Â´Ã€Â³Â¢Â´Ã‚ Â»Ã³Ã…Ã‚Ã€ÃŒÂ´Ã™. Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã…Ã«ÂºÂ¸Ã‡Ã‘Â´Ã™. 
+						// Â¹Ã¨Â°ï¿½*Ã‡Ã„Ã€Â» Â´Ã€Â³Â¢Â´Ã‚ Â»Ã³Ã…Ã‚Ã€ÃŒÂ´Ã™. Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã…Ã«ÂºÂ¸Ã‡Ã‘Â´Ã™. 
 						SendNotifyMsg(NULL, i, DEF_NOTIFY_HUNGER, m_pClientList[i]->m_iHungerStatus, NULL, NULL, NULL);
 					}
 				}
@@ -3536,7 +3530,7 @@ void CGame::CheckClientResponseTime() {
 
 				// v1.432 Ã†Â¯Â¼Ã¶ Â´Ã‰Â·Ã‚ Â»Ã§Â¿Ã« Â°Â¡Â´Ã‰ Â½ÃƒÂ°Â£Ã€Â» Ã?Ã™Ã€ÃŽÂ´Ã™. 3Â¾Â¿ Ã?Ã™Â¾Ã®ÂµÃ§Â´Ã™.
 				if (m_pClientList[i]->m_iSpecialAbilityTime == 3) {
-					// Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+					// Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 					SendNotifyMsg(NULL, i, DEF_NOTIFY_SPECIALABILITYENABLED, NULL, NULL, NULL, NULL);
 					// New 25/05/2004
 					// After the time up, add magic back
@@ -3559,7 +3553,7 @@ void CGame::CheckClientResponseTime() {
 						// Â»Ã§Â¿Ã«Â½ÃƒÂ°Â£Ã€ÃŒ Â´Ã™ ÂµÃ‡Â¾ÃºÂ´Ã™.
 						SendNotifyMsg(NULL, i, DEF_NOTIFY_SPECIALABILITYSTATUS, 3, NULL, NULL, NULL);
 						m_pClientList[i]->m_bIsSpecialAbilityEnabled = FALSE;
-						// Â´Ã™Ã€Â½ Â»Ã§Â¿Ã« Â°Â¡Â´Ã‰ Â½ÃƒÂ°Â£Ã€Â» Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+						// Â´Ã™Ã€Â½ Â»Ã§Â¿Ã« Â°Â¡Â´Ã‰ Â½ÃƒÂ°Â£Ã€Â» Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 						m_pClientList[i]->m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
 						// ÃˆÂ¿Â°Ãº ÂºÃ±Ã†Â® Ã…Â¬Â¸Â®Â¾Ã®
 						sTemp = m_pClientList[i]->m_sAppr4;
@@ -3619,7 +3613,7 @@ void CGame::CheckClientResponseTime() {
 					m_pClientList[i]->m_iSkillMsgRecvCount = 0;
 				}
 
-				// Â¼Ã“ÂµÂµÂ¹Ã¶Â±Ã— ÃƒÂ¼Ã…Â©Â¿Ã«. Â´ÃœÃ€Â§Â½ÃƒÂ°Â£Â´Ã§ Ã?Ã¶Â³ÂªÃ„Â¡Â°Ã�? Â¸Â¹Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¾Ã²Ã€Âº Ã„Â³Â¸Â¯Ã€Âº ÂºÃ­Â·Ã?ÂµÃˆÂ´Ã™.
+				// Â¼Ã“ÂµÂµÂ¹Ã¶Â±Ã— ÃƒÂ¼Ã…Â©Â¿Ã«. Â´ÃœÃ€Â§Â½ÃƒÂ°Â£Â´Ã§ Ã?Ã¶Â³ÂªÃ„Â¡Â°Ã�? Â¸Â¹Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¾Ã²Ã€Âº Ã„Â³Â¸Â¯Ã€Âº ÂºÃ­Â·Ã?ÂµÃˆÂ´Ã™.
 				if (m_pClientList[i] == NULL) break;
 				// Ã‡Ã?Ã€Â§ Â·Â¹ÂºÂ§ Ã?Â¦Ã‡Ã‘Â¿Â¡ Â°Ã‰Â¸Â°Â´Ã™Â¸Ã©
 				//if (m_pClientList[i]->m_iLevel < m_pMapList[m_pClientList[i]->m_cMapIndex]->m_iLevelLimit) {
@@ -3813,7 +3807,7 @@ void CGame::OnMainLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 		case DEF_XSOCKEVENT_MSGSIZETOOLARGE:
 			// ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ Å©ï¿½â°¡ ï¿½ï¿½ï¿½Ûºï¿½ï¿½ï¿½ Å©ï¿½ï¿½.	ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ß¸ï¿½ ï¿½Ñ´ï¿½.
 		case DEF_XSOCKEVENT_SOCKETERROR:
-			// ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+			// ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
 			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 			delete m_pMainLogSock;
@@ -3875,7 +3869,7 @@ BOOL CGame::bSendMsgToLS(DWORD dwMsg, int iClientH, BOOL bFlag, char* pData) {
 				m_cShutDownCode      = 3;
 				m_bOnExitProcess     = TRUE;
 				m_dwExitProcessTime  = timeGetTime();
-				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
+				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
 				PutLogList("(!) GAME SERVER SHUTDOWN PROCESS STARTED(by Log-server connection Lost)!!!");
 			}
 			return FALSE;
@@ -4033,7 +4027,7 @@ BOOL CGame::bSendMsgToLS(DWORD dwMsg, int iClientH, BOOL bFlag, char* pData) {
 			break;
 
 		case MSGID_REQUEST_REGISTERGAMESERVER:
-			// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Ã€Â» Â¿Ã¤ÃƒÂ»Ã‡Ã‘Â´Ã™.
+			// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Ã€Â» Â¿Ã¤ÃƒÂ»Ã‡Ã‘Â´Ã™.
 			if (m_pMainLogSock == NULL) return FALSE;
 
 			wsprintf(cTxt, "(!) Try to register game server(%s)", m_cServerName);
@@ -4446,7 +4440,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize) {
 	if (m_pClientList[iClientH]->m_bIsInitComplete == TRUE) return; // Ã€ÃŒÂ¹ÃŒ ÃƒÃŠÂ±Ã¢ÃˆÂ­ ÂµÃˆ Ã„Â³Â¸Â¯Ã…Ã?Ã€Ã‡ ÂµÂ¥Ã€ÃŒÃ…Ã?Ã€ÃŒÂ´Ã™. Ã€ÃŒÂ·Â±Ã€Ã?Ã€ÃŒ Ã€Ã–Ã€Â» Â¼Ã¶ Ã€Ã–Ã€Â»Â±Ã®?
 
 	// Log ServerÂ·ÃŽÂºÃŽÃ…Ã?Ã€Ã‡ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÃ?Â¼Â®Ã‡Ã?Â¿Â© Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Ã€Ã‡ ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ ÃƒÃŠÂ±Ã¢ÃˆÂ­Ã‡Ã‘Â´Ã™.
-	// Â¸Â¸Â¾Ã  Â·ÃŽÂ±Ã—Â¼Â­Â¹Ã¶Â·ÃŽÂºÃŽÃ…Ã?Ã€Ã‡ Â¸ÃžÂ½ÃƒÃ?Ã¶Â°Â¡ Ã†Ã„Ã€Ã?Â¼Ã•Â»Ã³ÂµÃ®Ã€Ã‡ Ã€ÃŒÃ€Â¯Â·ÃŽ Â³Â»Â¿Ã«Ã€ÃŒ Ã?Â¤ÃˆÂ®Ã‡Ã?Â°Ã�? Â¸Ã‚Ã?Ã¶ Â¾ÃŠÃ€Â¸Â¸Ã© ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ°Ã­ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ Â»Ã¨Ã?Â¦Ã‡Ã‘Â´Ã™.
+	// Â¸Â¸Â¾Ã  Â·ÃŽÂ±Ã—Â¼Â­Â¹Ã¶Â·ÃŽÂºÃŽÃ…Ã?Ã€Ã‡ Â¸ÃžÂ½ÃƒÃ?Ã¶Â°Â¡ Ã†Ã„Ã€Ã?Â¼Ã•Â»Ã³ÂµÃ®Ã€Ã‡ Ã€ÃŒÃ€Â¯Â·ÃŽ Â³Â»Â¿Ã«Ã€ÃŒ Ã?Â¤ÃˆÂ®Ã‡Ã?Â°Ã�? Â¸Ã‚Ã?Ã¶ Â¾ÃŠÃ€Â¸Â¸Ã© ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ°Ã­ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ Â»Ã¨Ã?Â¦Ã‡Ã‘Â´Ã™.
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 
@@ -4509,7 +4503,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize) {
 
 	// Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã§Â°Ã¨Â»Ãª.
 	CalcTotalItemEffect(iClientH, -1, TRUE); //FALSE
-	// Â¹Â«Â°Ã�? Â°Ã¨Â»Ãª
+	// Â¹Â«Â°Ã�? Â°Ã¨Â»Ãª
 	iCalcTotalWeight(iClientH);
 
 	// New 23/05/2004
@@ -4599,7 +4593,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize) {
 	// Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Ã€Ã‡ ÂµÂ¥Ã€ÃŒÃ…Ã?Â°Â¡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ ÂµÃ‡Â¾ÃºÂ´Ã™.
 	m_pClientList[iClientH]->m_bIsInitComplete = TRUE;
 
-	// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Ã€ÃŒ Â°Ã¨Ã?Â¤Ã€Ã‡ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â°Â¡ Â°Ã�?Ã€Ã“Ã?ÃŸÂ¿Â¡ ÂµÃ©Â¾Ã®Â¿Ã�?Ã€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+	// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Ã€ÃŒ Â°Ã¨Ã?Â¤Ã€Ã‡ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â°Â¡ Â°Ã�?Ã€Ã“Ã?ÃŸÂ¿Â¡ ÂµÃ©Â¾Ã®Â¿Ã�?Ã€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 	bSendMsgToLS(MSGID_ENTERGAMECONFIRM, iClientH);
 
 	// Â¼Â­Â¹Ã¶ Â´Ã™Â¿Ã®Ã€Â» Â¸Â·Â±Ã¢Ã€Â§Ã‡Ã‘ ÃƒÃ–ÃˆÃ„Ã€Ã‡ Ã?Â¶Ã„Â¡Ã€ÃŒÂ´Ã™.
@@ -4650,7 +4644,7 @@ BOOL CGame::bReadProgramConfigFile(char * cFn) {
 
 	pFile = fopen(cFn, "rt");
 	if (pFile == NULL) {
-		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
+		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
 		//	PutLogList("(!) Cannot open configuration file.");
 		return FALSE;
 	} else {
@@ -4681,7 +4675,7 @@ BOOL CGame::bReadProgramConfigFile(char * cFn) {
 						break;
 
 					case 2:
-						// v2.04 Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ IP Ã€ÃšÂµÂ¿Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„
+						// v2.04 Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ IP Ã€ÃšÂµÂ¿Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„
 						ZeroMemory(m_cGameServerAddr, sizeof (m_cGameServerAddr));
 						char ServerAddr[50];
 						::gethostname(ServerAddr, 50);
@@ -4886,7 +4880,7 @@ BOOL CGame::bReadSettingsConfigFile(char * cFn) {
 
 	pFile = fopen(cFn, "rt");
 	if (pFile == NULL) {
-		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
+		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
 		//   PutLogList("(!) Cannot open configuration file.");
 		return FALSE;
 	} else {
@@ -5156,7 +5150,7 @@ BOOL CGame::bReadCrusadeStructureConfigFile(char * cFn) {
 
 	pFile = fopen(cFn, "rt");
 	if (pFile == NULL) {
-		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
+		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
 		PutLogList("(!) Cannot open Crusade configuration file.");
 		return FALSE;
 	} else {
@@ -5625,7 +5619,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 								// Â¹Â«Â±Ã¢Â³Âª Â¹Ã¦Â¾Ã®Â±Â¸Ã€Ã‡ Â°Ã¦Â¿Ã¬ Â°Â¡Ã?ÃŸÃ„Â¡ ItemSpecialEffectValue2
 							}
 
-							// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Ã‡ÃƒÂ·Â¡Â±Ã—Â°Â¡ Â¼Â³Ã?Â¤ÂµÃ‡Â¾Ã® Ã€Ã–Â´Ã™Â¸Ã© ÃƒÃ–Â´Ã« Â¼Ã¶Â¸Ã­, Â½ÂºÃ‡Ã‡ÂµÃ¥, Â¹Â«Â°Ã�? ÂµÃ®Ã€Â» Ã€Ã§Â¼Â³Ã?Â¤ Ã‡Ã˜Â¾ÃŸ Ã‡Ã‘Â´Ã™.
+							// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Ã‡ÃƒÂ·Â¡Â±Ã—Â°Â¡ Â¼Â³Ã?Â¤ÂµÃ‡Â¾Ã® Ã€Ã–Â´Ã™Â¸Ã© ÃƒÃ–Â´Ã« Â¼Ã¶Â¸Ã­, Â½ÂºÃ‡Ã‡ÂµÃ¥, Â¹Â«Â°Ã�? ÂµÃ®Ã€Â» Ã€Ã§Â¼Â³Ã?Â¤ Ã‡Ã˜Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 							_AdjustRareItemValue(m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 
 							// v1.41 Ã‡Ã¶Ã€Ã§ Â¼Ã¶Â¸Ã­ ÃƒÃ–Â´Ã« Â¼Ã¶Â¸Ã­Ã€Â» Â´Ã‰Â°Â¡Ã‡Ã?Â¸Ã© Â¹Ã¶Â±Ã—Ã€ÃŒÂ¹Ã‡Â·ÃŽ ÂµÃ‡ÂµÂ¹Â¸Â°Â´Ã™.
@@ -6151,7 +6145,7 @@ BOOL CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 								}
 							}
 
-							// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Ã‡ÃƒÂ·Â¡Â±Ã—Â°Â¡ Â¼Â³Ã?Â¤ÂµÃ‡Â¾Ã® Ã€Ã–Â´Ã™Â¸Ã© ÃƒÃ–Â´Ã« Â¼Ã¶Â¸Ã­, Â½ÂºÃ‡Ã‡ÂµÃ¥, Â¹Â«Â°Ã�? ÂµÃ®Ã€Â» Ã€Ã§Â¼Â³Ã?Â¤ Ã‡Ã˜Â¾ÃŸ Ã‡Ã‘Â´Ã™.
+							// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Ã‡ÃƒÂ·Â¡Â±Ã—Â°Â¡ Â¼Â³Ã?Â¤ÂµÃ‡Â¾Ã® Ã€Ã–Â´Ã™Â¸Ã© ÃƒÃ–Â´Ã« Â¼Ã¶Â¸Ã­, Â½ÂºÃ‡Ã‡ÂµÃ¥, Â¹Â«Â°Ã�? ÂµÃ®Ã€Â» Ã€Ã§Â¼Â³Ã?Â¤ Ã‡Ã˜Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 							_AdjustRareItemValue(m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]);
 
 							// v1.41 Â¼Ã¶Â¸Ã­Ã€ÃŒ ÃƒÃ–Â´Ã«Â¼Ã¶Â¸Ã­Ã€Â» ÃƒÃŠÂ°ÃºÃ‡Ã‘Â´Ã™Â¸Ã© Â¹Ã¶Â±Ã—Ã€ÃŒÂ¹Ã‡Â·ÃŽ ÂµÃ‡ÂµÂ¹Â¸Â°Â´Ã™.
@@ -7131,7 +7125,7 @@ DPDC_STOP_DECODING:
 	if ((m_Misc.bCheckValidName(m_pClientList[iClientH]->m_cCharName) == FALSE) || (m_Misc.bCheckValidName(m_pClientList[iClientH]->m_cAccountName) == FALSE))
 		return FALSE;
 
-	// v1.4 Ã‚Â¡Â°Ã¨ Â¸Ã�?Ã€Âº Ã„Â³Â¸Â¯Ã…Ã?Ã€Ã‡ Ã‚Â¡Â°Ã¨Â±Ã¢Â°Â£ Â¾ÃˆÃ€ÃŒÂ¸Ã© Ã?Â¢Â¼Ã“ ÂºÃ’Â°Â¡
+	// v1.4 Ã‚Â¡Â°Ã¨ Â¸Ã�?Ã€Âº Ã„Â³Â¸Â¯Ã…Ã?Ã€Ã‡ Ã‚Â¡Â°Ã¨Â±Ã¢Â°Â£ Â¾ÃˆÃ€ÃŒÂ¸Ã© Ã?Â¢Â¼Ã“ ÂºÃ’Â°Â¡
 	if (m_pClientList[iClientH]->m_iPenaltyBlockYear != 0) {
 		GetLocalTime(&SysTime);
 		iDateSum1 = (__int64) (m_pClientList[iClientH]->m_iPenaltyBlockYear * 10000 + m_pClientList[iClientH]->m_iPenaltyBlockMonth * 100 + m_pClientList[iClientH]->m_iPenaltyBlockDay);
@@ -7153,7 +7147,7 @@ DPDC_STOP_DECODING:
 		}
 	}
 
-	// v1.42 Ã€ÃŸÂ¸Ã¸ Ã€Ã�?Â·Ã‚ÂµÃˆ Â¿Ã®Â¿ÂµÃ€Ãš Â·Â¹ÂºÂ§ Â°ÂªÃ€Â» Ã…Â¬Â¸Â®Â¾Ã®
+	// v1.42 Ã€ÃŸÂ¸Ã¸ Ã€Ã�?Â·Ã‚ÂµÃˆ Â¿Ã®Â¿ÂµÃ€Ãš Â·Â¹ÂºÂ§ Â°ÂªÃ€Â» Ã…Â¬Â¸Â®Â¾Ã®
 	if (m_pClientList[iClientH]->m_iAdminUserLevel < 0) m_pClientList[iClientH]->m_iAdminUserLevel = 0;
 
 	// ============================================================================================================
@@ -7192,7 +7186,7 @@ DPDC_STOP_DECODING:
 	// Â¼Ã’Ã?Ã¶Ã‡Â° ÃƒÃ‘ Ã?ÃŸÂ·Â®Â°Ã¨Â»Ãª
 	iCalcTotalWeight(iClientH);
 
-	// v1.3 Ã?Ã¶Â³ÂªÃ„Â¡Â°Ã�? Â¸Â¹Ã€Âº ÂµÂ·Ã€Â» Â¼Ã’Ã?Ã¶Ã‡Ã‘ Ã„Â³Â¸Â¯Ã…Ã? Ã€ÃŒÂ¸Â§Ã€Â» Ã€Ã»Â´Ã‚Â´Ã™.
+	// v1.3 Ã?Ã¶Â³ÂªÃ„Â¡Â°Ã�? Â¸Â¹Ã€Âº ÂµÂ·Ã€Â» Â¼Ã’Ã?Ã¶Ã‡Ã‘ Ã„Â³Â¸Â¯Ã…Ã? Ã€ÃŒÂ¸Â§Ã€Â» Ã€Ã»Â´Ã‚Â´Ã™.
 	//if (iTotalGold > 800000) {
 	//	wsprintf(G_cTxt, "(!) Ã‡Ã˜Ã…Â· Â¿Ã«Ã€Ã‡Ã€Ãš(%s) Gold(%d)", m_pClientList[iClientH]->m_cCharName, iTotalGold);
 	//PutLogFileList(G_cTxt);
@@ -7450,7 +7444,7 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 	 */
 
 	//
-	// Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã® Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã�?Â·Ã‚
+	// Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã® Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã�?Â·Ã‚
 	strcat(pData, "sex-status       = ");
 	itoa(m_pClientList[iClientH]->m_cSex, cTxt, 10);
 	strcat(pData, cTxt);
@@ -7600,7 +7594,7 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 
 	strcat(pData, "\n\n");
 
-	// Ã„Â³Â¸Â¯Ã…Ã?Ã€Ã‡ Â¿ÃœÃ‡Ã¼Ã‡Â¥Ã‡Ã¶ Appr4Â°Â³Â¸Â¦ Ã€ÃºÃ€Ã¥Ã‡Ã‘Â´Ã™. Ã€ÃŒÂ°Ã?Ã€Âº Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Â¿Â¡Â¼Â­Â´Ã‚ Â»Ã§Â¿Ã«Ã‡Ã?Ã?Ã¶ Â¾ÃŠÃ€Â¸Â¸Ã§ Â·ÃŽÂ±Ã—Â¼Â­Â¹Ã¶->Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â°Â£Â¿Â¡ Â»Ã§Â¿Ã«ÂµÃˆÂ´Ã™.
+	// Ã„Â³Â¸Â¯Ã…Ã?Ã€Ã‡ Â¿ÃœÃ‡Ã¼Ã‡Â¥Ã‡Ã¶ Appr4Â°Â³Â¸Â¦ Ã€ÃºÃ€Ã¥Ã‡Ã‘Â´Ã™. Ã€ÃŒÂ°Ã?Ã€Âº Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Â¿Â¡Â¼Â­Â´Ã‚ Â»Ã§Â¿Ã«Ã‡Ã?Ã?Ã¶ Â¾ÃŠÃ€Â¸Â¸Ã§ Â·ÃŽÂ±Ã—Â¼Â­Â¹Ã¶->Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â°Â£Â¿Â¡ Â»Ã§Â¿Ã«ÂµÃˆÂ´Ã™.
 	strcat(pData, "appr1 = ");
 	itoa(m_pClientList[iClientH]->m_sAppr1, cTxt, 10);
 	strcat(pData, cTxt);
@@ -7765,7 +7759,7 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 		ZeroMemory(cTxt, sizeof (cTxt));
 		wsprintf(cTxt, "%d ", m_pClientList[iClientH]->m_cSkillMastery[i]);
 
-		strcat(pData, cTxt); // ÃƒÃŠÂ±Ã¢Â°Âª Ã€Ã�?Â·Ã‚
+		strcat(pData, cTxt); // ÃƒÃŠÂ±Ã¢Â°Âª Ã€Ã�?Â·Ã‚
 	}
 	strcat(pData, "\n");
 
@@ -7774,11 +7768,11 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 		ZeroMemory(cTxt, sizeof (cTxt));
 		wsprintf(cTxt, "%d ", m_pClientList[iClientH]->m_iSkillSSN[i]);
 
-		strcat(pData, cTxt); // ÃƒÃŠÂ±Ã¢Â°Âª Ã€Ã�?Â·Ã‚
+		strcat(pData, cTxt); // ÃƒÃŠÂ±Ã¢Â°Âª Ã€Ã�?Â·Ã‚
 	}
 	strcat(pData, "\n");
 
-	// Â¾Ã†Ã€ÃŒÃ…Ã› Ã€Ã¥Ã‚Ã¸ Â»Ã³Ã…Ã‚Â¸Â¦ Ã€ÃºÃ€Ã¥Ã‡Ã‘Â´Ã™. Â¹Ã?ÂµÃ¥Â½Ãƒ Â¸Ã‡ Â¸Â¶Ã?Ã¶Â¸Â·Â¿Â¡ Ã€Ã–Â¾Ã®Â¾ÃŸ Ã‡Ã�?.
+	// Â¾Ã†Ã€ÃŒÃ…Ã› Ã€Ã¥Ã‚Ã¸ Â»Ã³Ã…Ã‚Â¸Â¦ Ã€ÃºÃ€Ã¥Ã‡Ã‘Â´Ã™. Â¹Ã?ÂµÃ¥Â½Ãƒ Â¸Ã‡ Â¸Â¶Ã?Ã¶Â¸Â·Â¿Â¡ Ã€Ã–Â¾Ã®Â¾ÃŸ Ã‡Ã�?.
 	strcat(pData, "[ITEM-EQUIP-STATUS]\n\n");
 	strcat(pData, "item-equip-status = ");
 
@@ -8404,7 +8398,7 @@ GET_VALIDLOC_SUCCESS:
 					break;
 
 				case DEF_MOVETYPE_RANDOMWAYPOINT:
-					// 10Â°Â³Ã€Ã‡ Â»Ã½Â¼ÂºÃ€Â§Ã„Â¡Ã?ÃŸ Ã‡Ã‘Â°Ã·Ã€Â» Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Â¼Â±Ã…Ãƒ
+					// 10Â°Â³Ã€Ã‡ Â»Ã½Â¼ÂºÃ€Â§Ã„Â¡Ã?ÃŸ Ã‡Ã‘Â°Ã·Ã€Â» Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Â¼Â±Ã…Ãƒ
 					sX = (short) m_pMapList[iMapIndex]->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].x;
 					sY = (short) m_pMapList[iMapIndex]->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].y;
 					break;
@@ -8438,7 +8432,7 @@ GET_VALIDLOC_SUCCESS:
 			}
 
 			if ((poX != NULL) && (poY != NULL)) {
-				// Ã†Ã·Ã€ÃŽÃ…Ã?Â°Â¡ NULLÃ€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â»Ã½Â¼ÂºÃ?Ã‚Ã‡Â¥Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+				// Ã†Ã·Ã€ÃŽÃ…Ã?Â°Â¡ NULLÃ€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â»Ã½Â¼ÂºÃ?Ã‚Ã‡Â¥Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 				*poX = sX;
 				*poY = sY;
 			}
@@ -8633,7 +8627,7 @@ GET_VALIDLOC_SUCCESS:
 					break;
 			}
 
-			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â¸Â°Â´Ã™.
+			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â¸Â°Â´Ã™.
 			SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, NULL, NULL, NULL);
 			return TRUE;
 		}
@@ -8764,7 +8758,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 	// v1.41 ShutUp TimeÃ€ÃŒ Â°Ã‰Â·Ã? Ã€Ã–Ã€Â¸Â¸Ã© Â¿Ã?Ã€Ã¼ÃˆÃ· Â¸Â»Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™. Â°Â­Â·Ã‚ Ã?Â¦Ã€Ã§
 	if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) return;
 
-	// ÂºÂ»Ã€ÃŽÃ€Ã‡ Ã€ÃŒÂ¸Â§Ã€ÃŒ Â±Ã¢Ã€Ã�?ÂµÃ‡Â¾Ã® Ã€Ã–Ã?Ã¶ Â¾ÃŠÂ´Ã™Â¸Ã© Â¸Â®Ã…Ã?
+	// ÂºÂ»Ã€ÃŽÃ€Ã‡ Ã€ÃŒÂ¸Â§Ã€ÃŒ Â±Ã¢Ã€Ã�?ÂµÃ‡Â¾Ã® Ã€Ã–Ã?Ã¶ Â¾ÃŠÂ´Ã™Â¸Ã© Â¸Â®Ã…Ã?
 	if (memcmp((pData + 10), m_pClientList[iClientH]->m_cCharName, strlen(m_pClientList[iClientH]->m_cCharName)) != 0) return;
 
 	// Â°Ã¼Â¶Ã·Ã€ÃšÂ¶Ã³Â¸Ã© ÃƒÂ¤Ã†ÃƒÃ€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
@@ -8840,7 +8834,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 	// Â¸ÃžÂ½ÃƒÃ?Ã¶Â¿Â¡ Â¸Ã­Â·Ã‰Â¾Ã®Â°Â¡ Â¼Â¯Â¿Â© Ã€Ã–Â´Ã‚Ã?Ã¶ Â°Ã‹Â»Ã§Ã‡Ã‘Â´Ã™.
 	switch (*cp) {
 		case '@':
-			// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶
+			// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶
 			*cp = 32;
 			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 1) &&
 					  (m_pClientList[iClientH]->m_iSP >= 3)) {
@@ -8878,7 +8872,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 			break;
 
 		case '^':
-			// Ã€Ã¼ÃƒÂ¼ Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÂµÃ‡Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Ã€ÃŒÂ´Ã™.
+			// Ã€Ã¼ÃƒÂ¼ Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÂµÃ‡Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Ã€ÃŒÂ´Ã™.
 			// Â¸Â¸Â¾Ã  Â°Ã¼Â¸Â®Â±Ã‡Ã‡Ã‘Ã€ÃŒ Ã€Ã–Â°Ã…Â³Âª Â±Ã¦ÂµÃ¥Â¸Â¶Â½ÂºÃ…Ã?Ã€ÃŽÂ°Ã¦Â¿Ã¬ Ã€Ã¼ÃƒÂ¼Â¼Â­Â¹Ã¶Â¿Â¡ ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ¼Â¼Ã?Ã¶
 			*cp = 32;
 			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 10) &&
@@ -8901,8 +8895,8 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 			break;
 
 		case '!':
-			// Ã€Ã¼ÃƒÂ¼ Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÂµÃ‡Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Ã€ÃŒÂ´Ã™.
-			// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶
+			// Ã€Ã¼ÃƒÂ¼ Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÂµÃ‡Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Ã€ÃŒÂ´Ã™.
+			// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶
 			*cp = 32;
 			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 10) &&
 					  (m_pClientList[iClientH]->m_iSP >= 5)) {
@@ -8926,7 +8920,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 			break;
 
 		case '~':
-			// Â°Â°Ã€Âº Ã†Ã­Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶
+			// Â°Â°Ã€Âº Ã†Ã­Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶
 			*cp = 32;
 			if ((m_pClientList[iClientH]->m_iTimeLeft_ShutUp == 0) && (m_pClientList[iClientH]->m_iLevel > 1) &&
 					  (m_pClientList[iClientH]->m_iSP >= 3)) {
@@ -9396,13 +9390,13 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 			}
 
 			if ((memcmp(cp, "/shutdownthisserverrightnow ", 28) == 0) && (m_pClientList[iClientH]->m_iAdminUserLevel >= m_iAdminLevelShutdown)) {
-				// Ã„Â¿Â¸Ã‡ÂµÃ¥Â¿Â¡ Ã€Ã‡Ã‡Ã‘ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã® Â¸Ã­Â·Ã‰ ÂºÃ±Â»Ã³Â»Ã§Ã…Ã‚Â¿Â¡ Â´Ã«ÂºÃ±Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?Ã€ÃŒÂ´Ã™.
+				// Ã„Â¿Â¸Ã‡ÂµÃ¥Â¿Â¡ Ã€Ã‡Ã‡Ã‘ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã® Â¸Ã­Â·Ã‰ ÂºÃ±Â»Ã³Â»Ã§Ã…Ã‚Â¿Â¡ Â´Ã«ÂºÃ±Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?Ã€ÃŒÂ´Ã™.
 				m_cShutDownCode = 2;
 				m_bOnExitProcess = TRUE;
 				m_dwExitProcessTime = timeGetTime();
-				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
+				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
 				PutLogList("(!) GAME SERVER SHUTDOWN PROCESS BEGIN(by Admin-Command)!!!");
-				// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Ã‡Ã¶Ã€Ã§ Â¼Â­Â¹Ã¶Â°Â¡ Â¼Ã‹Â´Ã™Â¿Ã® Ã?ÃŸÃ€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+				// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Ã‡Ã¶Ã€Ã§ Â¼Â­Â¹Ã¶Â°Â¡ Â¼Ã‹Â´Ã™Â¿Ã® Ã?ÃŸÃ€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 				bSendMsgToLS(MSGID_GAMESERVERSHUTDOWNED, NULL);
 				// OccupyFlag ÂµÂ¥Ã€ÃŒÃ…Ã? Ã€ÃºÃ€Ã¥
 				if (m_iMiddlelandMapIndex > 0) {
@@ -9495,7 +9489,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 17);
 
 	if ((cSendMode == NULL) && (m_pClientList[iClientH]->m_iWhisperPlayerIndex != -1)) {
-		// Ã€Ã?Â¹Ã? Â¸ÃžÂ½ÃƒÃ?Ã¶Ã€ÃŒÂ°Ã­ Â±Ã“Â¼Ã“Â¸Â» Â¸Ã°ÂµÃ¥Â¶Ã³Â¸Ã© ÂºÂ»Ã€ÃŽÂ°Ãº Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�?Â¸Â¸ Ã€Ã¼Â¼Ã›Ã‡Ã‘Â´Ã™.
+		// Ã€Ã?Â¹Ã? Â¸ÃžÂ½ÃƒÃ?Ã¶Ã€ÃŒÂ°Ã­ Â±Ã“Â¼Ã“Â¸Â» Â¸Ã°ÂµÃ¥Â¶Ã³Â¸Ã© ÂºÂ»Ã€ÃŽÂ°Ãº Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�?Â¸Â¸ Ã€Ã¼Â¼Ã›Ã‡Ã‘Â´Ã™.
 		cSendMode = 20;
 
 		// Â±Ã“Â¼Ã“Â¸Â» Ã…Â»Ã„Ã° Ã„ÃšÂµÃ¥Â°Â¡ Ã€Ã–Â´Ã™Â¸Ã© Ã€Ã?Â¹Ã? Â´Ã«ÃˆÂ­Â°Â¡ ÂµÃˆÂ´Ã™.
@@ -9505,11 +9499,11 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 		if (m_pClientList[iClientH]->m_iTimeLeft_ShutUp > 0) cSendMode = NULL;
 	}
 
-	// ÃƒÂ¤Ã†Ãƒ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ Â±Ã—Â´Ã«Â·ÃŽ Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®ÂµÃ©Â¿Â¡Â°Ã�? Â¹ÃŸÂ¼Ã›Ã‡Ã‘Â´Ã™.
-	// Â´Ãœ, MSGTYPEÃ€Â§Ã„Â¡Â¿Â¡ Â¿Ã€ÂºÃªÃ?Â§Ã†Â® Â¾Ã†Ã€ÃŒÂµÃ°Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+	// ÃƒÂ¤Ã†Ãƒ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ Â±Ã—Â´Ã«Â·ÃŽ Ã€ÃŽÃ?Â¢Ã‡Ã‘ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®ÂµÃ©Â¿Â¡Â°Ã�? Â¹ÃŸÂ¼Ã›Ã‡Ã‘Â´Ã™.
+	// Â´Ãœ, MSGTYPEÃ€Â§Ã„Â¡Â¿Â¡ Â¿Ã€ÂºÃªÃ?Â§Ã†Â® Â¾Ã†Ã€ÃŒÂµÃ°Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 	wp = (WORD *) (pData + DEF_INDEX2_MSGTYPE);
 	*wp = (WORD) iClientH;
-	// Â±Ã—Â¸Â®Â°Ã­ Â¸ÃžÂ½ÃƒÃ?Ã¶ Ã…Â¸Ã€Ã�?Ã€Â» Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+	// Â±Ã—Â¸Â®Â°Ã­ Â¸ÃžÂ½ÃƒÃ?Ã¶ Ã…Â¸Ã€Ã�?Ã€Â» Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 16);
 	*cp = cSendMode;
 
@@ -10066,7 +10060,7 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 	// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ñ´ï¿½.
 	TargetSearch(iNpcH, &sTarget, &cTargetType);
 	if (sTarget != NULL) {
-		// ï¿½ï¿½�?¸ï¿½Ç¥ ï¿½ß°ï¿½.
+		// ï¿½ï¿½�?¸ï¿½Ç¥ ï¿½ß°ï¿½.
 		if (m_pNpcList[iNpcH]->m_dwActionTime < 1000) {
 			// ï¿½×¼ï¿½ ï¿½ï¿½ï¿½Çµï¿½ 1000ms ï¿½Ì¸ï¿½ï¿½ï¿½ NPCï¿½ï¿½ 33% È®ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ È¹ï¿½ï¿½ï¿½Ñ´ï¿½.
 			if (iDice(1, 3) == 3) {
@@ -10097,7 +10091,7 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 		sY = m_pNpcList[iNpcH]->m_sY;
 		switch (m_pNpcList[iNpcH]->m_cFollowOwnerType) {
 			case DEF_OWNERTYPE_PLAYER:
-				// ï¿½ï¿½ï¿½Ù´�?´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯.
+				// ï¿½ï¿½ï¿½Ù´�?´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯.
 				if (m_pClientList[m_pNpcList[iNpcH]->m_iFollowOwnerIndex] == NULL) {
 					m_pNpcList[iNpcH]->m_cMoveType = DEF_MOVETYPE_RANDOM;
 					return;
@@ -10107,7 +10101,7 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 				dY = m_pClientList[m_pNpcList[iNpcH]->m_iFollowOwnerIndex]->m_sY;
 				break;
 			case DEF_OWNERTYPE_NPC:
-				// ï¿½ï¿½ï¿½Ù´�?´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯. -> 01-12-19 ï¿½Öºï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+				// ï¿½ï¿½ï¿½Ù´�?´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯. -> 01-12-19 ï¿½Öºï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				if (m_pNpcList[m_pNpcList[iNpcH]->m_iFollowOwnerIndex] == NULL) {
 					m_pNpcList[iNpcH]->m_cMoveType = DEF_MOVETYPE_RANDOM;
 					m_pNpcList[iNpcH]->m_iFollowOwnerIndex = NULL;
@@ -10308,13 +10302,13 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 	// ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½.
 	m_pNpcList[iNpcH]->m_sBehaviorTurnCount++;
 	if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount > 20) {
-		// 20È¸ ï¿½Ì»ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½Ù½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°£ï¿½ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ ï¿½Æ´�?¶ï¿½ï¿½
+		// 20È¸ ï¿½Ì»ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½Ù½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°£ï¿½ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ ï¿½Æ´�?¶ï¿½ï¿½
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 
 		if ((m_pNpcList[iNpcH]->m_bIsPermAttackMode == FALSE))
 			m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
 
-		// ï¿½ï¿½ï¿½â¼­ Ç¥È¿ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½.
+		// ï¿½ï¿½ï¿½â¼­ Ç¥È¿ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½.
 		return;
 	}
 
@@ -10368,11 +10362,11 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 
 	// ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½Ç´ï¿½ï¿½Ñ´ï¿½.
 	if ((abs(sX - dX) <= 1) && (abs(sY - dY) <= 1)) {
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½.	ï¿½Ù°Å¸ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½�?°ï¿½ï¿½ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½.	ï¿½Ù°Å¸ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½�?°ï¿½ï¿½ï¿½.
 
 		cDir = m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
 		if (cDir == 0) return;
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Ù°ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Ù°ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½
 		m_pNpcList[iNpcH]->m_cDir = cDir;
 
 		if (m_pNpcList[iNpcH]->m_cActionLimit == 5) {
@@ -10401,9 +10395,9 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 					break;
 			}
 		} else {
-			// ï¿½�?¹ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½
-			SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 1); // 1 : Ä®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ç¹ï¿½
-			iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 1, FALSE, FALSE); // ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+			// ï¿½�?¹ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½
+			SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 1); // 1 : Ä®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ç¹ï¿½
+			iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 1, FALSE, FALSE); // ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		}
 		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½.
 		m_pNpcList[iNpcH]->m_iAttackCount++;
@@ -10432,7 +10426,7 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 		if (cDir == 0) return;
 		m_pNpcList[iNpcH]->m_cDir = cDir;
 
-		// ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 		if ((m_pNpcList[iNpcH]->m_cMagicLevel > 0) && (iDice(1, 2) == 1) &&
 				  (abs(sX - dX) <= 9) && (abs(sY - dY) <= 7)) {
 			iMagicType = -1;
@@ -10554,14 +10548,14 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 					switch (m_pNpcList[iNpcH]->m_cTargetType) {
 						case DEF_OWNERTYPE_PLAYER:
 							if (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] == 2) {
-								// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½�?°Å³ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯, ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½
+								// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½�?°Å³ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯, ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½
 								if ((abs(sX - dX) > m_pNpcList[iNpcH]->m_iAttackRange) || (abs(sY - dY) > m_pNpcList[iNpcH]->m_iAttackRange)) {
 									m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 									m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
 									return;
 								} else goto NBA_CHASE;
 							}
-							// ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½�?·ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+							// ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½�?·ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 							if ((iMagicType == 35) && (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
 							break;
 
@@ -10574,13 +10568,13 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 									return;
 								} else goto NBA_CHASE;
 							}
-							// ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½�?·ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+							// ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½�?·ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 							if ((iMagicType == 35) && (m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0)) goto NBA_CHASE;
 							break;
 					}
 				}
 
-				SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 1); // 1 : Ä®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ç¹ï¿½
+				SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 1); // 1 : Ä®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ç¹ï¿½
 				NpcMagicHandler(iNpcH, dX, dY, iMagicType);
 				m_pNpcList[iNpcH]->m_dwTime = dwTime + 2000;
 				return;
@@ -10599,20 +10593,20 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 				iMagicType = 0;
 
 			if (iMagicType != -1) {
-				SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 1); // 1 : Ä®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ç¹ï¿½
+				SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 1); // 1 : Ä®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ç¹ï¿½
 				NpcMagicHandler(iNpcH, dX, dY, iMagicType);
 				m_pNpcList[iNpcH]->m_dwTime = dwTime + 2000;
 				return;
 			}
 		}
 
-		// v1.41 ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´Ù¸ï¿½
+		// v1.41 ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´Ù¸ï¿½
 		if ((m_pNpcList[iNpcH]->m_iAttackRange > 1) &&
 				  (abs(sX - dX) <= m_pNpcList[iNpcH]->m_iAttackRange) && (abs(sY - dY) <= m_pNpcList[iNpcH]->m_iAttackRange)) {
 
 			cDir = m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
 			if (cDir == 0) return;
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Ù°ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Ù°ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½
 			m_pNpcList[iNpcH]->m_cDir = cDir;
 
 			if (m_pNpcList[iNpcH]->m_cActionLimit == 5) {
@@ -10720,7 +10714,7 @@ NBA_BREAK1:
 
 					default:
 						SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 20); // 20: ï¿½Ê»ï¿½ï¿½
-						// ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+						// ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 						iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 20);
 						break;
 				}
@@ -10759,7 +10753,7 @@ NBA_CHASE:
 		m_pNpcList[iNpcH]->m_iAttackCount = 0;
 
 		{
-			// ï¿½Ìµï¿½ï¿½ï¿½å°¡ Followï¿½ï¿½ ï¿½Æ´�?¶ï¿½ï¿½ ï¿½ï¿½�?¸ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.	ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
+			// ï¿½Ìµï¿½ï¿½ï¿½å°¡ Followï¿½ï¿½ ï¿½Æ´�?¶ï¿½ï¿½ ï¿½ï¿½�?¸ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.	ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 			cDir = cGetNextMoveDir(sX, sY, dX, dY, m_pNpcList[iNpcH]->m_cMapIndex, m_pNpcList[iNpcH]->m_cTurn, &m_pNpcList[iNpcH]->m_tmp_iError);
 			if (cDir == 0) {
 				return;
@@ -10785,7 +10779,7 @@ void CGame::RemoveFromTarget(short sTargetH, char cTargetType, int iCode) {
 	for (i = 0; i < DEF_MAXNPCS; i++)
 		if (m_pNpcList[i] != NULL) {
 			// Crusade Â¸Â¸Â¾Ã  Ã?Ã¶ÃˆÃ–Â°Ã¼Ã€ÃŒ Â»Ã§Â¸Ã?Ã‡Ã‘ Â°Ã¦Â¿Ã¬ Ã?Ã¶ÃˆÃ–Â°Ã¼ Â»ÃªÃ‡Ã? NPCÂµÃ©Ã€Âº Â¼Ã’ÃˆÂ¯Â¸Ã· Â¸Ã°ÂµÃ¥Â·ÃŽ Ã€Ã¼ÃˆÂ¯ÂµÃ‡Â¾Ã® Ã€Ã?Ã?Â¤Â½ÃƒÂ°Â£
-			// Ã€ÃŒÃˆÃ„Â¿Â¡ Ã€ÃšÂµÂ¿ Ã†Ã¸Ã†Ã„ÂµÃˆÂ´Ã™. Â¸Ã·Ã€ÃŒ Â³Ã‘ÃƒÃ„Â³ÂªÂ´Ã‚ Â°Ã?Ã€Â» Â¸Â·Â±Ã¢ Ã€Â§Ã‡Ã�?.
+			// Ã€ÃŒÃˆÃ„Â¿Â¡ Ã€ÃšÂµÂ¿ Ã†Ã¸Ã†Ã„ÂµÃˆÂ´Ã™. Â¸Ã·Ã€ÃŒ Â³Ã‘ÃƒÃ„Â³ÂªÂ´Ã‚ Â°Ã?Ã€Â» Â¸Â·Â±Ã¢ Ã€Â§Ã‡Ã�?.
 			if ((m_pNpcList[i]->m_iGuildGUID != NULL) && (cTargetType == DEF_OWNERTYPE_PLAYER) &&
 					  (m_pClientList[sTargetH]->m_iGuildGUID == m_pNpcList[i]->m_iGuildGUID)) {
 
@@ -10869,7 +10863,7 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 	NpcDeadItemGenerator(iNpcH, sAttackerH, cAttackerType);
 
 	// Â»ÃµÂ·ÃŽÂ¿Ã® Â°Ã¦Ã‡Ã¨Ã„Â¡ Â¹Ã¨ÂºÃ? Â°Ã¸Â½Ã„.
-	// NPCÂ¿Â¡ Â´Ã«Ã‡Ã‘ Â°Ã¸Â°Ã?Ã€ÃŒ Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â¸Â¹Ã‡Â·ÃŽ Â°Ã¸Â°Ã?Ã€ÃšÂ°Â¡ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¶Ã³Â¸Ã© Ã€Ã�?ÃˆÃ¹ Â´Ã«Â¹ÃŒÃ?Ã¶ Â¸Â¸Ã…Â­Ã€Ã‡ Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â°Ã¸Â°Ã?Ã€ÃšÂ¿Â¡Â°Ã�? Ã?Ã˜Â´Ã™.
+	// NPCÂ¿Â¡ Â´Ã«Ã‡Ã‘ Â°Ã¸Â°Ã?Ã€ÃŒ Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â¸Â¹Ã‡Â·ÃŽ Â°Ã¸Â°Ã?Ã€ÃšÂ°Â¡ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¶Ã³Â¸Ã© Ã€Ã�?ÃˆÃ¹ Â´Ã«Â¹ÃŒÃ?Ã¶ Â¸Â¸Ã…Â­Ã€Ã‡ Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â°Ã¸Â°Ã?Ã€ÃšÂ¿Â¡Â°Ã�? Ã?Ã˜Â´Ã™.
 	if ((m_pNpcList[iNpcH]->m_bIsSummoned != TRUE) && (cAttackerType == DEF_OWNERTYPE_PLAYER) &&
 			  (m_pClientList[sAttackerH] != NULL)) {
 		// NPCÂ°Â¡ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Ã€Ã‡ Â°Ã¸Â°Ã?Â¿Â¡ Ã?Ã—Â¾ÃºÂ´Ã™Â¸Ã© ExpStockÃ€Â» Â¿ÃƒÂ¸Â°Â´Ã™.
@@ -10936,9 +10930,9 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		switch (m_pNpcList[iNpcH]->m_sType) {
 			case 32:
-				// Ã€Â¯Â´Ã?Ã„ÃœÃ€ÃŒ Ã?Ã—Â¾ÃºÂ´Ã™. Ã?Ã—Ã€ÃŽ Ã€ÃšÂ¿Â¡Â°Ã�? Ã†Ã¤Â³ÃŽÃ†Â¼Â¸Â¦ Â¹Â°Â¸Â°Â´Ã™.
+				// Ã€Â¯Â´Ã?Ã„ÃœÃ€ÃŒ Ã?Ã—Â¾ÃºÂ´Ã™. Ã?Ã—Ã€ÃŽ Ã€ÃšÂ¿Â¡Â°Ã�? Ã†Ã¤Â³ÃŽÃ†Â¼Â¸Â¦ Â¹Â°Â¸Â°Â´Ã™.
 				m_pClientList[sAttackerH]->m_iRating -= 0;
-				// v1.41 Rating ï¿½�?¶ï¿½ 
+				// v1.41 Rating ï¿½�?¶ï¿½ 
 				m_pClientList[sAttackerH]->m_iRating -= 0;
 				if (m_pClientList[sAttackerH]->m_iRating > 10000) m_pClientList[sAttackerH]->m_iRating = 10000;
 				if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = -10000;
@@ -11059,7 +11053,7 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 								//testcode
 								wsprintf(G_cTxt, "Enemy Npc Killed by Npc! Construct point +%d", iConstructionPoint);
 								PutLogList(G_cTxt);
-								// Ã?Ã¶ÃˆÃ–Â°Ã¼Â¿Â¡Â°Ã�? Â¹Ã™Â·ÃŽ Ã…Ã«ÂºÂ¸.
+								// Ã?Ã¶ÃˆÃ–Â°Ã¼Â¿Â¡Â°Ã�? Â¹Ã™Â·ÃŽ Ã…Ã«ÂºÂ¸.
 								SendNotifyMsg(NULL, i, DEF_NOTIFY_CONSTRUCTIONPOINT, m_pClientList[i]->m_iConstructionPoint, m_pClientList[i]->m_iWarContribution, NULL, NULL);
 								goto NKH_GOTOPOINT1;
 							}
@@ -11202,7 +11196,7 @@ void CGame::NpcBehavior_Flee(int iNpcH) {
 	}
 
 	if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount > 10) {
-		// 10ï¿½ï¿½ï¿½ï¿½ ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯.
+		// 10ï¿½ï¿½ï¿½ï¿½ ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯.
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 		m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
 		m_pNpcList[iNpcH]->m_tmp_iError = 0;
@@ -11220,7 +11214,7 @@ void CGame::NpcBehavior_Flee(int iNpcH) {
 		m_pNpcList[iNpcH]->m_cTargetType = cTargetType;
 	}
 
-	// ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+	// ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	sX = m_pNpcList[iNpcH]->m_sX;
 	sY = m_pNpcList[iNpcH]->m_sY;
 	switch (m_pNpcList[iNpcH]->m_cTargetType) {
@@ -11278,9 +11272,9 @@ void CGame::MsgProcess() {
 		m_cShutDownCode = 2;
 		m_bOnExitProcess = TRUE;
 		m_dwExitProcessTime = timeGetTime();
-		// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
+		// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
 		PutLogList("(!) GAME SERVER SHUTDOWN PROCESS BEGIN(by Local command)!!!");
-		// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Ã‡Ã¶Ã€Ã§ Â¼Â­Â¹Ã¶Â°Â¡ Â¼Ã‹Â´Ã™Â¿Ã® Ã?ÃŸÃ€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+		// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â¿Â¡Â°Ã�? Ã‡Ã¶Ã€Ã§ Â¼Â­Â¹Ã¶Â°Â¡ Â¼Ã‹Â´Ã™Â¿Ã® Ã?ÃŸÃ€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 		bSendMsgToLS(MSGID_GAMESERVERSHUTDOWNED, NULL);
 		// OccupyFlag ÂµÂ¥Ã€ÃŒÃ…Ã? Ã€ÃºÃ€Ã¥
 		if (m_iMiddlelandMapIndex > 0) {
@@ -11509,7 +11503,7 @@ void CGame::MsgProcess() {
 
 					case MSGID_GUILDNOTIFY:
 						//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_LOGSERVER -> MSGID_GUILDNOTIFY");
-						// Â´Ã™Â¸Â¥ Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Â¿Â¡Â¼Â­ Â¹ÃŸÂ»Ã½Ã‡Ã‘ Â±Ã¦ÂµÃ¥ Ã€ÃŒÂºÂ¥Ã†Â®Â¿Â¡ Â´Ã«Ã‡Ã‘ Ã…Ã«ÂºÂ¸(Â±Ã¦ÂµÃ¥Â¿Ã¸ Â°Â¡Ã€Ã�?, Â±Ã¦ÂµÃ¥Â¿Ã¸ Ã…Â»Ã…Ã°, Â±Ã¦ÂµÃ¥ Ã‡Ã˜Â»Ãª ÂµÃ®)
+						// Â´Ã™Â¸Â¥ Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Â¿Â¡Â¼Â­ Â¹ÃŸÂ»Ã½Ã‡Ã‘ Â±Ã¦ÂµÃ¥ Ã€ÃŒÂºÂ¥Ã†Â®Â¿Â¡ Â´Ã«Ã‡Ã‘ Ã…Ã«ÂºÂ¸(Â±Ã¦ÂµÃ¥Â¿Ã¸ Â°Â¡Ã€Ã�?, Â±Ã¦ÂµÃ¥Â¿Ã¸ Ã…Â»Ã…Ã°, Â±Ã¦ÂµÃ¥ Ã‡Ã˜Â»Ãª ÂµÃ®)
 						GuildNotifyHandler(pData, dwMsgSize);
 						break;
 
@@ -11540,43 +11534,43 @@ void CGame::MsgProcess() {
 						}
 
 						if (m_bIsBuildItemAvailable == FALSE) {
-							// Â¸Â¸Â¾Ã  ÂºÃ´ÂµÃ¥Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
+							// Â¸Â¸Â¾Ã  ÂºÃ´ÂµÃ¥Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
 							PutLogList(" ");
 							PutLogList("(!!!) STOPPED! Build-Item configuration error.");
 						}
 
 						if (m_bIsItemAvailable == FALSE) {
-							// Â¸Â¸Â¾Ã  Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
+							// Â¸Â¸Â¾Ã  Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
 							PutLogList(" ");
 							PutLogList("(!!!) STOPPED! Item configuration error.");
 						}
 
 						if (m_bIsNpcAvailable == FALSE) {
-							// Â¸Â¸Â¾Ã  Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
+							// Â¸Â¸Â¾Ã  Â¾Ã†Ã€ÃŒÃ…Ã› Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
 							PutLogList(" ");
 							PutLogList("(!!!) STOPPED! Npc configuration error.");
 						}
 
 						if (m_bIsMagicAvailable == FALSE) {
-							// Â¸Â¸Â¾Ã  MAGIC Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
+							// Â¸Â¸Â¾Ã  MAGIC Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
 							PutLogList(" ");
 							PutLogList("(!!!) STOPPED! MAGIC configuration error.");
 						}
 
 						if (m_bIsSkillAvailable == FALSE) {
-							// Â¸Â¸Â¾Ã  SKILL Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
+							// Â¸Â¸Â¾Ã  SKILL Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
 							PutLogList(" ");
 							PutLogList("(!!!) STOPPED! SKILL configuration error.");
 						}
 
 						if (m_bIsQuestAvailable == FALSE) {
-							// Â¸Â¸Â¾Ã  SKILL Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
+							// Â¸Â¸Â¾Ã  SKILL Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
 							PutLogList(" ");
 							PutLogList("(!!!) STOPPED! QUEST configuration error.");
 						}
 
 						if (m_bIsPortionAvailable == FALSE) {
-							// Â¸Â¸Â¾Ã  Portion Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
+							// Â¸Â¸Â¾Ã  Portion Ã?Â¤Ã€Ã‡ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â°Â¡ Ã€Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ ÂµÃ®Â·Ã?Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ ÂµÂ¿Ã€Ã› ÂºÃ’Â°Â¡Â´Ã‰.
 							PutLogList(" ");
 							PutLogList("(!!!) STOPPED! PORTION configuration error.");
 						}
@@ -11590,7 +11584,7 @@ void CGame::MsgProcess() {
 							(m_bIsMagicAvailable == TRUE) &&
 							(m_bIsSkillAvailable == TRUE) && (m_bIsPortionAvailable == TRUE) &&
 							(m_bIsQuestAvailable == TRUE) ) {
-							// Â°Ã�?Ã€Ã“Ã€Â» Â½ÃƒÃ€Ã›Ã‡Ã’ Ã?Ã˜ÂºÃ±Â°Â¡ ÂµÃ‡Â¾ÃºÂ´Ã™. Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â½Â´Ã™.
+							// Â°Ã�?Ã€Ã“Ã€Â» Â½ÃƒÃ€Ã›Ã‡Ã’ Ã?Ã˜ÂºÃ±Â°Â¡ ÂµÃ‡Â¾ÃºÂ´Ã™. Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â½Â´Ã™.
 							SendMessage(m_hWnd, WM_USER_STARTGAMESIGNAL, NULL, NULL);
 							m_bIsGameStarted = TRUE;
 						}
@@ -11612,14 +11606,14 @@ void CGame::MsgProcess() {
 
 					case MSGID_ITEMCONFIGURATIONCONTENTS:
 						//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_LOGSERVER -> MSGID_ITEMCONFIGURATIONCONTENTS");
-						// Â·ÃŽÂ±Ã—Â¼Â­Â¹Ã¶Â·ÃŽÂºÃŽÃ…Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Ã„Ã?Ã‡Ã‡Â±Ã�?Â·Â¹Ã€ÃŒÂ¼Ã‡ ÂµÂ¥Ã€ÃŒÃ…Ã?Â°Â¡ ÂµÂµÃ‚Ã¸Ã‡ÃŸÂ´Ã™.
+						// Â·ÃŽÂ±Ã—Â¼Â­Â¹Ã¶Â·ÃŽÂºÃŽÃ…Ã? Â¾Ã†Ã€ÃŒÃ…Ã› Ã„Ã?Ã‡Ã‡Â±Ã�?Â·Â¹Ã€ÃŒÂ¼Ã‡ ÂµÂ¥Ã€ÃŒÃ…Ã?Â°Â¡ ÂµÂµÃ‚Ã¸Ã‡ÃŸÂ´Ã™.
 						PutLogList("(!) ITEM configuration contents received. Now decoding...");
 						m_bIsItemAvailable = _bDecodeItemConfigFileContents((char *) (pData + DEF_INDEX2_MSGTYPE + 2), dwMsgSize);
 						break;
 
 					case MSGID_NPCCONFIGURATIONCONTENTS:
 						//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_LOGSERVER -> MSGID_NPCCONFIGURATIONCONTENTS");
-						// NPC Ã„Ã?Ã‡Ã‡Â±Ã�?Â·Â¹Ã€ÃŒÂ¼Ã‡ ÂµÂ¥Ã€ÃŒÃ…Ã?Â°Â¡ ÂµÂµÃ‚Ã¸Ã‡ÃŸÂ´Ã™.
+						// NPC Ã„Ã?Ã‡Ã‡Â±Ã�?Â·Â¹Ã€ÃŒÂ¼Ã‡ ÂµÂ¥Ã€ÃŒÃ…Ã?Â°Â¡ ÂµÂµÃ‚Ã¸Ã‡ÃŸÂ´Ã™.
 						PutLogList("(!) NPC configuration contents received. Now decoding...");
 						m_bIsNpcAvailable = _bDecodeNpcConfigFileContents((char *) (pData + DEF_INDEX2_MSGTYPE + 2), dwMsgSize);
 						break;
@@ -11965,7 +11959,7 @@ void CGame::ClientCommonHandler(int iClientH, char * pData) {
 
 		case DEF_COMMONTYPE_REQ_PURCHASEITEM:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_PURCHASEITEM");
-			// Â¾Ã†Ã€ÃŒÃ…Ã› Â±Â¸Ã€Ã�? Â¿Ã¤Â±Â¸. Â»Ã§Â½Ã‡ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Âº Ã€Ã¥Â¼Ã’Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ Â¾Ã®ÂµÃ°Â¼Â­Â¶Ã³ÂµÂµ Â±Â¸Ã€Ã�?Ã‡Ã’ Â¼Ã¶ Ã€Ã–Â´Ã™.
+			// Â¾Ã†Ã€ÃŒÃ…Ã› Â±Â¸Ã€Ã�? Â¿Ã¤Â±Â¸. Â»Ã§Â½Ã‡ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Âº Ã€Ã¥Â¼Ã’Â¿Â¡ Â»Ã³Â°Ã¼Â¾Ã¸Ã€ÃŒ Â¾Ã®ÂµÃ°Â¼Â­Â¶Ã³ÂµÂµ Â±Â¸Ã€Ã�?Ã‡Ã’ Â¼Ã¶ Ã€Ã–Â´Ã™.
 			RequestPurchaseItemHandler(iClientH, pString, iV1);
 			break;
 
@@ -11982,7 +11976,7 @@ void CGame::ClientCommonHandler(int iClientH, char * pData) {
 
 		case DEF_COMMONTYPE_GIVEITEMTOCHAR:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_GIVEITEMTOCHAR");
-			// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â´Ã™Â¸Â¥ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÃ‡Ã‘Â´Ã™.
+			// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â´Ã™Â¸Â¥ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÃ‡Ã‘Â´Ã™.
 			GiveItemHandler(iClientH, cDir, iV1, iV2, iV3, iV4, pString);
 			break;
 
@@ -12032,7 +12026,7 @@ void CGame::ClientCommonHandler(int iClientH, char * pData) {
 			ToggleSafeAttackModeHandler(iClientH);
 			break;
 
-			// v1.4311-3 ÃƒÃŸÂ°Â¡ Ã€Ã�?Ã€Ã¥Â±Ã‡ Â¹ÃžÂ±Ã¢  case DEF_COMMONTYPE_REQ_GETOCCUPYFIGHTZONETICKET:
+			// v1.4311-3 ÃƒÃŸÂ°Â¡ Ã€Ã�?Ã€Ã¥Â±Ã‡ Â¹ÃžÂ±Ã¢  case DEF_COMMONTYPE_REQ_GETOCCUPYFIGHTZONETICKET:
 		case DEF_COMMONTYPE_REQ_GETOCCUPYFIGHTZONETICKET:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_GETOCCUPYFIGHTZONETICKET");
 			GetFightzoneTicketHandler(iClientH);
@@ -12097,7 +12091,7 @@ void CGame::DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * 
 	if (((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) &&
 			  (((int) m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwCount - iAmount) > 0)) {
-		// Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¾ÃºÂ°Ã­ Â¼Ã¶Â·Â®Â¸Â¸Ã…Â­ Â°Â¨Â¼Ã’Â½ÃƒÃ…Â°Â°Ã­ Â³Â²Ã€Âº Â°Ã�? Ã€Ã–Â´Ã™Â¸Ã©
+		// Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¾ÃºÂ°Ã­ Â¼Ã¶Â·Â®Â¸Â¸Ã…Â­ Â°Â¨Â¼Ã’Â½ÃƒÃ…Â°Â°Ã­ Â³Â²Ã€Âº Â°Ã�? Ã€Ã–Â´Ã™Â¸Ã©
 		pItem = new class CItem;
 		if (_bInitItemAttr(pItem, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName) == FALSE) {
 			// ÂºÃ?Ã‡Ã’Ã‡Ã?Â°Ã­Ã€Ãš Ã‡Ã?Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡ Â¾Ã¸Â´Ã‚ Â°Ã…Â´Ã™. Ã€ÃŒÂ·Â± Ã€Ã?Ã€Âº Ã€Ã?Â¾Ã®Â³Â¯ Â¼Ã¶Â°Â¡ Â¾Ã¸Ã?Ã¶Â¸Â¸
@@ -12137,7 +12131,7 @@ void CGame::DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * 
 		else
 			_bItemLog(DEF_ITEMLOG_DROP, iClientH, (int) - 1, pItem, TRUE);
 
-		// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+		// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 				  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 				  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); // v1.4 color
@@ -12173,7 +12167,7 @@ void CGame::DropItemHandler(int iClientH, short sItemIndex, int iAmount, char * 
 			else
 				_bItemLog(DEF_ITEMLOG_DROP, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[sItemIndex], TRUE);
 
-			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 					  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 					  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
@@ -12726,7 +12720,7 @@ BOOL CGame::bEquipItemHandler(int iClientH, short sItemIndex, BOOL bNotify) {
 			break;
 
 		case DEF_EQUIPPOS_TWOHAND:
-			// Â¾Ã§Â¼Ã•Ã…Â¸Ã€Ã�?Ã€ÃŒÃ?Ã¶Â¸Â¸ Â»Ã§Â½Ã‡ Â¿Ã€Â¸Â¥Â¼Ã•Â¿Â¡ Ã€Ã¥Ã‚Ã¸ÂµÃˆÂ´Ã™.
+			// Â¾Ã§Â¼Ã•Ã…Â¸Ã€Ã�?Ã€ÃŒÃ?Ã¶Â¸Â¸ Â»Ã§Â½Ã‡ Â¿Ã€Â¸Â¥Â¼Ã•Â¿Â¡ Ã€Ã¥Ã‚Ã¸ÂµÃˆÂ´Ã™.
 			sTemp = m_pClientList[iClientH]->m_sAppr2;
 			sTemp = sTemp & 0xF00F; // Â¹Â«Â±Ã¢ Ã†Â¯Â¼ÂºÃ„Â¡ ÂºÃ±Ã†Â®Â¸Â¦ Ã…Â¬Â¸Â®Â¾Ã®.
 			sTemp = sTemp | ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cApprValue) << 4); // Appr Â°ÂªÃ€Â» Â¼Â¼Ã†Ãƒ.
@@ -13008,7 +13002,7 @@ void CGame::ResponseCreateNewGuildHandler(char * pData, DWORD dwMsgSize) {
 			wp = (WORD *) (cData + DEF_INDEX2_MSGTYPE);
 			*wp = wResult;
 
-			// Â±Ã¦ÂµÃ¥ Â»Ã½Â¼Âº Â¿Ã¤Â±Â¸ Ã€Ã€Â´Ã¤ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã€Ã¼Â¼Ã›
+			// Â±Ã¦ÂµÃ¥ Â»Ã½Â¼Âº Â¿Ã¤Â±Â¸ Ã€Ã€Â´Ã¤ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã€Ã¼Â¼Ã›
 			iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData, 6);
 			switch (iRet) {
 				case DEF_XSOCKEVENT_QUENEFULL:
@@ -13050,7 +13044,7 @@ void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, DWORD dwMsg
 	cp += 20;
 
 	if (m_pClientList[iClientH]->m_iGuildRank != -1) {
-		// Ã€ÃŒ Ã„Â³Â¸Â¯Ã…Ã?Â´Ã‚ Ã€ÃŒÂ¹ÃŒ Â±Ã¦ÂµÃ¥Â¿Â¡ Â°Â¡Ã€Ã�?Ã‡Ã?Â¿Â© Ã€Ã–Ã€Â¸Â¹Ã‡Â·ÃŽ Â±Ã¦ÂµÃ¥Â¸Â¦ Â¸Â¸ÂµÃ© Â¼Ã¶ Â¾Ã¸Â´Ã™.
+		// Ã€ÃŒ Ã„Â³Â¸Â¯Ã…Ã?Â´Ã‚ Ã€ÃŒÂ¹ÃŒ Â±Ã¦ÂµÃ¥Â¿Â¡ Â°Â¡Ã€Ã�?Ã‡Ã?Â¿Â© Ã€Ã–Ã€Â¸Â¹Ã‡Â·ÃŽ Â±Ã¦ÂµÃ¥Â¸Â¦ Â¸Â¸ÂµÃ© Â¼Ã¶ Â¾Ã¸Â´Ã™.
 		wsprintf(cTxt, "(!)Cannot create guild! Already guild member.: CharName(%s)", m_pClientList[iClientH]->m_cCharName);
 		PutLogList(cTxt);
 	} else {
@@ -13065,7 +13059,7 @@ void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, DWORD dwMsg
 			wp = (WORD *) (cData + DEF_INDEX2_MSGTYPE);
 			*wp = DEF_MSGTYPE_REJECT;
 
-			// Â±Ã¦ÂµÃ¥ Â»Ã½Â¼Âº Â¿Ã¤Â±Â¸ Ã€Ã€Â´Ã¤ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã€Ã¼Â¼Ã›
+			// Â±Ã¦ÂµÃ¥ Â»Ã½Â¼Âº Â¿Ã¤Â±Â¸ Ã€Ã€Â´Ã¤ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã€Ã¼Â¼Ã›
 			iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 6);
 			switch (iRet) {
 				case DEF_XSOCKEVENT_QUENEFULL:
@@ -13083,7 +13077,7 @@ void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, DWORD dwMsg
 			// Â±Ã¦ÂµÃ¥Ã€Ã‡ Â¼Ã’Â¼Ã“ Â¸Â¶Ã€Â» Ã€ÃŒÂ¸Â§Ã€Â» Ã€ÃºÃ€Ã¥Ã‡Ã‘Â´Ã™.
 			ZeroMemory(m_pClientList[iClientH]->m_cLocation, sizeof (m_pClientList[iClientH]->m_cLocation));
 			strcpy(m_pClientList[iClientH]->m_cLocation, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName);
-			// Â±Ã¦ÂµÃ¥Ã€Ã‡ GUIDÂ¸Â¦ Â»Ã½Â¼ÂºÃ‡Ã?Â¿Â© Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+			// Â±Ã¦ÂµÃ¥Ã€Ã‡ GUIDÂ¸Â¦ Â»Ã½Â¼ÂºÃ‡Ã?Â¿Â© Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 			GetLocalTime(&SysTime);
 			m_pClientList[iClientH]->m_iGuildGUID = (int) (SysTime.wYear + SysTime.wMonth + SysTime.wDay + SysTime.wHour + SysTime.wMinute + timeGetTime());
 
@@ -13125,20 +13119,20 @@ void CGame::ResponseDisbandGuildHandler(char * pData, DWORD dwMsgSize) {
 	char * cp, cCharName[11], cData[100], cTxt[120];
 	int iRet;
 
-	// ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½äµ¥ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½.
+	// ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½äµ¥ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½.
 	ZeroMemory(cCharName, sizeof (cCharName));
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	memcpy(cCharName, cp, 10);
 	cp += 10;
 
-	// ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½�?´ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ Ã£ï¿½Â´ï¿½.
+	// ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½�?´ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ Ã£ï¿½Â´ï¿½.
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cCharName, 10) == 0)) {
 
 			wp = (WORD *) (pData + DEF_INDEX2_MSGTYPE);
 			switch (*wp) {
 				case DEF_LOGRESMSGTYPE_CONFIRM:
-					// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½ ï¿½ä±¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½.
+					// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½ ï¿½ä±¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½.
 					wResult = DEF_MSGTYPE_CONFIRM;
 					wsprintf(cTxt, "(!) Disband guild(%s) success! : character(%s)", m_pClientList[i]->m_cGuildName, m_pClientList[i]->m_cCharName);
 					PutLogList(cTxt);
@@ -13149,12 +13143,12 @@ void CGame::ResponseDisbandGuildHandler(char * pData, DWORD dwMsgSize) {
 					// ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
 					ZeroMemory(m_pClientList[i]->m_cGuildName, sizeof (m_pClientList[i]->m_cGuildName));
 					memcpy(m_pClientList[i]->m_cGuildName, "NONE", 4);
-					m_pClientList[i]->m_iGuildRank = -1; // ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ -1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?´ï¿½.
+					m_pClientList[i]->m_iGuildRank = -1; // ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ -1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?´ï¿½.
 					m_pClientList[i]->m_iGuildGUID = -1;
 					break;
 
 				case DEF_LOGRESMSGTYPE_REJECT:
-					// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½ ï¿½ä±¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½.
+					// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ø»ï¿½ ï¿½ä±¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½.
 					wResult = DEF_MSGTYPE_REJECT;
 					wsprintf(cTxt, "(!) Disband guild(%s) Fail! : character(%s)", m_pClientList[i]->m_cGuildName, m_pClientList[i]->m_cCharName);
 					PutLogList(cTxt);
@@ -13180,7 +13174,7 @@ void CGame::ResponseDisbandGuildHandler(char * pData, DWORD dwMsgSize) {
 			return;
 		}
 
-	// ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½�?´ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½.
+	// ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½�?´ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	wsprintf(cTxt, "(!)Non-existing player data received from Log server(2): CharName(%s)", cCharName);
 	PutLogList(cTxt);
 }
@@ -13200,7 +13194,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 
 	if (m_pClientList[iClientH] == NULL) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
-	// Â¸Â¸Â¾Ã  Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â±Â¸Ã€Ã�?Ã‡Ã?Â°Ã­Ã€Ãš Ã‡Ã?Â´Ã‚ Â°Ã·Ã€ÃŒ Ã€ÃšÂ½Ã…Ã€Ã‡ Â¸Â¶Ã€Â»Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â±Â¸Ã€Ã�?Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+	// Â¸Â¸Â¾Ã  Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â±Â¸Ã€Ã�?Ã‡Ã?Â°Ã­Ã€Ãš Ã‡Ã?Â´Ã‚ Â°Ã·Ã€ÃŒ Ã€ÃšÂ½Ã…Ã€Ã‡ Â¸Â¶Ã€Â»Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â±Â¸Ã€Ã�?Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 	//if ( (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) &&
 	//	 (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, m_pClientList[iClientH]->m_cLocation, 10) != 0) ) return;
 
@@ -13221,7 +13215,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 	}
 
 
-	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â±Â¸Ã€Ã�?Ã‡Ã‘Â´Ã™.
+	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â±Â¸Ã€Ã�?Ã‡Ã‘Â´Ã™.
 	ZeroMemory(cData, sizeof (cData));
 	ZeroMemory(cItemName, sizeof (cItemName));
 
@@ -13244,7 +13238,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 
 		pItem = new class CItem;
 		if (_bInitItemAttr(pItem, cItemName) == FALSE) {
-			// Â±Â¸Ã€Ã�?Ã‡Ã?Â°Ã­Ã€Ãš Ã‡Ã?Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¾Ã†Ã€ÃŒÃ…Ã› Â¸Â®Â½ÂºÃ†Â®Â»Ã³Â¿Â¡ Â¾Ã¸Â´Ã™. Â±Â¸Ã€Ã�?Ã€ÃŒ ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
+			// Â±Â¸Ã€Ã�?Ã‡Ã?Â°Ã­Ã€Ãš Ã‡Ã?Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¾Ã†Ã€ÃŒÃ…Ã› Â¸Â®Â½ÂºÃ†Â®Â»Ã³Â¿Â¡ Â¾Ã¸Â´Ã™. Â±Â¸Ã€Ã�?Ã€ÃŒ ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
 			delete pItem;
 		} else {
 
@@ -13272,7 +13266,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 			else iItemWeight = pItem->m_wWeight;
 
 			if ( (iItemWeight + m_pClientList[iClientH]->m_iCurWeightLoad) > _iCalcMaxLoad(iClientH)) {
-				// Ã?ÃŸÂ·Â® ÃƒÃŠÂ°Ãº. Â±Â¸Ã€Ã�?Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+				// Ã?ÃŸÂ·Â® ÃƒÃŠÂ°Ãº. Â±Â¸Ã€Ã�?Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 
 				// Â´ÃµÃ€ÃŒÂ»Ã³ Â°Â¡Ã?ÃºÂ¼Ã¶ Â¾Ã¸Â´Ã™Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â½Â´Ã™.
 				dwp  = (DWORD *)(cData + DEF_INDEX4_MSGID);
@@ -13481,7 +13475,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 	if (((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)) &&
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwCount > (DWORD) iAmount)) {
-		// Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¾ÃºÂ°Ã­ Â¼Ã¶Â·Â®Â¸Â¸Ã…Â­ Â°Â¨Â¼Ã’Â½ÃƒÃ…Â°Â°Ã­ Â³Â²Ã€Âº Â°Ã�? Ã€Ã–Â´Ã™Â¸Ã©
+		// Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¾ÃºÂ°Ã­ Â¼Ã¶Â·Â®Â¸Â¸Ã…Â­ Â°Â¨Â¼Ã’Â½ÃƒÃ…Â°Â°Ã­ Â³Â²Ã€Âº Â°Ã�? Ã€Ã–Â´Ã™Â¸Ã©
 
 		pItem = new class CItem;
 		if (_bInitItemAttr(pItem, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName) == FALSE) {
@@ -13499,7 +13493,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 		// v1.41 !!! Â¾Ã†Ã€ÃŒÃ…Ã› Ã€ÃŒÂ¸Â§Â¿Â¡Â¼Â­ Ã€ÃŽÂµÂ¦Â½ÂºÂ·ÃŽ ÂºÂ¯Â°Ã¦ÂµÃ‡Â¾ÃºÂ´Ã™.
 		SetItemCount(iClientH, sItemIndex, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwCount);
 
-		//Ã€ÃŒÃ?Â¦ dX, dYÂ¿Â¡ Ã€Ã–Â´Ã‚ Â¿Ã€ÂºÃªÃ?Â§Ã†Â®Â¿Â¡Â°Ã�? Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â°Ã‡Â³Ã—Ã?Ã˜Â´Ã™.
+		//Ã€ÃŒÃ?Â¦ dX, dYÂ¿Â¡ Ã€Ã–Â´Ã‚ Â¿Ã€ÂºÃªÃ?Â§Ã†Â®Â¿Â¡Â°Ã�? Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â°Ã‡Â³Ã—Ã?Ã˜Â´Ã™.
 		m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 
 		// v1.4 Ã?Ã–Â°Ã­Ã€Ãš Ã‡Ã‘ Â°Â´ÃƒÂ¼Â¿Ã? Â¸Ã‚Â´Ã‚Ã?Ã¶ Ã†Ã‡Â´ÃœÃ‡Ã‘Â´Ã™.
@@ -13529,18 +13523,18 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 			// v1.411
 			_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, pItem);
 
-			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 					  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 					  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
 		} else {
 			// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã˜Â´Ã™.
 			if (cOwnerType == DEF_OWNERTYPE_PLAYER) {
-				// Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¿Â¡Â°Ã�? Ã?Ã–Â¾ÃºÂ´Ã™.
+				// Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¿Â¡Â°Ã�? Ã?Ã–Â¾ÃºÂ´Ã™.
 				memcpy(cCharName, m_pClientList[sOwnerH]->m_cCharName, 10);
 
 				if (sOwnerH == iClientH) {
-					// Â¸Â¸Â¾Ã  Ã€ÃšÂ±Ã¢ Ã€ÃšÂ½Ã…Â¿Â¡Â°Ã�? Ã?Ã–Â´Ã‚ Â°Ã…Â¶Ã³Â¸Ã© Â¹Â«Â½ÃƒÃ‡Ã‘Â´Ã™. Ã‡Ã˜Ã…Â·Ã€Ã‡ Â¼Ã’Ã?Ã¶Â°Â¡ Ã€Ã–Â´Ã™.
+					// Â¸Â¸Â¾Ã  Ã€ÃšÂ±Ã¢ Ã€ÃšÂ½Ã…Â¿Â¡Â°Ã�? Ã?Ã–Â´Ã‚ Â°Ã…Â¶Ã³Â¸Ã© Â¹Â«Â½ÃƒÃ‡Ã‘Â´Ã™. Ã‡Ã˜Ã…Â·Ã€Ã‡ Â¼Ã’Ã?Ã¶Â°Â¡ Ã€Ã–Â´Ã™.
 					delete pItem;
 					return;
 				}
@@ -13562,7 +13556,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					cp += 20;
 
 					dwp = (DWORD *) cp;
-					*dwp = pItem->m_dwCount; // Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚
+					*dwp = pItem->m_dwCount; // Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚
 					cp += 4;
 
 					*cp = pItem->m_cItemType;
@@ -13637,7 +13631,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					// v1.411
 					_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, pItem);
 
-					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 							  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
@@ -13664,7 +13658,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 				}
 
 			} else {
-				// NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¾ÃºÂ´Ã™.
+				// NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¾ÃºÂ´Ã™.
 				memcpy(cCharName, m_pNpcList[sOwnerH]->m_cNpcName, 20);
 
 				if (memcmp(m_pNpcList[sOwnerH]->m_cNpcName, "Howard", 6) == 0) {
@@ -13679,19 +13673,19 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 						// v1.411
 						_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, pItem);
 
-						// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+						// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 						SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 								  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 								  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); // v1.4 color
 					}
 				} else {
-					// Ã€Ã?Â¹Ã? NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¸Ã© Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¼Â­Ã€Ã–Â´Ã‚ Ã€Â§Ã„Â¡Â¿Â¡ Â¹Ã¶Â·Ã?Â¾ÃŸ Ã‡Ã‘Â´Ã™.
+					// Ã€Ã?Â¹Ã? NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¸Ã© Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¼Â­Ã€Ã–Â´Ã‚ Ã€Â§Ã„Â¡Â¿Â¡ Â¹Ã¶Â·Ã?Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 					m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY, pItem);
 
 					// v1.411
 					_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, pItem);
 
-					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 							  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); // v1.4 color
@@ -13708,8 +13702,8 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 		if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_ARROW)
 			m_pClientList[iClientH]->m_cArrowIndex = -1;
 
-		//Ã€ÃŒÃ?Â¦ dX, dYÂ¿Â¡ Ã€Ã–Â´Ã‚ Â¿Ã€ÂºÃªÃ?Â§Ã†Â®Â¿Â¡Â°Ã�? Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â°Ã‡Â³Ã—Ã?Ã˜Â´Ã™.
-		m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY); // Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» dX, dYÂ¿Â¡ Ã€Ã–Â´Ã‚ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã?Ã˜Â´Ã™. Â¸Â¸Â¾Ã  Â¹ÃžÃ€Â» Ã„Â³Â¸Â¯Ã…Ã?Â°Â¡ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¹ÃžÃ?Ã¶ Â¸Ã¸Ã‡Ã’ Â»Ã³ÃˆÂ²Ã€ÃŒÂ¶Ã³Â¸Ã© Â¶Â¥Â¿Â¡ Â¶Â³Â¾Ã®Ã?Ã¸Â´Ã™.
+		//Ã€ÃŒÃ?Â¦ dX, dYÂ¿Â¡ Ã€Ã–Â´Ã‚ Â¿Ã€ÂºÃªÃ?Â§Ã†Â®Â¿Â¡Â°Ã�? Â¼Ã’ÂºÃ±Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â°Ã‡Â³Ã—Ã?Ã˜Â´Ã™.
+		m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY); // Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» dX, dYÂ¿Â¡ Ã€Ã–Â´Ã‚ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã?Ã˜Â´Ã™. Â¸Â¸Â¾Ã  Â¹ÃžÃ€Â» Ã„Â³Â¸Â¯Ã…Ã?Â°Â¡ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¹ÃžÃ?Ã¶ Â¸Ã¸Ã‡Ã’ Â»Ã³ÃˆÂ²Ã€ÃŒÂ¶Ã³Â¸Ã© Â¶Â¥Â¿Â¡ Â¶Â³Â¾Ã®Ã?Ã¸Â´Ã™.
 
 		// v1.4 Ã?Ã–Â°Ã­Ã€Ãš Ã‡Ã‘ Â°Â´ÃƒÂ¼Â¿Ã? Â¸Ã‚Â´Ã‚Ã?Ã¶ Ã†Ã‡Â´ÃœÃ‡Ã‘Â´Ã™.
 		if (wObjectID != NULL) {
@@ -13739,7 +13733,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 			// v1.411
 			_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
-			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+			// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 			SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 					  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 					  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
@@ -13749,26 +13743,26 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 			// Ã€ÃŒÃ?Â¦ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Â³Ã€Â¸Â¹Ã‡Â·ÃŽ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡Â¼Â­ Â»Ã¨Ã?Â¦Ã‡Ã’Â°Ã?Ã€Â» Ã…Ã«ÂºÂ¸Ã‡Ã‘Â´Ã™.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_DROPITEMFIN_ERASEITEM, sItemIndex, iAmount, NULL, NULL);
 		} else {
-			// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â´Ã™Â¸Â¥ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã?Ã˜Â´Ã™. @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â´Ã™Â¸Â¥ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã?Ã˜Â´Ã™. @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 			if (cOwnerType == DEF_OWNERTYPE_PLAYER) {
-				// Ä³ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½.
+				// Ä³ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½.
 				memcpy(cCharName, m_pClientList[sOwnerH]->m_cCharName, 10);
 				pItem = m_pClientList[iClientH]->m_pItemList[sItemIndex];
 
-				// v2.03 Å©ï¿½ç¼¼ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½Î°ï¿½ìµµ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½.
+				// v2.03 Å©ï¿½ç¼¼ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½Î°ï¿½ìµµ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½.
 
 				// v2.17 2002-7-31 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Ñ´ï¿½.
 				if (pItem->m_sIDnum == 88) {
 
 					// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ iClientH ï¿½ï¿½ sOwnerHï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½
-					// sOwnerHï¿½ï¿½ ï¿½ï¿½å¸¶ï¿½ï¿½ï¿½�?¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
+					// sOwnerHï¿½ï¿½ ï¿½ï¿½å¸¶ï¿½ï¿½ï¿½�?¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
 					// v2.17 2002-7-31 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Ñ´ï¿½.
 					if ((m_pClientList[iClientH]->m_iGuildRank == -1) &&
 							  (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) &&
 							  (memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[sOwnerH]->m_cLocation, 10) == 0) &&
 							  (m_pClientList[sOwnerH]->m_iGuildRank == 0)) {
-						// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.	ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½Ô´ï¿½ ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+						// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.	ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½Ô´ï¿½ ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 						SendNotifyMsg(iClientH, sOwnerH, DEF_NOTIFY_QUERY_JOINGUILDREQPERMISSION, NULL, NULL, NULL, NULL);
 						// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½ï¿½ï¿½ ï¿½ëº¸ï¿½Ñ´ï¿½.
 						SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, sItemIndex, 1, NULL, cCharName);
@@ -13784,11 +13778,11 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 
 					// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ iClientH ï¿½ï¿½ sOwnerHï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å»ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½
 					// sOwnerHï¿½ï¿½ ï¿½ï¿½å¸¶ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ iClientHï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ iClientHï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½
-					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
 					if ((memcmp(m_pClientList[iClientH]->m_cGuildName, m_pClientList[sOwnerH]->m_cGuildName, 20) == 0) &&
 							  (m_pClientList[iClientH]->m_iGuildRank != -1) &&
 							  (m_pClientList[sOwnerH]->m_iGuildRank == 0)) {
-						// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.	ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½Ô´ï¿½ Å»ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+						// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.	ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½Ô´ï¿½ Å»ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 						SendNotifyMsg(iClientH, sOwnerH, DEF_NOTIFY_QUERY_DISMISSGUILDREQPERMISSION, NULL, NULL, NULL, NULL);
 						// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½ï¿½ï¿½ ï¿½ëº¸ï¿½Ñ´ï¿½.
 						SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, sItemIndex, 1, NULL, cCharName);
@@ -13892,7 +13886,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					// v1.41 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¶Â³Â¾Ã®Â¶ÃŸÂ¸Â° Â°Ã?Ã€ÃŒÂ¶Ã³Â¸Ã© Â·ÃŽÂ±Ã—Â¸Â¦ Â³Â²Â±Ã¤Â´Ã™.
 					_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
-					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 							  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
@@ -13920,7 +13914,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					ZeroMemory(cCharName, sizeof (cCharName));
 				}
 			} else {
-				// NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¾ÃºÂ´Ã™.
+				// NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¾ÃºÂ´Ã™.
 				memcpy(cCharName, m_pNpcList[sOwnerH]->m_cNpcName, 20);
 
 				if (memcmp(m_pNpcList[sOwnerH]->m_cNpcName, "Howard", 6) == 0) {
@@ -13937,7 +13931,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 						// v1.41 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¶Â³Â¾Ã®Â¶ÃŸÂ¸Â° Â°Ã?Ã€ÃŒÂ¶Ã³Â¸Ã© Â·ÃŽÂ±Ã—Â¸Â¦ Â³Â²Â±Ã¤Â´Ã™.
 						_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
-						// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+						// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 						SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 								  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 								  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
@@ -13945,11 +13939,11 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 								  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemColor); // v1.4 color
 					}
 				} else if (memcmp(m_pNpcList[sOwnerH]->m_cNpcName, "Kennedy", 7) == 0) {
-					// Â±Ã¦ÂµÃ¥ Â»Ã§Â¹Â«Ã€Ã¥Â¿Â¡Â°Ã�? Â±Ã¦ÂµÃ¥ Ã…Â»Ã…Ã° Â½Ã…ÃƒÂ»Â¼Â­Â¸Â¦ Ã?Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â±Ã¦ÂµÃ¥Â¸Â¦ Ã…Â»Ã…Ã°Ã‡Ã‘Â´Ã™.
+					// Â±Ã¦ÂµÃ¥ Â»Ã§Â¹Â«Ã€Ã¥Â¿Â¡Â°Ã�? Â±Ã¦ÂµÃ¥ Ã…Â»Ã…Ã° Â½Ã…ÃƒÂ»Â¼Â­Â¸Â¦ Ã?Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â±Ã¦ÂµÃ¥Â¸Â¦ Ã…Â»Ã…Ã°Ã‡Ã‘Â´Ã™.
 					if ((m_bIsCrusadeMode == FALSE) && (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 89)) {
 
 						if ((m_pClientList[iClientH]->m_iGuildRank != 0) && (m_pClientList[iClientH]->m_iGuildRank != -1)) {
-							// Ã…Â»Ã…Ã° Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Ã…Â»Ã…Ã° Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
+							// Ã…Â»Ã…Ã° Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Ã…Â»Ã…Ã° Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
 							SendNotifyMsg(iClientH, iClientH, DEF_COMMONTYPE_DISMISSGUILDAPPROVE, NULL, NULL, NULL, NULL);
 
 							// Â±Ã¦ÂµÃ¥ Ã…Â»Ã…Ã°.
@@ -13978,7 +13972,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 						// v1.41 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¶Â³Â¾Ã®Â¶ÃŸÂ¸Â° Â°Ã?Ã€ÃŒÂ¶Ã³Â¸Ã© Â·ÃŽÂ±Ã—Â¸Â¦ Â³Â²Â±Ã¤Â´Ã™.
 						_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
-						// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+						// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 						SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 								  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 								  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
@@ -13990,7 +13984,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 
 					}
 				} else {
-					// Ã€Ã?Â¹Ã? NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¸Ã© Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¼Â­Ã€Ã–Â´Ã‚ Ã€Â§Ã„Â¡Â¿Â¡ Â¹Ã¶Â·Ã?Â¾ÃŸ Ã‡Ã‘Â´Ã™.
+					// Ã€Ã?Â¹Ã? NPCÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¸Ã© Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¼Â­Ã€Ã–Â´Ã‚ Ã€Â§Ã„Â¡Â¿Â¡ Â¹Ã¶Â·Ã?Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 
 					m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 							  m_pClientList[iClientH]->m_sY,
@@ -13999,7 +13993,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					// v1.41 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¶Â³Â¾Ã®Â¶ÃŸÂ¸Â° Â°Ã?Ã€ÃŒÂ¶Ã³Â¸Ã© Â·ÃŽÂ±Ã—Â¸Â¦ Â³Â²Â±Ã¤Â´Ã™.
 					_bItemLog(DEF_ITEMLOG_DROP, iClientH, NULL, m_pClientList[iClientH]->m_pItemList[sItemIndex]);
 
-					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 							  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
@@ -14011,7 +14005,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 				}
 			}
 
-			// Ã€ÃŒÃ?Â¦ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã˜ ÂºÂ»Ã€ÃŽÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¾ÃºÃ€Â¸Â¹Ã‡Â·ÃŽ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡Â¼Â­ Â»Ã¨Ã?Â¦Ã‡Ã’Â°Ã?Ã€Â» Ã…Ã«ÂºÂ¸Ã‡Ã‘Â´Ã™.
+			// Ã€ÃŒÃ?Â¦ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã˜ ÂºÂ»Ã€ÃŽÂ¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã–Â¾ÃºÃ€Â¸Â¹Ã‡Â·ÃŽ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡Â¼Â­ Â»Ã¨Ã?Â¦Ã‡Ã’Â°Ã?Ã€Â» Ã…Ã«ÂºÂ¸Ã‡Ã‘Â´Ã™.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, sItemIndex, iAmount, NULL, cCharName);
 		}
 
@@ -15097,7 +15091,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 
 		case DEF_NOTIFY_TOTALUSERS:
 			wp = (WORD *) cp;
-			*wp = (WORD) m_iTotalGameServerClients; //_iGetTotalClients();
+			*wp = (WORD) m_iTotalClients; //_iGetTotalClients();
 			cp += 2;
 
 			iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 8);
@@ -15278,7 +15272,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 			break;
 
 		case DEF_NOTIFY_PKPENALTY:
-			// PK Ã†Ã¤Â³ÃŽÃ†Â¼Â¸Â¦ Â¸Ã�?Â¾ÃºÂ´Ã™.
+			// PK Ã†Ã¤Â³ÃŽÃ†Â¼Â¸Â¦ Â¸Ã�?Â¾ÃºÂ´Ã™.
 			dwp = (DWORD *) cp;
 			*dwp = (DWORD) m_pClientList[iToH]->m_iExp;
 			cp += 4;
@@ -15330,7 +15324,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 			break;
 
 		case DEF_NOTIFY_KILLED:
-			// Â»Ã§Â¸Ã? Ã…Ã«ÂºÂ¸ : Ã?Ã—Ã€ÃŽ Ã„Â³Â¸Â¯Ã…Ã? Ã€ÃŒÂ¸Â§ÂµÂµ Ã‡Ã�?Â²Â² ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
+			// Â»Ã§Â¸Ã? Ã…Ã«ÂºÂ¸ : Ã?Ã—Ã€ÃŽ Ã„Â³Â¸Â¯Ã…Ã? Ã€ÃŒÂ¸Â§ÂµÂµ Ã‡Ã�?Â²Â² ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
 			memcpy(cp, pString, 20);
 			cp += 20;
 
@@ -15569,7 +15563,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 			iRet = m_pClientList[iToH]->m_pXSock->iSendMsg(cData, 36);
 			break;
 
-			// v1.4311-3 ÃƒÃŸÂ°Â¡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã Ã€ÃŒ ÃƒÃ«Â¼Ã’ÂµÃ‡Â¾ÃºÂ´Ã™Â°Ã­ Â¾Ã‹Â¸Â² ..
+			// v1.4311-3 ÃƒÃŸÂ°Â¡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã Ã€ÃŒ ÃƒÃ«Â¼Ã’ÂµÃ‡Â¾ÃºÂ´Ã™Â°Ã­ Â¾Ã‹Â¸Â² ..
 		case DEF_NOTIFY_FIGHTZONERESERVE:
 			ip = (int *) cp;
 			*ip = (int) sV1;
@@ -15608,7 +15602,7 @@ void CGame::JoinGuildApproveHandler(int iClientH, char * pName) {
 	if (m_pClientList[iClientH] == NULL) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
 
-	// pNameÃ€Â» Â°Â®Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Ã€Ã‡ iClientH Â±Ã¦ÂµÃ¥Â¿Â¡ Â´Ã«Ã‡Ã‘ Â°Â¡Ã€Ã�?Â¿Ã¤Â±Â¸Â°Â¡ Â¼ÂºÂ°Ã¸Ã‡Ã?Â¿Â´Â´Ã™.
+	// pNameÃ€Â» Â°Â®Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Ã€Ã‡ iClientH Â±Ã¦ÂµÃ¥Â¿Â¡ Â´Ã«Ã‡Ã‘ Â°Â¡Ã€Ã�?Â¿Ã¤Â±Â¸Â°Â¡ Â¼ÂºÂ°Ã¸Ã‡Ã?Â¿Â´Â´Ã™.
 
 	// pNameÃ€Ã‡ Ã€ÃŒÂ¸Â§Ã€Â» Â°Â®Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Â±Â¸Ã?Â¶ÃƒÂ¼Â¸Â¦ Â°Ã‹Â»Ã¶Ã‡Ã‘Â´Ã™.
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
@@ -15629,13 +15623,13 @@ void CGame::JoinGuildApproveHandler(int iClientH, char * pName) {
 
 			m_pClientList[i]->m_iGuildRank = DEF_GUILDSTARTRANK; //@@@  GuildRankÃ€Ã‡ Â½ÃƒÃ€Ã›Ã€Âº DEF_GUILDSTARTRANK
 
-			// Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Â°Â¡Ã€Ã�?Ã€ÃŒ Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
+			// Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Â°Â¡Ã€Ã�?Ã€ÃŒ Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
 			SendNotifyMsg(iClientH, i, DEF_COMMONTYPE_JOINGUILDAPPROVE, NULL, NULL, NULL, NULL);
 
 			// Ã†Â¯Â¼ÂºÃ€ÃŒ Â¹Ã™Â²Ã®Â¹Ã‡Â·ÃŽ Â¿ÃœÂ¾Ã§Ã€Â» Â»ÃµÂ·ÃŽ ÂºÂ¸Â³Â½Â´Ã™.
 			SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
 
-			// Â´Ã™Â¸Â¥ Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â»Ãµ Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€ÃŒ Ã€Ã–Ã€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+			// Â´Ã™Â¸Â¥ Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â»Ãµ Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€ÃŒ Ã€Ã–Ã€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 			SendGuildMsg(i, DEF_NOTIFY_NEWGUILDSMAN, NULL, NULL, NULL);
 
 			// Â±Ã¦ÂµÃ¥Ã?Â¤ÂºÂ¸ÃˆÂ­Ã€Ã?Â¿Â¡ Â»Ãµ Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€Ã‡ Ã€ÃŒÂ¸Â§Ã€Â» Â±Ã¢Â·Ã?Ã‡Ã‘Â´Ã™.
@@ -15643,7 +15637,7 @@ void CGame::JoinGuildApproveHandler(int iClientH, char * pName) {
 			return;
 		}
 
-	// Â°Â¡Ã€Ã�?Ã€Â» Â½Ã…ÃƒÂ»Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ ÃƒÂ£Ã€Â»Â¼Ã¶ Â¾Ã¸Â´Ã™.(Ã?Â¢Â¼Ã“Ã€ÃŒ Â±Ã—Â»Ã§Ã€ÃŒ Â²Ã·Â°Ã¥Â´Ã™Â´Ã¸Ã?Ã¶) Â¹Â«ÃˆÂ¿Ã€Ã“
+	// Â°Â¡Ã€Ã�?Ã€Â» Â½Ã…ÃƒÂ»Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ ÃƒÂ£Ã€Â»Â¼Ã¶ Â¾Ã¸Â´Ã™.(Ã?Â¢Â¼Ã“Ã€ÃŒ Â±Ã—Â»Ã§Ã€ÃŒ Â²Ã·Â°Ã¥Â´Ã™Â´Ã¸Ã?Ã¶) Â¹Â«ÃˆÂ¿Ã€Ã“
 }
 
 void CGame::JoinGuildRejectHandler(int iClientH, char * pName) {
@@ -15652,18 +15646,18 @@ void CGame::JoinGuildRejectHandler(int iClientH, char * pName) {
 	if (m_pClientList[iClientH] == NULL) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
 
-	// pNameÃ€Â» Â°Â®Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Ã€Ã‡ iClientH Â±Ã¦ÂµÃ¥Â¿Â¡ Â´Ã«Ã‡Ã‘ Â°Â¡Ã€Ã�? Â¿Ã¤Â±Â¸Â°Â¡ Â½Ã‡Ã†Ã? Ã‡Ã?Â¿Â´Â´Ã™.
+	// pNameÃ€Â» Â°Â®Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Ã€Ã‡ iClientH Â±Ã¦ÂµÃ¥Â¿Â¡ Â´Ã«Ã‡Ã‘ Â°Â¡Ã€Ã�? Â¿Ã¤Â±Â¸Â°Â¡ Â½Ã‡Ã†Ã? Ã‡Ã?Â¿Â´Â´Ã™.
 
 	// pNameÃ€Ã‡ Ã€ÃŒÂ¸Â§Ã€Â» Â°Â®Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Â±Â¸Ã?Â¶ÃƒÂ¼Â¸Â¦ Â°Ã‹Â»Ã¶Ã‡Ã‘Â´Ã™.
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, pName, 10) == 0)) {
 
-			// Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Â°Â¡Ã€Ã�?Ã€ÃŒ Â½Ã‡Ã†Ã?Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
+			// Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Â°Â¡Ã€Ã�?Ã€ÃŒ Â½Ã‡Ã†Ã?Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
 			SendNotifyMsg(iClientH, i, DEF_COMMONTYPE_JOINGUILDREJECT, NULL, NULL, NULL, NULL);
 			return;
 		}
 
-	// Â°Â¡Ã€Ã�?Ã€Â» Â½Ã…ÃƒÂ»Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ ÃƒÂ£Ã€Â»Â¼Ã¶ Â¾Ã¸Â´Ã™.(Ã?Â¢Â¼Ã“Ã€ÃŒ Â±Ã—Â»Ã§Ã€ÃŒ Â²Ã·Â°Ã¥Â´Ã™Â´Ã¸Ã?Ã¶) Â¹Â«ÃˆÂ¿Ã€Ã“
+	// Â°Â¡Ã€Ã�?Ã€Â» Â½Ã…ÃƒÂ»Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ ÃƒÂ£Ã€Â»Â¼Ã¶ Â¾Ã¸Â´Ã™.(Ã?Â¢Â¼Ã“Ã€ÃŒ Â±Ã—Â»Ã§Ã€ÃŒ Â²Ã·Â°Ã¥Â´Ã™Â´Ã¸Ã?Ã¶) Â¹Â«ÃˆÂ¿Ã€Ã“
 }
 
 void CGame::DismissGuildApproveHandler(int iClientH, char * pName) {
@@ -15704,7 +15698,7 @@ void CGame::DismissGuildRejectHandler(int iClientH, char * pName) {
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, pName, 10) == 0)) {
 
-			// Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Ã…Â»Ã…Ã°Â°Â¡ Â½Ã‡Ã†Ã?Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
+			// Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Ã…Â»Ã…Ã°Â°Â¡ Â½Ã‡Ã†Ã?Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
 			SendNotifyMsg(iClientH, i, DEF_COMMONTYPE_DISMISSGUILDREJECT, NULL, NULL, NULL, NULL);
 			return;
 		}
@@ -15809,7 +15803,7 @@ void CGame::ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType
 		_ClearExchangeStatus(iClientH);
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ NPCï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ NPCï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	RemoveFromTarget(iClientH, DEF_OWNERTYPE_PLAYER);
 
 	ZeroMemory(cAttackerName, sizeof (cAttackerName));
@@ -15866,7 +15860,7 @@ void CGame::ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType
 		}
 
 		if (iAttackerH == iClientH) return; // ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
-		// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½×¿ï¿½ï¿½Ù¸ï¿½ PKï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½.
+		// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½×¿ï¿½ï¿½Ù¸ï¿½ PKï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½.
 		if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) {
 			// ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
 			if (m_pClientList[iClientH]->m_iPKCount == 0) {
@@ -15876,11 +15870,11 @@ void CGame::ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType
 				ApplyPKpenalty(iAttackerH, iClientH);
 			} else {
 
-				// ï¿½ï¿½ï¿½Ë¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ PKï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´Â´ï¿½.
+				// ï¿½ï¿½ï¿½Ë¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ PKï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´Â´ï¿½.
 				PK_KillRewardHandler(iAttackerH, iClientH);
 			}
 		} else {
-			// ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Æ´�?¶ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¼ï¿½ï¿½Ì´ï¿½.
+			// ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Æ´�?¶ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¼ï¿½ï¿½Ì´ï¿½.
 			if (m_pClientList[iClientH]->m_iGuildRank == -1) {
 				// ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ ï¿½Ã¹ï¿½ï¿½Ì´ï¿½.
 				// ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¹ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> PKï¿½ï¿½ ï¿½ï¿½. ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¹ï¿½, ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
@@ -15944,7 +15938,7 @@ void CGame::ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType
 		if (m_pClientList[iClientH]->m_iPKCount == 0) {
 			// Innocent
 			if (memcmp(m_pClientList[iAttackerH]->m_cLocation, "NONE", 4) == 0) {
-				//ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½�?¹Þ¾ï¿½ ï¿½×¾ï¿½ï¿½.
+				//ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½�?¹Þ¾ï¿½ ï¿½×¾ï¿½ï¿½.
 				//PKï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 				//m_pClientList[iClientH]->m_iExp -= iDice(1, 100);
 				//if (m_pClientList[iClientH]->m_iExp < 0) m_pClientList[iClientH]->m_iExp = 0;
@@ -16110,7 +16104,7 @@ void CGame::ReleaseItemHandler(int iClientH, short sItemIndex, BOOL bNotice) {
 		}
 	}
 
-	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Ã‡ Ã‡Ã˜Ã?Â¦Ã€Â§Ã„Â¡Â¿Â¡ Â¸Ã‚Â°Ã�? ApprÂºÂ¯Â¼Ã¶Â¸Â¦ Ã?Â¶Ã?Â¤Ã‡Ã‘Â´Ã™.
+	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Ã‡ Ã‡Ã˜Ã?Â¦Ã€Â§Ã„Â¡Â¿Â¡ Â¸Ã‚Â°Ã�? ApprÂºÂ¯Â¼Ã¶Â¸Â¦ Ã?Â¶Ã?Â¤Ã‡Ã‘Â´Ã™.
 	switch (cEquipPos) {
 		case DEF_EQUIPPOS_RHAND:
 			// Â¿Ã€Â¸Â¥Â¼Ã•Â¿Â¡ Ã€Ã¥Ã‚Ã¸Ã‡Ã?Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›. Â¹Â«Â±Ã¢Â·Ã¹Ã€ÃŒÂ´Ã™.
@@ -16660,7 +16654,7 @@ BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char
 
 				pNpc->m_sType = m_pNpcConfigList[i]->m_sType;
 
-				// HitDiceÂ¿Â¡ ÂµÃ»Â¶Ã³ Â°Ã¸Â½Ã„Ã€ÃŒ Â´Ã™Â¸Â£Â´Ã™. Â¸Ã·Â°Â£Ã€Ã‡ Ã‚Ã·ÂºÂ°Ã€Â» ÂµÃŽÂ±Ã¢ Ã€Â§Ã‡Ã�?.
+				// HitDiceÂ¿Â¡ ÂµÃ»Â¶Ã³ Â°Ã¸Â½Ã„Ã€ÃŒ Â´Ã™Â¸Â£Â´Ã™. Â¸Ã·Â°Â£Ã€Ã‡ Ã‚Ã·ÂºÂ°Ã€Â» ÂµÃŽÂ±Ã¢ Ã€Â§Ã‡Ã�?.
 				if (m_pNpcConfigList[i]->m_iHitDice <= 5)
 					pNpc->m_iHP = abs(iDice(m_pNpcConfigList[i]->m_iHitDice, 4) + m_pNpcConfigList[i]->m_iHitDice);
 				else pNpc->m_iHP = abs((m_pNpcConfigList[i]->m_iHitDice * 4) + m_pNpcConfigList[i]->m_iHitDice + iDice(1, m_pNpcConfigList[i]->m_iHitDice));
@@ -16812,13 +16806,13 @@ BOOL CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char
 				// v1.411 Ã€Â§Ã„Â¡ Â¿Ã…Â±Ã¨
 				pNpc->m_iNoDieRemainExp = (pNpc->m_iExp) - (pNpc->m_iExp / 3);
 
-				// v1.411 NPCÃ€Ã‡ Ã†Â¯Â¼Ã¶ Â´Ã‰Â·Ã‚ Â»Ã°Ã€Ã�?
+				// v1.411 NPCÃ€Ã‡ Ã†Â¯Â¼Ã¶ Â´Ã‰Â·Ã‚ Â»Ã°Ã€Ã�?
 				pNpc->m_iStatus = pNpc->m_iStatus & 0xFFFFF0FF;
 				sTemp = cSA;
 				sTemp = sTemp << 8;
 				pNpc->m_iStatus = pNpc->m_iStatus | sTemp;
 
-				// v1.41 NPCÃ€Ã‡ ClassÂ»Ã°Ã€Ã�?.
+				// v1.41 NPCÃ€Ã‡ ClassÂ»Ã°Ã€Ã�?.
 				pNpc->m_iStatus = pNpc->m_iStatus & 0xFFFFFFF0;
 				pNpc->m_iStatus = pNpc->m_iStatus | (sClass);
 
@@ -16979,7 +16973,7 @@ void CGame::TimeStaminarPointsUp(int iClientH) {
 	if (m_pClientList[iClientH]->m_bIsKilled == TRUE) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
 	if (m_pClientList[iClientH]->m_iHungerStatus <= 0) return;
-	if (m_pClientList[iClientH]->m_bSkillUsingStatus[19] == TRUE) return; // v1.4 ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚ÂºÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â±ÃƒÂ¢ Ã‚Â±ÃƒÂ¢Ã‚Â¼ÃƒÂº Ã‚Â»ÃƒÂ§Ã‚Â¿ÃƒÂ«ÃƒÂ?ÃƒÅ¸Ã‚Â¿Ã‚Â¡Ã‚Â´Ãƒâ€š Ã‚Â½Ã‚ÂºÃƒâ€¦Ãƒâ€�?Ã‚Â¹ÃƒÅ’Ã‚Â³ÃƒÅ  Ã‚Â¿Ãƒâ‚¬Ã‚Â¸Ã‚Â£ÃƒÂ?ÃƒÂ¶ Ã‚Â¾ÃƒÅ Ãƒâ‚¬Ã‚Â½.
+	if (m_pClientList[iClientH]->m_bSkillUsingStatus[19] == TRUE) return; // v1.4 ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚ÂºÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â±ÃƒÂ¢ Ã‚Â±ÃƒÂ¢Ã‚Â¼ÃƒÂº Ã‚Â»ÃƒÂ§Ã‚Â¿ÃƒÂ«ÃƒÂ?ÃƒÅ¸Ã‚Â¿Ã‚Â¡Ã‚Â´Ãƒâ€š Ã‚Â½Ã‚ÂºÃƒâ€¦Ãƒâ€�?Ã‚Â¹ÃƒÅ’Ã‚Â³ÃƒÅ  Ã‚Â¿Ãƒâ‚¬Ã‚Â¸Ã‚Â£ÃƒÂ?ÃƒÂ¶ Ã‚Â¾ÃƒÅ Ãƒâ‚¬Ã‚Â½.
 
 	iMaxSP = (2 * (m_pClientList[iClientH]->m_iStr + m_pClientList[iClientH]->m_iAngelicStr)) + (2 * m_pClientList[iClientH]->m_iLevel);
 	if (m_pClientList[iClientH]->m_iSP < iMaxSP) {
@@ -17020,7 +17014,7 @@ void CGame::SendGuildMsg(int iClientH, WORD wNotifyMsgType, short sV1, short sV2
 	char * cp;
 	register int i, iRet;
 
-	// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�?Â¸Â¸ ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶ÂµÃ©
+	// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�?Â¸Â¸ ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶ÂµÃ©
 	if (m_pClientList[iClientH] == NULL) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
 
@@ -17041,7 +17035,7 @@ void CGame::SendGuildMsg(int iClientH, WORD wNotifyMsgType, short sV1, short sV2
 			// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥ Ã€ÃŒÂ¸Â§Ã€Â» Â°Â®Â°Ã­ Ã€Ã–Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ ÃƒÂ£Â¾Ã’Â´Ã™.
 			switch (wNotifyMsgType) {
 				case DEF_NOTIFY_GUILDDISBANDED:
-					if (i == iClientH) break; // <-- Â±Ã¦ÂµÃ¥ Â¸Â¶Â½ÂºÃ…Ã? Ã€ÃšÂ½Ã…Â¿Â¡Â°Ã�?Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+					if (i == iClientH) break; // <-- Â±Ã¦ÂµÃ¥ Â¸Â¶Â½ÂºÃ…Ã? Ã€ÃšÂ½Ã…Â¿Â¡Â°Ã�?Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 					// Â±Ã¦ÂµÃ¥ Ã‡Ã˜Â»Ãª Ã…Ã«ÂºÂ¸Â¿Â¡ Ã‡Ã˜Â´Ã§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Ã€Ã‡ Â±Ã¦ÂµÃ¥ Â·Â©Ã…Â©Â¸Â¦ Ã…Â¬Â¸Â®Â¾Ã®Ã‡Ã‘Â´Ã™.
 					memcpy(cp, m_pClientList[iClientH]->m_cGuildName, 20);
 					cp += 20;
@@ -17055,7 +17049,7 @@ void CGame::SendGuildMsg(int iClientH, WORD wNotifyMsgType, short sV1, short sV2
 					break;
 
 				case DEF_NOTIFY_EVENTMSGSTRING:
-					// Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÂµÃ‡Â´Ã‚ Ã€ÃŒÂºÂ¥Ã†Â® Â¸ÃžÂ½ÃƒÃ?Ã¶ Â½ÂºÃ†Â®Â¸Âµ
+					// Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Ã€Ã¼Â´ÃžÂµÃ‡Â´Ã‚ Ã€ÃŒÂºÂ¥Ã†Â® Â¸ÃžÂ½ÃƒÃ?Ã¶ Â½ÂºÃ†Â®Â¸Âµ
 					strcpy(cp, pString);
 					cp += strlen(pString);
 
@@ -17091,7 +17085,7 @@ void CGame::SendGuildMsg(int iClientH, WORD wNotifyMsgType, short sV1, short sV2
 }
 
 void CGame::GuildNotifyHandler(char * pData, DWORD dwMsgSize) {
-	// Â´Ã™Â¸Â¥ Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Â·ÃŽÂºÃŽÃ…Ã? Â±Ã¦ÂµÃ¥ Ã€ÃŒÂºÂ¥Ã†Â®Â°Â¡ ÂµÂµÃ‚Ã¸Ã‡ÃŸÂ´Ã™.
+	// Â´Ã™Â¸Â¥ Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Â·ÃŽÂºÃŽÃ…Ã? Â±Ã¦ÂµÃ¥ Ã€ÃŒÂºÂ¥Ã†Â®Â°Â¡ ÂµÂµÃ‚Ã¸Ã‡ÃŸÂ´Ã™.
 	char * cp, cCharName[11], cGuildName[21];
 
 	ZeroMemory(cCharName, sizeof (cCharName));
@@ -17618,7 +17612,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 								Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, FALSE, iMagicAttr);
 								Effect_SpDown_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9);
@@ -17644,7 +17638,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -17657,7 +17651,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX - 1, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -17670,7 +17664,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX + 1, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -17683,7 +17677,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY - 1);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -17696,7 +17690,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY + 1);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -17715,7 +17709,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 								Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 						}
@@ -17729,7 +17723,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 						  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-					// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+					// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 					if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 						Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, TRUE, iMagicAttr); // v1.41 FALSE
 				}
@@ -17754,7 +17748,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
 								if (m_pClientList[sOwnerH]->m_iHP < 0) goto MAGIC_NOEFFECT;
-								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -17786,14 +17780,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 							// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -17832,7 +17826,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -17865,14 +17859,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX - 1, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 							// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -17911,7 +17905,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -17944,14 +17938,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX + 1, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 							// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -17990,7 +17984,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18023,14 +18017,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY - 1);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 							// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18069,7 +18063,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18102,14 +18096,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY + 1);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+						// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 						if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 							Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 							// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18154,7 +18148,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18187,14 +18181,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 								Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 								// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 								switch (cOwnerType) {
 									case DEF_OWNERTYPE_PLAYER:
 										if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-										// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+										// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 										if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 											if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 												m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18234,7 +18228,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					switch (cOwnerType) {
 						case DEF_OWNERTYPE_PLAYER:
 							if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-							// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+							// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 							if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 								if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 									m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18267,14 +18261,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 						  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-					// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+					// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 					if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 						Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, TRUE, iMagicAttr); // v1.41 FALSE
 						// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 						switch (cOwnerType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+								// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -18330,7 +18324,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 						  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-					// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+					// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 					if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 						Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, TRUE, iMagicAttr);
 				}
@@ -18346,7 +18340,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 						}
@@ -18366,7 +18360,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 								Effect_Damage_Spot_DamageMove(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 						}
@@ -18376,14 +18370,14 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 			case DEF_MAGICTYPE_SPUP_AREA:
 				// SpÃ‚Â°Ã‚Â¡ Ã‚Â»ÃƒÂ³Ã‚Â½Ãƒâ€šÃƒâ€¡Ãƒâ€˜Ã‚Â´Ãƒâ„¢.
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
-				// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬ÃƒÅ’ Ãƒâ€¡ÃƒÅ Ã‚Â¿ÃƒÂ¤Ã‚Â¾ÃƒÂ¸Ã‚Â´Ãƒâ„¢.
+				// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬ÃƒÅ’ Ãƒâ€¡ÃƒÅ Ã‚Â¿ÃƒÂ¤Ã‚Â¾ÃƒÂ¸Ã‚Â´Ãƒâ„¢.
 				Effect_SpUp_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6);
 				// ÃƒÂ?Ãƒâ€“Ã‚ÂºÃ‚Â¯ Ã‚Â°ÃƒÂ¸Ã‚Â°ÃƒÂ? ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº
 				for (iy = dY - m_pMagicConfigList[sType]->m_sValue3; iy <= dY + m_pMagicConfigList[sType]->m_sValue3; iy++)
 					for (ix = dX - m_pMagicConfigList[sType]->m_sValue2; ix <= dX + m_pMagicConfigList[sType]->m_sValue2; ix++) {
 						// Ãƒâ‚¬ÃƒÅ¡Ã‚Â½Ãƒâ€¦Ã‚ÂµÃ‚Âµ Ãƒâ€¡Ãƒâ€¡Ãƒâ€ ÃƒÂ¸Ã‚ÂµÃƒâ€° Ã‚Â¼ÃƒÂ¶ Ãƒâ‚¬Ãƒâ€“Ãƒâ‚¬Ã‚Â¸Ã‚Â´ÃƒÂ? ÃƒÂ?Ãƒâ€“Ãƒâ‚¬Ãƒâ€¡.
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
-						// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬ÃƒÅ’ Ãƒâ€¡ÃƒÅ Ã‚Â¿ÃƒÂ¤ Ã‚Â¾ÃƒÂ¸Ã‚Â´Ãƒâ„¢.
+						// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬ÃƒÅ’ Ãƒâ€¡ÃƒÅ Ã‚Â¿ÃƒÂ¤ Ã‚Â¾ÃƒÂ¸Ã‚Â´Ãƒâ„¢.
 						Effect_SpUp_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9);
 					}
 				break;
@@ -18958,7 +18952,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 				// Ã‚Â¾Ãƒâ€ Ãƒâ‚¬ÃƒÅ’Ãƒâ€¦Ãƒâ€ºÃƒâ‚¬Ã‚Â» Ã‚Â¼Ã‚Â­Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ‚¬Ã‚Â§Ãƒâ€žÃ‚Â¡Ã‚Â¿Ã‚Â¡ Ã‚Â¹ÃƒÂ¶Ã‚Â¸Ã‚Â°Ã‚Â´Ãƒâ„¢.
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bSetItem(dX, dY, pItem);
 
-				// v1.41 ÃƒË†ÃƒÂ±Ã‚Â±ÃƒÂ? Ã‚Â¾Ãƒâ€ Ãƒâ‚¬ÃƒÅ’Ãƒâ€¦Ãƒâ€ºÃƒâ‚¬Ã‚Â» Ã‚Â¶Ã‚Â³Ã‚Â¾ÃƒÂ®Ã‚Â¶ÃƒÅ¸Ã‚Â¸Ã‚Â° Ã‚Â°ÃƒÂ?Ãƒâ‚¬ÃƒÅ’Ã‚Â¶ÃƒÂ³Ã‚Â¸ÃƒÂ© Ã‚Â·ÃƒÅ½Ã‚Â±Ãƒâ€�?Ã‚Â¸Ã‚Â¦ Ã‚Â³Ã‚Â²Ã‚Â±ÃƒÂ¤Ã‚Â´Ãƒâ„¢.
+				// v1.41 ÃƒË†ÃƒÂ±Ã‚Â±ÃƒÂ? Ã‚Â¾Ãƒâ€ Ãƒâ‚¬ÃƒÅ’Ãƒâ€¦Ãƒâ€ºÃƒâ‚¬Ã‚Â» Ã‚Â¶Ã‚Â³Ã‚Â¾ÃƒÂ®Ã‚Â¶ÃƒÅ¸Ã‚Â¸Ã‚Â° Ã‚Â°ÃƒÂ?Ãƒâ‚¬ÃƒÅ’Ã‚Â¶ÃƒÂ³Ã‚Â¸ÃƒÂ© Ã‚Â·ÃƒÅ½Ã‚Â±Ãƒâ€�?Ã‚Â¸Ã‚Â¦ Ã‚Â³Ã‚Â²Ã‚Â±ÃƒÂ¤Ã‚Â´Ãƒâ„¢.
 				_bItemLog(DEF_ITEMLOG_DROP, iClientH, (int) - 1, pItem);
 
 				// Ã‚Â´Ãƒâ„¢Ã‚Â¸Ã‚Â¥ Ãƒâ€¦Ã‚Â¬Ã‚Â¶ÃƒÂ³Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ°Ãƒâ€ Ã‚Â®Ã‚Â¿Ã‚Â¡Ã‚Â°Ãƒâ€? Ã‚Â¾Ãƒâ€ Ãƒâ‚¬ÃƒÅ’Ãƒâ€¦Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â¶Ã‚Â³Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¸ Ã‚Â°ÃƒÂ?Ãƒâ‚¬Ã‚Â» Ã‚Â¾Ãƒâ€¹Ã‚Â¸Ã‚Â°Ã‚Â´Ãƒâ„¢.
@@ -19385,7 +19379,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 					if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
 						// Ã‚Â¾Ãƒâ€ Ãƒâ‚¬ÃƒÅ’Ãƒâ€¦Ãƒâ€ºÃƒâ‚¬Ã‚Â» ÃƒË†Ã‚Â¹Ã‚ÂµÃƒÂ¦Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢.
 
-						// v1.411 Ã‚Â·ÃƒÅ½Ã‚Â±Ãƒâ€�? Ã‚Â³Ã‚Â²Ã‚Â±ÃƒÂ¤Ã‚Â´Ãƒâ„¢.
+						// v1.411 Ã‚Â·ÃƒÅ½Ã‚Â±Ãƒâ€�? Ã‚Â³Ã‚Â²Ã‚Â±ÃƒÂ¤Ã‚Â´Ãƒâ„¢.
 						_bItemLog(DEF_ITEMLOG_GET, iClientH, (int) - 1, pItem);
 
 						dwp = (DWORD *) (cData + DEF_INDEX4_MSGID);
@@ -19586,7 +19580,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 				break;
 
 			case DEF_MAGICTYPE_POISON:
-				// ÃƒÂ?ÃƒÅ¸Ã‚ÂµÃ‚Â¶ Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½. Ã‚Â¸Ãƒâ€¢Ãƒâ‚¬ÃƒÂº Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ã‚Â±Ã‚Â¼Ã‚Â¸Ã‚Â®Ã‚Â°ÃƒÂ­ Ã‚Â´Ãƒâ„¢Ãƒâ‚¬Ã‚Â½Ãƒâ‚¬Ã‚Â¸Ã‚Â·ÃƒÅ½ Ã‚ÂµÃ‚Â¶Ã‚Â¼Ã‚ÂºÃƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ãƒâ€¡Ãƒâ€˜Ã‚Â¹ÃƒÂ¸ Ã‚Â´ÃƒÂµ Ã‚Â±Ã‚Â¼Ã‚Â¸Ã‚Â°Ã‚Â´Ãƒâ„¢.
+				// ÃƒÂ?ÃƒÅ¸Ã‚ÂµÃ‚Â¶ Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½. Ã‚Â¸Ãƒâ€¢Ãƒâ‚¬ÃƒÂº Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ã‚Â±Ã‚Â¼Ã‚Â¸Ã‚Â®Ã‚Â°ÃƒÂ­ Ã‚Â´Ãƒâ„¢Ãƒâ‚¬Ã‚Â½Ãƒâ‚¬Ã‚Â¸Ã‚Â·ÃƒÅ½ Ã‚ÂµÃ‚Â¶Ã‚Â¼Ã‚ÂºÃƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ãƒâ€¡Ãƒâ€˜Ã‚Â¹ÃƒÂ¸ Ã‚Â´ÃƒÂµ Ã‚Â±Ã‚Â¼Ã‚Â¸Ã‚Â°Ã‚Â´Ãƒâ„¢.
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 
 				if (m_pMagicConfigList[sType]->m_sValue4 == 1) {
@@ -19601,7 +19595,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 							bAnalyzeCriminalAction(iClientH, dX, dY);
 
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
-								// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢. Ã‚ÂµÃ‚Â¶Ã‚Â¼Ã‚ÂºÃƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ã‚Â°ÃƒÂ¨Ã‚Â»ÃƒÂªÃƒâ€¡Ãƒâ€˜Ã‚Â´Ãƒâ„¢.
+								// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢. Ã‚ÂµÃ‚Â¶Ã‚Â¼Ã‚ÂºÃƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ã‚Â°ÃƒÂ¨Ã‚Â»ÃƒÂªÃƒâ€¡Ãƒâ€˜Ã‚Â´Ãƒâ„¢.
 								if (bCheckResistingPoisonSuccess(sOwnerH, cOwnerType) == FALSE) {
 									// ÃƒÂ?ÃƒÅ¸Ã‚ÂµÃ‚Â¶Ã‚ÂµÃƒâ€¡Ã‚Â¾ÃƒÂºÃ‚Â´Ãƒâ„¢.
 									m_pClientList[sOwnerH]->m_bIsPoisoned = TRUE;
@@ -19622,7 +19616,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 							if (m_pNpcList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
 							if (m_pNpcList[sOwnerH]->m_iHP > 0) goto MAGIC_NOEFFECT;
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
-								// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢. Ã‚ÂµÃ‚Â¶Ã‚Â¼Ã‚ÂºÃƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ã‚Â°ÃƒÂ¨Ã‚Â»ÃƒÂªÃƒâ€¡Ãƒâ€˜Ã‚Â´Ãƒâ„¢.
+								// Ã‚Â¸Ã‚Â¶Ã‚Â¹ÃƒÂ½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢. Ã‚ÂµÃ‚Â¶Ã‚Â¼Ã‚ÂºÃƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ãƒâ‚¬Ã‚Â» Ã‚Â°ÃƒÂ¨Ã‚Â»ÃƒÂªÃƒâ€¡Ãƒâ€˜Ã‚Â´Ãƒâ„¢.
 								if (bCheckResistingPoisonSuccess(sOwnerH, cOwnerType) == FALSE) {
 									// ÃƒÂ?ÃƒÅ¸Ã‚ÂµÃ‚Â¶Ã‚ÂµÃƒâ€¡Ã‚Â¾ÃƒÂºÃ‚Â´Ãƒâ„¢.
 
@@ -19757,7 +19751,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									if (m_pClientList[sOwnerH] == NULL) goto MAGIC_NOEFFECT;
-									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
+									// Ãƒâ€¦Ã‚Â¸Ã‚Â°Ãƒâ„¢Ãƒâ‚¬ÃƒÅ’ Ã‚Â»ÃƒÂ¬Ã‚Â¾Ãƒâ€ Ãƒâ‚¬Ãƒâ€“Ã‚Â°ÃƒÂ­ Ã‚Â¾ÃƒÂ³Ãƒâ‚¬Ã‚Â½ Ãƒâ‚¬ÃƒÂºÃƒâ€¡Ãƒâ€�?Ã‚Â¿Ã‚Â¡ Ã‚Â½Ãƒâ€¡Ãƒâ€ ÃƒÂ?Ãƒâ€¡ÃƒÅ¸Ã‚Â´Ãƒâ„¢Ã‚Â¸ÃƒÂ© Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚ÂºÃƒâ„¢Ã‚Â´Ãƒâ€šÃ‚Â´Ãƒâ„¢.
 									if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 										if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 											m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -19790,12 +19784,12 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, BOOL b
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
+							// ÃƒÂ?Ãƒâ€�?Ãƒâ‚¬Ã‚Âº ÃƒÆ’Ã‚Â´Ãƒâ€¡ÃƒÂ?Ã‚Â°ÃƒÂ­ Ãƒâ‚¬Ãƒâ€“Ã‚Â´Ãƒâ€š Ãƒâ€¡ÃƒÆ’Ã‚Â·Ã‚Â¹Ãƒâ‚¬ÃƒÅ’Ã‚Â¾ÃƒÂ®Ã‚Â´Ãƒâ„¢.
 							if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE) {
 
 								//Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, TRUE, iMagicAttr);
 								Effect_Damage_Spot(iClientH, DEF_OWNERTYPE_PLAYER, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, TRUE, iMagicAttr);
-								// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº. ÃƒÂ?Ãƒâ€�?ÃƒÂ?ÃƒÂ¶ Ã‚Â¾ÃƒÅ Ã‚Â¾Ãƒâ€™Ãƒâ‚¬Ã‚Â¸Ã‚Â¸ÃƒÂ© Ãƒâ‚¬ÃƒÂ»Ã‚Â¿ÃƒÂ«
+								// Ã‚Â¾ÃƒÂ³Ã‚Â¾ÃƒÂ®Ã‚Â¼Ã‚Â­ Ã‚ÂµÃ‚Â¿Ãƒâ‚¬Ãƒâ€ºÃƒâ‚¬ÃƒÅ’ Ã‚Â´ÃƒÅ Ã‚Â¾ÃƒÂ®ÃƒÂ?ÃƒÂ¶Ã‚Â´Ãƒâ€š ÃƒË†Ã‚Â¿Ã‚Â°ÃƒÂº. ÃƒÂ?Ãƒâ€�?ÃƒÂ?ÃƒÂ¶ Ã‚Â¾ÃƒÅ Ã‚Â¾Ãƒâ€™Ãƒâ‚¬Ã‚Â¸Ã‚Â¸ÃƒÂ© Ãƒâ‚¬ÃƒÂ»Ã‚Â¿ÃƒÂ«
 								if ((m_pClientList[sOwnerH]->m_iHP > 0) && (bCheckResistingIceSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)) {
 									if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] == 0) {
 										m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_ICE ] = 1;
@@ -19906,7 +19900,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ ï¿½Ô·ï¿½
 	iResult = m_pNpcList[iNpcH]->m_iMagicHitRatio;
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?·ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?·ï¿½ ï¿½ï¿½ï¿½ï¿½
 	iWhetherBonus = iGetWhetherMagicBonusEffect(sType, m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_cWhetherStatus);
 
 	// v1.41 ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½
@@ -19927,7 +19921,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 								if (m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] != 0) goto NMH_NOEFFECT;
 								m_pClientList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = (char) m_pMagicConfigList[sType]->m_sValue4;
 								SetInvisibilityFlag(sOwnerH, cOwnerType, TRUE);
-								// ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½ï¿½.
+								// ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½ï¿½.
 								RemoveFromTarget(sOwnerH, DEF_OWNERTYPE_PLAYER);
 								break;
 
@@ -19936,7 +19930,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 								if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] != 0) goto NMH_NOEFFECT;
 								m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ] = (char) m_pMagicConfigList[sType]->m_sValue4;
 								SetInvisibilityFlag(sOwnerH, cOwnerType, TRUE);
-								// ï¿½ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½ï¿½.
+								// ï¿½ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½ï¿½.
 								RemoveFromTarget(sOwnerH, DEF_OWNERTYPE_NPC);
 								break;
 						}
@@ -19950,7 +19944,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 						break;
 
 					case 2:
-						// dX, dY ï¿½�?°ï¿½ 8 ï¿½Öºï¿½ï¿½ï¿½ Invisibility ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Objectï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å²ï¿½ï¿½.
+						// dX, dY ï¿½�?°ï¿½ 8 ï¿½Öºï¿½ï¿½ï¿½ Invisibility ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Objectï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å²ï¿½ï¿½.
 						for (ix = dX - 8; ix <= dX + 8; ix++)
 							for (iy = dY - 8; iy <= dY + 8; iy++) {
 								m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
@@ -19999,7 +19993,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 
 						case DEF_OWNERTYPE_NPC:
 							if (m_pNpcList[sOwnerH] == NULL) goto NMH_NOEFFECT;
-							if (m_pNpcList[sOwnerH]->m_cMagicLevel >= 6) goto NMH_NOEFFECT; // v1.4 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 6ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?¿ï¿½ï¿½Ô´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+							if (m_pNpcList[sOwnerH]->m_cMagicLevel >= 6) goto NMH_NOEFFECT; // v1.4 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 6ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½�?¿ï¿½ï¿½Ô´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 							if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) goto NMH_NOEFFECT;
 							m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] = (char) m_pMagicConfigList[sType]->m_sValue4;
 							break;
@@ -20033,7 +20027,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 					m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 						if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -20046,7 +20040,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 					m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX - 1, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 						if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -20059,7 +20053,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 					m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX + 1, tY);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 						if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -20072,7 +20066,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 					m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY - 1);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 						if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -20085,7 +20079,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 					m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, tX, tY + 1);
 					if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 							  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+						// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 						if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 							Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 					}
@@ -20104,7 +20098,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 						m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 							if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 								Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 						}
@@ -20118,7 +20112,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 				m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 						  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-					// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+					// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 					if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 						Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, FALSE, iMagicAttr);
 				}
@@ -20132,7 +20126,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 				m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 						  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-					// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+					// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 					if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 						Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, TRUE, iMagicAttr);
 				}
@@ -20157,7 +20151,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 				m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 						  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-					// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+					// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 					if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 						Effect_Damage_Spot(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, m_pMagicConfigList[sType]->m_sValue4, m_pMagicConfigList[sType]->m_sValue5, m_pMagicConfigList[sType]->m_sValue6 + iWhetherBonus, TRUE, iMagicAttr);
 				}
@@ -20173,7 +20167,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 						m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 							if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 								Effect_Damage_Spot_DamageMove(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 						}
@@ -20193,7 +20187,7 @@ void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 						m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetDeadOwner(&sOwnerH, &cOwnerType, ix, iy);
 						if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != NULL) &&
 								  (m_pClientList[sOwnerH]->m_iHP > 0)) {
-							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
+							// ï¿½ï¿½ï¿½ï¿½ Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½.
 							if (bCheckResistingMagicSuccess(m_pNpcList[iNpcH]->m_cDir, sOwnerH, cOwnerType, iResult) == FALSE)
 								Effect_Damage_Spot_DamageMove(iNpcH, DEF_OWNERTYPE_NPC, sOwnerH, cOwnerType, dX, dY, m_pMagicConfigList[sType]->m_sValue7, m_pMagicConfigList[sType]->m_sValue8, m_pMagicConfigList[sType]->m_sValue9 + iWhetherBonus, FALSE, iMagicAttr);
 						}
@@ -20304,17 +20298,17 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 	// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â?Â´ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã«Â¥Â¼ Ã«ÂªÂ©Ã­â€˜Å“Ã«Â¡Å“ Ã¬â€šÂ¼ÃªÂ³Â  Ã¬Å¾Ë†Ã«Å â€? Ã«ÂªÂ¹Ã«â€œÂ¤Ã¬Â?Ëœ ÃªÂ³ÂµÃªÂ²Â©Ã­â€“â€°Ã«Â?â„¢Ã¬Â?â€ž Ã«Â©Ë†Ã¬Â¶â€?ÃªÂ²Å’ Ã­â€¢Å“Ã«â€¹Â¤.
 	RemoveFromTarget(iClientH, DEF_OWNERTYPE_PLAYER);
 
-	// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã«Â§Âµ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â?Ã¬â€žÅ“ Ã¬Â§â‚¬Ã¬Å¡Â´Ã«â€¹Â¤.
+	// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã«Â§Âµ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â?Ã¬â€žÅ“ Ã¬Â§â‚¬Ã¬Å¡Â´Ã«â€¹Â¤.
 	m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->ClearOwner(13, iClientH, DEF_OWNERTYPE_PLAYER,
 			  m_pClientList[iClientH]->m_sX,
 			  m_pClientList[iClientH]->m_sY);
 
-	// Ã«â€¹Â¤Ã«Â¥Â¸ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«â€œÂ¤Ã¬â€�?Â?ÃªÂ²Å’ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´ÃªÂ°â‚¬ Ã­Ëœâ€ž Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â?Ã¬â€žÅ“ Ã¬â€šÂ¬Ã«Â?Â¼Ã¬Â§Â?Ã¬Â?â€ž Ã¬â€¢Å’Ã«Â¦Â°Ã«â€¹Â¤.
+	// Ã«â€¹Â¤Ã«Â¥Â¸ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«â€œÂ¤Ã¬â€�?Â?ÃªÂ²Å’ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´ÃªÂ°â‚¬ Ã­Ëœâ€ž Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â?Ã¬â€žÅ“ Ã¬â€šÂ¬Ã«Â?Â¼Ã¬Â§Â?Ã¬Â?â€ž Ã¬â€¢Å’Ã«Â¦Â°Ã«â€¹Â¤.
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, NULL, NULL, NULL);
 
-	// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ÃªÂ°â‚¬ Ã«Â§Ë†Ã«Â²â€¢Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ ÃªÂ²Æ’Ã¬Â?Â¸Ã¬Â§â‚¬, Ã¬â€¢â€žÃ«â€¹Ë†Ã«Â©Â´ Ã¬Â?Â¼Ã«Â°ËœÃ¬Â Â?Ã¬Â?Â¸ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ ÃªÂ²Æ’Ã¬Â?Â¸Ã¬Â§â‚¬Ã«Â¥Â¼ Ã¬Â²Â´Ã­Â?Â¬Ã­â€¢Å“Ã«â€¹Â¤.
-	// Ã«Â§Å’Ã¬â€¢Â½ Ã¬Â?Â¼Ã«Â°ËœÃ¬Â Â?Ã¬Â?Â¸ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ ÃªÂ²Æ’Ã¬Â?Â´Ã«Â?Â¼Ã«Â©Â´ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã¬Å“â€žÃ¬Â¹ËœÃ¬Â?Ëœ Ã«Â§ÂµÃ¬Â?Â´Ã«Â¦â€ž, Ã¬Â¢Å’Ã­â€˜Å“Ã«Â¥Â¼ ÃªÂµÂ¬Ã­â€¢Â´Ã¬â„¢â‚¬Ã¬â€žÅ“
-	// ÃªÂ·Â¸ Ã«Â§ÂµÃ¬Â?Â´ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢ËœÃ«Å â€?Ã¬Â§â‚¬Ã«Â¥Â¼ ÃªÂ²â‚¬Ã¬Æ’â€°Ã­â€¢Å“Ã«â€¹Â¤. Ã«Â§Å’Ã¬â€¢Â½ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢ËœÃ¬Â§â‚¬ Ã¬â€¢Å Ã«Å â€?Ã«â€¹Â¤Ã«Â©Â´ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã¬â€�?Â?ÃªÂ²Å’
+	// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ÃªÂ°â‚¬ Ã«Â§Ë†Ã«Â²â€¢Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ ÃªÂ²Æ’Ã¬Â?Â¸Ã¬Â§â‚¬, Ã¬â€¢â€žÃ«â€¹Ë†Ã«Â©Â´ Ã¬Â?Â¼Ã«Â°ËœÃ¬Â Â?Ã¬Â?Â¸ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ ÃªÂ²Æ’Ã¬Â?Â¸Ã¬Â§â‚¬Ã«Â¥Â¼ Ã¬Â²Â´Ã­Â?Â¬Ã­â€¢Å“Ã«â€¹Â¤.
+	// Ã«Â§Å’Ã¬â€¢Â½ Ã¬Â?Â¼Ã«Â°ËœÃ¬Â Â?Ã¬Â?Â¸ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ ÃªÂ²Æ’Ã¬Â?Â´Ã«Â?Â¼Ã«Â©Â´ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã¬Å“â€žÃ¬Â¹ËœÃ¬Â?Ëœ Ã«Â§ÂµÃ¬Â?Â´Ã«Â¦â€ž, Ã¬Â¢Å’Ã­â€˜Å“Ã«Â¥Â¼ ÃªÂµÂ¬Ã­â€¢Â´Ã¬â„¢â‚¬Ã¬â€žÅ“
+	// ÃªÂ·Â¸ Ã«Â§ÂµÃ¬Â?Â´ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢ËœÃ«Å â€?Ã¬Â§â‚¬Ã«Â¥Â¼ ÃªÂ²â‚¬Ã¬Æ’â€°Ã­â€¢Å“Ã«â€¹Â¤. Ã«Â§Å’Ã¬â€¢Â½ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢ËœÃ¬Â§â‚¬ Ã¬â€¢Å Ã«Å â€?Ã«â€¹Â¤Ã«Â©Â´ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã¬â€�?Â?ÃªÂ²Å’
 	// Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“Ã¬Â?Ëœ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢ËœÃ«Â?Â¼Ã«Å â€? Ã«Â©â€?Ã¬â€¹Å“Ã¬Â§â‚¬Ã«Â¥Â¼ Ã«Â³Â´Ã«â€šÂ¸Ã«â€¹Â¤.
 
 	// Ã«Â¨Â¼Ã¬Â â‚¬ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´ÃªÂ°â‚¬ Ã¬â€žÅ“Ã¬Å¾Ë†Ã«Å â€? Ã¬Å“â€žÃ¬Â¹ËœÃªÂ°â‚¬ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Â¸Ã¬Â§â‚¬ Ã¬â€¢Å’Ã¬â€¢â€žÃ«â€šÂ¸Ã«â€¹Â¤.
@@ -20326,7 +20320,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 
 	// Crusade
 	if ((strcmp(m_pClientList[iClientH]->m_cLockedMapName, "NONE") != 0) && (m_pClientList[iClientH]->m_iLockedMapTime > 0)) {
-		// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
+		// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
 		// Ã«Â§Å’Ã¬â€¢Â½ ÃªÂ°Ë† Ã«Â§ÂµÃ¬Â?Â´ ÃªÂ±Â´Ã«Â¬Â¼ Ã«â€šÂ´Ã«Â¶â‚¬Ã«Â?Â¼Ã«Â©Â´
 		iMapSide = iGetMapLocationSide(cDestMapName);
 		if (iMapSide > 3) iMapSide -= 2; // New 18/05/2004
@@ -20342,11 +20336,11 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 	}
 
 	if ((bRet == TRUE) && (cMapName == NULL)) {
-		// Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´ÃªÂ°â‚¬ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼ Ã¬Å“â€žÃ¬â€�?Â? Ã¬â€žÅ“ Ã¬Å¾Ë†Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢ËœÃ«Å â€?Ã¬Â§â‚¬ ÃªÂ²â‚¬Ã¬Æ’â€°Ã­â€¢Å“Ã«â€¹Â¤. Ã«Â¬Â¼Ã«Â¡Â  Ã«ÂªÂ©Ã¬Â Â?Ã¬Â§â‚¬ÃªÂ°â‚¬ Ã¬Â§â‚¬Ã¬Â â€¢Ã«Â?ËœÃ¬Â§â‚¬ Ã¬â€¢Å Ã¬Â?â‚¬ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã¬â€�?Â¬Ã¬â€¢Â¼Ã­â€¢Å“Ã«â€¹Â¤.
+		// Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´ÃªÂ°â‚¬ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼ Ã¬Å“â€žÃ¬â€�?Â? Ã¬â€žÅ“ Ã¬Å¾Ë†Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢ËœÃ«Å â€?Ã¬Â§â‚¬ ÃªÂ²â‚¬Ã¬Æ’â€°Ã­â€¢Å“Ã«â€¹Â¤. Ã«Â¬Â¼Ã«Â¡Â  Ã«ÂªÂ©Ã¬Â Â?Ã¬Â§â‚¬ÃªÂ°â‚¬ Ã¬Â§â‚¬Ã¬Â â€¢Ã«Â?ËœÃ¬Â§â‚¬ Ã¬â€¢Å Ã¬Â?â‚¬ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã¬â€�?Â¬Ã¬â€¢Â¼Ã­â€¢Å“Ã«â€¹Â¤.
 		for (i = 0; i < DEF_MAXMAPS; i++)
 			if (m_pMapList[i] != NULL) {
 				if (memcmp(m_pMapList[i]->m_cName, cDestMapName, 10) == 0) {
-					// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢Å“Ã«â€¹Â¤.
+					// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢Å“Ã«â€¹Â¤.
 					m_pClientList[iClientH]->m_sX = iDestX; // Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã¬Â¢Å’Ã­â€˜Å“Ã«Â¥Â¼ Ã¬Å¾â€¦Ã«Â Â¥Ã­â€¢Å“Ã«â€¹Â¤.
 					m_pClientList[iClientH]->m_sY = iDestY;
 					m_pClientList[iClientH]->m_cDir = cDir;
@@ -20357,7 +20351,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 				}
 			}
 
-		// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
+		// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
 		m_pClientList[iClientH]->m_sX = iDestX; // Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã¬Â¢Å’Ã­â€˜Å“Ã«Â¥Â¼ Ã¬Å¾â€¦Ã«Â Â¥Ã­â€¢Å“Ã«â€¹Â¤.
 		m_pClientList[iClientH]->m_sY = iDestY;
 		m_pClientList[iClientH]->m_cDir = cDir;
@@ -20369,18 +20363,18 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 				  m_pClientList[iClientH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_CONFUSE ], NULL, NULL);
 		SetSlateFlag(iClientH, DEF_NOTIFY_SLATECLEAR, FALSE);
 
-		// Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ Ã«Â?Â°Ã¬Â?Â´Ã­â€žÂ°Ã«Â¥Â¼ Ã¬Â â‚¬Ã¬Å¾Â¥Ã­â€¢ËœÃªÂ³Â  Ã¬Â â‚¬Ã¬Å¾Â¥Ã­â€“Ë†Ã«â€¹Â¤Ã«Å â€? Ã¬Â?â€˜Ã«â€¹ÂµÃ¬Â?Â´ Ã¬ËœÂ¤Ã«Â©Â´ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã¬â€�?Â?ÃªÂ²Å’ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã«â€¹Â¤Ã¬â€¹Å“ Ã­â€¢Â ÃªÂ²Æ’Ã¬Â?â€ž Ã¬â€¢Å’Ã«Â Â¤Ã¬Â¤â‚¬Ã«â€¹Â¤.
+		// Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ Ã«Â?Â°Ã¬Â?Â´Ã­â€žÂ°Ã«Â¥Â¼ Ã¬Â â‚¬Ã¬Å¾Â¥Ã­â€¢ËœÃªÂ³Â  Ã¬Â â‚¬Ã¬Å¾Â¥Ã­â€“Ë†Ã«â€¹Â¤Ã«Å â€? Ã¬Â?â€˜Ã«â€¹ÂµÃ¬Â?Â´ Ã¬ËœÂ¤Ã«Â©Â´ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã¬â€�?Â?ÃªÂ²Å’ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã«â€¹Â¤Ã¬â€¹Å“ Ã­â€¢Â ÃªÂ²Æ’Ã¬Â?â€ž Ã¬â€¢Å’Ã«Â Â¤Ã¬Â¤â‚¬Ã«â€¹Â¤.
 		bSendMsgToLS(MSGID_REQUEST_SAVEPLAYERDATA_REPLY, iClientH, FALSE); // ! Ã¬Â¹Â´Ã¬Å¡Â´Ã­Å’â€¦ Ã­â€¢ËœÃ¬Â§â‚¬ Ã¬â€¢Å Ã«Å â€?Ã«â€¹Â¤.
 		// !!!!
 		m_pClientList[iClientH]->m_bIsOnServerChange = TRUE;
 		m_pClientList[iClientH]->m_bIsOnWaitingProcess = TRUE;
 		return;
 	} else {
-		// Ã«Â§Ë†Ã«Â²â€¢Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã¬Â?Â´Ã«â€¹Â¤.
+		// Ã«Â§Ë†Ã«Â²â€¢Ã¬â€�?Â? Ã¬Â?ËœÃ­â€¢Å“ Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã¬Â?Â´Ã«â€¹Â¤.
 		switch (pData[0]) {
 			case '0':
 				// Forced Recall.
-				// Ã«Â Ë†Ã«Â²Â¨ Ã¬Â Å“Ã­â€¢Å“Ã¬Â?Â´ Ã¬Å¾Ë†Ã«Å â€? Ã«Â§ÂµÃ¬â€�?Â? Ã«â€œÂ¤Ã¬â€“Â´ÃªÂ°â€?Ã¬Â?â€žÃ«â€¢Å’ Ã¬Â?Â¼Ã¬â€“Â´Ã«â€šÅ“Ã«â€¹Â¤.
+				// Ã«Â Ë†Ã«Â²Â¨ Ã¬Â Å“Ã­â€¢Å“Ã¬Â?Â´ Ã¬Å¾Ë†Ã«Å â€? Ã«Â§ÂµÃ¬â€�?Â? Ã«â€œÂ¤Ã¬â€“Â´ÃªÂ°â€?Ã¬Â?â€žÃ«â€¢Å’ Ã¬Â?Â¼Ã¬â€“Â´Ã«â€šÅ“Ã«â€¹Â¤.
 				ZeroMemory(cTempMapName, sizeof (cTempMapName));
 				if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) {
 					strcpy(cTempMapName, "default");
@@ -20392,7 +20386,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 
 				// Crusade
 				if ((strcmp(m_pClientList[iClientH]->m_cLockedMapName, "NONE") != 0) && (m_pClientList[iClientH]->m_iLockedMapTime > 0)) {
-					// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
+					// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
 					bIsLockedMapNotify = TRUE;
 					ZeroMemory(cTempMapName, sizeof (cTempMapName));
 					strcpy(cTempMapName, m_pClientList[iClientH]->m_cLockedMapName);
@@ -20401,7 +20395,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 				for (i = 0; i < DEF_MAXMAPS; i++)
 					if (m_pMapList[i] != NULL) {
 						if (memcmp(m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
-							// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢Å“Ã«â€¹Â¤.
+							// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢Å“Ã«â€¹Â¤.
 							GetMapInitialPoint(i, &m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY, m_pClientList[iClientH]->m_cLocation);
 
 							m_pClientList[iClientH]->m_cMapIndex = i; // Ã«Â§Âµ Ã¬Â?Â¸Ã«Â?Â±Ã¬Å Â¤Ã«Â¥Â¼ Ã«Â°â€?ÃªÂ¾Â¼Ã«â€¹Â¤.
@@ -20411,7 +20405,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 						}
 					}
 
-				// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
+				// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
 				m_pClientList[iClientH]->m_sX = -1; // Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã¬Â¢Å’Ã­â€˜Å“Ã«Â¥Â¼ Ã¬Å¾â€¦Ã«Â Â¥Ã­â€¢Å“Ã«â€¹Â¤.
 				m_pClientList[iClientH]->m_sY = -1; // -1Ã¬Â?â‚¬ InitialPointÃ«Â¥Â¼ Ã«Â§Â?Ã­â€¢Å“Ã«â€¹Â¤.
 
@@ -20452,7 +20446,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 				}
 				// Crusade
 				if ((strcmp(m_pClientList[iClientH]->m_cLockedMapName, "NONE") != 0) && (m_pClientList[iClientH]->m_iLockedMapTime > 0)) {
-					// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
+					// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
 					bIsLockedMapNotify = TRUE;
 					ZeroMemory(cTempMapName, sizeof (cTempMapName));
 					strcpy(cTempMapName, m_pClientList[iClientH]->m_cLockedMapName);
@@ -20461,7 +20455,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 				for (i = 0; i < DEF_MAXMAPS; i++)
 					if (m_pMapList[i] != NULL) {
 						if (memcmp(m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
-							// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢Å“Ã«â€¹Â¤.
+							// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬Â¡Â´Ã¬Å¾Â¬Ã­â€¢Å“Ã«â€¹Â¤.
 
 							GetMapInitialPoint(i, &m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY, m_pClientList[iClientH]->m_cLocation);
 
@@ -20472,7 +20466,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 						}
 					}
 
-				// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
+				// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
 				m_pClientList[iClientH]->m_sX = -1; // Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã¬Â¢Å’Ã­â€˜Å“Ã«Â¥Â¼ Ã¬Å¾â€¦Ã«Â Â¥Ã­â€¢Å“Ã«â€¹Â¤.
 				m_pClientList[iClientH]->m_sY = -1; // -1Ã¬Â?â‚¬ InitialPointÃ«Â¥Â¼ Ã«Â§Â?Ã­â€¢Å“Ã«â€¹Â¤.
 
@@ -20496,7 +20490,7 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 
 				// Crusade
 				if ((strcmp(m_pClientList[iClientH]->m_cLockedMapName, "NONE") != 0) && (m_pClientList[iClientH]->m_iLockedMapTime > 0)) {
-					// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
+					// Ã­Å Â¹Ã¬Â â€¢ Ã«Â§ÂµÃ¬â€�?Â? ÃªÂ°â€“Ã­Å¾Å’ Ã¬Æ’Â?Ã­Æ’Å“Ã¬Â?Â´Ã«â€¹Â¤. Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­Æ’â‚¬Ã¬Â?Â¼Ã¬Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ«Â¥Â¼ ÃªÂ°â€“Ã­Å¾Å’ Ã«Â§ÂµÃ¬Å“Â¼Ã«Â¡Å“ Ã«Â³â‚¬Ã­Ëœâ€¢Ã­â€¢Å“Ã«â€¹Â¤.
 					dX = -1;
 					dY = -1;
 					bIsLockedMapNotify = TRUE;
@@ -20509,8 +20503,8 @@ void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, 
 
 				cMapIndex = iGetMapIndex(cTempMapName);
 				if (cMapIndex == -1) {
-					// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã«ÂªÂ©Ã¬Â Â?Ã¬Â§â‚¬ÃªÂ°â‚¬ Ã¬â€�?â€ Ã«â€¹Â¤.
-					// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
+					// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã«ÂªÂ©Ã¬Â Â?Ã¬Â§â‚¬ÃªÂ°â‚¬ Ã¬â€�?â€ Ã«â€¹Â¤.
+					// Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬â€žÅ“Ã«Â²â€žÃ¬â€�?Â? Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã­â€¢Â  Ã«Â§ÂµÃ¬Â?Â´ Ã¬â€�?â€ Ã«â€¹Â¤. Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«Å â€? Ã­Ëœâ€žÃ¬Å¾Â¬ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬Â¢â€¦Ã«Â£Å’Ã­â€¢ËœÃªÂ³Â  Ã«â€¹Â¤Ã«Â¥Â¸ Ã¬â€žÅ“Ã«Â²â€žÃ«Â¡Å“ Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã¬â€¹Å“Ã«Â?â€žÃ­â€¢Â´Ã¬â€¢Â¼ Ã­â€¢Å“Ã«â€¹Â¤.
 					m_pClientList[iClientH]->m_sX = dX; //-1;	  // Ã­â€¦â€?Ã«Â Ë†Ã­Â?Â¬Ã­Å Â¸ Ã¬Â¢Å’Ã­â€˜Å“Ã«Â¥Â¼ Ã¬Å¾â€¦Ã«Â Â¥Ã­â€¢Å“Ã«â€¹Â¤.
 					m_pClientList[iClientH]->m_sY = dY; //-1;	  // -1Ã¬Â?â‚¬ InitialPointÃ«Â¥Â¼ Ã«Â§Â?Ã­â€¢Å“Ã«â€¹Â¤.
 
@@ -20577,7 +20571,7 @@ RTH_NEXTSTEP:
 		bGetEmptyPosition(&m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY, m_pClientList[iClientH]->m_cMapIndex);
 	else GetMapInitialPoint(m_pClientList[iClientH]->m_cMapIndex, &m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY);
 
-	// Ã¬Â â€žÃ¬â€ Â¡Ã­â€¢Â  Ã«Â§Âµ Ã«Â?Â°Ã¬Â?Â´Ã­â€žÂ°Ã¬Â?Ëœ ÃªÂ¸Â°Ã¬Â¤â‚¬Ã¬Å“â€žÃ¬Â¹Ëœ. Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã«Å â€? ÃªÂ¸Â°Ã¬Â¤â‚¬Ã¬Å“â€žÃ¬Â¹Ëœ (x, y)Ã«Â¡Å“Ã«Â¶â‚¬Ã­â€žÂ° (x+14, y+12)Ã¬â€�?Â? Ã¬Å“â€žÃ¬Â¹ËœÃ­â€¢Å“Ã«â€¹Â¤.
+	// Ã¬Â â€žÃ¬â€ Â¡Ã­â€¢Â  Ã«Â§Âµ Ã«Â?Â°Ã¬Â?Â´Ã­â€žÂ°Ã¬Â?Ëœ ÃªÂ¸Â°Ã¬Â¤â‚¬Ã¬Å“â€žÃ¬Â¹Ëœ. Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã«Å â€? ÃªÂ¸Â°Ã¬Â¤â‚¬Ã¬Å“â€žÃ¬Â¹Ëœ (x, y)Ã«Â¡Å“Ã«Â¶â‚¬Ã­â€žÂ° (x+14, y+12)Ã¬â€�?Â? Ã¬Å“â€žÃ¬Â¹ËœÃ­â€¢Å“Ã«â€¹Â¤.
 	sp = (short *) cp;
 	*sp = iClientH; // Player ObjectID
 	cp += 2;
@@ -20643,7 +20637,7 @@ RTH_NEXTSTEP:
 	*ip = m_pClientList[iClientH]->m_iContribution;
 	cp += 4;
 
-	// @@@ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã«Â¥Â¼ Ã«Â§ÂµÃ¬Æ’Â?Ã¬â€�?Â? Ã¬ÂµÅ“Ã¬Â´Ë†Ã«Â¡Å“ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€¹Å“Ã­â€šÂ¨Ã«â€¹Â¤.
+	// @@@ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã«Â¥Â¼ Ã«Â§ÂµÃ¬Æ’Â?Ã¬â€�?Â? Ã¬ÂµÅ“Ã¬Â´Ë†Ã«Â¡Å“ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€¹Å“Ã­â€šÂ¨Ã«â€¹Â¤.
 	if (m_pClientList[iClientH]->m_bIsObserverMode == FALSE) {
 		m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetOwner(iClientH,
 				  DEF_OWNERTYPE_PLAYER,
@@ -20678,7 +20672,7 @@ RTH_NEXTSTEP:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			// Ã«Â©â€?Ã¬â€¹Å“Ã¬Â§â‚¬Ã«Â¥Â¼ Ã«Â³Â´Ã«â€šÂ¼Ã«â€¢Å’ Ã¬â€�?Â?Ã«Å¸Â¬ÃªÂ°â‚¬ Ã«Â°Å“Ã¬Æ’Â?Ã­â€“Ë†Ã«â€¹Â¤Ã«Â©Â´ Ã¬Â Å“ÃªÂ±Â°Ã­â€¢Å“Ã«â€¹Â¤.
+			// Ã«Â©â€?Ã¬â€¹Å“Ã¬Â§â‚¬Ã«Â¥Â¼ Ã«Â³Â´Ã«â€šÂ¼Ã«â€¢Å’ Ã¬â€�?Â?Ã«Å¸Â¬ÃªÂ°â‚¬ Ã«Â°Å“Ã¬Æ’Â?Ã­â€“Ë†Ã«â€¹Â¤Ã«Â©Â´ Ã¬Â Å“ÃªÂ±Â°Ã­â€¢Å“Ã«â€¹Â¤.
 			DeleteClient(iClientH, TRUE, TRUE);
 			if (pBuffer != NULL) delete pBuffer;
 			return;
@@ -20686,7 +20680,7 @@ RTH_NEXTSTEP:
 
 	if (pBuffer != NULL) delete pBuffer;
 
-	// Ã«â€¹Â¤Ã«Â¥Â¸ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«â€œÂ¤Ã¬â€�?Â?ÃªÂ²Å’ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´ÃªÂ°â‚¬ Ã¬Æ’Ë†Ã«Â¡Å“Ã¬Å¡Â´ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â? Ã«â€šËœÃ­Æ’â‚¬Ã«â€šÂ¬Ã¬Â?Å’Ã¬Â?â€ž Ã¬â€¢Å’Ã«Â¦Â°Ã«â€¹Â¤.
+	// Ã«â€¹Â¤Ã«Â¥Â¸ Ã­Â?Â´Ã«Â?Â¼Ã¬Â?Â´Ã¬â€“Â¸Ã­Å Â¸Ã«â€œÂ¤Ã¬â€�?Â?ÃªÂ²Å’ Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´ÃªÂ°â‚¬ Ã¬Æ’Ë†Ã«Â¡Å“Ã¬Å¡Â´ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â? Ã«â€šËœÃ­Æ’â‚¬Ã«â€šÂ¬Ã¬Â?Å’Ã¬Â?â€ž Ã¬â€¢Å’Ã«Â¦Â°Ã«â€¹Â¤.
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, NULL, NULL, NULL);
 
 	if ((memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) &&
@@ -20782,7 +20776,7 @@ RTH_NEXTSTEP:
 			m_pClientList[iClientH]->m_dwCrusadeGUID = m_dwCrusadeGUID;
 		} else if (m_pClientList[iClientH]->m_dwCrusadeGUID != m_dwCrusadeGUID) {
 			// Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦?Ã­Å¡â€˜Ã¬Â§Â¸Ã¬Â±Â  Ã­Å¡â€°Ã­Å¡â€žÃ¬Â¨Å’Ã¬Â¨â€??Ã­Å¡â€˜Ã¬Â©Â?Ã¬Â±Â¤?Ã­Å¡â€° GUIDÃ¬Â§Â¸Ã¬Â§â€¢ Ã­Å¡â€°Ã¬Â²Â ?Ã¬Â±Å’ Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦ Ã¬Â©Â?Ã­Å¡Ë†?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±Â¨Ã¬Â©â€?Ã­Å¡â€™ Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Â?Ã¬Â§â„¢Ã¬Â¨Ë†Ã­Å¡Â¢Ã¬Â¨Ë†Ã­Å¡â€š Ã¬Â§Â¸Ã­Å¡â€™?Ã¬Â¨Ëœ ?Ã¬Â²Â¬Ã¬Â¨â€?Ã¬Â²Â©Ã¬Â©â€?Ã¬Â§â€¢ Ã¬Â¨â€?Ã¬Â²Â¬Ã¬Â©Â?Ã¬Â±Â¤Ã­Å¡Â?Ã¬Â¨â‚¬Ã¬Â¨Ë†Ã¬Â²Â© Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦?Ã­Å¡â€° Ã¬Â§Â¸Ã¬Â°Â¼Ã¬Â§Â¸Ã¬Â²Â¬?Ã­Å¡â€˜Ã¬Â¨Ë†Ã­Å¡Â¢.
-			// ?Ã­Å¡â€˜Ã¬Â¨Å’Ã¬Â§Â¹ Ã¬Â§Â¸Ã¬Â±Ë†Ã¬Â©â€?Ã¬Â±â„¢ ?Ã¬Â²Â´Ã¬Â§Â¸Ã¬Â²Â©Ã¬Â©â€?Ã¬Â§â€¢ Ã¬Â¨â€°Ã¬Â²Â­Ã¬Â¨Â?Ã¬Â§Å“ Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Ëœ Ã¬Â©Å’Ã¬Â²Â  Ã¬Â©Â?Ã¬Â²Â©Ã¬Â¨Ë†Ã­Å¡Â¢. Ã­Å¡â€žÃ­Å¡Å“Ã¬Â©Å’Ã­Å¡ËœÃ­Å¡â€°Ã­Å¡â€�? Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦ Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â§Â¸Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â©Â?Ã¬Â¨Å’Ã¬Â°Â¼Ã¬Â¨â€°Ã­Å¡Å  Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? ?Ã¬Â²Â´Ã¬Â¨Â?Ã¬Â±â€¢?Ã¬Â²Â´?Ã­Å¡â€˜ Ã¬Â©Â?Ã­Å¡â€ž?Ã­Å¡Â¤Ã¬Â¨â€°Ã­Å¡â€°Ã¬Â§Â¹Ã¬Â°Â½ ?Ã¬Â²Â´Ã¬Â©â€?Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â§â€“Ã¬Â©Å’Ã­Å¡â„¢?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Â Ã¬Â©Â?Ã­Å¡Â© Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã¬Â©Â?Ã¬Â±Âµ?Ã¬Â¨Â© Ã¬Â©Å’Ã¬Â²Â  ?Ã­Å¡Å“Ã¬Â¨Ë†Ã­Å¡Â¢.
+			// ?Ã­Å¡â€˜Ã¬Â¨Å’Ã¬Â§Â¹ Ã¬Â§Â¸Ã¬Â±Ë†Ã¬Â©â€?Ã¬Â±â„¢ ?Ã¬Â²Â´Ã¬Â§Â¸Ã¬Â²Â©Ã¬Â©â€?Ã¬Â§â€¢ Ã¬Â¨â€°Ã¬Â²Â­Ã¬Â¨Â?Ã¬Â§Å“ Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Ëœ Ã¬Â©Å’Ã¬Â²Â  Ã¬Â©Â?Ã¬Â²Â©Ã¬Â¨Ë†Ã­Å¡Â¢. Ã­Å¡â€žÃ­Å¡Å“Ã¬Â©Å’Ã­Å¡ËœÃ­Å¡â€°Ã­Å¡â€�? Ã­Å¡â€¡Ã¬Â§Â¤Ã¬Â¨Å’Ã¬Â±Å’Ã¬Â©Å’Ã¬Â©Å’?Ã­Å¡â€˜Ã¬Â¨â€°Ã¬Â±â€¦ Ã¬Â¨Â?Ã¬Â±Â¨Ã¬Â¨â€°Ã¬Â±â€¦Ã¬Â§Â¸Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â©Â?Ã¬Â¨Å’Ã¬Â°Â¼Ã¬Â¨â€°Ã­Å¡Å  Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? Ã¬Â¨Ë†Ã­Å¡Â¢?Ã¬Â©Â? ?Ã¬Â²Â´Ã¬Â¨Â?Ã¬Â±â€¢?Ã¬Â²Â´?Ã­Å¡â€˜ Ã¬Â©Â?Ã­Å¡â€ž?Ã­Å¡Â¤Ã¬Â¨â€°Ã­Å¡â€°Ã¬Â§Â¹Ã¬Â°Â½ ?Ã¬Â²Â´Ã¬Â©â€?Ã¬Â§â€¢ Ã­Å¡Â?Ã¬Â§â€“Ã¬Â©Å’Ã­Å¡â„¢?Ã¬Â¨Â© Ã­Å¡â€°Ã­Å¡Â Ã¬Â©Â?Ã­Å¡Â© Ã­Å¡Ë†Ã¬Â²Â¨Ã¬Â¨Â©Ã¬Â²Ëœ?Ã¬Â¨Â© Ã¬Â©Â?Ã¬Â±Âµ?Ã¬Â¨Â© Ã¬Â©Å’Ã¬Â²Â  ?Ã­Å¡Å“Ã¬Â¨Ë†Ã­Å¡Â¢.
 			// ?Ã­Å¡â€˜?Ã¬Â²Â´Ã¬Â©â€?Ã¬Â§â€¢ Ã­Å¡â€°Ã­Å¡ËœÃ¬Â¨Ë†Ã¬Â±Å’Ã¬Â¨â€°Ã­Å¡â€°Ã¬Â©Â?Ã¬Â²Â¬Ã¬Â¨Ë†Ã¬Â²Â© Ã¬Â©â€?Ã¬Â§Â§Ã­Å¡â€°Ã­Å¡Ëœ, Ã¬Â§Â¸Ã­Å¡â€°Ã¬Â©Å’Ã¬Â¨â‚¬ Ã­Å¡Ë†Ã¬Â²Â¨?Ã­Å¡â€œÃ­Å¡Ë†Ã¬Â§Â°, ?Ã¬Â²Â´?Ã¬Â±Â¦ Ã¬Â§Â¸Ã¬Â²Â©Ã­Å¡â€°Ã¬Â±â€¦Ã¬Â¨â€°Ã¬Â¨â€° Ã­Å¡â€žÃ­Å¡Å½Ã¬Â§Â¹Ã¬Â°Â½Ã­Å¡Å Ã¬Â§Â¯.
 			m_pClientList[iClientH]->m_iCrusadeDuty = 0;
 			m_pClientList[iClientH]->m_iConstructionPoint = 0;
@@ -20827,18 +20821,18 @@ RTH_NEXTSTEP:
 			m_pClientList[iClientH]->m_dwCrusadeGUID = 0;
 		}
 	}
-	/*// Crusade Ã­Ëœâ€žÃ¬Å¾Â¬ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“Ã¬Â?Â´ÃªÂ³Â  Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ CrusadeGUIDÃªÂ°â‚¬ 0 Ã­ËœÂ¹Ã¬Â?â‚¬ Ã­Ëœâ€žÃ¬Å¾Â¬Ã¬â„¢â‚¬ Ã«â€¹Â¤Ã«Â¥Â´Ã«â€¹Â¤Ã«Â©Â´ Ã¬Â²ËœÃ¬Â?Å’ Ã­â€¢Â Ã«â€¹Â¹Ã«Â?ËœÃ«Å â€? ÃªÂ²Æ’Ã¬Â?Â´Ã«â€¹Â¤. Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã¬â€�?Â­Ã­â€¢Â  Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?.
+	/*// Crusade Ã­Ëœâ€žÃ¬Å¾Â¬ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“Ã¬Â?Â´ÃªÂ³Â  Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ CrusadeGUIDÃªÂ°â‚¬ 0 Ã­ËœÂ¹Ã¬Â?â‚¬ Ã­Ëœâ€žÃ¬Å¾Â¬Ã¬â„¢â‚¬ Ã«â€¹Â¤Ã«Â¥Â´Ã«â€¹Â¤Ã«Â©Â´ Ã¬Â²ËœÃ¬Â?Å’ Ã­â€¢Â Ã«â€¹Â¹Ã«Â?ËœÃ«Å â€? ÃªÂ²Æ’Ã¬Â?Â´Ã«â€¹Â¤. Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã¬â€�?Â­Ã­â€¢Â  Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?.
 	if (m_bIsCrusadeMode == TRUE) {
 		if (m_pClientList[iClientH]->m_dwCrusadeGUID == 0) {
-			// Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“Ã«ÂªÂ¨Ã«â€œÅ“Ã¬Â?Â´ÃªÂ³Â  Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ GUIDÃªÂ°â‚¬ 0Ã¬Â?Â´Ã«Å¾â‚¬ ÃªÂ²Æ’Ã¬Â?â‚¬ Ã¬Â²ËœÃ¬Â?Å’ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“Ã¬â€�?Â? Ã«â€œÂ¤Ã¬â€“Â´Ã¬â„¢â€?Ã«â€¹Â¤Ã«Å â€? Ã¬Â?ËœÃ«Â¯Â¸. Ã¬â€�?Â­Ã­â€¢Â  Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?.
+			// Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“Ã«ÂªÂ¨Ã«â€œÅ“Ã¬Â?Â´ÃªÂ³Â  Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ GUIDÃªÂ°â‚¬ 0Ã¬Â?Â´Ã«Å¾â‚¬ ÃªÂ²Æ’Ã¬Â?â‚¬ Ã¬Â²ËœÃ¬Â?Å’ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“Ã¬â€�?Â? Ã«â€œÂ¤Ã¬â€“Â´Ã¬â„¢â€?Ã«â€¹Â¤Ã«Å â€? Ã¬Â?ËœÃ«Â¯Â¸. Ã¬â€�?Â­Ã­â€¢Â  Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?.
 			m_pClientList[iClientH]->m_iCrusadeDuty = 0;
 			m_pClientList[iClientH]->m_iConstructionPoint = 0;
 			m_pClientList[iClientH]->m_dwCrusadeGUID = m_dwCrusadeGUID;
 		}
 		else if (m_pClientList[iClientH]->m_dwCrusadeGUID != m_dwCrusadeGUID) {
-			// Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“Ã«ÂªÂ¨Ã«â€œÅ“Ã¬Â?Â´ÃªÂ³Â  Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ GUIDÃªÂ°â‚¬ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã¬â€¢â€žÃ¬Â?Â´Ã«â€?â€?Ã¬â„¢â‚¬ Ã«â€¹Â¤Ã«Â¥Â´Ã«â€¹Â¤Ã«Å â€? ÃªÂ²Æ’Ã¬Â?â‚¬ Ã¬Â â‚¬Ã«Â²Ë†Ã¬â€�?Â? Ã«Â²Å’Ã¬â€“Â´Ã¬Â¡Å’Ã«Â?Ëœ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“Ã¬Â?Ëœ ÃªÂ²Â°ÃªÂ³Â¼Ã¬Â?Â´Ã«â€¹Â¤.
-			// Ã¬Â?Â´Ã«Å¸Â° ÃªÂ²Â½Ã¬Å¡Â° Ã¬Â â€žÃªÂ³ÂµÃ¬â€�?Â? Ã«â€?Â°Ã«Â¥Â¸ Ã­Â?Â¬Ã¬Æ’Â?Ã¬Â?â€ž Ã­â€¢Â  Ã¬Ë†Ëœ Ã¬â€�?â€ Ã«â€¹Â¤. Ã¬ÂµÅ“Ã¬â€ Å’Ã­â€¢Å“ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“ÃªÂ°â‚¬ Ã¬Â¢â€¦Ã«Â£Å’Ã«Â?Å“ Ã«â€¹Â¤Ã¬Â?Å’ Ã«â€¹Â¤Ã¬Â?Å’ Ã¬Â â€žÃ«Â©Â´Ã¬Â â€žÃ¬Â?Â´ Ã¬â€¹Å“Ã¬Å¾â€˜Ã«Â?ËœÃªÂ¸Â° Ã¬Â â€žÃ¬â€�?Â? Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã­â€¢Â´Ã¬â€¢Â¼ Ã­Â?Â¬Ã¬Æ’Â?Ã¬Â?â€ž Ã¬â€“Â»Ã¬Â?â€ž Ã¬Ë†Ëœ Ã¬Å¾Ë†Ã«â€¹Â¤.
-			// Ã¬Â?Â´Ã¬Â â€žÃ¬â€�?Â? Ã­â€¢Â Ã«â€¹Â¹Ã«Â?ËœÃ¬â€�?Ë†Ã«Â?Ëœ Ã¬â€�?Â­Ã­â€¢Â , ÃªÂ±Â´Ã¬â€žÂ¤ Ã­Â?Â¬Ã¬Â?Â¸Ã­Å Â¸, Ã¬Â â€žÃ¬Å¸Â? ÃªÂ³ÂµÃ­â€�?Å’Ã«Â?â€ž Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?.
+			// Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“Ã«ÂªÂ¨Ã«â€œÅ“Ã¬Â?Â´ÃªÂ³Â  Ã­â€?Å’Ã«Â Ë†Ã¬Â?Â´Ã¬â€“Â´Ã¬Â?Ëœ GUIDÃªÂ°â‚¬ Ã­Ëœâ€žÃ¬Å¾Â¬ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã¬â€¢â€žÃ¬Â?Â´Ã«â€?â€?Ã¬â„¢â‚¬ Ã«â€¹Â¤Ã«Â¥Â´Ã«â€¹Â¤Ã«Å â€? ÃªÂ²Æ’Ã¬Â?â‚¬ Ã¬Â â‚¬Ã«Â²Ë†Ã¬â€�?Â? Ã«Â²Å’Ã¬â€“Â´Ã¬Â¡Å’Ã«Â?Ëœ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“Ã¬Â?Ëœ ÃªÂ²Â°ÃªÂ³Â¼Ã¬Â?Â´Ã«â€¹Â¤.
+			// Ã¬Â?Â´Ã«Å¸Â° ÃªÂ²Â½Ã¬Å¡Â° Ã¬Â â€žÃªÂ³ÂµÃ¬â€�?Â? Ã«â€?Â°Ã«Â¥Â¸ Ã­Â?Â¬Ã¬Æ’Â?Ã¬Â?â€ž Ã­â€¢Â  Ã¬Ë†Ëœ Ã¬â€�?â€ Ã«â€¹Â¤. Ã¬ÂµÅ“Ã¬â€ Å’Ã­â€¢Å“ Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“ÃªÂ°â‚¬ Ã¬Â¢â€¦Ã«Â£Å’Ã«Â?Å“ Ã«â€¹Â¤Ã¬Â?Å’ Ã«â€¹Â¤Ã¬Â?Å’ Ã¬Â â€žÃ«Â©Â´Ã¬Â â€žÃ¬Â?Â´ Ã¬â€¹Å“Ã¬Å¾â€˜Ã«Â?ËœÃªÂ¸Â° Ã¬Â â€žÃ¬â€�?Â? Ã¬Â â€˜Ã¬â€ Â?Ã¬Â?â€ž Ã­â€¢Â´Ã¬â€¢Â¼ Ã­Â?Â¬Ã¬Æ’Â?Ã¬Â?â€ž Ã¬â€“Â»Ã¬Â?â€ž Ã¬Ë†Ëœ Ã¬Å¾Ë†Ã«â€¹Â¤.
+			// Ã¬Â?Â´Ã¬Â â€žÃ¬â€�?Â? Ã­â€¢Â Ã«â€¹Â¹Ã«Â?ËœÃ¬â€�?Ë†Ã«Â?Ëœ Ã¬â€�?Â­Ã­â€¢Â , ÃªÂ±Â´Ã¬â€žÂ¤ Ã­Â?Â¬Ã¬Â?Â¸Ã­Å Â¸, Ã¬Â â€žÃ¬Å¸Â? ÃªÂ³ÂµÃ­â€�?Å’Ã«Â?â€ž Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?.
 			m_pClientList[iClientH]->m_iCrusadeDuty       = 0;
 			m_pClientList[iClientH]->m_iConstructionPoint = 0;
 			m_pClientList[iClientH]->m_iWarContribution   = 0;
@@ -20849,7 +20843,7 @@ RTH_NEXTSTEP:
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_CRUSADE, (DWORD)m_bIsCrusadeMode, m_pClientList[iClientH]->m_iCrusadeDuty, NULL, NULL);
 	}
 	else {
-		// Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“ÃªÂ°â‚¬ Ã¬â€¢â€žÃ«â€¹Å’ ÃªÂ²Â½Ã¬Å¡Â° Ã¬â€�?Â­Ã­â€¢Â ÃªÂ³Â¼ ÃªÂ³ÂµÃ­â€�?Å’ Ã­Â?Â¬Ã¬Â?Â¸Ã­Å Â¸Ã«Â§Å’ Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?. Ã¬Â â€žÃ¬Å¸Â? ÃªÂ³ÂµÃ­â€�?Å’Ã«Â?â€žÃ«Å â€? Ã¬Å¾Â Ã¬â€¹Å“Ã­â€ºâ€žÃ¬â€�?Â? ÃªÂ³â€žÃ¬â€šÂ°Ã«Â?ËœÃ¬â€“Â´Ã¬â€žÅ“ Ã­Â?Â¬Ã¬Æ’Â?Ã«Â?Å“Ã«â€¹Â¤.
+		// Ã­Â?Â¬Ã«Â£Â¨Ã¬â€žÂ¸Ã¬Â?Â´Ã«â€œÅ“ Ã«ÂªÂ¨Ã«â€œÅ“ÃªÂ°â‚¬ Ã¬â€¢â€žÃ«â€¹Å’ ÃªÂ²Â½Ã¬Å¡Â° Ã¬â€�?Â­Ã­â€¢Â ÃªÂ³Â¼ ÃªÂ³ÂµÃ­â€�?Å’ Ã­Â?Â¬Ã¬Â?Â¸Ã­Å Â¸Ã«Â§Å’ Ã¬Â´Ë†ÃªÂ¸Â°Ã­â„¢â€?. Ã¬Â â€žÃ¬Å¸Â? ÃªÂ³ÂµÃ­â€�?Å’Ã«Â?â€žÃ«Å â€? Ã¬Å¾Â Ã¬â€¹Å“Ã­â€ºâ€žÃ¬â€�?Â? ÃªÂ³â€žÃ¬â€šÂ°Ã«Â?ËœÃ¬â€“Â´Ã¬â€žÅ“ Ã­Â?Â¬Ã¬Æ’Â?Ã«Â?Å“Ã«â€¹Â¤.
 		if (m_pClientList[iClientH]->m_dwCrusadeGUID == m_dwCrusadeGUID) {
 			m_pClientList[iClientH]->m_iCrusadeDuty = 0;
 			m_pClientList[iClientH]->m_iConstructionPoint = 0;
@@ -21405,7 +21399,7 @@ void CGame::RequestStudyMagicHandler(int iClientH, char * pName, BOOL bIsPurchas
 
 	} else {
 		if (bIsPurchase == TRUE) {
-			if (m_pMagicConfigList[iRet]->m_iGoldCost < 0) bMagic = FALSE; // ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½.
+			if (m_pMagicConfigList[iRet]->m_iGoldCost < 0) bMagic = FALSE; // ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½.
 			dwGoldCount = dwGetItemCount(iClientH, "Gold");
 			if ((DWORD) iCost > dwGoldCount) bMagic = FALSE; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½.
 		}
@@ -21587,7 +21581,7 @@ void CGame::TrainSkillResponse(BOOL bSuccess, int iClientH, int iSkillNum, int i
 		// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ iRetï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½î·¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ñ´ï¿½.
 
 		if (1) {
-			// @@ Testï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
+			// @@ Testï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 			m_pClientList[iClientH]->m_cSkillMastery[iRet]++;
 
 			// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù´ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
@@ -24149,7 +24143,7 @@ void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD dwMsgSize)
  */
 //}
 
-// v1.4311-3 ÃƒÃŸÂ°Â¡ Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  Ã‡Ã�?Â¼Ã¶ FightzoneReserveHandler
+// v1.4311-3 ÃƒÃŸÂ°Â¡ Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  Ã‡Ã�?Â¼Ã¶ FightzoneReserveHandler
 
 void CGame::FightzoneReserveHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 	char cData[100];
@@ -24176,7 +24170,7 @@ void CGame::FightzoneReserveHandler(int iClientH, char * pData, DWORD dwMsgSize)
 	// Ã€ÃŸÂ¸Ã¸ÂµÃˆ fightzone Â¹Ã¸ÃˆÂ£Â¸Â¦ Â°Ã‰Â·Â¯Â³Â½Â´Ã™.
 	if ((iFightzoneNum < 1) || (iFightzoneNum > DEF_MAXFIGHTZONE)) return;
 
-	// Â»Ã§Ã…ÃµÃ€Ã¥Ã€ÃŒ Ã?ÃŸÂºÂ¹ÂµÃ‡Ã?Ã¶ Â¾ÃŠÂ°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã˜ Â¿Ã¤Ã€Ã?Â¿Â¡ ÂµÃ»Â¶Ã³ Â»Ã§Â¿Ã«Ã‡Ã’Â¼Ã¶ Ã€Ã–Â´Ã‚ Â»Ã§Ã…ÃµÃ€Ã¥Ã€ÃŒ Â´Ã™Â¸Â£Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã‘ ÂºÂ¯Â¼Ã¶Â´Ã™.
+	// Â»Ã§Ã…ÃµÃ€Ã¥Ã€ÃŒ Ã?ÃŸÂºÂ¹ÂµÃ‡Ã?Ã¶ Â¾ÃŠÂ°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã˜ Â¿Ã¤Ã€Ã?Â¿Â¡ ÂµÃ»Â¶Ã³ Â»Ã§Â¿Ã«Ã‡Ã’Â¼Ã¶ Ã€Ã–Â´Ã‚ Â»Ã§Ã…ÃµÃ€Ã¥Ã€ÃŒ Â´Ã™Â¸Â£Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã‘ ÂºÂ¯Â¼Ã¶Â´Ã™.
 	// ÃˆÂ¦Â¼Ã¶Â³Â¯Â¿Â¡Â´Ã‚ Â¾Ã†Â·Â¹Â½ÂºÂµÂ§ 2 4 6 8 Â¿Â¤Â¹Ã™Ã€ÃŽÃ€ÃŒ 1 3 5 7  Â»Ã§Ã…ÃµÃ€Ã¥Ã€ÃŒ Â»Ã§Â¿Ã«Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™
 	//             ex) 1Ã€Ã?Ã€ÃŽÂ°Ã¦Â¿Ã¬ => {1 + 1 (Â¾Ã†Â·Â¹Â½ÂºÂµÂ§) + 1 (Â»Ã§Ã…ÃµÃ€Ã¥ Â¹Ã¸ÃˆÂ£ )} %2 == 1 Ã€ÃŒÂ¹Ã‡Â·ÃŽ
 	//                            Â¾Ã†Â·Â¹Â½ÂºÂµÂ§Ã€Âº ÃˆÂ¦Â¼Ã¶Â³Â¯ ÃˆÂ¦Â¼Ã¶ Â»Ã§Ã…ÃµÃ€Ã¥Ã€Â»  Â¿Â¹Â¾Ã  Ã‡Ã’Â¼Ã¶ Â¾Ã¸Â´Ã™.
@@ -24192,9 +24186,9 @@ void CGame::FightzoneReserveHandler(int iClientH, char * pData, DWORD dwMsgSize)
 		wResult = DEF_MSGTYPE_REJECT;
 		iResult = -1;
 	} else if (dwGoldCount < 1500) {
-		// Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â°Â¡ Â°Â®Â°Ã­Ã€Ã–Â´Ã‚ GoldÂ°Â¡ Ã€Ã�?Ã€Ã¥Â±Ã‡ Â°Â¡Â°Ã?Â¿Â¡ ÂºÃ±Ã‡Ã˜ Ã€Ã»Â´Ã™.
+		// Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â°Â¡ Â°Â®Â°Ã­Ã€Ã–Â´Ã‚ GoldÂ°Â¡ Ã€Ã�?Ã€Ã¥Â±Ã‡ Â°Â¡Â°Ã?Â¿Â¡ ÂºÃ±Ã‡Ã˜ Ã€Ã»Â´Ã™.
 		wResult = DEF_MSGTYPE_REJECT;
-		iResult = -2; // ÂµÂ·Ã€ÃŒ Ã€Ã»Ã€Â¸Â¸Ã© -2 Â°ÂªÃ€Â» Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â½Â´Ã™.
+		iResult = -2; // ÂµÂ·Ã€ÃŒ Ã€Ã»Ã€Â¸Â¸Ã© -2 Â°ÂªÃ€Â» Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? ÂºÂ¸Â³Â½Â´Ã™.
 	} else if (iCannotReserveDay) {
 		// Â¿Ã€Â´ÃƒÃ€Âº Â¿Â¹Â¾Ã Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã‚ Â³Â¯Ã€ÃŒÂ´Ã™. Ã€ÃŒÂ¶Â§Â´Ã‚ -3 Â°ÂªÃ€Â» Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡ ÂºÂ¸Â³Â½Â´Ã™.
 		wResult = DEF_MSGTYPE_REJECT;
@@ -24243,7 +24237,7 @@ void CGame::FightzoneReserveHandler(int iClientH, char * pData, DWORD dwMsgSize)
 	*ip = iResult;
 	ip += 4;
 
-	// Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  Ã€Ã€Â´Ã¤ Â¸ÃžÂ¼Â¼Ã?Ã¶  Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã€Ã¼Â¼Ã›
+	// Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  Ã€Ã€Â´Ã¤ Â¸ÃžÂ¼Â¼Ã?Ã¶  Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã€Ã¼Â¼Ã›
 
 	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 10);
 
@@ -24284,11 +24278,11 @@ void CGame::RequestCivilRightHandler(int iClientH, char *pData) {
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
 	if ((m_bAdminSecurity == TRUE) && (m_pClientList[iClientH]->m_iAdminUserLevel > 0)) return;
 
-	// ?íš‘ì¨�?íš‘ íš‰íš— ì¨?ì¨‹?ì¨©?íš‰ ì©Œíš˜ì©Œíš™?íš‘ ?íšœì¨ˆíš¢ì¨?ì±• ì©?íš„ì¨�?íš“ì§¹íš‰?ì¨© ì§¸ì§•íš?ì²¬ ì©Œì²  ì©?ì²©ì¨ˆíš¢.
+	// ?íš‘ì¨�?íš‘ íš‰íš— ì¨?ì¨‹?ì¨©?íš‰ ì©Œíš˜ì©Œíš™?íš‘ ?íšœì¨ˆíš¢ì¨?ì±• ì©?íš„ì¨�?íš“ì§¹íš‰?ì¨© ì§¸ì§•íš?ì²¬ ì©Œì²  ì©?ì²©ì¨ˆíš¢.
 	if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) wResult = 0;
 	else wResult = 1;
 
-	// ì¨Œì¨�?ì¨˜ì§ ?íš‘ 5 ?íš‘íš‰íš•ì¨‹ì²˜ì¨‰ì¨‰ ì©?íš„ì¨�?íš“ì§¹íš‰?ì¨© ì©?ì±µ?ì¨© ì©Œì²  ì©?ì²©ì¨ˆíš¢.
+	// ì¨Œì¨�?ì¨˜ì§ ?íš‘ 5 ?íš‘íš‰íš•ì¨‹ì²˜ì¨‰ì¨‰ ì©?íš„ì¨�?íš“ì§¹íš‰?ì¨© ì©?ì±µ?ì¨© ì©Œì²  ì©?ì²©ì¨ˆíš¢.
 	if (m_pClientList[iClientH]->m_iLevel < 19) wResult = 0;
 
 	if (wResult == 1) {
@@ -24314,18 +24308,18 @@ void CGame::RequestCivilRightHandler(int iClientH, char *pData) {
 	memcpy(cp, m_pClientList[iClientH]->m_cLocation, 10);
 	cp += 10;
 
-	// ??ì¨ˆì±„ ì¨?íš§ì©?íš„íš?ì² ì¨?ì§? íš‡ì§­ì¨‹ì²˜?íš‘ì©?ì±¨íšˆì§°ì©�?ì§•ì§¸íšš ?ì²´ì©Œíš¤
+	// ??ì¨ˆì±„ ì¨?íš§ì©?íš„íš?ì² ì¨?ì§? íš‡ì§­ì¨‹ì²˜?íš‘ì©?ì±¨íšˆì§°ì©�?ì§•ì§¸íšš ?ì²´ì©Œíš¤
 	iRet = m_pClientList[iClientH]->m_pXSock->iSendMsg(cData, 16);
 	switch (iRet) {
 		case DEF_XSOCKEVENT_QUENEFULL:
 		case DEF_XSOCKEVENT_SOCKETERROR:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
-			// ì¨?íš§ì©?íš„íš?ì² ì¨?ì§? ì¨˜ì¨?ì¨€ì©?ì¨‹ì§  ì©�?ì§•ì¨Œì§±ì§¸ì§• ì¨�?íš©ì¨©ì²µíš‰íš©ì¨ˆíš¢ì¨?ì±• íš?ì§?ì§¸íš‡íš‰íš—ì¨ˆíš¢.
+			// ì¨?íš§ì©?íš„íš?ì² ì¨?ì§? ì¨˜ì¨?ì¨€ì©?ì¨‹ì§  ì©�?ì§•ì¨Œì§±ì§¸ì§• ì¨�?íš©ì¨©ì²µíš‰íš©ì¨ˆíš¢ì¨?ì±• íš?ì§?ì§¸íš‡íš‰íš—ì¨ˆíš¢.
 			DeleteClient(iClientH, TRUE, TRUE);
 			return;
 	}
-	// íšˆì§±ì©Œì¨˜?íš‘ ì¨�?íš¢ì§¼ì±¤ì¨�?íš‰ì¨Œíš“ ì©�?íš¥ì©?ì±Œ?ì¨© ì¨©ì²œì¨Œíš“ ì¨˜ì¨?ì¨€ì©?ì¨ˆíš¢.
+	// íšˆì§±ì©Œì¨˜?íš‘ ì¨�?íš¢ì§¼ì±¤ì¨�?íš‰ì¨Œíš“ ì©�?íš¥ì©?ì±Œ?ì¨© ì¨©ì²œì¨Œíš“ ì¨˜ì¨?ì¨€ì©?ì¨ˆíš¢.
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, NULL, NULL, NULL);
 	RequestChangePlayMode(iClientH);
 }
@@ -24666,7 +24660,7 @@ void CGame::ApplyPKpenalty(short sAttackerH, short sVictumH) {
 	m_pClientList[sAttackerH]->m_iExp -= iV2;
 	if (m_pClientList[sAttackerH]->m_iExp < 0) m_pClientList[sAttackerH]->m_iExp = 0;
 
-	// Ã†Ã¤Â³ÃŽÃ†Â¼Â¸Â¦ Â¸Ã�?Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+	// Ã†Ã¤Â³ÃŽÃ†Â¼Â¸Â¦ Â¸Ã�?Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 	SendNotifyMsg(NULL, sAttackerH, DEF_NOTIFY_PKPENALTY, NULL, NULL, NULL, NULL);
 
 	// Ã†Â¯Â¼ÂºÃ€ÃŒ Â¹Ã™Â²Ã®Â¹Ã‡Â·ÃŽ Â¿ÃœÂ¾Ã§Ã€Â» Â»ÃµÂ·ÃŽ ÂºÂ¸Â³Â½Â´Ã™.
@@ -24825,7 +24819,7 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 	} else {
 		// ÃˆÃ±Â»Ã½Ã€ÃšÃ€Ã‡ Â½ÃƒÂ¹ÃŽ, Â±Ã¦ÂµÃ¥Â¿Ã¸ Â¿Â©ÂºÃŽÂ¿Â¡ ÂµÃ»Â¶Ã³ Ã†Ã·Â»Ã³Ã€ÃŒ Â´ÃžÂ¶Ã³Ã?Ã¸Â´Ã™.
 		if (m_pClientList[iClientH]->m_iGuildRank == -1) {
-			// Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€ÃŒ Â¾Ã†Â´Ã?Â¹Ã‡Â·ÃŽ Â½ÃƒÂ¹ÃŽ. (Â¿Â©Ã‡Ã Ã€ÃšÃ€Ã‡ Â°Ã¦Â¿Ã¬Â¿Â¡Â´Ã‚ Ã€ÃŒ Ã‡Ã�?Â¼Ã¶Â°Â¡ ÃˆÂ£ÃƒÃ¢ÂµÃ‡Ã?Ã¶ Â¾ÃŠÃ€Â¸Â¹Ã‡Â·ÃŽ)
+			// Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€ÃŒ Â¾Ã†Â´Ã?Â¹Ã‡Â·ÃŽ Â½ÃƒÂ¹ÃŽ. (Â¿Â©Ã‡Ã Ã€ÃšÃ€Ã‡ Â°Ã¦Â¿Ã¬Â¿Â¡Â´Ã‚ Ã€ÃŒ Ã‡Ã�?Â¼Ã¶Â°Â¡ ÃˆÂ£ÃƒÃ¢ÂµÃ‡Ã?Ã¶ Â¾ÃŠÃ€Â¸Â¹Ã‡Â·ÃŽ)
 			// v2.15 Ã€Ã»Ã€Â» Ã?Ã—Â¿Â´Ã€Â»Â¶Â§ Ã†Ã²Â±Ã•Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¾Ã²Â±Ã¢Ã€Â§Ã‡Ã˜
 			iRewardExp = (iDice(3, (3 * iGetExpLevel(m_pClientList[iClientH]->m_iExp))) + iGetExpLevel(m_pClientList[iClientH]->m_iExp)) / 3;
 
@@ -25064,7 +25058,7 @@ void CGame::ApplyCombatKilledPenalty(int iClientH, int cPenaltyLevel, BOOL bIsSA
 		// v1.41 Ã?ÃŸÂ¸Â³Ã€Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 		if (m_pClientList[iClientH]->m_bIsNeutral != TRUE) {
 			if (m_pClientList[iClientH]->m_iLevel < 80) {
-				// Â·Â¹ÂºÂ§ 80 Â¹ÃŒÂ¸Â¸Ã€Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Ã‡Ã?Â³Âª Ã€Ã»Â°Ã�? Â¶Â³Â¾Ã®Ã?Ã¸Â´Ã™.
+				// Â·Â¹ÂºÂ§ 80 Â¹ÃŒÂ¸Â¸Ã€Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Ã‡Ã?Â³Âª Ã€Ã»Â°Ã�? Â¶Â³Â¾Ã®Ã?Ã¸Â´Ã™.
 				// v2.03 60 -> 80
 				cPenaltyLevel--;
 				if (cPenaltyLevel <= 0) cPenaltyLevel = 1;
@@ -25136,7 +25130,7 @@ PID_DROP:
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sTouchEffectValue1 == m_pClientList[iClientH]->m_sCharIDnum1) &&
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sTouchEffectValue2 == m_pClientList[iClientH]->m_sCharIDnum2) &&
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sTouchEffectValue3 == m_pClientList[iClientH]->m_sCharIDnum3)) {
-			// Â°Â³Ã€ÃŽÂ¿Â¡Â°Ã�? Â¼Ã“Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â¸Â·ÃŽ Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™. Â¸Ã?Ã…Ã¤Â°Â°Ã€Âº Â°Â³Ã€ÃŽÂ¿Ã« Â¾Ã†Ã€ÃŒÃ…Ã›
+			// Â°Â³Ã€ÃŽÂ¿Â¡Â°Ã�? Â¼Ã“Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â¸Â·ÃŽ Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™. Â¸Ã?Ã…Ã¤Â°Â°Ã€Âº Â°Â³Ã€ÃŽÂ¿Ã« Â¾Ã†Ã€ÃŒÃ…Ã›
 		} else if (
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum >= 400) &&
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum != 402) &&
@@ -25144,9 +25138,9 @@ PID_DROP:
 		} else if (((m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) ||
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) &&
 				  (bIsSAattacked == FALSE)) {
-			// Ã†Â¯Â¼Ã¶ Â´Ã‰Â·Ã‚Ã€Â» Â°Â¡Ã?Ã¸ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Ã†Â¯Â¼Ã¶ Â°Ã¸Â°Ã?Ã€Â» Â¹ÃžÃ€ÂºÂ°Ã�? Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+			// Ã†Â¯Â¼Ã¶ Â´Ã‰Â·Ã‚Ã€Â» Â°Â¡Ã?Ã¸ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Ã†Â¯Â¼Ã¶ Â°Ã¸Â°Ã?Ã€Â» Â¹ÃžÃ€ÂºÂ°Ã�? Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 		} else if ((m_pClientList[iClientH]->m_bIsLuckyEffect == TRUE) && (iDice(1, 10) == 5)) {
-			// Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã‡Ã Â¿Ã®ÃˆÂ¿Â°ÃºÂ°Â¡ Ã€Ã–Ã€Â¸Â¸Ã© 10% ÃˆÂ®Â·Ã¼Â·ÃŽ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+			// Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Ã‡Ã Â¿Ã®ÃˆÂ¿Â°ÃºÂ°Â¡ Ã€Ã–Ã€Â¸Â¸Ã© 10% ÃˆÂ®Â·Ã¼Â·ÃŽ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 		} else DropItemHandler(iClientH, cItemIndex, -1, m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_cName);
 	}
 }
@@ -25511,7 +25505,7 @@ void CGame::CalculateSSN_ItemIndex(int iClientH, short sWeaponIndex, int iValue)
 		}
 
 		if (m_pClientList[iClientH]->m_iSkillSSN[sSkillIndex] == 0) {
-			// SKillï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 600ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½�?³ï¿½ï¿½ï¿½ 1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+			// SKillï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 600ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½�?³ï¿½ï¿½ï¿½ 1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 			bCheckTotalSkillMasteryPoints(iClientH, sSkillIndex);
 			// Skillï¿½ï¿½ ï¿½Ã¶ï¿½Ù´ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ë·ï¿½ï¿½Ø´ï¿½.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, sSkillIndex, m_pClientList[iClientH]->m_cSkillMastery[sSkillIndex], NULL, NULL);
@@ -25651,7 +25645,7 @@ void CGame::CalculateSSN_ItemIndex(int iClientH, short sWeaponIndex, int iValue)
 		if (m_pClientList[iClientH]->m_iSkillSSN[sSkillIndex] == 0) {
 			// SKillÃ€Ã‡ ÃƒÃ‘Ã‡Ã•Ã€ÃŒ 600Ã€Â» Â³Ã‘Ã€Â¸Â¸Ã© Â´Ã™Â¸Â¥ Â½ÂºÃ…Â³Ã?ÃŸ Ã‡Ã?Â³ÂªÂ¸Â¦ 1 Â³Â»Â¸Â°Â´Ã™.
 			bCheckTotalSkillMasteryPoints(iClientH, sSkillIndex);
-			// SkillÃ€ÃŒ Â¿ÃƒÂ¶ÃºÂ´Ã™Â´Ã‚ Â°Ã?Ã€Â» Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+			// SkillÃ€ÃŒ Â¿ÃƒÂ¶ÃºÂ´Ã™Â´Ã‚ Â°Ã?Ã€Â» Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, sSkillIndex, m_pClientList[iClientH]->m_cSkillMastery[sSkillIndex], NULL, NULL);
 		}
 	}
@@ -25779,7 +25773,7 @@ void CGame::CalculateSSN_SkillIndex(int iClientH, short sSkillIndex, int iValue)
 			// SKillÃ€Ã‡ ÃƒÃ‘Ã‡Ã•Ã€ÃŒ 700Ã€Â» Â³Ã‘Ã€Â¸Â¸Ã© Â´Ã™Â¸Â¥ Â½ÂºÃ…Â³Ã?ÃŸ Ã‡Ã?Â³ÂªÂ¸Â¦ 1 Â³Â»Â¸Â°Â´Ã™.
 			bCheckTotalSkillMasteryPoints(iClientH, sSkillIndex);
 
-			// SkillÃ€ÃŒ Â¿ÃƒÂ¶ÃºÂ´Ã™Â´Ã‚ Â°Ã?Ã€Â» Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+			// SkillÃ€ÃŒ Â¿ÃƒÂ¶ÃºÂ´Ã™Â´Ã‚ Â°Ã?Ã€Â» Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SKILL, sSkillIndex, m_pClientList[iClientH]->m_cSkillMastery[sSkillIndex], NULL, NULL);
 		}
 	}
@@ -25802,11 +25796,11 @@ void CGame::MobGenerator() {
 		// v1.432 ??? ??????????????? ?????? ??? ?????? ??? ??????. 1000???????? 100%  ??? 50%
 		if ((m_pMapList[i] != NULL) && (m_pMapList[i]->m_bRandomMobGenerator == TRUE)) {
 		// ???????? ?????? ??? ????? ???.
-		if (m_iTotalGameServerClients >= 1000) {
+		if (m_iTotalClients >= 1000) {
 		iResultNum = (m_pMapList[i]->m_iMaximumObject - 30);
 		}
 		else {
-		dV2 = (double)m_iTotalGameServerClients;
+		dV2 = (double)m_iTotalClients;
 		dV3 = (m_pMapList[i]->m_iMaximumObject - 30);
 
 		dV1 = (dV2 / 1000.0f)*dV3;
@@ -27457,7 +27451,7 @@ void CGame::DeleteNpc(int iNpcH) {
 	iNumItem = 0;
 	iItemID = 0; // No current item
 
-	//Ã¬Â£Â½Ã¬â€“Â´Ã¬Å¾Ë†Ã«Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â?Ã¬â€žÅ“ Ã¬â€šÂ­Ã¬Â Å“ 
+	//Ã¬Â£Â½Ã¬â€“Â´Ã¬Å¾Ë†Ã«Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â?Ã¬â€žÅ“ Ã¬â€šÂ­Ã¬Â Å“ 
 	SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, NULL, NULL, NULL);
 	m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->ClearOwner(11, iNpcH, DEF_OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
 
@@ -27501,7 +27495,7 @@ void CGame::DeleteNpc(int iNpcH) {
 	// DelayEventÃ«Â¥Â¼ Ã¬â€šÂ­Ã¬Â Å“ 
 	bRemoveFromDelayEventList(iNpcH, DEF_OWNERTYPE_NPC, NULL);
 	if ((m_pNpcList[iNpcH]->m_bIsSummoned == FALSE) && (m_pNpcList[iNpcH]->m_bIsUnsummoned == FALSE)) {
-		// Ã¬â€ Å’Ã­â„¢ËœÃ«ÂªÂ¹Ã¬Â?Â´ Ã¬â€¢â€žÃ«â€¹Ë†Ã«Â?Â¼Ã«Â©Â´ Ã¬â€�?Â°ÃªÂ¸Ë† Ã¬Å¾Â¬Ã«Â£Å’ÃªÂ°â‚¬ Ã«â€šËœÃ¬ËœÂ¨Ã«â€¹Â¤.
+		// Ã¬â€ Å’Ã­â„¢ËœÃ«ÂªÂ¹Ã¬Â?Â´ Ã¬â€¢â€žÃ«â€¹Ë†Ã«Â?Â¼Ã«Â©Â´ Ã¬â€�?Â°ÃªÂ¸Ë† Ã¬Å¾Â¬Ã«Â£Å’ÃªÂ°â‚¬ Ã«â€šËœÃ¬ËœÂ¨Ã«â€¹Â¤.
 		pItem = new class CItem;
 		ZeroMemory(cItemName, sizeof (cItemName));
 		switch (m_pNpcList[iNpcH]->m_sType) {
@@ -27947,7 +27941,7 @@ void CGame::RequestFullObjectData(int iClientH, char *pData) {
 
 		ip = (int *) cp;
 
-		// m_pClientList[i]Â¿Ã? m_pClientList[sOwnerH]Ã€Ã‡ Â°Ã¼Â°Ã¨Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+		// m_pClientList[i]Â¿Ã? m_pClientList[sOwnerH]Ã€Ã‡ Â°Ã¼Â°Ã¨Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 		// sStatusÃ€Ã‡ Â»Ã³Ã€Â§ 4ÂºÃ±Ã†Â®Â°Â¡ FOE Â°Ã¼Â°Ã¨Â¸Â¦ Â³ÂªÃ…Â¸Â³Â½Â´Ã™.
 		sTemp = m_pClientList[wObjectID]->m_iStatus;
 		sTemp = 0x0FFFFFFF & sTemp; //Original : sTemp = 0x0FFF & sTemp; // Â»Ã³Ã€Â§ 4ÂºÃ±Ã†Â® Ã…Â¬Â¸Â®Â¾Ã®
@@ -28129,7 +28123,7 @@ void CGame::NpcBehavior_Stop(int iNpcH) {
 
 	if ((sTarget != NULL)) {
 
-		// ï¿½ï¿½�?¸ï¿½Ç¥ ï¿½ß°ï¿½.
+		// ï¿½ï¿½�?¸ï¿½Ç¥ ï¿½ß°ï¿½.
 		m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 		m_pNpcList[iNpcH]->m_iTargetIndex = sTarget;
@@ -28352,7 +28346,7 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 				iSEV1 = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue1;
 				// iV1Ã€Âº Â¹Ã¨Â¿Ã¯ Skill Â¹Ã¸ÃˆÂ£. iV2Â´Ã‚ Â±Ã¢Â¼Ãº Â¼Ã¶Ã?Ã˜, iSEV1Ã€Âº Â»Ã§Â¿Ã«Ã€Ãš Ã?Â¤Ã€Ã‡ Â±Ã¢Â¼Ãº Â¼Ã¶Ã?Ã˜(Â¿Ã¬Â¼Â±Â¼Ã¸Ã€Â§)
 				if (iSEV1 == 0) {
-					// Â»Ã§Â¿Ã«Ã€Ãš Ã?Â¤Ã€Ã‡ Â±Ã¢Â¼ÃºÂ¼Ã¶Ã?Ã˜Ã€ÃŒ 0Ã€ÃŒÂ¶Ã³Â¸Ã© Ã‡Â¥Ã?Ã˜ Â±Ã¢Â¼ÃºÂ¼Ã¶Ã?Ã˜Â¿Â¡ ÂµÃ»Â¶Ã³ Â±Ã¢Â¼ÃºÃ€Â» Â¹Ã¨Â¿Ã¬Â°Ã�? ÂµÃˆÂ´Ã™.
+					// Â»Ã§Â¿Ã«Ã€Ãš Ã?Â¤Ã€Ã‡ Â±Ã¢Â¼ÃºÂ¼Ã¶Ã?Ã˜Ã€ÃŒ 0Ã€ÃŒÂ¶Ã³Â¸Ã© Ã‡Â¥Ã?Ã˜ Â±Ã¢Â¼ÃºÂ¼Ã¶Ã?Ã˜Â¿Â¡ ÂµÃ»Â¶Ã³ Â±Ã¢Â¼ÃºÃ€Â» Â¹Ã¨Â¿Ã¬Â°Ã�? ÂµÃˆÂ´Ã™.
 					TrainSkillResponse(TRUE, iClientH, iV1, iV2);
 				} else {
 					TrainSkillResponse(TRUE, iClientH, iV1, iSEV1);
@@ -28413,7 +28407,7 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 						break;
 
 					case 4:
-						// fixed location teleportation: Ã€Ã�?Ã€Ã¥Â±Ã‡ ÂµÃ®ÂµÃ®
+						// fixed location teleportation: Ã€Ã�?Ã€Ã¥Â±Ã‡ ÂµÃ®ÂµÃ®
 						switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2) {
 							case 1:
 								// ÂºÃ­Â¸Â®ÂµÃ¹ Â¾Ã†Ã€Ã?Â·ÃŽ Â°Â£Â´Ã™
@@ -28441,12 +28435,12 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 								SYSTEMTIME SysTime;
 
 								GetLocalTime(&SysTime);
-								// v1.4311-3 ÂºÂ¯Â°Ã¦ Ã€Ã�?Ã€Ã¥Â±Ã‡ ÃƒÂ¼Ã…Â© Â´Ãž/Â³Â¯Ã‚Â¥/Â½ÃƒÂ°Â£Ã€Â¸Â·ÃŽ ÃƒÂ¼Ã…Â©Ã‡Ã‘Â´Ã™.
-								// Ã€Ã�?Ã€Ã¥ Â°Â¡Â´Ã‰Ã‡Ã‘ Â½ÃƒÂ°Â£ÂºÂ¸Â´Ã™ Ã€Ã›Â°Ã…Â³Âª Â°Â°Ã€Â¸Â¸Ã© Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€ÃŒ Â»Ã§Â¶Ã³Ã?Ã¸Â´Ã™.
+								// v1.4311-3 ÂºÂ¯Â°Ã¦ Ã€Ã�?Ã€Ã¥Â±Ã‡ ÃƒÂ¼Ã…Â© Â´Ãž/Â³Â¯Ã‚Â¥/Â½ÃƒÂ°Â£Ã€Â¸Â·ÃŽ ÃƒÂ¼Ã…Â©Ã‡Ã‘Â´Ã™.
+								// Ã€Ã�?Ã€Ã¥ Â°Â¡Â´Ã‰Ã‡Ã‘ Â½ÃƒÂ°Â£ÂºÂ¸Â´Ã™ Ã€Ã›Â°Ã…Â³Âª Â°Â°Ã€Â¸Â¸Ã© Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€ÃŒ Â»Ã§Â¶Ã³Ã?Ã¸Â´Ã™.
 								if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sTouchEffectValue1 != SysTime.wMonth) ||
 										  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sTouchEffectValue2 != SysTime.wDay) ||
 										  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sTouchEffectValue3 <= SysTime.wHour)) {
-									// Â³Â¯Ã‚Â¥Â°Â¡ Ã?Â¤ÃˆÂ®Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ´Ã™. Â¾Ã†Â¹Â«Â·Â± ÃˆÂ¿Â°ÃºÂ°Â¡ Â¾Ã¸Â°Ã­ Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Âº Â»Ã§Â¶Ã³Ã?Ã¸Â´Ã™.
+									// Â³Â¯Ã‚Â¥Â°Â¡ Ã?Â¤ÃˆÂ®Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ´Ã™. Â¾Ã†Â¹Â«Â·Â± ÃˆÂ¿Â°ÃºÂ°Â¡ Â¾Ã¸Â°Ã­ Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Âº Â»Ã§Â¶Ã³Ã?Ã¸Â´Ã™.
 								} else {
 									char cDestMapName[11];
 									ZeroMemory(cDestMapName, sizeof (cDestMapName));
@@ -28522,10 +28516,10 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 						break;
 
 					case 4:
-						// Â¼ÂºÃ€Ã¼ÃˆÂ¯ - Â¸Â¸Â¾Ã  Â¿ÃŠÃ€Â» Ã€Ã�?Â°Ã­ Ã€Ã–Â´Ã™Â¸Ã© Â½Ã‡Ã†Ã?Ã‡Ã‘Â´Ã™.
+						// Â¼ÂºÃ€Ã¼ÃˆÂ¯ - Â¸Â¸Â¾Ã  Â¿ÃŠÃ€Â» Ã€Ã�?Â°Ã­ Ã€Ã–Â´Ã™Â¸Ã© Â½Ã‡Ã†Ã?Ã‡Ã‘Â´Ã™.
 						sTemp = m_pClientList[iClientH]->m_sAppr3 & 0xFF0F;
 						if (sTemp == 0) {
-							// sTempÂ°Â¡ 0Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â°Ã‘Â¿ÃŠ, Â¼Ã“Â¿ÃŠ, Â¹Ã™Ã?Ã¶Ã?ÃŸ Ã‡Ã‘Â°Â¡Ã?Ã¶Â¸Â¦ Ã€Ã�?Â°Ã­ Ã€Ã–Â´Ã‚ Â°Ã?Ã€ÃŒÂ´Ã™. Â¼ÂºÃ€Ã¼ÃˆÂ¯Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+							// sTempÂ°Â¡ 0Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Â°Ã‘Â¿ÃŠ, Â¼Ã“Â¿ÃŠ, Â¹Ã™Ã?Ã¶Ã?ÃŸ Ã‡Ã‘Â°Â¡Ã?Ã¶Â¸Â¦ Ã€Ã�?Â°Ã­ Ã€Ã–Â´Ã‚ Â°Ã?Ã€ÃŒÂ´Ã™. Â¼ÂºÃ€Ã¼ÃˆÂ¯Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 							if (m_pClientList[iClientH]->m_cSex == 1)
 								m_pClientList[iClientH]->m_cSex = 2;
 							else m_pClientList[iClientH]->m_cSex = 1;
@@ -29608,7 +29602,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 	sTgtX = 0;
 	sTgtY = 0;
 
-	// ï¿½Ø´ï¿½ Å¸ï¿½�?¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½.
+	// ï¿½Ø´ï¿½ Å¸ï¿½�?¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½.
 	iDamage = iDice(sV1, sV2) + sV3;
 	if (iDamage <= 0) iDamage = 0;
 
@@ -29635,7 +29629,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 			if (m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_bIsFightZone == TRUE)
 				iDamage += iDamage / 3;
 
-			// Crusade : ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?·ï¿½ 1.33ï¿½ï¿½
+			// Crusade : ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?·ï¿½ 1.33ï¿½ï¿½
 			if ((cTargetType == DEF_OWNERTYPE_PLAYER) && (m_bIsCrusadeMode == TRUE) && (m_pClientList[sAttackerH]->m_iCrusadeDuty == 1)) {
 				// v2.15 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. 1.7 ï¿½ï¿½
 				if (m_pClientList[sAttackerH]->m_iLevel <= 80) {
@@ -29682,10 +29676,10 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 			// v2.03 ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿ï¿½Ç¾î¼­ ï¿½ï¿½Ä§
 			if (m_pClientList[sTargetH]->m_cMapIndex == -1) return;
 			if ((m_pMapList[ m_pClientList[sTargetH]->m_cMapIndex ]->m_bIsAttackEnabled == FALSE) && (m_pClientList[sTargetH]->m_iAdminUserLevel == 0)) return;
-			// v1.41 ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ß¸ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½�?´ï¿½.
+			// v1.41 ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ß¸ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½�?´ï¿½.
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsNeutral == TRUE) && (m_pClientList[sTargetH]->m_iPKCount == 0)) return;
 
-			// v2.172 ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ÊµÇ°ï¿½
+			// v2.172 ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ÊµÇ°ï¿½
 			if ((m_bIsCrusadeMode == FALSE) && (m_pClientList[sTargetH]->m_iPKCount == 0) && (cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sTargetH]->m_bIsPlayerCivil == TRUE)) return;
 			if ((m_bIsCrusadeMode == FALSE) && (m_pClientList[sTargetH]->m_iPKCount == 0) && (cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_bIsPlayerCivil == TRUE)) return;
 
@@ -29706,7 +29700,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 						// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ñ´ï¿½.
 						if (m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_bIsFightZone == TRUE) {
 							if (m_pClientList[sAttackerH]->m_iGuildGUID != m_pClientList[sTargetH]->m_iGuildGUID) {
-								// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½.
+								// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½.
 							} else return;
 						} else return;
 					}
@@ -29866,7 +29860,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 						}
 					}
 
-					// v1.44 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ 80ï¿½Ì»ï¿½ï¿½�?¶ï¿½ ï¿½�?¸ï¿½ï¿½ï¿½.
+					// v1.44 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ 80ï¿½Ì»ï¿½ï¿½�?¶ï¿½ ï¿½�?¸ï¿½ï¿½ï¿½.
 					if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_bIsFightZone == TRUE))
 						iMoveDamage = 80;
 					else iMoveDamage = 50;
@@ -29891,7 +29885,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 							else if (sTgtY < sAtkY) cDamageMoveDir = 8;
 						}
 
-						// v1.44 ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½Ñ´ï¿½.
+						// v1.44 ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½Ñ´ï¿½.
 						m_pClientList[sTargetH]->m_iLastDamage = iDamage;
 						// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ëº¸ï¿½Ñ´ï¿½. <- HPï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½.
 						SendNotifyMsg(NULL, sTargetH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
@@ -29902,18 +29896,18 @@ EDSD_SKIPDAMAGEMOVE:
 						;
 						// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ëº¸ï¿½Ñ´ï¿½. <- HPï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½.
 						SendNotifyMsg(NULL, sTargetH, DEF_NOTIFY_HP, NULL, NULL, NULL, NULL);
-						// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Ò´Ù¸ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+						// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Ò´Ù¸ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 						SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, NULL, NULL);
 					}
 
-					// v1.4 ï¿½ï¿½ï¿½ï¿½Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ Owner ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Å±ï¿½ï¿½.
+					// v1.4 ï¿½ï¿½ï¿½ï¿½Ã´ï¿½�?°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ Owner ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Å±ï¿½ï¿½.
 					if (m_pClientList[sTargetH]->m_bSkillUsingStatus[19] != TRUE) {
 						m_pMapList[m_pClientList[sTargetH]->m_cMapIndex]->ClearOwner(0, sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 						m_pMapList[m_pClientList[sTargetH]->m_cMapIndex]->SetOwner(sTargetH, DEF_OWNERTYPE_PLAYER, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
 					}
 
 					if (m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ] != 0) {
-						// Hold-Person ï¿½Ç¾ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ Ç®ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½�?µï¿½ Ç®ï¿½ï¿½ï¿½ï¿½.
+						// Hold-Person ï¿½Ç¾ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ Ç®ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½�?µï¿½ Ç®ï¿½ï¿½ï¿½ï¿½.
 						// 1: Hold-Person
 						// 2: Paralize
 						SendNotifyMsg(NULL, sTargetH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_HOLDOBJECT, m_pClientList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_HOLDOBJECT ], NULL, NULL);
@@ -29937,7 +29931,7 @@ EDSD_SKIPDAMAGEMOVE:
 					return;
 			}
 
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ ï¿½ï¿½ï¿½×·ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Æ±ï¿½ï¿½Ì³ï¿½ ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ ï¿½ï¿½ï¿½×·ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Æ±ï¿½ï¿½Ì³ï¿½ ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 			if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 				switch (m_pNpcList[sTargetH]->m_sType) {
 					case 40:
@@ -29955,7 +29949,7 @@ EDSD_SKIPDAMAGEMOVE:
 					break;
 			}
 
-			// ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½(AbsDamageï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½) ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½Å²ï¿½ï¿½.
+			// ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½(AbsDamageï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½) ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½Å²ï¿½ï¿½.
 			if (m_pNpcList[sTargetH]->m_iAbsDamage > 0) {
 				dTmp1 = (double) iDamage;
 				dTmp2 = (double) (m_pNpcList[sTargetH]->m_iAbsDamage) / 100.0f;
@@ -29980,12 +29974,12 @@ EDSD_SKIPDAMAGEMOVE:
 			if (m_pNpcList[sTargetH]->m_iHP <= 0) {
 				NpcKilledHandler(sAttackerH, cAttackerType, sTargetH, iDamage);
 			} else {
-				// ï¿½ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½. ï¿½�?°ï¿½ï¿½Ñ´ï¿½.
+				// ï¿½ï¿½�?´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½. ï¿½�?°ï¿½ï¿½Ñ´ï¿½.
 
-				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 				switch (cAttackerType) {
 					case DEF_OWNERTYPE_PLAYER:
-						// v2.15 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½? ï¿½�?°ï¿½ï¿½Ñ´ï¿½.
+						// v2.15 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½? ï¿½�?°ï¿½ï¿½Ñ´ï¿½.
 						if ((m_pNpcList[sTargetH]->m_sType != 21) && (m_pNpcList[sTargetH]->m_sType != 55) && (m_pNpcList[sTargetH]->m_sType != 56)
 								  && (m_pNpcList[sTargetH]->m_cSide == cAttackerSide)) return;
 						break;
@@ -29995,17 +29989,17 @@ EDSD_SKIPDAMAGEMOVE:
 						break;
 				}
 
-				// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Ò´Ù¸ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Ò´Ù¸ï¿½ ï¿½ï¿½�?µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 				SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, NULL, NULL);
 
 				if ((iDice(1, 3) == 2) && (m_pNpcList[sTargetH]->m_cActionLimit == 0)) {
 
-					// ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 					if ((cAttackerType == DEF_OWNERTYPE_NPC) &&
 							  (m_pNpcList[sAttackerH]->m_sType == m_pNpcList[sTargetH]->m_sType) &&
 							  (m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide)) return;
 
-					// ActionLimitï¿½ï¿½ 1ï¿½Ì¸ï¿½ ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+					// ActionLimitï¿½ï¿½ 1ï¿½Ì¸ï¿½ ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 					m_pNpcList[sTargetH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
 					m_pNpcList[sTargetH]->m_sBehaviorTurnCount = 0;
 					m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
@@ -30307,7 +30301,7 @@ BOOL CGame::bCheckResistingIceSuccess(char cAttackerDir, short sTargetH, char cT
 
 	case DEF_OWNERTYPE_NPC:
 		if (m_pNpcList[sTargetH] == NULL) return FALSE;
-		iTargetIceResistRatio = (m_pNpcList[sTargetH]->m_cResistMagic) - (m_pNpcList[sTargetH]->m_cResistMagic/3); // Â¿Â©Â±Ã¢Â¿Â¡ Â¾Ã³Ã€Â½ Â¹Ã¦Â¾Ã® Â¼Ã¶Ã„Â¡ Ã€Ã�?Â·Ã‚. NPCÃ€Ã‡ Â°Ã¦Â¿Ã¬ Â¸Â¶Â¹Ã½ Ã€ÃºÃ‡Ã—Ã€Ã‡ 70% Â¼Ã¶Ã?Ã˜
+		iTargetIceResistRatio = (m_pNpcList[sTargetH]->m_cResistMagic) - (m_pNpcList[sTargetH]->m_cResistMagic/3); // Â¿Â©Â±Ã¢Â¿Â¡ Â¾Ã³Ã€Â½ Â¹Ã¦Â¾Ã® Â¼Ã¶Ã„Â¡ Ã€Ã�?Â·Ã‚. NPCÃ€Ã‡ Â°Ã¦Â¿Ã¬ Â¸Â¶Â¹Ã½ Ã€ÃºÃ‡Ã—Ã€Ã‡ 70% Â¼Ã¶Ã?Ã˜
 		break;
 	}
 
@@ -30787,7 +30781,7 @@ void CGame::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 				m_cShutDownCode      = 3;
 				m_bOnExitProcess     = TRUE;
 				m_dwExitProcessTime  = timeGetTime();
-				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
+				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
 				PutLogList("(!) GAME SERVER SHUTDOWN PROCESS STARTED(by Log-server connection Lost Emulation)!!!");
 			}
 			 */
@@ -31263,12 +31257,12 @@ void CGame::DynamicObjectEffectProcessor() {
 
 							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if (sOwnerH != NULL) {
-								// Poison DamageÂ¸Â¦ Ã€Ã�?Â´Ã‚Â´Ã™.
+								// Poison DamageÂ¸Â¦ Ã€Ã�?Â´Ã‚Â´Ã™.
 								switch (cOwnerType) {
 									case DEF_OWNERTYPE_PLAYER:
 										if (m_pClientList[sOwnerH] == NULL) break;
 										if (m_pClientList[sOwnerH]->m_bIsKilled == TRUE) break;
-										// v1.41 Ã?ÃŸÂ¸Â³Ã€ÃŒÂ°Ã­ Ã€Ã¼Ã…ÃµÂ¸Ã°ÂµÃ¥Â°Â¡ Â¾Ã†Â´Ã?Â¸Ã© Ã‡Ã‡Ã‡Ã˜Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+										// v1.41 Ã?ÃŸÂ¸Â³Ã€ÃŒÂ°Ã­ Ã€Ã¼Ã…ÃµÂ¸Ã°ÂµÃ¥Â°Â¡ Â¾Ã†Â´Ã?Â¸Ã© Ã‡Ã‡Ã‡Ã˜Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 										//if ((m_pClientList[sOwnerH]->m_bIsNeutral == TRUE) && (m_pClientList[sOwnerH]->m_sAppr2 & 0xF000) == 0) break;
 
 										// Ã€ÃŒÂ·Â± Â½Ã„Ã€Â¸Â·ÃŽ Â´Ã«Â¹ÃŒÃ?Ã¶Ã€Ã‡ Ã…Â©Â±Ã¢Â¸Â¦ Â°Ã¡Ã?Â¤
@@ -31322,7 +31316,7 @@ void CGame::DynamicObjectEffectProcessor() {
 											iDamage = iDice(1, 6);
 										else iDamage = iDice(1, 8);
 
-										// Ã€Ã¼Ã€Ã¯Â¿Ã« Â±Â¸Ã?Â¶Â¹Â°Ã?ÃŸ Â±Ã—Â·Â£ÂµÃ¥ Â¸Ã…Ã?Ã· Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?, Â¿Â¡Â³ÃŠÃ?Ã¶ Â½Ã‡ÂµÃ¥ Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?Â´Ã‚ Ã‡ÃŠÂµÃ¥Â·Ã¹ Â¸Â¶Â¹Ã½Â¿Â¡ Â´Ã«Â¹ÃŒÃ?Ã¶Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+										// Ã€Ã¼Ã€Ã¯Â¿Ã« Â±Â¸Ã?Â¶Â¹Â°Ã?ÃŸ Â±Ã—Â·Â£ÂµÃ¥ Â¸Ã…Ã?Ã· Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?, Â¿Â¡Â³ÃŠÃ?Ã¶ Â½Ã‡ÂµÃ¥ Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?Â´Ã‚ Ã‡ÃŠÂµÃ¥Â·Ã¹ Â¸Â¶Â¹Ã½Â¿Â¡ Â´Ã«Â¹ÃŒÃ?Ã¶Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 										switch (m_pNpcList[sOwnerH]->m_sType) {
 											case 40: // ESG
 											case 41: // GMG
@@ -31346,9 +31340,9 @@ void CGame::DynamicObjectEffectProcessor() {
 
 										if (m_pNpcList[sOwnerH]->m_iHP <= 0) {
 											// NPCÂ°Â¡ Â»Ã§Â¸Ã?Ã‡ÃŸÂ´Ã™.
-											NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0); //v1.2 Ã?ÃŸÂµÂ¶Â±Â¸Â¸Â§Â¿Â¡ Ã?Ã—Ã€Â¸Â¸Ã© Â¸Â¶Ã?Ã¶Â¸Â· Â´Ã«Â¹ÃŒÃ?Ã¶Â°Â¡ 0. Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â½Â±Â°Ã�? Â±Â¸Ã‡Ã?Ã?Ã¶ Â¸Ã¸Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?.
+											NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0); //v1.2 Ã?ÃŸÂµÂ¶Â±Â¸Â¸Â§Â¿Â¡ Ã?Ã—Ã€Â¸Â¸Ã© Â¸Â¶Ã?Ã¶Â¸Â· Â´Ã«Â¹ÃŒÃ?Ã¶Â°Â¡ 0. Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â½Â±Â°Ã�? Â±Â¸Ã‡Ã?Ã?Ã¶ Â¸Ã¸Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?.
 										} else {
-											// DamageÂ¸Â¦ Ã€Ã�?Ã€Âº ÃƒÃ¦Â°Ã?Ã€Â¸Â·ÃŽ Ã€ÃŽÃ‡Ã‘ Ã?Ã¶Â¿Â¬ÃˆÂ¿Â°Ãº.
+											// DamageÂ¸Â¦ Ã€Ã�?Ã€Âº ÃƒÃ¦Â°Ã?Ã€Â¸Â·ÃŽ Ã€ÃŽÃ‡Ã‘ Ã?Ã¶Â¿Â¬ÃˆÂ¿Â°Ãº.
 											if (iDice(1, 3) == 2)
 												m_pNpcList[sOwnerH]->m_dwTime = dwTime;
 
@@ -31438,9 +31432,9 @@ void CGame::DynamicObjectEffectProcessor() {
 
 										if (m_pNpcList[sOwnerH]->m_iHP <= 0) {
 											// NPCÂ°Â¡ Â»Ã§Â¸Ã?Ã‡ÃŸÂ´Ã™.
-											NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0); //v1.2 Ã…Â¸Â¼Â­ Ã?Ã—Ã€Â¸Â¸Ã© Â¸Â¶Ã?Ã¶Â¸Â· Â´Ã«Â¹ÃŒÃ?Ã¶Â°Â¡ 0. Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â½Â±Â°Ã�? Â±Â¸Ã‡Ã?Ã?Ã¶ Â¸Ã¸Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?.
+											NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0); //v1.2 Ã…Â¸Â¼Â­ Ã?Ã—Ã€Â¸Â¸Ã© Â¸Â¶Ã?Ã¶Â¸Â· Â´Ã«Â¹ÃŒÃ?Ã¶Â°Â¡ 0. Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â½Â±Â°Ã�? Â±Â¸Ã‡Ã?Ã?Ã¶ Â¸Ã¸Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?.
 										} else {
-											// DamageÂ¸Â¦ Ã€Ã�?Ã€Âº ÃƒÃ¦Â°Ã?Ã€Â¸Â·ÃŽ Ã€ÃŽÃ‡Ã‘ Ã?Ã¶Â¿Â¬ÃˆÂ¿Â°Ãº.
+											// DamageÂ¸Â¦ Ã€Ã�?Ã€Âº ÃƒÃ¦Â°Ã?Ã€Â¸Â·ÃŽ Ã€ÃŽÃ‡Ã‘ Ã?Ã¶Â¿Â¬ÃˆÂ¿Â°Ãº.
 											if (iDice(1, 3) == 2)
 												m_pNpcList[sOwnerH]->m_dwTime = dwTime;
 
@@ -31509,13 +31503,13 @@ void CGame::DynamicObjectEffectProcessor() {
 
 							m_pMapList[m_pDynamicObjectList[i]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if (sOwnerH != NULL) {
-								// Fire DamageÂ¸Â¦ Ã€Ã�?Â´Ã‚Â´Ã™.
+								// Fire DamageÂ¸Â¦ Ã€Ã�?Â´Ã‚Â´Ã™.
 								switch (cOwnerType) {
 
 									case DEF_OWNERTYPE_PLAYER:
 										if (m_pClientList[sOwnerH] == NULL) break;
 										if (m_pClientList[sOwnerH]->m_bIsKilled == TRUE) break;
-										// v1.41 Ã?ÃŸÂ¸Â³Ã€ÃŒÂ°Ã­ Ã€Ã¼Ã…ÃµÂ¸Ã°ÂµÃ¥Â°Â¡ Â¾Ã†Â´Ã?Â¸Ã© Ã‡Ã‡Ã‡Ã˜Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+										// v1.41 Ã?ÃŸÂ¸Â³Ã€ÃŒÂ°Ã­ Ã€Ã¼Ã…ÃµÂ¸Ã°ÂµÃ¥Â°Â¡ Â¾Ã†Â´Ã?Â¸Ã© Ã‡Ã‡Ã‡Ã˜Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 										//if ((m_pClientList[sOwnerH]->m_bIsNeutral == TRUE) && (m_pClientList[sOwnerH]->m_sAppr2 & 0xF000) == 0) break;
 
 										iDamage = iDice(1, 6);
@@ -31549,7 +31543,7 @@ void CGame::DynamicObjectEffectProcessor() {
 
 										iDamage = iDice(1, 6);
 
-										// Ã€Ã¼Ã€Ã¯Â¿Ã« Â±Â¸Ã?Â¶Â¹Â°Ã?ÃŸ Â±Ã—Â·Â£ÂµÃ¥ Â¸Ã…Ã?Ã· Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?, Â¿Â¡Â³ÃŠÃ?Ã¶ Â½Ã‡ÂµÃ¥ Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?Â´Ã‚ Ã‡ÃŠÂµÃ¥Â·Ã¹ Â¸Â¶Â¹Ã½Â¿Â¡ Â´Ã«Â¹ÃŒÃ?Ã¶Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+										// Ã€Ã¼Ã€Ã¯Â¿Ã« Â±Â¸Ã?Â¶Â¹Â°Ã?ÃŸ Â±Ã—Â·Â£ÂµÃ¥ Â¸Ã…Ã?Ã· Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?, Â¿Â¡Â³ÃŠÃ?Ã¶ Â½Ã‡ÂµÃ¥ Ã?Â¦Â³Ã—Â·Â¹Ã€ÃŒÃ…Ã?Â´Ã‚ Ã‡ÃŠÂµÃ¥Â·Ã¹ Â¸Â¶Â¹Ã½Â¿Â¡ Â´Ã«Â¹ÃŒÃ?Ã¶Â¸Â¦ Ã€Ã�?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 										switch (m_pNpcList[sOwnerH]->m_sType) {
 											case 40: // ESG
 											case 41: // GMG
@@ -31573,9 +31567,9 @@ void CGame::DynamicObjectEffectProcessor() {
 
 										if (m_pNpcList[sOwnerH]->m_iHP <= 0) {
 											// NPCÂ°Â¡ Â»Ã§Â¸Ã?Ã‡ÃŸÂ´Ã™.
-											NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0); //v1.2 Ã…Â¸Â¼Â­ Ã?Ã—Ã€Â¸Â¸Ã© Â¸Â¶Ã?Ã¶Â¸Â· Â´Ã«Â¹ÃŒÃ?Ã¶Â°Â¡ 0. Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â½Â±Â°Ã�? Â±Â¸Ã‡Ã?Ã?Ã¶ Â¸Ã¸Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?.
+											NpcKilledHandler(sOwnerH, cOwnerType, sOwnerH, 0); //v1.2 Ã…Â¸Â¼Â­ Ã?Ã—Ã€Â¸Â¸Ã© Â¸Â¶Ã?Ã¶Â¸Â· Â´Ã«Â¹ÃŒÃ?Ã¶Â°Â¡ 0. Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â½Â±Â°Ã�? Â±Â¸Ã‡Ã?Ã?Ã¶ Â¸Ã¸Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?.
 										} else {
-											// DamageÂ¸Â¦ Ã€Ã�?Ã€Âº ÃƒÃ¦Â°Ã?Ã€Â¸Â·ÃŽ Ã€ÃŽÃ‡Ã‘ Ã?Ã¶Â¿Â¬ÃˆÂ¿Â°Ãº.
+											// DamageÂ¸Â¦ Ã€Ã�?Ã€Âº ÃƒÃ¦Â°Ã?Ã€Â¸Â·ÃŽ Ã€ÃŽÃ‡Ã‘ Ã?Ã¶Â¿Â¬ÃˆÂ¿Â°Ãº.
 											if (iDice(1, 3) == 2)
 												m_pNpcList[sOwnerH]->m_dwTime = dwTime;
 
@@ -31686,7 +31680,7 @@ int CGame::iCalculateUseSkillItemEffect(int iOwnerH, char cOwnerType, char cOwne
 	// Â½ÂºÃ…Â³ Â»Ã§Â¿Ã« Â¿Â©ÂºÃŽ Ã?Ã–Â»Ã§Ã€Â§Â¸Â¦ Â±Â¼Â¸Â°Â´Ã™.
 	if (cOwnerSkill == 0) return 0;
 
-	// Â½ÂºÃ…Â³Ã€ÃŒ 100Ã€ÃŒÂ¶Ã³Â°Ã­ Ã‡Ã˜ÂµÂµ Â°Â¡Â²Ã» Â³Â¬Â½ÃƒÂ¸Â¦ Â½Ã‡Ã†Ã?Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã˜Â¼Â­ 1D105
+	// Â½ÂºÃ…Â³Ã€ÃŒ 100Ã€ÃŒÂ¶Ã³Â°Ã­ Ã‡Ã˜ÂµÂµ Â°Â¡Â²Ã» Â³Â¬Â½ÃƒÂ¸Â¦ Â½Ã‡Ã†Ã?Ã‡Ã?Â°Ã�? Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã˜Â¼Â­ 1D105
 	iResult = iDice(1, 105);
 	if (cOwnerSkill <= iResult) return 0; // Â½Ã‡Ã†Ã?Â´Ã™.
 
@@ -31740,7 +31734,7 @@ int CGame::iCalculateUseSkillItemEffect(int iOwnerH, char cOwnerType, char cOwne
 					// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â³ÃµÂ´Ã‚Â´Ã™.
 					m_pMapList[cMapIndex]->bSetItem(lX, lY, pItem);
 
-					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, cMapIndex,
 							  lX, lY, pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4
 				}
@@ -31839,7 +31833,7 @@ void CGame::UseSkillHandler(int iClientH, int iV1, int iV2, int iV3) {
 					// Â½ÂºÃ…Â³ Ã„Â«Â¿Ã®Ã†Â® Â¿ÃƒÂ¸Â°Â´Ã™. <-- Â³Â»ÂºÃŽÂ¿Â¡Â¼Â­ Ã„Â«Â¿Ã®Ã†ÃƒÃ€Â» Ã‡Ã˜Â¾ÃŸ Â¾Ã»Â¶Ã—Ã‡Ã‘ Â½ÂºÃ…Â³Ã€ÃŒ Â¿Ã€Â¸Â£Â´Ã‚ Â°Ã¦Â¿Ã¬Â°Â¡ Â¾Ã¸Â´Ã™.
 					CalculateSSN_SkillIndex(iClientH, iV1, 1);
 
-					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã?Ã—Â´Ã‚ ÂµÂ¿Ã€Ã› Ã€Ã¼Â¼Ã›.
+					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Ã?Ã—Â´Ã‚ ÂµÂ¿Ã€Ã› Ã€Ã¼Â¼Ã›.
 					sAttackerWeapon = 1;
 					SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDYING, 0, sAttackerWeapon, NULL);
 					// Ã?Â¤Â»Ã³ Ã€Â§Ã„Â¡Â¿Â¡Â¼Â­ Ã?Ã¶Â¿Ã®Â´Ã™.
@@ -31882,13 +31876,13 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 	// v1.42
 	bNeutral = FALSE;
 	if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) bNeutral = TRUE;
-	// v2.13 Â¼ÂºÃˆÃ„Â´Ã? Â¼Ã¶Ã?Â¤ Â¹Â°Â°Ã‡Ã€Â» Â¾Ã®ÂµÃ°Â¼Â­Â³Âª Ã†ÃˆÂ°Ã�? Â¼Ã¶Ã?Â¤Ã‡Ã?Â¿Â©Â¼Â­ Ã†ÃˆÂ¶Â§Â´Ã‚ NPC Â±Â¸ÂºÃ?Ã€ÃŒ Ã‡ÃŠÂ¿Ã¤Â¾Ã¸Â´Ã™.
+	// v2.13 Â¼ÂºÃˆÃ„Â´Ã? Â¼Ã¶Ã?Â¤ Â¹Â°Â°Ã‡Ã€Â» Â¾Ã®ÂµÃ°Â¼Â­Â³Âª Ã†ÃˆÂ°Ã�? Â¼Ã¶Ã?Â¤Ã‡Ã?Â¿Â©Â¼Â­ Ã†ÃˆÂ¶Â§Â´Ã‚ NPC Â±Â¸ÂºÃ?Ã€ÃŒ Ã‡ÃŠÂ¿Ã¤Â¾Ã¸Â´Ã™.
 	// Â´Ãœ Ã„Â«Ã…Ã—Â°Ã­Â¸Â®Â¸Â¦ Â±Ã¢Ã?Ã˜Ã€Â¸Â·ÃŽ Â¾Ã†Ã€ÃŒÃ…Ã› Â°Â¡Â°Ã?Ã€Â» Â°Ã¡Ã?Â¤Ã‡Ã‘Â´Ã™.
 	switch (cSellToWhom) {
 		case 15: // Â»Ã³Ã?Â¡ Â¾Ã†Ã?ÃœÂ¸Â¶
 		case 24: // Â´Ã«Ã€Ã¥Â°Â£ Ã?Ã–Ã€ÃŽ
 			cItemCategory = m_pClientList[iClientH]->m_pItemList[cItemID]->m_cCategory;
-			// 12-22 Â¼ÂºÃˆÃ„Â´Ã? Â¼Ã¶Ã?Â¤ Â¾Ã®ÂµÃ°Â¼Â­ÂµÃ§ Ã†ÃˆÂ¼Ã¶ Ã€Ã–Â°Ã�? Â¼Ã¶Ã?Â¤
+			// 12-22 Â¼ÂºÃˆÃ„Â´Ã? Â¼Ã¶Ã?Â¤ Â¾Ã®ÂµÃ°Â¼Â­ÂµÃ§ Ã†ÃˆÂ¼Ã¶ Ã€Ã–Â°Ã�? Â¼Ã¶Ã?Â¤
 			// Â»Ã³Ã?Â¡Â¾Ã†Ã€ÃŒÃ…Ã›
 			if ((cItemCategory >= 11) && (cItemCategory <= 50)) {
 
@@ -31903,7 +31897,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 				if (iPrice > 1000000) iPrice = 1000000;
 
 				if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(m_pGold, iPrice) > (DWORD) _iCalcMaxLoad(iClientH)) {
-					// v2.12 Ã†Ãˆ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â°Â¡ ÃƒÃŠÂ°ÃºÂµÃ‡Â¾Ã®Â¼Â­ Ã†Ãˆ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+					// v2.12 Ã†Ãˆ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â°Â¡ ÃƒÃŠÂ°ÃºÂµÃ‡Â¾Ã®Â¼Â­ Ã†Ãˆ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_CANNOTSELLITEM, cItemID, 4, NULL, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName);
 				} else SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SELLITEMPRICE, cItemID, sRemainLife, iPrice, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName, iNum);
 			}// Â´Ã«Ã€Ã¥Â°Â£ Â¾Ã†Ã€ÃŒÃ…Ã›
@@ -31990,7 +31984,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 						dwAddPrice1 = (int) (d1 + d3);
 					}
 
-					// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¶Ã³Â¸Ã© Sub ÃˆÂ¿Â°ÃºÂ¸Â¦ Â¼Â³Ã?Â¤Ã‡Ã‘Â´Ã™. Â°Ã¸Â°Ã?Â¹Â«Â±Ã¢Â´Ã‚ 1Â°Â³Â¸Â¸ Ã€Ã¥Ã‚Ã¸ÂµÃˆÂ´Ã™Â°Ã­ Ã‡ÃŸÃ€Â»Â¶Â§Â¸Â¸ Ã€Â¯ÃˆÂ¿Ã‡Ã�?.
+					// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¶Ã³Â¸Ã© Sub ÃˆÂ¿Â°ÃºÂ¸Â¦ Â¼Â³Ã?Â¤Ã‡Ã‘Â´Ã™. Â°Ã¸Â°Ã?Â¹Â«Â±Ã¢Â´Ã‚ 1Â°Â³Â¸Â¸ Ã€Ã¥Ã‚Ã¸ÂµÃˆÂ´Ã™Â°Ã­ Ã‡ÃŸÃ€Â»Â¶Â§Â¸Â¸ Ã€Â¯ÃˆÂ¿Ã‡Ã�?.
 					if ((m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwAttribute & 0x0000F000) != NULL) {
 						dwSWEType = (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwAttribute & 0x0000F000) >> 12;
 						dwSWEValue = (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwAttribute & 0x00000F00) >> 8;
@@ -32060,7 +32054,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 					if (iPrice > 1000000) iPrice = 1000000;
 
 					if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(m_pGold, iPrice) > (DWORD) _iCalcMaxLoad(iClientH)) {
-						// v2.12 Ã†Ãˆ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â°Â¡ ÃƒÃŠÂ°ÃºÂµÃ‡Â¾Ã®Â¼Â­ Ã†Ãˆ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+						// v2.12 Ã†Ãˆ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â°Â¡ ÃƒÃŠÂ°ÃºÂµÃ‡Â¾Ã®Â¼Â­ Ã†Ãˆ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 						SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_CANNOTSELLITEM, cItemID, 4, NULL, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName);
 					} else SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SELLITEMPRICE, cItemID, sRemainLife, iPrice, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName, iNum);
 				}
@@ -32193,7 +32187,7 @@ void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char
 				dwAddPrice1 = (int) (d1 + d3);
 			}
 
-			// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¶Ã³Â¸Ã© Sub ÃˆÂ¿Â°ÃºÂ¸Â¦ Â¼Â³Ã?Â¤Ã‡Ã‘Â´Ã™. Â°Ã¸Â°Ã?Â¹Â«Â±Ã¢Â´Ã‚ 1Â°Â³Â¸Â¸ Ã€Ã¥Ã‚Ã¸ÂµÃˆÂ´Ã™Â°Ã­ Ã‡ÃŸÃ€Â»Â¶Â§Â¸Â¸ Ã€Â¯ÃˆÂ¿Ã‡Ã�?.
+			// v1.42 ÃˆÃ±Â±Ã? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ¶Ã³Â¸Ã© Sub ÃˆÂ¿Â°ÃºÂ¸Â¦ Â¼Â³Ã?Â¤Ã‡Ã‘Â´Ã™. Â°Ã¸Â°Ã?Â¹Â«Â±Ã¢Â´Ã‚ 1Â°Â³Â¸Â¸ Ã€Ã¥Ã‚Ã¸ÂµÃˆÂ´Ã™Â°Ã­ Ã‡ÃŸÃ€Â»Â¶Â§Â¸Â¸ Ã€Â¯ÃˆÂ¿Ã‡Ã�?.
 			if ((m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwAttribute & 0x0000F000) != NULL) {
 				dwSWEType = (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwAttribute & 0x0000F000) >> 12;
 				dwSWEValue = (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwAttribute & 0x00000F00) >> 8;
@@ -32403,7 +32397,7 @@ void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char
 		m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 				  m_pClientList[iClientH]->m_sY, pItemGold);
 
-		// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+		// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 				  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 				  pItemGold->m_sSprite, pItemGold->m_sSpriteFrame, pItemGold->m_cItemColor); // v1.4 color
@@ -32447,7 +32441,7 @@ void CGame::ReqRepairItemHandler(int iClientH, char cItemID, char cRepairWhom, c
 	if ((cItemCategory >= 1) && (cItemCategory <= 10)) {
 		// Â¹Â«Â±Ã¢Â·Ã¹Â´Ã™
 
-		// Â¸Â¸Â¾Ã  Â¹Â«Â±Ã¢Â¸Â¦ Â´Ã«Ã€Ã¥Â°Â£ Ã?Ã–Ã€ÃŽÃ€ÃŒ Â¾Ã†Â´Ã‘ Ã€ÃŒÂ¿Â¡Â°Ã�? Â°Ã­ÃƒÃ„Â´ÃžÂ¶Ã³Â°Ã­ Ã‡Ã‘Â´Ã™Â¸Ã© Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+		// Â¸Â¸Â¾Ã  Â¹Â«Â±Ã¢Â¸Â¦ Â´Ã«Ã€Ã¥Â°Â£ Ã?Ã–Ã€ÃŽÃ€ÃŒ Â¾Ã†Â´Ã‘ Ã€ÃŒÂ¿Â¡Â°Ã�? Â°Ã­ÃƒÃ„Â´ÃžÂ¶Ã³Â°Ã­ Ã‡Ã‘Â´Ã™Â¸Ã© Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 		if (cRepairWhom != 24) {
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_CANNOTREPAIRITEM, cItemID, 2, NULL, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName);
 			return;
@@ -32474,7 +32468,7 @@ void CGame::ReqRepairItemHandler(int iClientH, char cItemID, char cRepairWhom, c
 	} else if (((cItemCategory >= 43) && (cItemCategory <= 50)) || ((cItemCategory >= 11) && (cItemCategory <= 12))) {
 		// Â³Â¬Â½ÃƒÂ´Ã«, Â°Ã®Â±ÂªÃ€ÃŒ ÂµÃ®Â°Ãº Â°Â°Ã€Âº ÂºÃ±Â¹Â«Â±Ã¢Â·Ã¹ Â¼Ã¶Â¸Â®Â°Â¡Â´Ã‰ Â¾Ã†Ã€ÃŒÃ…Ã›. Â¿ÃŠ, ÂºÃŽÃƒÃ·Â·Ã¹
 
-		// Â¸Â¸Â¾Ã  Â»Ã³Ã?Â¡ Ã?Ã–Ã€ÃŽÃ€ÃŒ Â¾Ã†Â´Ã‘ Ã€ÃŒÂ¿Â¡Â°Ã�? Â°Ã­ÃƒÃ„Â´ÃžÂ¶Ã³Â°Ã­ Ã‡Ã‘Â´Ã™Â¸Ã© Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+		// Â¸Â¸Â¾Ã  Â»Ã³Ã?Â¡ Ã?Ã–Ã€ÃŽÃ€ÃŒ Â¾Ã†Â´Ã‘ Ã€ÃŒÂ¿Â¡Â°Ã�? Â°Ã­ÃƒÃ„Â´ÃžÂ¶Ã³Â°Ã­ Ã‡Ã‘Â´Ã™Â¸Ã© Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 		if (cRepairWhom != 15) {
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_CANNOTREPAIRITEM, cItemID, 2, NULL, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName);
 			return;
@@ -32946,7 +32940,7 @@ void CGame::___RestorePlayerCharacteristics(int iClientH) {
 			}
 		}
 
-		// Â³Â²Ã€Âº Ã†Ã·Ã€ÃŽÃ†Â®Â¸Â¦ Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Â¿ÃƒÂ¸Â°Â´Ã™.
+		// Â³Â²Ã€Âº Ã†Ã·Ã€ÃŽÃ†Â®Â¸Â¦ Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Â¿ÃƒÂ¸Â°Â´Ã™.
 		while (iToBeRestoredPoint != 0) {
 			switch (iDice(1, 6)) {
 				case 1:
@@ -33055,7 +33049,7 @@ void CGame::___RestorePlayerCharacteristics(int iClientH) {
 		}
 
 		if (iToBeRestoredPoint < 0) {
-			// Â³Â²Ã€Âº Ã†Ã·Ã€ÃŽÃ†Â® Â¸Â¸Ã…Â­ Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Â¼Â±Ã…ÃƒÂµÃˆ Ã†Â¯Â¼ÂºÃ„Â¡Ã€Ã‡ Â°ÂªÃ€Â» Â³Â»Â¸Â°Â´Ã™.
+			// Â³Â²Ã€Âº Ã†Ã·Ã€ÃŽÃ†Â® Â¸Â¸Ã…Â­ Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Â¼Â±Ã…ÃƒÂµÃˆ Ã†Â¯Â¼ÂºÃ„Â¡Ã€Ã‡ Â°ÂªÃ€Â» Â³Â»Â¸Â°Â´Ã™.
 			while (iToBeRestoredPoint != 0) {
 				switch (iDice(1, 6)) {
 					case 1:
@@ -33178,7 +33172,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 	if ((m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] != -1) &&
 			  (m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] != -1)) {
 
-		// ï¿½ß¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½. ï¿½ï¿½ ï¿½ï¿½ ï¿½�?³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â´ï¿½.
+		// ï¿½ß¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½. ï¿½ï¿½ ï¿½ï¿½ ï¿½�?³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â´ï¿½.
 		if (m_pClientList[iClientH]->m_pItemList[ m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND] ] != NULL) {
 			// ï¿½Ñ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			m_pClientList[iClientH]->m_bIsItemEquipped[m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]] = FALSE;
@@ -33299,16 +33293,16 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 					m_pClientList[iClientH]->m_iAddPhysicalDamage += iTemp;
 					m_pClientList[iClientH]->m_iAddMagicalDamage += iTemp;
 
-					// ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½Å³ï¿½ï¿½Å­ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
+					// ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½Å³ï¿½ï¿½Å­ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 					m_pClientList[iClientH]->m_iHitRatio += m_pClientList[iClientH]->m_cSkillMastery[ m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill ];
 
-					// v1.432 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
+					// v1.432 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 					//m_pClientList[iClientH]->m_iHitRatio_ItemEffect_SM += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSM_HitRatio;
 					//m_pClientList[iClientH]->m_iHitRatio_ItemEffect_L  += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sL_HitRatio;
-					// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+					// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 					m_pClientList[iClientH]->m_sUsingWeaponSkill = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill;
 
-					// v1.41 Custom-Made ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
+					// v1.41 Custom-Made ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
 					if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000001) != NULL) {
 						m_pClientList[iClientH]->m_iCustomItemValue_Attack += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2;
 						// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
@@ -33369,7 +33363,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 						}
 					}
 
-					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Main È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
+					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Main È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
 					if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) {
 						dwSWEType = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;
 						dwSWEValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;
@@ -33393,7 +33387,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 						}
 					}
 
-					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Sub È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
+					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Sub È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
 					if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) != NULL) {
 						dwSWEType = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;
 						dwSWEValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;
@@ -33450,7 +33444,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 						}
 					}
 
-					// ï¿½�?¹ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+					// ï¿½�?¹ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 					switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType) {
 						case DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN:
 							// ï¿½Ö´ï¿½ HP ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½
@@ -33498,7 +33492,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 							break;
 
 						case 3:
-							// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½. ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù´Â´ï¿½.
+							// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½. ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù´Â´ï¿½.
 							m_pClientList[iClientH]->m_iAddPhysicalDamage += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
 
@@ -33515,7 +33509,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 							break;
 
 						case 6:
-							// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½. ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù´Â´ï¿½.
+							// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½. ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù´Â´ï¿½.
 							m_pClientList[iClientH]->m_iAddMagicalDamage += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
 
@@ -33601,7 +33595,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 					break;
 
 				case DEF_ITEMEFFECTTYPE_ATTACK_ARROW:
-					// È­ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½(È°ï¿½ï¿½)
+					// È­ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½(È°ï¿½ï¿½)
 					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½È¿ï¿½ï¿½ï¿½ ï¿½î¶² È­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÃµÇ´ï¿½ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ ï¿½Þ¶ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½Ñ´ï¿½.
 					if ((m_pClientList[iClientH]->m_cArrowIndex != -1) &&
 							  (m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cArrowIndex] == NULL)) {
@@ -33628,7 +33622,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 						m_pClientList[iClientH]->m_cAttackDiceRange_L  = m_pClientList[iClientH]->m_pItemList[iArrowIndex]->m_sItemEffectValue5;
 						m_pClientList[iClientH]->m_cAttackBonus_L      = m_pClientList[iClientH]->m_pItemList[iArrowIndex]->m_sItemEffectValue6;
 						 */
-						// v2.12 È°ï¿½ï¿½ Å¸ï¿½ï¿½Ä¡ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ È° ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½.
+						// v2.12 È°ï¿½ï¿½ Å¸ï¿½ï¿½Ä¡ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ È° ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½.
 						m_pClientList[iClientH]->m_cAttackDiceThrow_SM = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1;
 						m_pClientList[iClientH]->m_cAttackDiceRange_SM = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 						m_pClientList[iClientH]->m_cAttackBonus_SM = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue3;
@@ -33637,9 +33631,9 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 						m_pClientList[iClientH]->m_cAttackBonus_L = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue6;
 					}
 
-					// ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½Å³ï¿½ï¿½Å­ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
+					// ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½Å³ï¿½ï¿½Å­ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 					m_pClientList[iClientH]->m_iHitRatio += m_pClientList[iClientH]->m_cSkillMastery[ m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sRelatedSkill ];
-					// v1.432 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
+					// v1.432 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½�?´ï¿½ï¿½ ï¿½ï¿½ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 					// m_pClientList[iClientH]->m_iHitRatio_ItemEffect_SM += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSM_HitRatio;
 					// m_pClientList[iClientH]->m_iHitRatio_ItemEffect_L  += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sL_HitRatio;
 					break;
@@ -33673,7 +33667,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 						//PutLogList(G_cTxt);
 					}
 
-					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Main È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
+					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Main È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
 					if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) != NULL) {
 						dwSWEType = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00F00000) >> 20;
 						dwSWEValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x000F0000) >> 16;
@@ -33706,7 +33700,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 						}
 					}
 
-					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Sub È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
+					// v1.42 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ Sub È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½�?¹ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½.
 					if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) != NULL) {
 						dwSWEType = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x0000F000) >> 12;
 						dwSWEValue = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0x00000F00) >> 8;
@@ -33765,8 +33759,8 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 
 					switch (cEquipPos) {
 						case DEF_EQUIPPOS_LHAND:
-							// ï¿½ï¿½î±¸ ï¿½ï¿½ ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½.
-							// ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½î°ªï¿½ï¿½ 70% ï¿½ï¿½ï¿½ï¿½
+							// ï¿½ï¿½î±¸ ï¿½ï¿½ ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½.
+							// ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½î°ªï¿½ï¿½ 70% ï¿½ï¿½ï¿½ï¿½
 							m_pClientList[iClientH]->m_iDamageAbsorption_Shield = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1) - (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1) / 3;
 							break;
 						default:
@@ -33775,7 +33769,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 							break;
 					}
 
-					// ï¿½�?¹ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+					// ï¿½�?¹ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 					switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectType) {
 						case DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY:
 							// Æ¯ï¿½ï¿½ ï¿½É·ï¿½ ï¿½ï¿½ï¿½ï¿½
@@ -33798,7 +33792,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, BOOL bNotify) {
 	if ((iPrevSAType != 0) && (m_pClientList[iClientH]->m_iSpecialAbilityType == 0) && (bNotify == TRUE)) {
 		// Æ¯ï¿½ï¿½ ï¿½É·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½.
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SPECIALABILITYSTATUS, 4, NULL, NULL, NULL);
-		// ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½É·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½Ù¸ï¿½ ï¿½Ü¸ï¿½ ï¿½ï¿½È­ï¿½�?¸ï¿½ ï¿½ï¿½ëµµ ï¿½ï¿½ï¿½ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½É·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½Ù¸ï¿½ ï¿½Ü¸ï¿½ ï¿½ï¿½È­ï¿½�?¸ï¿½ ï¿½ï¿½ëµµ ï¿½ï¿½ï¿½ï¿½.
 		if (m_pClientList[iClientH]->m_bIsSpecialAbilityEnabled == TRUE) {
 			m_pClientList[iClientH]->m_bIsSpecialAbilityEnabled = FALSE;
 			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½Ñ´ï¿½.
@@ -34066,7 +34060,7 @@ void CGame::CheckDayOrNightMode() {
 	else m_cDayOrNight = 1;
 
 	if (cPrevMode != m_cDayOrNight) {
-		// Ã?Ã–, Â¾ÃŸÂ°Â£ Â¸Ã°ÂµÃ¥Â°Â¡ ÂºÂ¯Â°Ã¦ÂµÃ‡Â¾ÃºÂ´Ã™. Ã?Ã–, Â¾ÃŸÂ°Â£ Â¸Ã°ÂµÃ¥Ã€Ã‡ Â¿ÂµÃ‡Ã¢Ã€Â» Â¹ÃžÂ´Ã‚ Â¸ÃŠÂ¿Â¡ Ã?Â¸Ã€Ã§Ã‡Ã?Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Â¾Ã‹Â¸Â°Â´Ã™.
+		// Ã?Ã–, Â¾ÃŸÂ°Â£ Â¸Ã°ÂµÃ¥Â°Â¡ ÂºÂ¯Â°Ã¦ÂµÃ‡Â¾ÃºÂ´Ã™. Ã?Ã–, Â¾ÃŸÂ°Â£ Â¸Ã°ÂµÃ¥Ã€Ã‡ Â¿ÂµÃ‡Ã¢Ã€Â» Â¹ÃžÂ´Ã‚ Â¸ÃŠÂ¿Â¡ Ã?Â¸Ã€Ã§Ã‡Ã?Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Â¾Ã‹Â¸Â°Â´Ã™.
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
 				if ((m_pClientList[i]->m_cMapIndex >= 0) &&
@@ -34101,7 +34095,7 @@ void CGame::ShutUpPlayer(int iClientH, char * pMsg, DWORD dwMsgSize) {
 	token = pStrTok->pGet();
 
 	if (token != NULL) {
-		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
+		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
 		if (strlen(token) > 10)
 			memcpy(cName, token, 10);
 		else memcpy(cName, token, strlen(token));
@@ -34191,7 +34185,7 @@ void CGame::SetPlayerReputation(int iClientH, char * pMsg, char cValue, DWORD dw
 					return;
 				}
 			}
-		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?´ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?´ï¿½.
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PLAYERNOTONGAME, NULL, NULL, NULL, cName);
 	}
 
@@ -34317,7 +34311,7 @@ void CGame::CalcExpStock(int iClientH) {
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return;
 	if (m_pClientList[iClientH]->m_iExpStock <= 0) return;
 	// !!!!
-	// v2.12 2002-2-6 Ã?Ã¶Ã?Â¸ÂµÂµ Ã‡Ã¶Ã€Ã§ Â°Ã¦Ã‡Ã¨Ã„Â¡Â°Â¡ ÃƒÃ–Â´Ã« Â·Â¹ÂºÂ§ Â°Ã¦Ã‡Ã¨Ã„Â¡ÂºÂ¸Â´Ã™ Ã€Ã»Ã€Â¸Â¸Ã© Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¾Ã²Ã€Â»Â¼Ã¶ Ã€Ã–Â°Ã�? ÂºÂ¯Â°Ã¦ .. v2.15 Â»Ã¨Ã?Â¦. Ã?Ã¶Ã?Â¸ÂµÂµ Â°Ã¦Ã‡Ã¨Ã„Â¡ Â¾Ã²Â´Ã‚Â´Ã™.
+	// v2.12 2002-2-6 Ã?Ã¶Ã?Â¸ÂµÂµ Ã‡Ã¶Ã€Ã§ Â°Ã¦Ã‡Ã¨Ã„Â¡Â°Â¡ ÃƒÃ–Â´Ã« Â·Â¹ÂºÂ§ Â°Ã¦Ã‡Ã¨Ã„Â¡ÂºÂ¸Â´Ã™ Ã€Ã»Ã€Â¸Â¸Ã© Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¾Ã²Ã€Â»Â¼Ã¶ Ã€Ã–Â°Ã�? ÂºÂ¯Â°Ã¦ .. v2.15 Â»Ã¨Ã?Â¦. Ã?Ã¶Ã?Â¸ÂµÂµ Â°Ã¦Ã‡Ã¨Ã„Â¡ Â¾Ã²Â´Ã‚Â´Ã™.
 	//if ((m_pClientList[iClientH]->m_iLevel >= m_iPlayerMaxLevel) && (m_pClientList[iClientH]->m_iExp >= m_iLevelExpTable[m_iPlayerMaxLevel])) return;
 
 	// Ã†Ã·Â»Ã³Â°Ãº Ã†Ã¤Â³ÃŽÃ†Â¼Â°Â¡ Â¾Ã¸Â´Ã‚ Â¸ÃŠ Ã€Â§Â¿Â¡ Â¼Â­ Ã€Ã–Â´Ã™Â¸Ã© Â°Ã¦Ã‡Ã¨Ã„Â¡Â´Ã‚ Â¿ÃƒÂ¶Ã³Â°Â¡Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
@@ -34405,7 +34399,7 @@ void CGame::AdminOrder_CallGuard(int iClientH, char * pData, DWORD dwMsgSize) {
 	token = pStrTok->pGet();
 
 	if (token != NULL) {
-		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
+		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
 		if (strlen(token) > 10)
 			memcpy(cTargetName, token, 10);
 		else memcpy(cTargetName, token, strlen(token));
@@ -34511,7 +34505,7 @@ void CGame::AdminOrder_Kill(int iClientH, char * pData, DWORD dwMsgSize) {
 	}
 	if (cName != NULL) {
 		token = cName;
-		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
+		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
 		if (strlen(token) > 10)
 			memcpy(cTargetName, token, 10);
 		else memcpy(cTargetName, token, strlen(token));
@@ -34605,7 +34599,7 @@ void CGame::AdminOrder_Revive(int iClientH, char * pData, DWORD dwMsgSize) {
 	token = cName;
 	//if (token == NULL) { token = "null"; }
 	if (cName != NULL) {
-		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
+		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
 		if (strlen(token) > 10)
 			memcpy(cTargetName, token, 10);
 		else memcpy(cTargetName, token, strlen(token));
@@ -34815,7 +34809,7 @@ void CGame::AdminOrder_CloseConn(int iClientH, char * pData, DWORD dwMsgSize) {
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != NULL) {
-		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
+		// tokenÃ€ÃŒ Â°Ã° ÃƒÂ¤Ã†ÃƒÃ€Â» ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Â¸Â¸ÂµÃ© Â»Ã§Â¿Ã«Ã€Ãš Ã€ÃŒÂ¸Â§
 		if (strlen(token) > 10)
 			memcpy(cTargetName, token, 10);
 		else memcpy(cTargetName, token, strlen(token));
@@ -34845,7 +34839,7 @@ void CGame::AdminOrder_CloseConn(int iClientH, char * pData, DWORD dwMsgSize) {
 
 
 
-// v1.4311-3 ÃƒÃŸÂ°Â¡Â¹Ã— ÂºÂ¯Â°Ã¦ Ã‡Ã�?Â¼Ã¶  Â±Ã¦ÂµÃ¥Â¿Ã¸ Â°Â­Ã…Ã° Â¸Ã­Â·Ã‰ void CGame::UserCommand_BanGuildsman
+// v1.4311-3 ÃƒÃŸÂ°Â¡Â¹Ã— ÂºÂ¯Â°Ã¦ Ã‡Ã�?Â¼Ã¶  Â±Ã¦ÂµÃ¥Â¿Ã¸ Â°Â­Ã…Ã° Â¸Ã­Â·Ã‰ void CGame::UserCommand_BanGuildsman
 
 void CGame::UserCommand_BanGuildsman(int iClientH, char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
@@ -34890,7 +34884,7 @@ void CGame::UserCommand_BanGuildsman(int iClientH, char * pData, DWORD dwMsgSize
 				// Â±Ã¦ÂµÃ¥ Ã?Â¤ÂºÂ¸ ÃˆÂ­Ã€Ã?Â¿Â¡Â¼Â­ Ã…Â»Ã…Ã°Ã‡Ã‘ Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€Ã‡ Ã€ÃŒÂ¸Â§Ã€Â» Â»Ã¨Ã?Â¦Ã‡Ã‘Â´Ã™.
 				bSendMsgToLS(MSGID_REQUEST_UPDATEGUILDINFO_DELGUILDSMAN, i);
 
-				// Â´Ã™Â¸Â¥ Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€Ã‡ Ã…Â»Ã…Ã°Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
+				// Â´Ã™Â¸Â¥ Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â±Ã¦ÂµÃ¥Â¿Ã¸Ã€Ã‡ Ã…Â»Ã…Ã°Â¸Â¦ Â¾Ã‹Â¸Â°Â´Ã™.
 				SendGuildMsg(i, DEF_NOTIFY_DISMISSGUILDSMAN, NULL, NULL, NULL);
 
 				// Â±Ã¦ÂµÃ¥Ã€Ã‡ Ã€ÃŒÂ¸Â§Ã€Â» ÃƒÃŠÂ±Ã¢ÃˆÂ­Ã‡Ã˜ Ã?Ã˜Â´Ã™.
@@ -34899,10 +34893,10 @@ void CGame::UserCommand_BanGuildsman(int iClientH, char * pData, DWORD dwMsgSize
 				m_pClientList[i]->m_iGuildRank = -1;
 				m_pClientList[i]->m_iGuildGUID = -1;
 
-				// Â±Ã¦ÂµÃ¥ Â¸Â¶Â½ÂºÃ…Ã?Â¿Â¡Â°Ã�? Â°Â­Ã?Â¦ Ã…Â»Ã…Ã°Â¿Â¡ Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
+				// Â±Ã¦ÂµÃ¥ Â¸Â¶Â½ÂºÃ…Ã?Â¿Â¡Â°Ã�? Â°Â­Ã?Â¦ Ã…Â»Ã…Ã°Â¿Â¡ Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
 				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_SUCCESSBANGUILDMAN, NULL, NULL, NULL, NULL);
 
-				// Â°Â­Ã?Â¦ Ã…Â»Ã…Ã°ÂµÃˆ Â±Ã¦ÂµÃ¥Â¿Ã¸Â¿Â¡Â°Ã�? Â°Â­Ã?Â¦ Ã…Â»Ã…Ã° ÂµÃ‡Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+				// Â°Â­Ã?Â¦ Ã…Â»Ã…Ã°ÂµÃˆ Â±Ã¦ÂµÃ¥Â¿Ã¸Â¿Â¡Â°Ã�? Â°Â­Ã?Â¦ Ã…Â»Ã…Ã° ÂµÃ‡Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 				SendNotifyMsg(iClientH, i, DEF_COMMONTYPE_BANGUILD, NULL, NULL, NULL, NULL);
 
 				// Ã†Â¯Â¼ÂºÃ€ÃŒ Â¹Ã™Â²Ã®Â¹Ã‡Â·ÃŽ Â¿ÃœÂ¾Ã§Ã€Â» Â»ÃµÂ·ÃŽ ÂºÂ¸Â³Â½Â´Ã™.
@@ -34993,7 +34987,7 @@ BOOL CGame::bDeleteFish(int iHandle, int iDelMode) {
 		m_pDynamicObjectList[iH] = NULL;
 	}
 
-	// Ã€ÃŒ Â¹Â°Â°Ã­Â±Ã¢Â¿Ã? Â¿Â¬Â°Ã¡ÂµÃ‡Â¾Ã® Ã€Ã–Â´Ã‚ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®ÂµÃ©Â¿Â¡Â°Ã�? Â¹Â°Â°Ã­Â±Ã¢Â°Â¡ Â»Ã§Â¶Ã³Ã?Â® Â³Â¬Â½ÃƒÂ°Â¡ ÃƒÃ«Â¼Ã’ÂµÃ‡Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+	// Ã€ÃŒ Â¹Â°Â°Ã­Â±Ã¢Â¿Ã? Â¿Â¬Â°Ã¡ÂµÃ‡Â¾Ã® Ã€Ã–Â´Ã‚ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®ÂµÃ©Â¿Â¡Â°Ã�? Â¹Â°Â°Ã­Â±Ã¢Â°Â¡ Â»Ã§Â¶Ã³Ã?Â® Â³Â¬Â½ÃƒÂ°Â¡ ÃƒÃ«Â¼Ã’ÂµÃ‡Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 	for (i = 1; i < DEF_MAXCLIENTS; i++) {
 		if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE) &&
 				  (m_pClientList[i]->m_iAllocatedFish == iHandle)) {
@@ -35036,7 +35030,7 @@ int CGame::iCheckFish(int iClientH, char cMapIndex, short dX, short dY) {
 				// Ã€ÃŒÂ¹ÃŒ Â³Â¬Â½ÃƒÂ¸Ã°ÂµÃ¥Â¿Â¡ ÂµÃ©Â¾Ã®Â°Â¡ Ã€Ã–Â´Ã‚ Ã„Â³Â¸Â¯Ã…Ã?Â´Ã‚ Ã?ÃŸÂºÂ¹ ÂµÂ¿Ã€Ã›Ã€ÃŒ ÂºÃ’Â°Â¡Â´Ã‰.
 				if (m_pClientList[iClientH]->m_iAllocatedFish != NULL) return 0;
 				if (m_pClientList[iClientH]->m_cMapIndex != cMapIndex) return 0;
-				// Ã€ÃŒÃ?Â¦ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Â³Â¬Â½Ãƒ Â¸Ã°ÂµÃ¥Â¸Â¦ Â½ÃƒÃ€Ã›Ã‡Ã’ Â°Ã?Ã€Â» Ã‡Ã’Â´Ã§Ã‡Ã‘Â´Ã™.
+				// Ã€ÃŒÃ?Â¦ Ã„Â³Â¸Â¯Ã…Ã?Â¿Â¡Â°Ã�? Â³Â¬Â½Ãƒ Â¸Ã°ÂµÃ¥Â¸Â¦ Â½ÃƒÃ€Ã›Ã‡Ã’ Â°Ã?Ã€Â» Ã‡Ã’Â´Ã§Ã‡Ã‘Â´Ã™.
 				m_pClientList[iClientH]->m_iAllocatedFish = m_pDynamicObjectList[i]->m_sOwner;
 				m_pClientList[iClientH]->m_iFishChance = 1;
 				// Ã€ÃŒ Ã„Â³Â¸Â¯Ã…Ã?Â´Ã‚ Â³Â¬Â½Ãƒ Â½ÂºÃ…Â³Ã€Â» Â»Ã§Â¿Ã«Ã?ÃŸÃ€Ã“Ã€Â» Â¼Â³Ã?Â¤.
@@ -35065,7 +35059,7 @@ void CGame::FishProcessor() {
 
 			if (m_pFish[ m_pClientList[i]->m_iAllocatedFish ] == NULL) break;
 
-			// ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½â°¡ ï¿½Ö´ï¿½. ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ëº¸ï¿½ï¿½ ï¿½Ø´ï¿½.
+			// ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½â°¡ ï¿½Ö´ï¿½. ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ëº¸ï¿½ï¿½ ï¿½Ø´ï¿½.
 			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³
 			iSkillLevel = m_pClientList[i]->m_cSkillMastery[1];
 			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
@@ -35303,14 +35297,14 @@ void CGame::ReqGetFishThisTimeHandler(int iClientH) {
 
 	iResult = iDice(1, 100);
 	if (m_pClientList[iClientH]->m_iFishChance >= iResult) {
-		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½Âµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½!
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½Âµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½!
 
 		// ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
 		GetExp(iClientH, iDice(m_pFish[m_pClientList[iClientH]->m_iAllocatedFish]->m_iDifficulty, 5)); //m_pClientList[iClientH]->m_iExpStock += iDice(m_pFish[m_pClientList[iClientH]->m_iAllocatedFish]->m_iDifficulty, 5);
 		// ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
 		CalculateSSN_SkillIndex(iClientH, 1, m_pFish[m_pClientList[iClientH]->m_iAllocatedFish]->m_iDifficulty);
 
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½Â´ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½ï¿½Â´ï¿½.
 		pItem = m_pFish[m_pClientList[iClientH]->m_iAllocatedFish]->m_pItem;
 		m_pFish[m_pClientList[iClientH]->m_iAllocatedFish]->m_pItem = NULL;
 
@@ -35462,7 +35456,7 @@ int CGame::_iCalcPlayerNum(char cMapIndex, short dX, short dY, char cRadius) {
 	register int ix, iy, iRet;
 	class CTile * pTile;
 
-	// ÃƒÂ³Â¸Â® Â¼Ã“ÂµÂµÂ¸Â¦ Â³Ã´Ã€ÃŒÂ±Ã¢ Ã€Â§Ã‡Ã˜ Ã‡Ã�?Â¼Ã¶Â¸Â¦ Ã„Ã?Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+	// ÃƒÂ³Â¸Â® Â¼Ã“ÂµÂµÂ¸Â¦ Â³Ã´Ã€ÃŒÂ±Ã¢ Ã€Â§Ã‡Ã˜ Ã‡Ã�?Â¼Ã¶Â¸Â¦ Ã„Ã?Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 	if ((cMapIndex < 0) || (cMapIndex > DEF_MAXMAPS)) return 0;
 	if (m_pMapList[cMapIndex] == NULL) return 0;
 
@@ -35520,14 +35514,14 @@ void CGame::WhetherProcessor() {
 }
 
 
-// v1.4311-3 ÃƒÃŸÂ°Â¡ Ã‡Ã�?Â¼Ã¶  Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  ÃƒÃŠÂ±Ã¢ÃˆÂ­Â¹Ã— Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Â¿Â¹Â¾Ã Ã€ÃŒ ÃƒÃ«Â¼Ã’ ÂµÃ‡Â¾ÃºÃ€Â½ Â¾Ã‹Â¸Â°Â´Ã™.FightzoneReserveProcessor
+// v1.4311-3 ÃƒÃŸÂ°Â¡ Ã‡Ã�?Â¼Ã¶  Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  ÃƒÃŠÂ±Ã¢ÃˆÂ­Â¹Ã— Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Â¿Â¹Â¾Ã Ã€ÃŒ ÃƒÃ«Â¼Ã’ ÂµÃ‡Â¾ÃºÃ€Â½ Â¾Ã‹Â¸Â°Â´Ã™.FightzoneReserveProcessor
 
 void CGame::FightzoneReserveProcessor() {/*
  register int i;
 
 	PutLogList("CAN FIGHTZONE RESERVE!!");
 
-	// Â¿Â¹Â¾Ã ÂµÃˆ Â»Ã§Ã…ÃµÃ€Ã¥ÂµÃ©Ã€Â» ÃƒÃŠÂ±Ã¢ÃˆÂ­ Â½ÃƒÃ…Â²Â´Ã™.  10Â°Â³Ã€Ã‡ Â»Ã§Ã…ÃµÃ€Ã¥Ã€Ã‡ Ã€Ã�?Ã€Ã¥Ã€Â» Ã‡Ã£Â¶Ã´Ã‡Ã‘Â´Ã™.
+	// Â¿Â¹Â¾Ã ÂµÃˆ Â»Ã§Ã…ÃµÃ€Ã¥ÂµÃ©Ã€Â» ÃƒÃŠÂ±Ã¢ÃˆÂ­ Â½ÃƒÃ…Â²Â´Ã™.  10Â°Â³Ã€Ã‡ Â»Ã§Ã…ÃµÃ€Ã¥Ã€Ã‡ Ã€Ã�?Ã€Ã¥Ã€Â» Ã‡Ã£Â¶Ã´Ã‡Ã‘Â´Ã™.
 	for (i=0 ; i < DEF_MAXFIGHTZONE ; i++ ) {
 
 		if (m_iFightZoneReserve[i] == -1 ) continue ; // Â¿Ã®Â¿ÂµÃ€ÃšÂ°Â¡ Â¿Â¹Â¾Ã Ã‡Ã‘ Â»Ã§Ã…ÃµÃ€Ã¥Ã€Âº Â¿Â¹Â¾Ã Ã€ÃŒ ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
@@ -35536,7 +35530,7 @@ void CGame::FightzoneReserveProcessor() {/*
 
 	for (i = 1; i < DEF_MAXCLIENTS; i++) {
 		// Â»Ã§Ã…ÃµÃ€Ã¥Ã€Â» Â¿Â¹Â¾Ã Ã‡Ã‘ Ã€Â¯Ã€ÃºÃ€ÃŽÃ?Ã¶Â¸Â¦ ÃˆÂ®Ã€ÃŽÃ‡Ã‘Â´Ã™.
-		// Â»Ã§Ã…ÃµÃ€Ã¥Ã€Â» Â¿Â¹Â¾Ã Ã‡Ã‘ Ã€Â¯Ã€ÃºÂ¿Â¡Â°Ã�? Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã Ã€ÃŒ ÃƒÃ«Â¼Ã’ÂµÃ‡Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+		// Â»Ã§Ã…ÃµÃ€Ã¥Ã€Â» Â¿Â¹Â¾Ã Ã‡Ã‘ Ã€Â¯Ã€ÃºÂ¿Â¡Â°Ã�? Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã Ã€ÃŒ ÃƒÃ«Â¼Ã’ÂµÃ‡Â¾ÃºÃ€Â½Ã€Â» Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 		if((m_pClientList[i] != NULL) && (m_pClientList[i]->m_iFightzoneNumber != 0))
 				SendNotifyMsg(NULL, i, DEF_NOTIFY_FIGHTZONERESERVE, -2, NULL, NULL, NULL);
 	}*/
@@ -35681,7 +35675,7 @@ int CGame::iGetNpcRelationship(int iWhatH, int iRecvH) {
  int iRet;
 
 	// Â¿Â©Â±Ã¢Â¼Â­ Â»Ã§Ã€ÃŒÂµÃ¥ Â°Ã¨Â»ÃªÃ‡Ã?Â´Ã‚ Â¹Ã¦Â¹Ã½Ã€Âº Â°Ã¼Ã?Â¡Ã€ÃŒ Â´Ã™Â¸Â£Â¹Ã‡Â·ÃŽ Ã?Ã–Ã€Ã‡Ã‡Ã‘Â´Ã™.
-	 // Â³Â» ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³ Â´Ã™Â¸Â¥ Ã€ÃŒÂ¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€Ã“Ã€Â» Ã?Ã–Ã€Ã‡.
+	 // Â³Â» ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³ Â´Ã™Â¸Â¥ Ã€ÃŒÂ¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€Ã“Ã€Â» Ã?Ã–Ã€Ã‡.
 	if (m_pClientList[iClientH] == NULL) return 0;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == FALSE) return 0;
 
@@ -35691,14 +35685,14 @@ int CGame::iGetNpcRelationship(int iWhatH, int iRecvH) {
 	iRet = 0;
 
 	if (m_pClientList[iClientH]->m_iPKCount != 0) {
-		// Â³Â»Â°Â¡ Â¹Ã¼Ã?Ã‹Ã€ÃšÃ€ÃŒÃ‡Ã?Â¸Ã© Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�?Â´Ã‚ Â¸Â¶Ã€Â»Ã€ÃŒ Â´Ã™Â¸Â¦ Â°Ã¦Â¿Ã¬ Ã€Ã», Â¾Ã†Â´Ã?Â¸Ã© PKÂ·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
+		// Â³Â»Â°Â¡ Â¹Ã¼Ã?Ã‹Ã€ÃšÃ€ÃŒÃ‡Ã?Â¸Ã© Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�?Â´Ã‚ Â¸Â¶Ã€Â»Ã€ÃŒ Â´Ã™Â¸Â¦ Â°Ã¦Â¿Ã¬ Ã€Ã», Â¾Ã†Â´Ã?Â¸Ã© PKÂ·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
 		if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iOpponentH]->m_cLocation, 10) != 0) &&
 			(memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) && (memcmp(m_pClientList[iOpponentH]->m_cLocation, "NONE", 4) != 0))
 			 iRet = 2; // Ã€Ã»
 		else iRet = 6; // PK
 	}
 	else if (m_pClientList[iOpponentH]->m_iPKCount != 0) {
-		// Â³Â»Â°Â¡ Â¹Â«Â°Ã­Ã‡Ã?Â°Ã­ Â»Ã³Â´Ã«Â¹Ã¦Ã€ÃŒ Â¹Ã¼Ã?Ã‹Ã€ÃšÃ€ÃŒÃ‡Ã?Â¸Ã© Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�? Â¸Â¶Ã€Â»Ã€ÃŒ Â´Ã™Â¸Â¦ Â°Ã¦Â¿Ã¬ Ã€Ã», Â¾Ã†Â´Ã?Â¸Ã© Ã€Â§Ã‡Ã¹Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
+		// Â³Â»Â°Â¡ Â¹Â«Â°Ã­Ã‡Ã?Â°Ã­ Â»Ã³Â´Ã«Â¹Ã¦Ã€ÃŒ Â¹Ã¼Ã?Ã‹Ã€ÃšÃ€ÃŒÃ‡Ã?Â¸Ã© Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�? Â¸Â¶Ã€Â»Ã€ÃŒ Â´Ã™Â¸Â¦ Â°Ã¦Â¿Ã¬ Ã€Ã», Â¾Ã†Â´Ã?Â¸Ã© Ã€Â§Ã‡Ã¹Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
 		if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iOpponentH]->m_cLocation, 10) != 0) &&
 			(memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) != 0) && (memcmp(m_pClientList[iOpponentH]->m_cLocation, "NONE", 4) != 0))
 			 iRet = 2; // Ã€Ã»
@@ -35715,7 +35709,7 @@ int CGame::iGetNpcRelationship(int iWhatH, int iRecvH) {
 				iRet = 2;
 			}
 			else {
-				// Ã‡Ã‘Ã‚ÃŠÃ€ÃŒ Ã?ÃŸÂ¸Â³Ã€ÃŒÂ¹Ã‡Â·ÃŽ Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�? Ã?ÃŸÂ¸Â³Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
+				// Ã‡Ã‘Ã‚ÃŠÃ€ÃŒ Ã?ÃŸÂ¸Â³Ã€ÃŒÂ¹Ã‡Â·ÃŽ Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�? Ã?ÃŸÂ¸Â³Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
 				iRet = 0;
 			}
 		}
@@ -35730,7 +35724,7 @@ int CGame::iGetNpcRelationship(int iWhatH, int iRecvH) {
 				(memcmp(m_pClientList[iClientH]->m_cGuildName, "NONE", 4) != 0) ) {
 				// Â±Ã¦ÂµÃ¥ Ã€ÃŒÂ¸Â§Ã€ÃŒ Â°Â°Â´Ã™.
 				if (m_pClientList[iClientH]->m_iGuildRank == 0)
-					 iRet = 5;	// Â³Â» Â±Ã¦ÂµÃ¥ Â·Â©Ã…Â©Â°Â¡ 0. Â±Ã¦ÂµÃ¥Â¸Â¶Â½ÂºÃ…Ã?Â·ÃŽ Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�? Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
+					 iRet = 5;	// Â³Â» Â±Ã¦ÂµÃ¥ Â·Â©Ã…Â©Â°Â¡ 0. Â±Ã¦ÂµÃ¥Â¸Â¶Â½ÂºÃ…Ã?Â·ÃŽ Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�? Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
 				else iRet = 3;	// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Ã¸
 			}
 			else
@@ -35755,7 +35749,7 @@ int CGame::iGetNpcRelationship_SendEvent(int iNpcH, int iOpponentH) {
 	int iRet;
 
 	// Â¿Â©Â±Ã¢Â¼Â­ Â»Ã§Ã€ÃŒÂµÃ¥ Â°Ã¨Â»ÃªÃ‡Ã?Â´Ã‚ Â¹Ã¦Â¹Ã½Ã€Âº Â°Ã¼Ã?Â¡Ã€ÃŒ Â´Ã™Â¸Â£Â¹Ã‡Â·ÃŽ Ã?Ã–Ã€Ã‡Ã‡Ã‘Â´Ã™.
-	// Â³Â»(NPC) ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³ Â´Ã™Â¸Â¥ Ã€ÃŒÂ¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€Ã“Ã€Â» Ã?Ã–Ã€Ã‡.
+	// Â³Â»(NPC) ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€ÃŒ Â¾Ã†Â´Ã?Â¶Ã³ Â´Ã™Â¸Â¥ Ã€ÃŒÂ¿Â¡Â°Ã�? ÂºÂ¸Â³Â»Â´Ã‚ ÂµÂ¥Ã€ÃŒÃ…Ã?Â¸Â¦ Ã€Ã›Â¼ÂºÃ‡Ã?Â´Ã‚ Â°Ã?Ã€Ã“Ã€Â» Ã?Ã–Ã€Ã‡.
 	if (m_pClientList[iOpponentH] == NULL) return 0;
 	if (m_pClientList[iOpponentH]->m_bIsInitComplete == FALSE) return 0;
 
@@ -35772,7 +35766,7 @@ int CGame::iGetNpcRelationship_SendEvent(int iNpcH, int iOpponentH) {
 		if (m_pNpcList[iNpcH]->m_cSide != m_pClientList[iOpponentH]->m_cSide) {
 			// Â¸Ã·Ã€Ã‡ Ã†Ã­Â°Ãº Â»Ã³Â´Ã«Â¹Ã¦Ã€Ã‡ Ã†Ã­Ã€ÃŒ Â´Ã™Â¸Â£Â´Ã™.
 			if (m_pNpcList[iNpcH]->m_cSide == 10)
-				iRet = 2; // Â¸Ã·Ã€ÃŒ Ã€Ã?Â¹Ã? Â¸Ã·Ã€ÃŒÂ´Ã™. Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�?Â´Ã‚ Ã€Ã»Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
+				iRet = 2; // Â¸Ã·Ã€ÃŒ Ã€Ã?Â¹Ã? Â¸Ã·Ã€ÃŒÂ´Ã™. Â»Ã³Â´Ã«Â¹Ã¦Â¿Â¡Â°Ã�?Â´Ã‚ Ã€Ã»Ã€Â¸Â·ÃŽ Ã€ÃŽÂ½Ã„ÂµÃˆÂ´Ã™.
 			else
 				if (m_pNpcList[iNpcH]->m_cSide == 0) iRet = 0; // Â¸Ã·Ã€ÃŒ Ã?ÃŸÂ¸Â³Ã€ÃŒÂ¸Ã© Â¹Â«Ã?Â¶Â°Ã‡ Ã?ÃŸÂ¸Â³
 			else
@@ -35901,7 +35895,7 @@ void CGame::NpcRequestAssistance(int iNpcH) {
 	short sOwnerH;
 	char cOwnerType;
 
-	// iNpc Â±Ã™Â¹Ã¦Â¿Â¡ Ã€Ã–Â´Ã‚ Ã€Ã¼Ã…ÃµÃ?ÃŸÃ€ÃŒ Â¾Ã†Â´Ã‘ NPCÂ¿Â¡Â°Ã�? ÂµÂµÂ¿Ã²Ã€Â» Â¿Ã¤ÃƒÂ»Ã‡Ã‘Â´Ã™.
+	// iNpc Â±Ã™Â¹Ã¦Â¿Â¡ Ã€Ã–Â´Ã‚ Ã€Ã¼Ã…ÃµÃ?ÃŸÃ€ÃŒ Â¾Ã†Â´Ã‘ NPCÂ¿Â¡Â°Ã�? ÂµÂµÂ¿Ã²Ã€Â» Â¿Ã¤ÃƒÂ»Ã‡Ã‘Â´Ã™.
 	if (m_pNpcList[iNpcH] == NULL) return;
 
 	sX = m_pNpcList[iNpcH]->m_sX;
@@ -36597,7 +36591,7 @@ RCPH_LOOPBREAK:
 
 		if ((_bInitItemAttr(pItem, cPortionName) == TRUE)) {
 			// Ã†Ã·Â¼Ã‡ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¸Â¸ÂµÃ©Â¾Ã®Ã?Â³Â´Ã™. Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Ã€Ã‡ Â¾Ã†Ã€ÃŒÃ…Ã› Â¸Â®Â½ÂºÃ†Â®Â¿Â¡ ÂµÃ®Â·Ã?Ã‡Ã‘Â´Ã™. Â¸Â¸Â¾Ã  Â°Ã¸Â°Â£Ã€ÃŒ Â¾Ã¸Â°Ã…Â³Âª
-			// Â¹Â«Â°Ã�?Â°Â¡ Â¸Ã°Ã€ÃšÂ¶Ã³Â¸Ã© Â¹ÃŸ Â¹Ã˜Â¿Â¡ Â¶Â³Â¾Ã®Ã?Â®Â¾ÃŸ Ã‡Ã‘Â´Ã™.
+			// Â¹Â«Â°Ã�?Â°Â¡ Â¸Ã°Ã€ÃšÂ¶Ã³Â¸Ã© Â¹ÃŸ Â¹Ã˜Â¿Â¡ Â¶Â³Â¾Ã®Ã?Â®Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 			if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
 				ZeroMemory(cData, sizeof (cData));
 				// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» ÃˆÂ¹ÂµÃ¦Ã‡ÃŸÂ´Ã™.
@@ -36616,7 +36610,7 @@ RCPH_LOOPBREAK:
 				cp += 20;
 
 				dwp = (DWORD *) cp;
-				*dwp = pItem->m_dwCount; // Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚
+				*dwp = pItem->m_dwCount; // Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚
 				cp += 4;
 
 				*cp = pItem->m_cItemType;
@@ -36688,7 +36682,7 @@ RCPH_LOOPBREAK:
 				m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 						  m_pClientList[iClientH]->m_sY, pItem);
 
-				// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+				// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 				SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 						  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 						  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); // v1.4
@@ -36917,7 +36911,7 @@ void CGame::LocalSavePlayerData(int iClientH) {
 	FILE * pFile;
 	SYSTEMTIME SysTime;
 
-	// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â·ÃŽÃ€Ã‡ Â¿Â¬Â°Ã¡Ã€ÃŒ Ã?Â¾Â·Ã¡ÂµÃ‡Â¾Ã® Ã€Ã“Â½ÃƒÂ·ÃŽ Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ Â³Â»Ã€Ã‡ Ã†ÃºÂ´ÃµÂ¿Â¡ Ã€ÃºÃ€Ã¥Ã‡Ã‘Â´Ã™.
+	// Â·ÃŽÂ±Ã— Â¼Â­Â¹Ã¶Â·ÃŽÃ€Ã‡ Â¿Â¬Â°Ã¡Ã€ÃŒ Ã?Â¾Â·Ã¡ÂµÃ‡Â¾Ã® Ã€Ã“Â½ÃƒÂ·ÃŽ Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶ Â³Â»Ã€Ã‡ Ã†ÃºÂ´ÃµÂ¿Â¡ Ã€ÃºÃ€Ã¥Ã‡Ã‘Â´Ã™.
 	if (m_pClientList[iClientH] == NULL) return;
 
 	pData = new char[30000];
@@ -37029,7 +37023,7 @@ int CGame::iCreateMineral(char cMapIndex, int tX, int tY, char cLevel) {
 			m_pMineral[i]->m_sDynamicObjectHandle = iDynamicHandle;
 			m_pMineral[i]->m_cMapIndex = cMapIndex;
 
-			// Â³Â­Ã€ÃŒÂµÂµÂ¿Ã? Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+			// Â³Â­Ã€ÃŒÂµÂµÂ¿Ã? Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 			switch (iMineralType) {
 				case 1: m_pMineral[i]->m_iDifficulty = 10;
 					m_pMineral[i]->m_iRemain = 20;
@@ -37291,7 +37285,7 @@ void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 					// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¼Â­Ã€Ã–Â´Ã‚ Ã€Â§Ã„Â¡Â¿Â¡ Â¹Ã¶Â¸Â°Â´Ã™.
 					m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
 							  m_pClientList[iClientH]->m_sY, pItem);
-					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+					// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 							  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 							  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); // v1.4
@@ -37333,7 +37327,7 @@ BOOL CGame::bDeleteMineral(int iIndex) {
 			  m_pDynamicObjectList[iDynamicIndex]->m_sType, iDynamicIndex, NULL);
 	// Â¸ÃŠÂ¿Â¡Â¼Â­ Â±Â¤Â¹Â° ÂµÂ¿Ã€Ã» Â°Â´ÃƒÂ¼Â¸Â¦ Â»Ã¨Ã?Â¦Ã‡Ã‘Â´Ã™.
 	m_pMapList[m_pDynamicObjectList[iDynamicIndex]->m_cMapIndex]->SetDynamicObject(NULL, NULL, m_pDynamicObjectList[iDynamicIndex]->m_sX, m_pDynamicObjectList[iDynamicIndex]->m_sY, dwTime);
-	// Â±Â¤Â¹Â°Ã€ÃŒ Â»Ã§Â¶Ã³Ã?Â³Ã€Â¸Â¹Ã‡Â·ÃŽ Ã€ÃŒÂµÂ¿Ã€ÃŒ Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Ã‡Ã‘Â´Ã™.
+	// Â±Â¤Â¹Â°Ã€ÃŒ Â»Ã§Â¶Ã³Ã?Â³Ã€Â¸Â¹Ã‡Â·ÃŽ Ã€ÃŒÂµÂ¿Ã€ÃŒ Â°Â¡Â´Ã‰Ã‡Ã?Â°Ã�? Ã‡Ã‘Â´Ã™.
 	m_pMapList[m_pMineral[iIndex]->m_cMapIndex]->SetTempMoveAllowedFlag(m_pDynamicObjectList[iDynamicIndex]->m_sX, m_pDynamicObjectList[iDynamicIndex]->m_sY, TRUE);
 
 	// Â±Â¤Â¹Â° Â°Â³ÃƒÂ¼ Â¼Ã¶ Â°Â¨Â¼Ã’
@@ -37564,7 +37558,7 @@ BOOL CGame::_bDepleteDestTypeItemUseEffect(int iClientH, int dX, int dY, short s
 
 			// crusade
 		case DEF_ITEMEFFECTTYPE_CONSTRUCTIONKIT:
-			// Â°Ã‡Â¼Â³ Ã…Â°Ã†Â®Ã€ÃŒÂ´Ã™. Â¹ÃŒÂµÃ©Â·Â£ÂµÃ¥Â¿Â¡Â¼Â­Â¸Â¸ Â»Ã§Â¿Ã« Â°Â¡Â´Ã‰Ã‡Ã�?. m_sItemEffectValue1: Â°Ã‡ÃƒÃ Â¹Â° Ã?Â¾Â·Ã¹, m_sItemEffectValue2: Â°Ã‡ÃƒÃ  Â½ÃƒÂ°Â£
+			// Â°Ã‡Â¼Â³ Ã…Â°Ã†Â®Ã€ÃŒÂ´Ã™. Â¹ÃŒÂµÃ©Â·Â£ÂµÃ¥Â¿Â¡Â¼Â­Â¸Â¸ Â»Ã§Â¿Ã« Â°Â¡Â´Ã‰Ã‡Ã�?. m_sItemEffectValue1: Â°Ã‡ÃƒÃ Â¹Â° Ã?Â¾Â·Ã¹, m_sItemEffectValue2: Â°Ã‡ÃƒÃ  Â½ÃƒÂ°Â£
 			bRet = __bSetConstructionKit(m_pClientList[iClientH]->m_cMapIndex, dX, dY, //
 					  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1, //
 					  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2, //
@@ -37731,7 +37725,7 @@ void CGame::SetSummonMobAction(int iClientH, int iMode, DWORD dwMsgSize, char *p
 	switch (iMode) {
 		case 0: // Free ï¿½ï¿½ï¿½
 		case 1: // Hold ï¿½ï¿½ï¿½
-			//  ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ iClientHï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+			//  ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ iClientHï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			for (i = 0; i < DEF_MAXNPCS; i++)
 				if (m_pNpcList[i] != NULL) {
 					if ((m_pNpcList[i]->m_bIsSummoned == TRUE) &&
@@ -37770,7 +37764,7 @@ void CGame::SetSummonMobAction(int iClientH, int iMode, DWORD dwMsgSize, char *p
 							  (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0) &&
 							  (strcmp(m_pClientList[iClientH]->m_cMapName, m_pClientList[i]->m_cMapName) == 0)) // adamas(mapï¿½ï¿½ ï¿½ï¿½ï¿½Æ¾ï¿½ ï¿½Ñ´ï¿½.)
 					{
-						// ï¿½ï¿½Ç¥ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ Ã£ï¿½Ò´ï¿½. ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+						// ï¿½ï¿½Ç¥ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ Ã£ï¿½Ò´ï¿½. ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 						iTargetIndex = i;
 						goto SSMA_SKIPSEARCH;
 					}
@@ -37944,7 +37938,7 @@ void CGame::GetOccupyFlagHandler(int iClientH) {
 
 
 
-// v1.4311-3 ÃƒÃŸÂ°Â¡  Ã‡Ã�?Â¼Ã¶ Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Â» Ã?Ã–Â´Ã‚ Ã‡Ã�?Â¼Ã¶   GetFightzoneTicketHandler
+// v1.4311-3 ÃƒÃŸÂ°Â¡  Ã‡Ã�?Â¼Ã¶ Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Â» Ã?Ã–Â´Ã‚ Ã‡Ã�?Â¼Ã¶   GetFightzoneTicketHandler
 
 void CGame::GetFightzoneTicketHandler(int iClientH) {
 	int iRet, iEraseReq, iMonth, iDay, iHour;
@@ -37957,8 +37951,8 @@ void CGame::GetFightzoneTicketHandler(int iClientH) {
 	if (m_pClientList[iClientH] == NULL) return;
 
 	if (m_pClientList[iClientH]->m_iFightZoneTicketNumber <= 0) {
-		// Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Â» Â´Ã™ Â»Ã§Â¿Ã«Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
-		// Â»Ã§Ã…ÃµÃ€Ã¥ Â¹Ã¸ÃˆÂ£Â°Â¡ Ã€Â½Â¼Ã¶Â¸Ã© Â¿Â¹Â¾Ã Ã€Âº Ã‡ÃŸÂ´Ã‚ÂµÂ¥ Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Â» Â´Ã™ Â¹ÃžÃ€ÂºÂ°Ã¦Â¿Ã¬ ..
+		// Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Â» Â´Ã™ Â»Ã§Â¿Ã«Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+		// Â»Ã§Ã…ÃµÃ€Ã¥ Â¹Ã¸ÃˆÂ£Â°Â¡ Ã€Â½Â¼Ã¶Â¸Ã© Â¿Â¹Â¾Ã Ã€Âº Ã‡ÃŸÂ´Ã‚ÂµÂ¥ Ã€Ã�?Ã€Ã¥Â±Ã‡Ã€Â» Â´Ã™ Â¹ÃžÃ€ÂºÂ°Ã¦Â¿Ã¬ ..
 		m_pClientList[iClientH]->m_iFightzoneNumber *= -1;
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_FIGHTZONERESERVE, -1, NULL, NULL, NULL);
 		return;
@@ -37980,7 +37974,7 @@ void CGame::GetFightzoneTicketHandler(int iClientH) {
 		// Â¿Â¡Â·Â¯ Â¹Ã¦Ã?Ã¶Â¿Ã« Ã„ÃšÂµÃ¥
 		if (m_pClientList[iClientH]->m_iCurWeightLoad < 0) m_pClientList[iClientH]->m_iCurWeightLoad = 0;
 
-		// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¹ÃžÃ€Â» Â¼Ã¶ Ã€Ã–Â´Ã™Â´Ã‚ Â°Ã?Ã€ÃŒ ÃˆÂ®Ã?Â¤ ÂµÃ‡Â¾ÃºÃ€Â¸Â¹Ã‡Â·ÃŽ Ã€Ã�?Ã€Ã¥Â±Ã‡Â°Â³Â¼Ã¶Â¸Â¦ Â»Â©ÂµÂµ ÂµÃˆÂ´Ã™.
+		// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¹ÃžÃ€Â» Â¼Ã¶ Ã€Ã–Â´Ã™Â´Ã‚ Â°Ã?Ã€ÃŒ ÃˆÂ®Ã?Â¤ ÂµÃ‡Â¾ÃºÃ€Â¸Â¹Ã‡Â·ÃŽ Ã€Ã�?Ã€Ã¥Â±Ã‡Â°Â³Â¼Ã¶Â¸Â¦ Â»Â©ÂµÂµ ÂµÃˆÂ´Ã™.
 		m_pClientList[iClientH]->m_iFightZoneTicketNumber = m_pClientList[iClientH]->m_iFightZoneTicketNumber - 1;
 
 		pItem->m_sTouchEffectType = DEF_ITET_DATE;
@@ -38574,7 +38568,7 @@ void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, sho
 	if (m_pClientList[iClientH]->m_bIsExchangeMode == TRUE) return;
 	if (wObjectID >= DEF_MAXCLIENTS) return;
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½�?°Ú´Ù´ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½. ï¿½ï¿½ï¿½æ¿¡ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¯Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½�?°Ú´Ù´ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½. ï¿½ï¿½ï¿½æ¿¡ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¯Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 	//ï¿½ï¿½ï¿½ï¿½ dX, dYï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Òºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç³ï¿½ï¿½Ø´ï¿½.
 	m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 
@@ -38596,7 +38590,7 @@ void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, sho
 		}
 
 		if ((sOwnerH == NULL) || (m_pClientList[sOwnerH] == NULL)) {
-			//Â¾Ã†Ã€ÃŒÃ…Ã› Â±Â³ÃˆÂ¯Ã€Â» Â¿Ã¤ÃƒÂ»Ã‡Ã‘ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¿Â¡Â°Ã�? Ã‡Ã˜Â´Ã§ Ã€Â§Ã„Â¡Â¿Â¡ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â°Â¡ Â¾Ã¸Ã€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+			//Â¾Ã†Ã€ÃŒÃ…Ã› Â±Â³ÃˆÂ¯Ã€Â» Â¿Ã¤ÃƒÂ»Ã‡Ã‘ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¿Â¡Â°Ã�? Ã‡Ã˜Â´Ã§ Ã€Â§Ã„Â¡Â¿Â¡ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â°Â¡ Â¾Ã¸Ã€Â½Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 			_ClearExchangeStatus(iClientH);
 		} else {
 			if ((m_pClientList[sOwnerH]->m_bIsExchangeMode == TRUE) || (m_pClientList[sOwnerH]->m_sAppr2 & 0xF000) ||
@@ -38677,11 +38671,11 @@ void CGame::SetExchangeItem(int iClientH, int iItemIndex, int iAmount) {
 	if ((m_pClientList[iClientH]->m_bIsExchangeMode == TRUE) && (m_pClientList[iClientH]->m_iExchangeH != NULL)) {
 		iExH = m_pClientList[iClientH]->m_iExchangeH;
 		if ((m_pClientList[iExH] == NULL) || (memcmp(m_pClientList[iClientH]->m_cExchangeName, m_pClientList[iExH]->m_cCharName, 10) != 0)) {
-			// ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Æ´�?´ï¿½.
+			// ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Æ´�?´ï¿½.
 
 		} else {
-			// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½æ¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë·ï¿½ï¿½Ø´ï¿½.
-			// ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â´ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ñ´ï¿½.
+			// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½æ¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë·ï¿½ï¿½Ø´ï¿½.
+			// ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â´ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ñ´ï¿½.
 			if ((iItemIndex < 0) || (iItemIndex >= DEF_MAXITEMS)) return;
 			if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == NULL) return;
 			if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwCount < iAmount) return;
@@ -38695,7 +38689,7 @@ void CGame::SetExchangeItem(int iClientH, int iItemIndex, int iAmount) {
 				}
 			}
 
-			// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			m_pClientList[iClientH]->m_cExchangeItemIndex[m_pClientList[iClientH]->iExchangeCount] = (char) iItemIndex;
 			m_pClientList[iClientH]->m_iExchangeItemAmount[m_pClientList[iClientH]->iExchangeCount] = iAmount;
 
@@ -38723,7 +38717,7 @@ void CGame::SetExchangeItem(int iClientH, int iItemIndex, int iAmount) {
 					  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 		}
 	} else {
-		// ï¿½ï¿½È¯ ï¿½ï¿½å°¡ ï¿½Æ´�?¹Ç·ï¿½
+		// ï¿½ï¿½È¯ ï¿½ï¿½å°¡ ï¿½Æ´�?¹Ç·ï¿½
 	}
 }
 
@@ -38747,7 +38741,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 			if ((memcmp(m_pClientList[iClientH]->m_cExchangeName, m_pClientList[iExH]->m_cCharName, 10) != 0) ||
 					  (m_pClientList[iExH]->m_bIsExchangeMode != TRUE) ||
 					  (memcmp(m_pClientList[iExH]->m_cExchangeName, m_pClientList[iClientH]->m_cCharName, 10) != 0)) {
-				// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Æ´�?´ï¿½. ï¿½ï¿½È¯ ï¿½ï¿½ï¿½Â´ï¿½ ï¿½ï¿½ï¿½.
+				// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Æ´�?´ï¿½. ï¿½ï¿½È¯ ï¿½ï¿½ï¿½Â´ï¿½ ï¿½ï¿½ï¿½.
 				_ClearExchangeStatus(iClientH);
 				_ClearExchangeStatus(iExH);
 				return;
@@ -38791,7 +38785,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 
 					//See if the other person can take the item weightload
 					if ((iWeightLeftA < iItemWeightB) || (iWeightLeftB < iItemWeightA)) {
-						// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½ï¿½È¯ ï¿½Ò°ï¿½ï¿½ï¿½.
+						// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½ï¿½È¯ ï¿½Ò°ï¿½ï¿½ï¿½.
 						_ClearExchangeStatus(iClientH);
 						_ClearExchangeStatus(iExH);
 						return;
@@ -38803,7 +38797,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 								  (m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 
 							if (m_pClientList[iClientH]->m_iExchangeItemAmount[i] > m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_dwCount) {
-								// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½×µï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½ï¿½.
+								// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½×µï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½ï¿½.
 								_ClearExchangeStatus(iClientH);
 								_ClearExchangeStatus(iExH);
 								return;
@@ -38834,7 +38828,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 								  (m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 
 							if (m_pClientList[iExH]->m_iExchangeItemAmount[i] > m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_dwCount) {
-								// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½×µï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½ï¿½.
+								// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½×µï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½ï¿½.
 								_ClearExchangeStatus(iClientH);
 								_ClearExchangeStatus(iExH);
 								return;
@@ -38976,7 +38970,7 @@ BOOL CGame::bAddItem(int iClientH, CItem * pItem, char cMode) {
 		cp += 20;
 
 		dwp = (DWORD *) cp;
-		*dwp = pItem->m_dwCount; // Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚
+		*dwp = pItem->m_dwCount; // Â¼Ã¶Â·Â®Ã€Â» Ã€Ã�?Â·Ã‚
 		cp += 4;
 
 		*cp = pItem->m_cItemType;
@@ -39044,7 +39038,7 @@ BOOL CGame::bAddItem(int iClientH, CItem * pItem, char cMode) {
 				  m_pClientList[iClientH]->m_sY,
 				  pItem);
 
-		// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+		// Â´Ã™Â¸Â¥ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¶Â³Â¾Ã®Ã?Ã¸ Â°Ã?Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pClientList[iClientH]->m_cMapIndex,
 				  m_pClientList[iClientH]->m_sX, m_pClientList[iClientH]->m_sY,
 				  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
@@ -39073,7 +39067,7 @@ int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMod
 	// -3  : Â¹Ã¼Ã?Ã‹Ã€ÃšÂ´Ã‚ Ã€Ã“Â¹Â«Â¸Â¦ Â¾Ã²Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
 	// -4  : Ã‡Ã¶Ã€Ã§ Ã?Â¶Â°Ã‡Â¿Â¡ Â¸Ã‚Â´Ã‚ Ã€Ã“Â¹Â«Â°Â¡ Â¾Ã¸Â´Ã™. Ã€Ã?Â»Ã³Ã€Ã»Ã€ÃŽ Â´Ã«ÃˆÂ­Â³Âª Ã?Â¤ÂºÂ¸ ÃƒÃ¢Â·Ã‚
 
-	// Â½ÃƒÃƒÂ» Ã‡Ã Ã?Â¤Â°Ã¼Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÂ´Ã™. Â·Â¹ÂºÂ§Â°Ãº Ã„Ã¹Â½ÂºÃ†Â® Â»Ã³Ã…Ã‚Â¿Â¡ ÂµÃ»Â¶Ã³ Ã€Ã“Â¹Â«Â¸Â¦ Ã‡Ã’Â´Ã§Ã‡Ã‘Â´Ã™.
+	// Â½ÃƒÃƒÂ» Ã‡Ã Ã?Â¤Â°Ã¼Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÂ´Ã™. Â·Â¹ÂºÂ§Â°Ãº Ã„Ã¹Â½ÂºÃ†Â® Â»Ã³Ã…Ã‚Â¿Â¡ ÂµÃ»Â¶Ã³ Ã€Ã“Â¹Â«Â¸Â¦ Ã‡Ã’Â´Ã§Ã‡Ã‘Â´Ã™.
 	if (m_pClientList[iClientH] == NULL) return 0;
 	/*if (((memcmp(m_pClientList[iClientH]->m_cMapName, "cityhall_1", 10) != 1) ||
 		(memcmp(m_pClientList[iClientH]->m_cMapName, "cityhall_2", 10) != 1)) &&
@@ -39087,7 +39081,7 @@ int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMod
 	if (m_pClientList[iClientH]->m_iQuest != NULL) {
 		if (m_pQuestConfigList[m_pClientList[iClientH]->m_iQuest] == NULL) return -4;
 		else if (m_pQuestConfigList[m_pClientList[iClientH]->m_iQuest]->m_iFrom == 4) {
-			// Â½ÃƒÃƒÂ» Ã‡Ã Ã?Â¤Â°Ã¼Â¿Â¡Â°Ã�? Â¸ÃƒÃ€Âº Ã€Ã“Â¹Â«Â´Ã™. Ã€Ã“Â¹Â«Â°Â¡ Â³Â¡Â³ÂµÂ´Ã™Â¸Ã© Â¿Â©Â±Ã¢Â¼Â­ ÃƒÂ³Â¸Â®Ã‡Ã?Â°Ã­ -5Â¸Â¦ Â¸Â®Ã…Ã?Ã‡Ã‘Â´Ã™.
+			// Â½ÃƒÃƒÂ» Ã‡Ã Ã?Â¤Â°Ã¼Â¿Â¡Â°Ã�? Â¸ÃƒÃ€Âº Ã€Ã“Â¹Â«Â´Ã™. Ã€Ã“Â¹Â«Â°Â¡ Â³Â¡Â³ÂµÂ´Ã™Â¸Ã© Â¿Â©Â±Ã¢Â¼Â­ ÃƒÂ³Â¸Â®Ã‡Ã?Â°Ã­ -5Â¸Â¦ Â¸Â®Ã…Ã?Ã‡Ã‘Â´Ã™.
 			if (m_pClientList[iClientH]->m_bIsQuestCompleted == TRUE) {
 				// Ã†Ã·Â»Ã³Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™Â¸Ã©(Â»Ã³Ã‡Â°Ã€Â» ÂµÃ© Â¼Ã¶ Â¾Ã¸Â´Ã‚ Â»Ã³ÃˆÂ²Ã€ÃŒÂ¶Ã³Â´Ã¸Â°Â¡) Ã€Ã“Â¹Â« Ã?Â¾Â·Ã¡ ÃƒÂ³Â¸Â®Â¸Â¦ Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 				// Â¸Ã°ÂµÃ§ Ã?Â¶Â°Ã‡Ã€ÃŒ Â¸Â¸Ã?Â·ÂµÃ‡Â¸Ã© ÃƒÂ³Â¸Â®Ã‡Ã?Â°Ã­ -5Â¸Â¦ Â¸Â®Ã…Ã?.
@@ -39135,7 +39129,7 @@ int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMod
 					_ClearQuestStatus(iClientH);
 					return -5;
 				} else if (m_pClientList[iClientH]->m_iQuestRewardType == -2) {
-					// Ã„Ã¹Â½ÂºÃ†Â®Ã€Ã‡ Â´Ã±Â°Â¡Â´Ã‚ ÂºÃ±Â·ÃŠ Â°Ã¦Ã‡Ã¨Ã„Â¡ Ã€Ã»Â¿Â¡Â°Ã�? Ã?Ã—Â¾ÃºÃ€Â»Â¶Â§ Â°Ã¦Ã‡Ã¨Ã„Â¡ * m_pClientList[iClientH]->m_iQuestRewardAmount Â¸Â¸Ã…Â­Ã€Ã‡ Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¾Ã²Â´Ã‚Â´Ã™.
+					// Ã„Ã¹Â½ÂºÃ†Â®Ã€Ã‡ Â´Ã±Â°Â¡Â´Ã‚ ÂºÃ±Â·ÃŠ Â°Ã¦Ã‡Ã¨Ã„Â¡ Ã€Ã»Â¿Â¡Â°Ã�? Ã?Ã—Â¾ÃºÃ€Â»Â¶Â§ Â°Ã¦Ã‡Ã¨Ã„Â¡ * m_pClientList[iClientH]->m_iQuestRewardAmount Â¸Â¸Ã…Â­Ã€Ã‡ Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¾Ã²Â´Ã‚Â´Ã™.
 					//***
 					iExp = iDice(1, (10 * m_pClientList[iClientH]->m_iLevel));
 					//***
@@ -39166,7 +39160,7 @@ int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMod
 			} else return -1;
 		}
 
-		return -4; // Â´Ã™Â¸Â¥ NPCÂ¿Â¡Â°Ã�?Â¼Â­ Â¾Ã²Ã€Âº Ã„Ã¹Â½ÂºÃ†Â®Â¸Â¦ Â¼Ã¶Ã‡Ã Ã?ÃŸÃ€ÃŒÂ´Ã™. Ã?Ã¯ Ã?Â¶Â°Ã‡Â¿Â¡ Â¸Ã‚Â´Ã‚ Ã€Ã“Â¹Â«Â°Â¡ Â¾Ã¸Â´Ã™. Ã€Ã?Â»Ã³Ã€Ã»Ã€ÃŽ Â´Ã«ÃˆÂ­Â¸Â¦ ÃƒÃ¢Â·Ã‚Ã‡Ã‘Â´Ã™.
+		return -4; // Â´Ã™Â¸Â¥ NPCÂ¿Â¡Â°Ã�?Â¼Â­ Â¾Ã²Ã€Âº Ã„Ã¹Â½ÂºÃ†Â®Â¸Â¦ Â¼Ã¶Ã‡Ã Ã?ÃŸÃ€ÃŒÂ´Ã™. Ã?Ã¯ Ã?Â¶Â°Ã‡Â¿Â¡ Â¸Ã‚Â´Ã‚ Ã€Ã“Â¹Â«Â°Â¡ Â¾Ã¸Â´Ã™. Ã€Ã?Â»Ã³Ã€Ã»Ã€ÃŽ Â´Ã«ÃˆÂ­Â¸Â¦ ÃƒÃ¢Â·Ã‚Ã‡Ã‘Â´Ã™.
 	}
 
 	// Â¾Ã†Â¹Â«Â·Â± Ã€Ã“Â¹Â«Â¸Â¦ Â¸Ã‚Â°Ã­ Ã€Ã–Ã?Ã¶ Â¾ÃŠÂ´Ã™. Ã€Ã“Â¹Â«Â¸Â¦ Â¸ÃƒÃ€Â» Â¼Ã¶ Ã€Ã–Â´Ã‚ Ã?Â¶Â°Ã‡Ã€ÃŽÃ?Ã¶ Ã†Ã‡ÂºÂ°Ã‡Ã‘Â´Ã™.
@@ -39192,36 +39186,36 @@ int CGame::_iTalkToNpcResult_Guard(int iClientH, int * pQuestType, int * pMode, 
 	if (memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) {
 		// Â¸Â» Â°Ã‡ Â»Ã§Â¶Ã·Ã€ÃŒ Â¾Ã†Â·Â¹Â½ÂºÂµÂ§ Â¼Ã’Â¼Ã“
 		if (memcmp(m_pClientList[iClientH]->m_cMapName, "aresden", 7) == 0) {
-			// Ã€ÃšÂ±Ã¢ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
+			// Ã€ÃšÂ±Ã¢ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NPCTALK, (200), NULL, NULL, NULL, NULL);
 			return 1000;
 		} else
 			if (memcmp(m_pClientList[iClientH]->m_cMapName, "elv", 3) == 0) {
-			// Â´Ã™Â¸Â¥ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
+			// Â´Ã™Â¸Â¥ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NPCTALK, (201), NULL, NULL, NULL, NULL);
 			return 1001;
 		}
 	} else
 		if (memcmp(m_pClientList[iClientH]->m_cLocation, "elv", 3) == 0) {
 		if (memcmp(m_pClientList[iClientH]->m_cMapName, "aresden", 7) == 0) {
-			// Â´Ã™Â¸Â¥ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
+			// Â´Ã™Â¸Â¥ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NPCTALK, (202), NULL, NULL, NULL, NULL);
 			return 1002;
 		} else
 			if (memcmp(m_pClientList[iClientH]->m_cMapName, "elv", 3) == 0) {
-			// Ã€ÃšÂ±Ã¢ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
+			// Ã€ÃšÂ±Ã¢ Â¸Â¶Ã€Â» Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NPCTALK, (203), NULL, NULL, NULL, NULL);
 			return 1003;
 		}
 	} else
 		if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) {
 		if (memcmp(m_pClientList[iClientH]->m_cMapName, "aresden", 7) == 0) {
-			// Ã?ÃŸÂ¸Â³Ã€ÃŒ Â¾Ã†Â·Â¹Â½ÂºÂµÂ§ Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½
+			// Ã?ÃŸÂ¸Â³Ã€ÃŒ Â¾Ã†Â·Â¹Â½ÂºÂµÂ§ Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NPCTALK, (204), NULL, NULL, NULL, NULL);
 			return 1004;
 		} else
 			if (memcmp(m_pClientList[iClientH]->m_cMapName, "elvine", 6) == 0) {
-			// Ã?ÃŸÂ¸Â³Ã€ÃŒ Â¿Â¤Â¹Ã™Ã€ÃŽ Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
+			// Ã?ÃŸÂ¸Â³Ã€ÃŒ Â¿Â¤Â¹Ã™Ã€ÃŽ Â°Ã¦ÂºÃ±Â¿Â¡Â°Ã�? Â¸Â»Ã€Â» Â°Ã‰Â¾ÃºÃ€Â½.
 			SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_NPCTALK, (205), NULL, NULL, NULL, NULL);
 			return 1005;
 		} else
@@ -39633,9 +39627,9 @@ int CGame::__iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMo
 						  m_pQuestConfigList[i]->m_iRequiredSkillLevel) goto SFQ_SKIP;
 			}
 
-			// Ã…Â©Â·Ã§Â¼Â¼Ã€ÃŒÂµÃ¥ Â¸Ã°ÂµÃ¥Ã€Ã?Â¶Â§Â´Ã‚ Ã‡Ã’Â´Ã§ Ã…Â¸Ã€Ã�?Ã€ÃŒ 1Ã€ÃŽ Ã„Ã¹Â½ÂºÃ†Â®Â¸Â¸ ÂºÃŽÂ¿Â©ÂµÃˆÂ´Ã™.
+			// Ã…Â©Â·Ã§Â¼Â¼Ã€ÃŒÂµÃ¥ Â¸Ã°ÂµÃ¥Ã€Ã?Â¶Â§Â´Ã‚ Ã‡Ã’Â´Ã§ Ã…Â¸Ã€Ã�?Ã€ÃŒ 1Ã€ÃŽ Ã„Ã¹Â½ÂºÃ†Â®Â¸Â¸ ÂºÃŽÂ¿Â©ÂµÃˆÂ´Ã™.
 			if ((m_bIsCrusadeMode == TRUE) && (m_pQuestConfigList[i]->m_iAssignType != 1)) goto SFQ_SKIP;
-			// Ã…Â©Â·Ã§Â¼Â¼Ã€ÃŒÂµÃ¥ Â¸Ã°ÂµÃ¥Â°Â¡ Â¾Ã†Â´Ã’Â¶Â§Â´Ã‚ Ã‡Ã’Â´Ã§ Ã…Â¸Ã€Ã�?Ã€ÃŒ 1Ã€Âº Â¼Â±Ã…ÃƒÂµÃ‡Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
+			// Ã…Â©Â·Ã§Â¼Â¼Ã€ÃŒÂµÃ¥ Â¸Ã°ÂµÃ¥Â°Â¡ Â¾Ã†Â´Ã’Â¶Â§Â´Ã‚ Ã‡Ã’Â´Ã§ Ã…Â¸Ã€Ã�?Ã€ÃŒ 1Ã€Âº Â¼Â±Ã…ÃƒÂµÃ‡Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 			if ((m_bIsCrusadeMode == FALSE) && (m_pQuestConfigList[i]->m_iAssignType == 1)) goto SFQ_SKIP;
 
 			if (m_pQuestConfigList[i]->m_iContributionLimit < m_pClientList[iClientH]->m_iContribution) goto SFQ_SKIP;
@@ -39648,7 +39642,7 @@ SFQ_SKIP:
 			;
 		}
 
-	// iIndexÂ°Â³ Â¸Â¸Ã…Â­Ã€Ã‡ Ã?Â¶Â°Ã‡Â¿Â¡ Â¸Â¸Ã?Â·Ã‡Ã?Â´Ã‚ Ã„Ã¹Â½ÂºÃ†Â®Â¸Â¦ ÃƒÂ£Â¾Ã’Â´Ã™. Â±Ã— Ã?ÃŸÂ¿Â¡Â¼Â­ Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? 1Â°Â³Â¸Â¦ Â¼Â±Ã…ÃƒÃ‡Ã‘Â´Ã™.
+	// iIndexÂ°Â³ Â¸Â¸Ã…Â­Ã€Ã‡ Ã?Â¶Â°Ã‡Â¿Â¡ Â¸Â¸Ã?Â·Ã‡Ã?Â´Ã‚ Ã„Ã¹Â½ÂºÃ†Â®Â¸Â¦ ÃƒÂ£Â¾Ã’Â´Ã™. Â±Ã— Ã?ÃŸÂ¿Â¡Â¼Â­ Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? 1Â°Â³Â¸Â¦ Â¼Â±Ã…ÃƒÃ‡Ã‘Â´Ã™.
 	if (iIndex == 0) return -1;
 	iQuest = (iDice(1, iIndex)) - 1;
 	iQuestIndex = iQuestList[iQuest];
@@ -39791,7 +39785,7 @@ BOOL CGame::_bCheckIsQuestCompleted(int iClientH) {
 			case DEF_QUESTTYPE_MONSTERHUNT:
 				if ((m_pClientList[iClientH]->m_bQuestMatchFlag_Loc == TRUE) &&
 						  (m_pClientList[iClientH]->m_iCurQuestCount >= m_pQuestConfigList[iQuestIndex]->m_iMaxCount)) {
-					// Â¸Ã³Â½ÂºÃ…Ã? Â»Ã§Â³Ã‰ Ã„Ã¹Â½ÂºÃ†Â®Â°Â¡ Â¿Ã?Â·Ã¡ÂµÃ‡Â¾ÃºÂ´Ã™. Â¿Ã?Â·Ã¡ÂµÃ‡Â¾ÃºÃ€Â¸Â¸Ã© Ã€Ã‡Â·ÃšÃ€ÃŽÂ¿Â¡Â°Ã�? ÂµÂ¹Â¾Ã†Â°Â¡ Â´Ã«ÃˆÂ­Â¸Â¦ Ã‡Ã?Â¸Ã© Ã†Ã·Â»Ã³Â¹ÃžÂ´Ã‚Â´Ã™.
+					// Â¸Ã³Â½ÂºÃ…Ã? Â»Ã§Â³Ã‰ Ã„Ã¹Â½ÂºÃ†Â®Â°Â¡ Â¿Ã?Â·Ã¡ÂµÃ‡Â¾ÃºÂ´Ã™. Â¿Ã?Â·Ã¡ÂµÃ‡Â¾ÃºÃ€Â¸Â¸Ã© Ã€Ã‡Â·ÃšÃ€ÃŽÂ¿Â¡Â°Ã�? ÂµÂ¹Â¾Ã†Â°Â¡ Â´Ã«ÃˆÂ­Â¸Â¦ Ã‡Ã?Â¸Ã© Ã†Ã·Â»Ã³Â¹ÃžÂ´Ã‚Â´Ã™.
 					m_pClientList[iClientH]->m_bIsQuestCompleted = TRUE;
 					SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_QUESTCOMPLETED, NULL, NULL, NULL, NULL);
 					return TRUE;
@@ -40228,7 +40222,7 @@ BOOL CGame::_bCheckSubLogSocketIndex() {
 				m_cShutDownCode = 3;
 				m_bOnExitProcess = TRUE;
 				m_dwExitProcessTime = timeGetTime();
-				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
+				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶ Â¼Ã‹Â´Ã™Â¿Ã®Ã€ÃŒ Â½ÃƒÃ€Ã›ÂµÃ‡Â¸Ã© Â´ÃµÃ€ÃŒÂ»Ã³Ã€Ã‡ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â® Ã?Â¢Â¼Ã“Ã€ÃŒ Â°Ã…ÂºÃŽÂµÃˆÂ´Ã™.
 				PutLogList("(!) GAME SERVER SHUTDOWN PROCESS BEGIN(by Log-server connection Lost)!!!");
 			}
 			return FALSE;
@@ -40662,13 +40656,13 @@ void CGame::BuildItemHandler(int iClientH, char *pData) {
 	iResult = iDice(1, 100);
 
 	if (iResult > iPlayerSkillLevel) {
-		// ï¿½ï¿½ï¿½�?´ï¿½.
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½.
+		// ï¿½ï¿½ï¿½�?´ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¿ï¿½ï¿½ï¿½.
 		SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILDITEMFAIL, NULL, NULL, NULL, NULL);
 		return;
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½.
 	for (i = 0; i < 6; i++)
 		if (cElementItemID[i] != -1) {
 			// ï¿½ß¸ï¿½ï¿½ Item IDï¿½ï¿½ï¿½Ì´ï¿½. ï¿½ï¿½ï¿½ï¿½
@@ -40680,7 +40674,7 @@ void CGame::BuildItemHandler(int iClientH, char *pData) {
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
 		if (m_pBuildItemList[i] != NULL) {
 			if (memcmp(m_pBuildItemList[i]->m_cName, cName, 20) == 0) {
-				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Ò´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½�?´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½.
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Ò´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½�?´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½.
 
 				// ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½Æ¼* ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½. ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½* ï¿½É·ï¿½ ï¿½ï¿½ï¿½.
 				if (m_pBuildItemList[i]->m_iSkillLimit > m_pClientList[iClientH]->m_cSkillMastery[13]) return;
@@ -40704,7 +40698,7 @@ void CGame::BuildItemHandler(int iClientH, char *pData) {
 								if ((m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_sIDnum == m_pBuildItemList[i]->m_iMaterialItemID[x]) &&
 										  (m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_dwCount >= m_pBuildItemList[i]->m_iMaterialItemCount[x]) &&
 										  (iItemCount[cElementItemID[z]] > 0)) {
-									// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?³ï¿½ï¿½ï¿½ Ã£ï¿½Ò´ï¿½.
+									// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?³ï¿½ï¿½ï¿½ Ã£ï¿½Ò´ï¿½.
 									iTemp = m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_sItemSpecEffectValue2;
 									if (iTemp > m_pClientList[iClientH]->m_cSkillMastery[13]) {
 										// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸ï¿½Ñ´Ù¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
@@ -40738,7 +40732,7 @@ BIH_LOOPBREAK:
 				else dV3 = (double) iTotalValue;
 				dV1 = (double) (dV3 / dV2)*100.0f;
 
-				// ï¿½ï¿½�?·ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½.
+				// ï¿½ï¿½�?·ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½.
 				iTotalValue = (int) dV1;
 
 				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
@@ -40765,7 +40759,7 @@ BIH_LOOPBREAK:
 					pItem->m_sTouchEffectValue3 = timeGetTime();
 
 				} else {
-					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½á°¡ ï¿½Æ´�?°ï¿½ ï¿½ï¿½ï¿½â³ª ï¿½ï¿½î±¸ï¿½ï¿½ï¿½ï¿½
+					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½á°¡ ï¿½Æ´�?°ï¿½ ï¿½ï¿½ï¿½â³ª ï¿½ï¿½î±¸ï¿½ï¿½ï¿½ï¿½
 					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½
 					dwTemp = pItem->m_dwAttribute;
 					dwTemp = dwTemp & 0x0000FFFF;
@@ -40850,13 +40844,13 @@ BIH_LOOPBREAK:
 							cColor = 8;
 						}
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Â»Ã¶Â»Ã³ Ã€Ã�?Â·Ã‚
+						// Â¾Ã†Ã€ÃŒÃ…Ã› Â»Ã¶Â»Ã³ Ã€Ã�?Â·Ã‚
 						pItem->m_cItemColor = cColor;
 
 						// Â°Â¡Âºï¿½*Â¿Ã®, Â°ï¿½*Ãˆï¿½*ÂµÃˆ, Ã‡ÃŠÂ»Ã¬Ã€Ã‡, Â¹ÃŽÃƒÂ¸Ã€Ã‡, ï¿½?Â¤Ã€Ã‡Ã€Ã‡, ï¿½?ÃŸÂµÂ¶Ã€Ã‡, Â¿Â¹Â¸Â®Ã‡Ã‘, Â°ï¿½*Â´Ã«Â¹Â®Â¸ï¿½*Ã€Ã‡
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Main Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
+						// Â¾Ã†Ã€ÃŒÃ…Ã› Main Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
+						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 2; // 10000/29348 = 34%
 						else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -40891,7 +40885,7 @@ BIH_LOOPBREAK:
 						// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶ï¿½?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡ï¿½?Ã€ï¿½?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
 						if (dwValue > 7) dwValue = 7;
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Main Ã†Â¯Â¼ÂºÃ„Â¡, Â°Âª Ã€Ã�?Â·Ã‚
+						// Â¾Ã†Ã€ÃŒÃ…Ã› Main Ã†Â¯Â¼ÂºÃ„Â¡, Â°Âª Ã€Ã�?Â·Ã‚
 						pItem->m_dwAttribute = NULL;
 						dwType = dwType << 20;
 						dwValue = dwValue << 16;
@@ -40908,7 +40902,7 @@ BIH_LOOPBREAK:
 						else if ((iResult >= 9000) && (iResult <= 9554)) dwType = 11; //dwType = 11;
 						else if ((iResult >= 9555) && (iResult <= 10000)) dwType = 12; //dwType = 12;
 
-						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
+						// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 						else if ((iResult >= 12000) && (iResult < 17400)) dwValue = 1; // 6600/29348 = 22.4%
@@ -40945,13 +40939,13 @@ BIH_LOOPBREAK:
 						// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶ï¿½?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡ï¿½?Ã€ï¿½?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
 						if (dwValue > 7) dwValue = 7;
 
-						// Â¹Ã¦Â¾Ã®Â±Â¸ Main Ã†Â¯Â¼ÂºÃ„Â¡, Â°Âª Ã€Ã�?Â·Ã‚
+						// Â¹Ã¦Â¾Ã®Â±Â¸ Main Ã†Â¯Â¼ÂºÃ„Â¡, Â°Âª Ã€Ã�?Â·Ã‚
 						pItem->m_dwAttribute = NULL;
 						dwType = dwType << 20;
 						dwValue = dwValue << 16;
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 
-						// Â¹Ã¦Â¾Ã®Â±Â¸ Sub Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã�?Â·Ã‚ÂµÃ‰ ÃˆÂ®Â·Ã¼Ã€Âº 40%
+						// Â¹Ã¦Â¾Ã®Â±Â¸ Sub Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã�?Â·Ã‚ÂµÃ‰ ÃˆÂ®Â·Ã¼Ã€Âº 40%
 						if (iDice(1, 10000) >= 3000) {
 
 							// ÃˆÃ±Â±ï¿½? Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ÃˆÂ¿Â°Ãº ï¿½?Â¾Â·Ã¹:
@@ -40991,7 +40985,7 @@ BIH_LOOPBREAK:
 
 							pItem->m_cItemColor = cColor;
 
-							// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
+							// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ ï¿½?Â¤ÂµÂµÂ°Âª Ã€Ã�?Â·Ã‚
 							iResult = iDice(1, 30000);
 							if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 							else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 1; // 6600/29348 = 22.4%
@@ -41021,7 +41015,7 @@ BIH_LOOPBREAK:
 							// v2.03 912 Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã¶ï¿½?Ã˜Ã€ÃŒ 2Ã€ÃŒÃ‡ï¿½?Ã€ï¿½?Â¶Â§ Ã†Â¯Â¼ÂºÃ„Â¡ ÃƒÃ–Â´Ã«Â°ÂªÃ€Âº 7
 							if (dwValue > 7) dwValue = 7;
 
-							// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã�?Â·Ã‚
+							// Â¾Ã†Ã€ÃŒÃ…Ã› Sub Ã†Â¯Â¼ÂºÃ„Â¡ Ã€Ã�?Â·Ã‚
 							dwType = dwType << 12;
 							dwValue = dwValue << 8;
 							pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
@@ -41034,7 +41028,7 @@ BIH_LOOPBREAK:
 
 				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 				bAddItem(iClientH, pItem, NULL);
-				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILDITEMSUCCESS, pItem->m_sItemSpecEffectValue2, pItem->m_cItemType, NULL, NULL); // Integerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?±ï¿½ ï¿½ï¿½ï¿½ï¿½
+				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_BUILDITEMSUCCESS, pItem->m_sItemSpecEffectValue2, pItem->m_cItemType, NULL, NULL); // Integerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?±ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 #ifdef DEF_TAIWANLOG
 				// v1.41 ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½Î±×¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
@@ -41056,7 +41050,7 @@ BIH_LOOPBREAK:
 						}
 					}
 
-				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½Ñ´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½Ñµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½*ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½. 
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½Ñ´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½Ñµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½*ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½. 
 				if (m_pBuildItemList[i]->m_iMaxSkill > m_pClientList[iClientH]->m_cSkillMastery[13])
 					CalculateSSN_SkillIndex(iClientH, 13, 1);
 
@@ -41086,7 +41080,7 @@ BIH_LOOPBREAK:
 			// ï¿½ï¿½ ï¿½ï¿½á°¡ ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ñ´ï¿½.
 			iTotalValue = 0;
 			for (x = 0; x < 6; x++)
-			if (m_pBuildItemList[i]->m_iMaterialItemCount[x] == 0) iMatch++; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
+			if (m_pBuildItemList[i]->m_iMaterialItemCount[x] == 0) iMatch++; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.
 			else {
 				bFlag = FALSE;
 				for (z = 0; z < DEF_MAXITEMS; z++)
@@ -41105,7 +41099,7 @@ BIH_LOOPBREAK:
 				}
             
 BIH_LOOPBREAK:;
-				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´Ù¸ï¿½
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?´Ù¸ï¿½
 				if (bFlag == TRUE) iMatch++;
 			}
          
@@ -41126,7 +41120,7 @@ BIH_LOOPBREAK:;
 			else dV3 = (double)iTotalValue;
 			dV1 = (double)(dV3/dV2)*100.0f;
 
-			// ï¿½ï¿½�?·ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½.
+			// ï¿½ï¿½�?·ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½.
 			iTotalValue = (int)dV1;
 
 			//testcode
@@ -41160,7 +41154,7 @@ BIH_LOOPBREAK:;
 					pItem->m_sItemSpecEffectValue1 = (iPlayerSkillLevel/2);
 			}
 			else {
-				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½á°¡ ï¿½Æ´�?°ï¿½ ï¿½ï¿½ï¿½â³ª ï¿½ï¿½î±¸ï¿½ï¿½ï¿½ï¿½
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½á°¡ ï¿½Æ´�?°ï¿½ ï¿½ï¿½ï¿½â³ª ï¿½ï¿½î±¸ï¿½ï¿½ï¿½ï¿½
 
 				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Custom-Madeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½×¸ï¿½ ï¿½Ô·ï¿½
 				dwTemp = pItem->m_dwAttribute;
@@ -41262,14 +41256,14 @@ void CGame::AdminOrder_SetAttackMode(int iClientH, char *pData, DWORD dwMsgSize)
 		// Ã€ÃŒ Â°ÂªÃ€ÃŒ Â¹Â®Ã€Ãš '1'Ã€ÃŒÂ¸Ã© Â°Ã¸Â°Ã? Â¸Ã°ÂµÃ¥ Â¼Â³Ã?Â¤. 0Ã€ÃŒÂ¸Ã© Â°Ã¸Â°Ã? Â¸Ã°ÂµÃ¥ Ã‡Ã˜Ã?Â¦
 		if (token[0] == '1') {
 			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_bIsAttackEnabled = TRUE;
-			// Â°Â¢ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Â°Ã¸Â°Ã?Â¸Ã°ÂµÃ¥ Ã€Â¯ÃˆÂ¿Ã€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+			// Â°Â¢ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Â°Ã¸Â°Ã?Â¸Ã°ÂµÃ¥ Ã€Â¯ÃˆÂ¿Ã€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 			for (i = 1; i < DEF_MAXCLIENTS; i++)
 				if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE) && (m_pClientList[i]->m_cMapIndex == m_pClientList[iClientH]->m_cMapIndex))
 					SendNotifyMsg(NULL, i, DEF_NOTIFY_GLOBALATTACKMODE, (int) m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_bIsAttackEnabled, NULL, NULL, NULL);
 		} else if (token[0] == '0') {
 			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_bIsAttackEnabled = FALSE;
 
-			// Â°Â¢ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Â°Ã¸Â°Ã?Â¸Ã°ÂµÃ¥ Â¹Â«ÃˆÂ¿Ã€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
+			// Â°Â¢ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®ÂµÃ©Â¿Â¡Â°Ã�? Â°Ã¸Â°Ã?Â¸Ã°ÂµÃ¥ Â¹Â«ÃˆÂ¿Ã€Ã“Ã€Â» Â¾Ã‹Â¸Â°Â´Ã™.
 			for (i = 1; i < DEF_MAXCLIENTS; i++)
 				if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE) && (m_pClientList[i]->m_cMapIndex == m_pClientList[iClientH]->m_cMapIndex))
 					SendNotifyMsg(NULL, i, DEF_NOTIFY_GLOBALATTACKMODE, (int) m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_bIsAttackEnabled, NULL, NULL, NULL);
@@ -41510,7 +41504,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, DWORD dwMsgSize) {
 			cName_Slave[0] = '_';
 			cName_Slave[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
 
-			// v1.411 Â¸Ã³Â½ÂºÃ…Ã?Ã€Ã‡ Ã†Â¯Â¼Ã¶ Ã†Â¯Â¼ÂºÃ„Â¡Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
+			// v1.411 Â¸Ã³Â½ÂºÃ…Ã?Ã€Ã‡ Ã†Â¯Â¼Ã¶ Ã†Â¯Â¼ÂºÃ„Â¡Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™.
 
 			if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, NULL, NULL, -1, FALSE, FALSE, FALSE) == FALSE) {
 				// Â½Ã‡Ã†Ã?Ã‡ÃŸÃ€Â¸Â¹Ã‡Â·ÃŽ Â¿Â¹Â¾Ã ÂµÃˆ NameValueÂ¸Â¦ Ã‡Ã˜Ã?Â¦Â½ÃƒÃ…Â²Â´Ã™.
@@ -41652,7 +41646,7 @@ void CGame::CheckSpecialEvent(int iClientH) {
 
 		pItem = new class CItem;
 		if (_bInitItemAttr(pItem, cItemName) == FALSE) {
-			// Â±Â¸Ã€Ã�?Ã‡Ã?Â°Ã­Ã€Ãš Ã‡Ã?Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¾Ã†Ã€ÃŒÃ…Ã› Â¸Â®Â½ÂºÃ†Â®Â»Ã³Â¿Â¡ Â¾Ã¸Â´Ã™. Â±Â¸Ã€Ã�?Ã€ÃŒ ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
+			// Â±Â¸Ã€Ã�?Ã‡Ã?Â°Ã­Ã€Ãš Ã‡Ã?Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â¾Ã†Ã€ÃŒÃ…Ã› Â¸Â®Â½ÂºÃ†Â®Â»Ã³Â¿Â¡ Â¾Ã¸Â´Ã™. Â±Â¸Ã€Ã�?Ã€ÃŒ ÂºÃ’Â°Â¡Â´Ã‰Ã‡Ã?Â´Ã™.
 			delete pItem;
 		} else {
 			if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == TRUE) {
@@ -41663,7 +41657,7 @@ void CGame::CheckSpecialEvent(int iClientH) {
 				wsprintf(G_cTxt, "(*) Get MemorialRing  : Char(%s)", m_pClientList[iClientH]->m_cCharName);
 				PutLogFileList(G_cTxt);
 
-				// Â¾Ã†Ã€ÃŒÃ…Ã›Â¿Â¡ Â»Ã§Â¿Ã«Ã€Ãš Â°Ã­Ã€Â¯ Â¹Ã¸ÃˆÂ£Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™. Â´Ã™Â¸Â¥ Ã„Â³Â¸Â¯Ã…Ã?Â´Ã‚ Ã€ÃŒ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â»Ã§Â¿Ã«Ã‡Ã’ Â¼Ã¶Â°Â¡ Â¾Ã¸Â´Ã™.
+				// Â¾Ã†Ã€ÃŒÃ…Ã›Â¿Â¡ Â»Ã§Â¿Ã«Ã€Ãš Â°Ã­Ã€Â¯ Â¹Ã¸ÃˆÂ£Â¸Â¦ Ã€Ã�?Â·Ã‚Ã‡Ã‘Â´Ã™. Â´Ã™Â¸Â¥ Ã„Â³Â¸Â¯Ã…Ã?Â´Ã‚ Ã€ÃŒ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â»Ã§Â¿Ã«Ã‡Ã’ Â¼Ã¶Â°Â¡ Â¾Ã¸Â´Ã™.
 				pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
 				pItem->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
 				pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
@@ -42231,7 +42225,7 @@ void CGame::RequestRestartHandler(int iClientH) {
 
 		ZeroMemory(cTmpMap, sizeof (cTmpMap));
 		strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);
-		// !!! RequestTeleportHandlerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ m_cMapNameï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½�?·ï¿½ ï¿½Ñ°ï¿½ï¿½Ö¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// !!! RequestTeleportHandlerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ m_cMapNameï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½�?·ï¿½ ï¿½Ñ°ï¿½ï¿½Ö¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		RequestTeleportHandler(iClientH, "2   ", cTmpMap, -1, -1);
 	}
 }
@@ -42433,7 +42427,7 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, DWORD dwMsgSize) {
 
 		cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
 
-		// 1ï¿½ï¿½ È¹ï¿½ï¿½ï¿½ß´ï¿½. Amountï¿½ï¿½ ï¿½Æ´�?´ï¿½!
+		// 1ï¿½ï¿½ È¹ï¿½ï¿½ï¿½ß´ï¿½. Amountï¿½ï¿½ ï¿½Æ´�?´ï¿½!
 		*cp = 1;
 		cp++;
 
@@ -42561,7 +42555,7 @@ void CGame::_DeleteRandomOccupyFlag(int iMapIndex) {
 			iTotalFlags++;
 		}
 
-	// Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Ã‡Ã?Â³Âª Ã?Â¤Ã‡Ã‘Â´Ã™.
+	// Â·Â£Â´Ã½Ã‡Ã?Â°Ã�? Ã‡Ã?Â³Âª Ã?Â¤Ã‡Ã‘Â´Ã™.
 	iTargetFlag = iDice(1, iTotalFlags);
 
 	iCount = 0;
@@ -42586,7 +42580,7 @@ void CGame::_DeleteRandomOccupyFlag(int iMapIndex) {
 				m_pMapList[iMapIndex]->m_iTotalOccupyFlags--;
 
 				iDynamicObjectIndex = m_pMapList[iMapIndex]->m_pOccupyFlag[i]->m_iDynamicObjectIndex;
-				// Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â±ÃªÂ¹ÃŸÃ€ÃŒ Â»Ã§Â¶Ã³Ã?Ã¼Ã€Â» Â¾Ã‹Â¸Â®Â°Ã­
+				// Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â±ÃªÂ¹ÃŸÃ€ÃŒ Â»Ã§Â¶Ã³Ã?Ã¼Ã€Â» Â¾Ã‹Â¸Â®Â°Ã­
 				SendEventToNearClient_TypeB(MSGID_DYNAMICOBJECT, DEF_MSGTYPE_REJECT, m_pDynamicObjectList[iDynamicObjectIndex]->m_cMapIndex,
 						  m_pDynamicObjectList[iDynamicObjectIndex]->m_sX, m_pDynamicObjectList[iDynamicObjectIndex]->m_sY,
 						  m_pDynamicObjectList[iDynamicObjectIndex]->m_sType, iDynamicObjectIndex, NULL);
@@ -42656,7 +42650,7 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 			RequestDeletePartyHandler(iClientH);
 			break;
 
-		case 1: // Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»
+		case 1: // Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»
 			//testcode
 			wsprintf(G_cTxt, "Join Party Req: %s(%d) ID(%d) Stat(%d) ReqJoinH(%d) ReqJoinName(%s)", m_pClientList[iClientH]->m_cCharName, iClientH,
 					  m_pClientList[iClientH]->m_iPartyID, m_pClientList[iClientH]->m_iPartyStatus, m_pClientList[iClientH]->m_iReqJoinPartyClientH,
@@ -42664,7 +42658,7 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 			PutLogList(G_cTxt);
 
 			if ((m_pClientList[iClientH]->m_iPartyID != NULL) || (m_pClientList[iClientH]->m_iPartyStatus != DEF_PARTYSTATUS_NULL)) {
-				// Ã€ÃŒÂ¹ÃŒ Ã†Ã„Ã†Â¼Â¿Â¡ Â°Â¡Ã€Ã�?Ã‡Ã˜ Ã€Ã–Â´Ã™Â¸Ã© Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+				// Ã€ÃŒÂ¹ÃŒ Ã†Ã„Ã†Â¼Â¿Â¡ Â°Â¡Ã€Ã�?Ã‡Ã˜ Ã€Ã–Â´Ã™Â¸Ã© Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 				SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PARTY, 7, 0, NULL, NULL);
 				m_pClientList[iClientH]->m_iReqJoinPartyClientH = NULL;
 				ZeroMemory(m_pClientList[iClientH]->m_cReqJoinPartyName, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
@@ -42679,7 +42673,7 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 					// Â°Â°Ã€Âº Ã€ÃŒÂ¸Â§Ã€Â» Â°Â¡Ã?Ã¸ Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â¸Â¦ ÃƒÂ£Â¾Ã’Â´Ã™.
 					sAppr2 = (short) ((m_pClientList[i]->m_sAppr2 & 0xF000) >> 12);
 					if (sAppr2 != 0) {
-						// Ã€Ã¼Ã…Ãµ Â¸Ã°ÂµÃ¥ Â»Ã³Ã…Ã‚Ã€Ã‡ Â»Ã³Â´Ã«Â¿Â¡Â°Ã�?Â´Ã‚ Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
+						// Ã€Ã¼Ã…Ãµ Â¸Ã°ÂµÃ¥ Â»Ã³Ã…Ã‚Ã€Ã‡ Â»Ã³Â´Ã«Â¿Â¡Â°Ã�?Â´Ã‚ Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â½Ã…ÃƒÂ»Ã€Â» Ã‡Ã’ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 						SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PARTY, 7, 0, NULL, NULL);
 						//testcode
 						PutLogList("Join Party Reject (2)");
@@ -42689,7 +42683,7 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 						//testcode
 						PutLogList("Join Party Reject (3)");
 					} else if (m_pClientList[i]->m_iPartyStatus == DEF_PARTYSTATUS_PROCESSING) {
-						// Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�?Ã€Â» Â½Ã…ÃƒÂ»Ã‡Ã‘ Â´Ã«Â»Ã³Ã€ÃŒ Ã€ÃŒÂ¹ÃŒ Â´Ã™Â¸Â¥ Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â°Ã¼Â·Ãƒ ÃƒÂ³Â¸Â®Â¸Â¦ Ã‡Ã?Â°Ã­ Ã€Ã–Â´Ã™. Â½Ã…ÃƒÂ» ÂºÃ’Â°Â¡.
+						// Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�?Ã€Â» Â½Ã…ÃƒÂ»Ã‡Ã‘ Â´Ã«Â»Ã³Ã€ÃŒ Ã€ÃŒÂ¹ÃŒ Â´Ã™Â¸Â¥ Ã†Ã„Ã†Â¼ Â°Â¡Ã€Ã�? Â°Ã¼Â·Ãƒ ÃƒÂ³Â¸Â®Â¸Â¦ Ã‡Ã?Â°Ã­ Ã€Ã–Â´Ã™. Â½Ã…ÃƒÂ» ÂºÃ’Â°Â¡.
 						SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PARTY, 7, 0, NULL, NULL);
 						//testcode
 						PutLogList("Join Party Reject (4)");
@@ -42701,13 +42695,13 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 						ZeroMemory(m_pClientList[iClientH]->m_cReqJoinPartyName, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 						m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 					} else {
-						// Â°Â¡Ã€Ã�? Â½Ã‚Ã€ÃŽ Â¿Â©ÂºÃŽÂ¸Â¦ Â¹Â¯Â´Ã‚Â´Ã™.
+						// Â°Â¡Ã€Ã�? Â½Ã‚Ã€ÃŽ Â¿Â©ÂºÃŽÂ¸Â¦ Â¹Â¯Â´Ã‚Â´Ã™.
 						m_pClientList[i]->m_iReqJoinPartyClientH = iClientH;
 						ZeroMemory(m_pClientList[i]->m_cReqJoinPartyName, sizeof (m_pClientList[i]->m_cReqJoinPartyName));
 						strcpy(m_pClientList[i]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName);
 						SendNotifyMsg(NULL, i, DEF_NOTIFY_QUERY_JOINPARTY, NULL, NULL, NULL, m_pClientList[iClientH]->m_cCharName);
 
-						// Â½Ã…ÃƒÂ»Ã‡Ã‘ ÃƒÃ¸Â¿Â¡Â´Ã‚ Ã†Ã„Ã†Â¼ Â¸Â¶Â½ÂºÃ…Ã?Â°Â¡ ÂµÃ‰ Ã„Â³Â¸Â¯Ã…Ã?Ã€Ã‡ Ã€ÃŽÂµÂ¦Â½ÂºÂ¸Â¦ Â³Ã–Â¾Ã®Ã?Ãœ. ÃƒÃ«Â¼Ã’Ã‡Ã’Â¶Â§ ÃƒÂ³Â¸Â®Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?Ã€Ã“.
+						// Â½Ã…ÃƒÂ»Ã‡Ã‘ ÃƒÃ¸Â¿Â¡Â´Ã‚ Ã†Ã„Ã†Â¼ Â¸Â¶Â½ÂºÃ…Ã?Â°Â¡ ÂµÃ‰ Ã„Â³Â¸Â¯Ã…Ã?Ã€Ã‡ Ã€ÃŽÂµÂ¦Â½ÂºÂ¸Â¦ Â³Ã–Â¾Ã®Ã?Ãœ. ÃƒÃ«Â¼Ã’Ã‡Ã’Â¶Â§ ÃƒÂ³Â¸Â®Ã‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã�?Ã€Ã“.
 						m_pClientList[iClientH]->m_iReqJoinPartyClientH = i;
 						ZeroMemory(m_pClientList[iClientH]->m_cReqJoinPartyName, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 						strcpy(m_pClientList[iClientH]->m_cReqJoinPartyName, m_pClientList[i]->m_cCharName);
@@ -42759,7 +42753,7 @@ BOOL CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 					m_pClientList[sAttackerH]->m_iContribution -= 10;
 				}
 
-				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
 						// Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Ã?Ã€Ã‡ Â¸ÃžÂ½ÃƒÃ?Ã¶ Ã‚Ã¸Â¿Ã€Â·ÃŽ
@@ -42788,7 +42782,7 @@ BOOL CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 					m_pClientList[sAttackerH]->m_iContribution -= 10;
 				}
 
-				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
 						//
@@ -42824,7 +42818,7 @@ BOOL CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 					m_pClientList[sAttackerH]->m_iContribution -= 10;
 				}
 
-				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
 						// Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Ã?Ã€Ã‡ Â¸ÃžÂ½ÃƒÃ?Ã¶ Ã‚Ã¸Â¿Ã€Â·ÃŽ
@@ -42853,7 +42847,7 @@ BOOL CGame::bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAtt
 					m_pClientList[sAttackerH]->m_iContribution -= 10;
 				}
 
-				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+				// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â°Ã±Ã€ÃŽ ÂµÃ†Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
 						//
@@ -42877,7 +42871,7 @@ void CGame::EnergySphereProcessor(BOOL bIsAdminCreate, int iClientH) {
 		// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â¸Â¸ÂµÃ©Â¾Ã®Ã?Ãº ÃˆÂ®Â·Ã¼Ã€Âº 3ÃƒÃŠÂ¸Â¶Â´Ã™ 2000ÂºÃ?Ã€Ã‡ 1
 		if (iDice(1, 2000) != 123) return;
 		// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â´Ã‚ ÃƒÃ‘ Â»Ã§Â¿Ã«Ã€Ãš 500Â¸Ã­ Ã€ÃŒÂ»Ã³Ã€Ã?Â¶Â§Â¸Â¸ Â¸Â¸ÂµÃ©Â¾Ã® Ã?Ã¸Â´Ã™.
-		if (m_iTotalGameServerClients < 500) return;
+		if (m_iTotalClients < 500) return;
 
 		// Â¸Â¸Â¾Ã  Ã€ÃŒÂ¹ÃŒ Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Ã€Ã‡ Â°Ã±Ã€ÃŒ Ã‡Ã’Â´Ã§ÂµÃ‡Â¾Ã® Ã€Ã–Ã€Â¸Â¸Ã© Â¸Â¸ÂµÃ©Â¸Ã© Â¾ÃˆÂµÃˆÂ´Ã™.
 		if (m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex >= 0) return;
@@ -42915,7 +42909,7 @@ void CGame::EnergySphereProcessor(BOOL bIsAdminCreate, int iClientH) {
 		// Ã‡Ã¶Ã€Ã§ Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã® Â°Ã± Ã€ÃŽÂµÂ¦Â½Âº Ã€ÃºÃ€Ã¥
 		m_pMapList[m_iMiddlelandMapIndex]->m_iCurEnergySphereGoalPointIndex = iTemp;
 
-		// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â¸Â¸ÂµÃ©Â¾Ã® Ã?Â³Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+		// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â¸Â¸ÂµÃ©Â¾Ã® Ã?Â³Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
 				SendNotifyMsg(NULL, i, DEF_NOTIFY_ENERGYSPHERECREATED, pX, pY, NULL, NULL);
@@ -42963,7 +42957,7 @@ void CGame::EnergySphereProcessor(BOOL bIsAdminCreate, int iClientH) {
 		// Ã‡Ã¶Ã€Ã§ Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã® Â°Ã± Ã€ÃŽÂµÂ¦Â½Âº Ã€ÃºÃ€Ã¥
 		m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_iCurEnergySphereGoalPointIndex = iTemp;
 
-		// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â¸Â¸ÂµÃ©Â¾Ã® Ã?Â³Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+		// Â¿Â¡Â³ÃŠÃ?Ã¶ Â½ÂºÃ‡Ã‡Â¾Ã®Â°Â¡ Â¸Â¸ÂµÃ©Â¾Ã® Ã?Â³Ã€Â½Ã€Â» Â¸Ã°ÂµÃ§ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_bIsInitComplete == TRUE)) {
 				SendNotifyMsg(NULL, i, DEF_NOTIFY_ENERGYSPHERECREATED, pX, pY, NULL, NULL);
@@ -43026,7 +43020,7 @@ void CGame::CancelQuestHandler(int iClientH) {
 int CGame::iGetItemWeight(CItem *pItem, int iCount) {
 	int iWeight;
 
-	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Ã‡ Â¼Ã¶Â·Â®Â¿Â¡ ÂµÃ»Â¸Â¥ Â¹Â«Â°Ã�?Â¸Â¦ Â°Ã¨Â»ÃªÃ‡Ã‘Â´Ã™. GoldÃ€ÃŽ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â¸Â¦ 20ÂºÃ?Ã€Ã‡ 1Â·ÃŽ ÂºÂ¯Â°Ã¦
+	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Ã‡ Â¼Ã¶Â·Â®Â¿Â¡ ÂµÃ»Â¸Â¥ Â¹Â«Â°Ã�?Â¸Â¦ Â°Ã¨Â»ÃªÃ‡Ã‘Â´Ã™. GoldÃ€ÃŽ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â¸Â¦ 20ÂºÃ?Ã€Ã‡ 1Â·ÃŽ ÂºÂ¯Â°Ã¦
 	iWeight = (pItem->m_wWeight);
 	if (iCount < 0) iCount = 1;
 	iWeight = iWeight * iCount;
@@ -43877,7 +43871,7 @@ void CGame::RemoveCrusadeStructures() {
 }
 
 void CGame::RequestHelpHandler(int iClientH) {
-	// Ã‡Ã¯Ã‡Ã? Â¿Ã¤ÃƒÂ»Ã€ÃŒÂ´Ã™. Â±Ã¦ÂµÃ¥ Â¸Â¶Â½ÂºÃ…Ã?Â¿Â¡Â°Ã�? Ã?Ã‚Ã‡Â¥Â¸Â¦ Ã€Ã¼Â´ÃžÃ‡Ã˜ Ã?Ã˜Â´Ã™.
+	// Ã‡Ã¯Ã‡Ã? Â¿Ã¤ÃƒÂ»Ã€ÃŒÂ´Ã™. Â±Ã¦ÂµÃ¥ Â¸Â¶Â½ÂºÃ…Ã?Â¿Â¡Â°Ã�? Ã?Ã‚Ã‡Â¥Â¸Â¦ Ã€Ã¼Â´ÃžÃ‡Ã˜ Ã?Ã˜Â´Ã™.
 	register int i;
 
 	if (m_pClientList[iClientH] == NULL) return;
@@ -45282,7 +45276,7 @@ BOOL CGame::_bCheckGoodItem(class CItem * pItem) {
 			return TRUE; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ±Ã¢ Â¶Â«Â½Ãƒ Â±Ã¢Â·Ã?...
 			break;
 		default:
-			// v2.17 2002-7-31 Ã?Â¦Ã€Ã› Â¾Ã†Ã€ÃŒÃ…Ã›ÂµÂµ Â·ÃŽÂ±Ã—Â¿Â¡ Â³Â²Â°Ã�? Ã‡Ã‘Â´Ã™.
+			// v2.17 2002-7-31 Ã?Â¦Ã€Ã› Â¾Ã†Ã€ÃŒÃ…Ã›ÂµÂµ Â·ÃŽÂ±Ã—Â¿Â¡ Â³Â²Â°Ã�? Ã‡Ã‘Â´Ã™.
 			if ((pItem->m_dwAttribute & 0xF0F0F001) == NULL) return FALSE; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›ÂµÃŽ Â¾Ã†Â´Ã?Â±Â¸ Ã†Â¯Â¼ÂºÃ„Â¡ÂµÂµ Â¾Ã¸Â´Ã™Â¸Ã© ÂºÂ°Â·Ã§..
 			else if (pItem->m_sIDnum > 30) return TRUE; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Âº Â¾Ã†Â´Ã?Ã?Ã¶Â¸Â¸ Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã–Â°Ã­ Â´ÃœÂ°Ã‹Â·Ã¹Â°Â¡ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Ã?Ã?Ã€Âº Â¾Ã†Ã…Ã›..
 			else return FALSE; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›ÂµÃŽ Â¾Ã†Â´Ã?Â±Â¸ Ã†Â¯Â¼ÂºÃ„Â¡Â´Ã‚ Ã€Ã–Ã?Ã¶Â¸Â¸ Â´ÃœÂ°Ã‹Â·Ã¹Â¶Ã³Â¸Ã© ÂºÂ°Â·Ã§...
@@ -45318,9 +45312,9 @@ BOOL CGame::_bCheckGoodItem(class CItem * pItem) {
 
 	if ((m_pClientList[iClientH]->m_iPartyID != NULL) && (m_pClientList[iClientH]->m_iPartyStatus == DEF_PARTYSTATUS_CONFIRM) &&
 		((dwTime - m_pClientList[iClientH]->m_dwLastActionTime) < 1000*60*5)) {
-		// ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½Î¾ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½�?¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¶ï¿½ï¿½ï¿½ï¿½.
+		// ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½Î¾ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½�?¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¶ï¿½ï¿½ï¿½ï¿½.
 		if ((iExp >= m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers) && (m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers > 0)) {
-			// ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½�?¹ï¿½
+			// ï¿½�?´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½�?¹ï¿½
 
 			// ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			dV1 = (double)m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers;
@@ -45528,7 +45522,7 @@ void CGame::GetExp(int iClientH, int iExp, BOOL bIsAttackerOwn)
 		((dwTime - m_pClientList[iClientH]->m_dwLastActionTime) < 1000*60*5)) {
 			// Ã†Ã„Ã†Â¼Â°Â¡ Â¸ÃŽÂ¾Ã®Ã?Â® Ã€Ã–Â´Ã™Â¸Ã© Â°Ã¦Ã‡Ã¨Ã„Â¡ ÂºÃ?Â¹Ã¨ Â¹Ã¦Â¹Ã½Ã€ÃŒ Â´ÃžÂ¶Ã³Ã?Ã¸Â´Ã™.
 			if ((iExp >= m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers) && (m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers > 0)) {
-				// Ã€Ã?Â´Ãœ Â¾Ã²Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡Â°Â¡ ÃƒÃ‘ Ã†Ã„Ã†Â¼ Â¸Ã¢Â¹Ã¶ Â¼Ã¶ÂºÂ¸Â´Ã™ Ã€ÃŒÂ»Ã³Ã€ÃŒÂ¶Ã³Â¸Ã© ÂµÂ¿ÂµÃ®Ã‡Ã?Â°Ã�? ÂºÃ?Â¹Ã¨
+				// Ã€Ã?Â´Ãœ Â¾Ã²Ã€Âº Â°Ã¦Ã‡Ã¨Ã„Â¡Â°Â¡ ÃƒÃ‘ Ã†Ã„Ã†Â¼ Â¸Ã¢Â¹Ã¶ Â¼Ã¶ÂºÂ¸Â´Ã™ Ã€ÃŒÂ»Ã³Ã€ÃŒÂ¶Ã³Â¸Ã© ÂµÂ¿ÂµÃ®Ã‡Ã?Â°Ã�? ÂºÃ?Â¹Ã¨
 
 				// Ã†Ã„Ã†Â¼Â¿Ã¸ÂµÃ© Â¼Ã¶Â¿Â¡ ÂµÃ»Â¶Ã³ Â°Ã¦Ã‡Ã¨Ã„Â¡ Â·Â® Ã?ÃµÂ°Â¡
 				dV1 = (double)m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iTotalMembers;
@@ -46085,7 +46079,7 @@ void CGame::AdminOrder_MonsterCount(int iClientH, char* pData, DWORD dwMsgSize) 
 	SendNotifyMsg(0, iClientH, DEF_NOTIFY_MONSTERCOUNT, iMonsterCount, NULL, NULL, NULL);
 }
 
-// v2.17 2002-7-15 ï¿½î¿µï¿½ï¿½ ï¿½ï¿½É¾ï¿½ï¿½ ï¿½ï¿½ï¿½�?½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+// v2.17 2002-7-15 ï¿½î¿µï¿½ï¿½ ï¿½ï¿½É¾ï¿½ï¿½ ï¿½ï¿½ï¿½�?½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 
 void CGame::AdminOrder_SetForceRecallTime(int iClientH, char *pData, DWORD dwMsgSize) {
 	class CStrTok * pStrTok;
@@ -47037,7 +47031,7 @@ void CGame::OnTimer(char cType) {
 	if ((dwTime - m_dwGameTime4) > 600) {
 		MobGenerator();
 
-		// v1.432-3 Sub-Log-Socketï¿½ï¿½ ï¿½Ñ²ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
+		// v1.432-3 Sub-Log-Socketï¿½ï¿½ ï¿½Ñ²ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 		if (m_iSubLogSockInitIndex < DEF_MAXSUBLOGSOCK) {
 			m_pSubLogSock[m_iSubLogSockInitIndex] = new class XSocket(m_hWnd, DEF_SERVERSOCKETBLOCKLIMIT);
 			m_pSubLogSock[m_iSubLogSockInitIndex]->bConnect(m_cLogServerAddr, m_iLogServerPort, (WM_ONLOGSOCKETEVENT + m_iSubLogSockInitIndex + 1));
@@ -47092,7 +47086,7 @@ void CGame::OnTimer(char cType) {
 		m_dwWhetherTime = dwTime;
 	}
 
-	// v1.4311-3 ï¿½ß°ï¿½  ï¿½Î½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë·ï¿½ï¿½Ø´ï¿½. 1000*60*60*2 = 7200000
+	// v1.4311-3 ï¿½ß°ï¿½  ï¿½Î½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë·ï¿½ï¿½Ø´ï¿½. 1000*60*60*2 = 7200000
 	if ((dwTime - m_dwCanFightzoneReserveTime) > 7200000) {
 		FightzoneReserveProcessor();
 		m_dwCanFightzoneReserveTime = dwTime;
@@ -47109,7 +47103,7 @@ void CGame::OnTimer(char cType) {
 				bInit();
 				m_iAutoRebootingCount++;
 			} else {
-				// v1.432 ï¿½ï¿½ï¿½ï¿½ ï¿½Ë´Ù¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½Ù¿î¿¡ ï¿½ï¿½î°£ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Þµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Î´Â°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. v2.05
+				// v1.432 ï¿½ï¿½ï¿½ï¿½ ï¿½Ë´Ù¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½Ù¿î¿¡ ï¿½ï¿½î°£ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Þµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½�?±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Î´Â°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. v2.05
 				if (m_iFinalShutdownCount == 0) m_iFinalShutdownCount = 20;
 			}
 		}
@@ -47118,7 +47112,7 @@ void CGame::OnTimer(char cType) {
 
 
 
-	// v1.432-2 10ï¿½Ê¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½�?¼ï¿½
+	// v1.432-2 10ï¿½Ê¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½�?¼ï¿½
 	if ((dwTime - m_dwMapSectorInfoTime) > 1000 * 10) {
 		m_dwMapSectorInfoTime = dwTime;
 		UpdateMapSectorInfo();
@@ -47600,7 +47594,7 @@ void CGame::_ClearExchangeStatus(int iClientH) {
 	ZeroMemory(m_pClientList[iClientH]->m_cExchangeName, sizeof (m_pClientList[iClientH]->m_cExchangeName));
 }
 
-// v2.17 2002-7-15 ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+// v2.17 2002-7-15 ï¿½ï¿½ï¿½�?¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 
 void CGame::SetForceRecallTime(int iClientH) {
 	int iTL_ = 0;
@@ -47627,11 +47621,11 @@ void CGame::SetForceRecallTime(int iClientH) {
 				case 4: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeThursday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½  3ï¿½ï¿½ 
 				case 5: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeFriday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
 				case 6: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeSaturday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½ 45ï¿½ï¿½ 
 				case 0: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeSunday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
 			}
 		}
 	} else { // if (m_pClientList[iClientH]->m_iTimeLeft_ForceRecall == 0) 
@@ -47639,7 +47633,7 @@ void CGame::SetForceRecallTime(int iClientH) {
 			iTL_ = 60 * m_sForceRecallTime;
 		} else {
 
-			// ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½. ï¿½ï¿½ï¿½�?ºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ 1ï¿½ï¿½ ï¿½Ê±ï¿½È­ 
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½. ï¿½ï¿½ï¿½�?ºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ 1ï¿½ï¿½ ï¿½Ê±ï¿½È­ 
 			GetLocalTime(&SysTime);
 			switch (SysTime.wDayOfWeek) {
 				case 1: iTL_ = 60 * m_sRaidTimeMonday;
@@ -47651,11 +47645,11 @@ void CGame::SetForceRecallTime(int iClientH) {
 				case 4: iTL_ = 60 * m_sRaidTimeThursday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½  3ï¿½ï¿½
 				case 5: iTL_ = 60 * m_sRaidTimeFriday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
 				case 6: iTL_ = 60 * m_sRaidTimeSaturday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½ 45ï¿½ï¿½ 
 				case 0: iTL_ = 60 * m_sRaidTimeSunday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
 				default: iTL_ = 60 * 1;
 					break;
 			}
@@ -47709,11 +47703,11 @@ void CGame::CheckForceRecallTime(int iClientH) {
 				case 4: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeThursday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½  3ï¿½ï¿½ 
 				case 5: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeFriday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
 				case 6: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeSaturday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½ 45ï¿½ï¿½ 
 				case 0: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * m_sRaidTimeSunday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
 				default: m_pClientList[iClientH]->m_iTimeLeft_ForceRecall = 60 * 1;
 					break; //
 			}
@@ -47735,11 +47729,11 @@ void CGame::CheckForceRecallTime(int iClientH) {
 				case 4: iTL_ = 60 * m_sRaidTimeThursday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½  3ï¿½ï¿½
 				case 5: iTL_ = 60 * m_sRaidTimeFriday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 15ï¿½ï¿½
 				case 6: iTL_ = 60 * m_sRaidTimeSaturday;
 					break; //ï¿½ï¿½ï¿½ï¿½ï¿½ 45ï¿½ï¿½ 
 				case 0: iTL_ = 60 * m_sRaidTimeSunday;
-					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
+					break; //ï¿½�?¿ï¿½ï¿½ï¿½ 60ï¿½ï¿½
 				default: iTL_ = 60 * 1;
 					break;
 			}
@@ -48792,19 +48786,19 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							break;
 					}
 				}
-				// 0-None 1-í•„ì‚´ê¸°ëŒ€ë¯¸ì§€ì¶�?ê°€ 2-ì¤‘ë�?…íš¨ê³¼ 3-ì •ì�?˜ì�?˜  
-				// 5-ë¯¼ì²©ì�?˜ 6-ê°€ë²¼ìš´ 7-ì˜ˆë¦¬í•œ 8-ê°•í™�?ë�?œ 9-ê³ ëŒ€ë¬¸ëª…ì�?˜ 10-ë§ˆë²• ì„±ê³µì�?˜
-				// ì•„ì�?´í…œì�?„ ë§Œë“¤ê³  
+				// 0-None 1-í•„ì‚´ê¸°ëŒ€ë¯¸ì§€ì¶�?ê°€ 2-ì¤‘ë�?…íš¨ê³¼ 3-ì •ì�?˜ì�?˜  
+				// 5-ë¯¼ì²©ì�?˜ 6-ê°€ë²¼ìš´ 7-ì˜ˆë¦¬í•œ 8-ê°•í™�?ë�?œ 9-ê³ ëŒ€ë¬¸ëª…ì�?˜ 10-ë§ˆë²• ì„±ê³µì�?˜
+				// ì•„ì�?´í…œì�?„ ë§Œë“¤ê³  
 				pItem = new class CItem;
-				// ê¸°ë³¸ íŠ¹ì„±ìœ¼ë¡œ ì•„ì�?´í…œ ìƒ�?ì„± 
+				// ê¸°ë³¸ íŠ¹ì„±ìœ¼ë¡œ ì•„ì�?´í…œ ìƒ�?ì„± 
 				if (_bInitItemAttr(pItem, iItemID) == FALSE) {
 					delete pItem;
 					return;
 				}
 
 				if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK) {
-					// °ø°�? ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â �?¢µÎ»ç¸¦ ¼±ÅÃ 
-					// °¡º­¿î(3%) °­È­µÈ(7%) ÇÊ»ìÀÇ(15%) ¹ÎÃ¸ÀÇ(20%) �?¤ÀÇÀÇ(20%) �?ßµ¶ÀÇ(16%) ¿¹¸®ÇÑ(16%) °í´ë¹®¸íÀÇ(3%)
+					// °ø°�? ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â �?¢µÎ»ç¸¦ ¼±ÅÃ 
+					// °¡º­¿î(3%) °­È­µÈ(7%) ÇÊ»ìÀÇ(15%) ¹ÎÃ¸ÀÇ(20%) �?¤ÀÇÀÇ(20%) �?ßµ¶ÀÇ(16%) ¿¹¸®ÇÑ(16%) °í´ë¹®¸íÀÇ(3%)
 					iResult = iDice(1, 10000);
 					if ((iResult >= 1) && (iResult <= 299)) {
 						dwType = 6;
@@ -48835,10 +48829,10 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					// ¾ÆÀÌÅÛ »ö»ó ÀÔ·Â 
 					pItem->m_cItemColor = cColor;
 
-					// °¡º­¿î, °­È­µÈ, ÇÊ»ìÀÇ, ¹ÎÃ¸ÀÇ, �?¤ÀÇÀÇ, �?ßµ¶ÀÇ, ¿¹¸®ÇÑ, °í´ë¹®¸íÀÇ
-					// ¾ÆÀÌÅÛ Main Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
+					// °¡º­¿î, °­È­µÈ, ÇÊ»ìÀÇ, ¹ÎÃ¸ÀÇ, �?¤ÀÇÀÇ, �?ßµ¶ÀÇ, ¿¹¸®ÇÑ, °í´ë¹®¸íÀÇ
+					// ¾ÆÀÌÅÛ Main Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 
-					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
+					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 					iResult = iDice(1, 30000);
 					if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 					else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -48855,12 +48849,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
-					// ¹«±âÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
+					// ¹«±âÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 					switch (dwType) {
-						case 1: // ÇÊ»ì Å¸°�? ÃÖÀú +5
+						case 1: // ÇÊ»ì Å¸°�? ÃÖÀú +5
 							if (dwValue <= 5) dwValue = 5;
 							break;
-						case 2: // �?ßµ¶ Å¸°�? ÃÖÀú +20
+						case 2: // �?ßµ¶ Å¸°�? ÃÖÀú +20
 							if (dwValue <= 4) dwValue = 4;
 							break;
 						case 6: // °æ·®È­ ÃÖÀú  +16%
@@ -48870,7 +48864,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							if (dwValue <= 2) dwValue = 2;
 							break;
 					}
-					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
+					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
 					// ¾ÆÀÌÅÛ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
@@ -48882,19 +48876,19 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (iDice(1, 10000) >= 6000) {
 
-						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
-						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
-						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
-						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
+						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
+						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
+						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
+						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
 
-						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°�? ¸í�?ß Ãß°¡(50%), ¿¬Å¸ Å¸°�?Ä¡ �?õ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
+						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°�? ¸í�?ß Ãß°¡(50%), ¿¬Å¸ Å¸°�?Ä¡ �?õ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
 						iResult = iDice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 4999)) dwType = 2;
 						else if ((iResult >= 5000) && (iResult <= 8499)) dwType = 10;
 						else if ((iResult >= 8500) && (iResult <= 9499)) dwType = 12;
 						else if ((iResult >= 9500) && (iResult <= 10000)) dwType = 11;
 
-						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 						else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -48911,22 +48905,22 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
-						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
+						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 						switch (dwType) {
-							case 2: // °ø°�?¸í�?ß ÃÖÀú +21%
+							case 2: // °ø°�?¸í�?ß ÃÖÀú +21%
 								if (dwValue <= 3) dwValue = 3;
 								break;
-							case 10: // ¿¬¼Ó Å¸°�? ÃÖÀú +1 ÃÖ´ë 7
+							case 10: // ¿¬¼Ó Å¸°�? ÃÖÀú +1 ÃÖ´ë 7
 								if (dwValue > 7) dwValue = 7;
 								break;
-							case 11: // Exp´Â ¹«�?¶°Ç +20%
+							case 11: // Exp´Â ¹«�?¶°Ç +20%
 								dwValue = 2;
 								break;
-							case 12: // Gold´Â ¹«�?¶°Ç +50%
+							case 12: // Gold´Â ¹«�?¶°Ç +50%
 								dwValue = 5;
 								break;
 						}
-						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
+						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
 						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ ÀÔ·Â
@@ -48936,8 +48930,8 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
 				} else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE) {
-					// ¸¶¹ý °ø°�? ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â �?¢µÎ»ç¸¦ ¼±ÅÃ 10, 11
-					// ¸¶¹ý ¼º°øÀÇ(100%) <- ÇöÀç ¸¶¹ý �?öÆÎÀÌ¿¡ ºÙÀ» ¼ö ÀÖ´Â ¿ä¼Ò°¡ ÀÌ°Å ¹Û¿¡ ¾ø´Ù.
+					// ¸¶¹ý °ø°�? ¹«±â·ù¿¡ ºÙÀ» ¼ö ÀÖ´Â �?¢µÎ»ç¸¦ ¼±ÅÃ 10, 11
+					// ¸¶¹ý ¼º°øÀÇ(100%) <- ÇöÀç ¸¶¹ý �?öÆÎÀÌ¿¡ ºÙÀ» ¼ö ÀÖ´Â ¿ä¼Ò°¡ ÀÌ°Å ¹Û¿¡ ¾ø´Ù.
 					dwType = 10;
 					cColor = 5;
 
@@ -48960,7 +48954,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
-					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
+					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
 					// ¹æ¾î±¸ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
@@ -48972,19 +48966,19 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (iDice(1, 10000) >= 6000) {
 
-						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
-						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
-						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
-						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
+						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
+						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
+						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
+						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
 
-						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°�? ¸í�?ß Ãß°¡(50%), ¿¬Å¸ Å¸°�?Ä¡ �?õ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
+						// ¹«±â·ùÀÌ±â ¶§¹®¿¡ °ø°�? ¸í�?ß Ãß°¡(50%), ¿¬Å¸ Å¸°�?Ä¡ �?õ°¡(35%), ´õ ¸¹Àº Gold(10%), ´õ ¸¹Àº °æÇèÄ¡(5%)
 						iResult = iDice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 4999)) dwType = 2;
 						else if ((iResult >= 5000) && (iResult <= 8499)) dwType = 10;
 						else if ((iResult >= 8500) && (iResult <= 9499)) dwType = 12;
 						else if ((iResult >= 9500) && (iResult <= 10000)) dwType = 11;
 
-						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 						else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -49001,21 +48995,21 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
-						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
+						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
-						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
+						// ¹«±âÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 						switch (dwType) {
-							case 2: // °ø°�?¸í�?ß ÃÖÀú +21%
+							case 2: // °ø°�?¸í�?ß ÃÖÀú +21%
 								if (dwValue <= 3) dwValue = 3;
 								break;
-							case 10: // ¿¬¼Ó Å¸°�? ÃÖÀú +1 ÃÖ´ë 7
+							case 10: // ¿¬¼Ó Å¸°�? ÃÖÀú +1 ÃÖ´ë 7
 								if (dwValue > 7) dwValue = 7;
 								break;
-							case 11: // Exp´Â ¹«�?¶°Ç +20%
+							case 11: // Exp´Â ¹«�?¶°Ç +20%
 								dwValue = 2;
 								break;
-							case 12: // Gold´Â ¹«�?¶°Ç +50%
+							case 12: // Gold´Â ¹«�?¶°Ç +50%
 								dwValue = 5;
 								break;
 						}
@@ -49026,7 +49020,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						pItem->m_dwAttribute = pItem->m_dwAttribute | dwType | dwValue;
 					}
 				} else if (pItem->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE) {
-					// ¹æ¾î±¸¿¡ ¸Â´Â �?¢µÎ»ç¿�? Æ¯¼ºÄ¡¸¦ ¼±ÅÃ, ÇÒ´çÇÑ´Ù.
+					// ¹æ¾î±¸¿¡ ¸Â´Â �?¢µÎ»ç¿�? Æ¯¼ºÄ¡¸¦ ¼±ÅÃ, ÇÒ´çÇÑ´Ù.
 
 					// °­È­µÈ(60%) °¡º­¿î (30%) ¸¶³ª º¯È¯ÀÇ(5%) ÇÊ»ì ÃæÀüÀÇ(5%)
 					iResult = iDice(1, 10000);
@@ -49035,7 +49029,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 9000) && (iResult <= 9554)) dwType = 11; //dwType = 11;
 					else if ((iResult >= 9555) && (iResult <= 10000)) dwType = 12; //dwType = 12;
 
-					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
+					// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 					iResult = iDice(1, 30000);
 					if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 					else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -49052,7 +49046,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 					else dwValue = 1; // v2.03 906
 
-					// ¹æ¾î±¸ÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
+					// ¹æ¾î±¸ÀÇ Main Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 					switch (dwType) {
 						case 6: // °æ·®È­ ÃÖÀú +16%
 							if (dwValue <= 4) dwValue = 4;
@@ -49069,7 +49063,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 							if ((iGenLevel <= 3) && (dwValue > 2)) dwValue = 2;
 							break;
 					}
-					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
+					// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 					if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
 					// ¹æ¾î±¸ Main Æ¯¼ºÄ¡, °ª ÀÔ·Â
@@ -49081,14 +49075,14 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					// ¹æ¾î±¸ Sub Æ¯¼ºÄ¡°¡ ÀÔ·ÂµÉ È®·üÀº 40%
 					if (iDice(1, 10000) >= 6000) {
 
-						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
-						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
-						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
-						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
+						// Èñ±�? ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ È¿°ú �?¾·ù: 
+						//Ãß°¡ µ¶¼ºÀúÇ×(1), Ãß°¡ ¸í�?ß°ª(2), Ãß°¡ ¹æ¾î°ª(3), HP È¸º¹·® Ãß°¡(4), SP È¸º¹·® Ãß°¡(5)
+						//MP È¸º¹·® Ãß°¡(6), Ãß°¡ ¸¶¹ýÀúÇ×(7), ¹°¸® ´ë¹Ì�?ö Èí¼ö(8), ¸¶¹ý ´ë¹Ì�?ö Èí¼ö(9)
+						//¿¬Å¸ ´ë¹Ì�?ö Ãß°¡(10), ´õ ¸¹Àº °æÇèÄ¡(11), ´õ¸¹Àº Gold(12)
 
 						// ¹æ¾î±¸ ÀÌ±â ¶§¹®¿¡ 
 						// Ãß°¡¹æ¾î°ª(10%) Ãß°¡µ¶¼ºÀúÇ×(30%)    SPÈ¸º¹Ãß°¡(15%)  HPÈ¸º¹Ãß°¡(10%) 
-						// MPÈ¸º¹ Ãß°¡(10%) Ãß°¡¸¶¹ýÀúÇ×(15%) ¹°¸®´ë¹Ì�?öÈí¼ö(3%) ¸¶¹ý´ë¹Ì�?öÈí¼ö(3%)
+						// MPÈ¸º¹ Ãß°¡(10%) Ãß°¡¸¶¹ýÀúÇ×(15%) ¹°¸®´ë¹Ì�?öÈí¼ö(3%) ¸¶¹ý´ë¹Ì�?öÈí¼ö(3%)
 						iResult = iDice(1, 10000);
 						if ((iResult >= 1) && (iResult <= 999)) dwType = 3;
 						else if ((iResult >= 1000) && (iResult <= 3999)) dwType = 1;
@@ -49099,7 +49093,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 9400) && (iResult <= 9799)) dwType = 8;
 						else if ((iResult >= 9800) && (iResult <= 10000)) dwType = 9;
 
-						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
+						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ �?¤µµ°ª ÀÔ·Â 
 						iResult = iDice(1, 30000);
 						if ((iResult >= 1) && (iResult < 10000)) dwValue = 1; // 10000/29348 = 34%
 						else if ((iResult >= 10000) && (iResult < 17400)) dwValue = 2; // 6600/29348 = 22.4%
@@ -49116,7 +49110,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						else if ((iResult >= 29970) && (iResult <= 30000)) dwValue = 13; // 68/29348 = 0.1%
 						else dwValue = 1; // v2.03 906
 
-						// ¹æ¾î±¸ÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
+						// ¹æ¾î±¸ÀÇ Sub Æ¯¼ºÄ¡¿¡ µû¶ó ¼öÄ¡ º¸�?¤ 
 						switch (dwType) {
 							case 1: // µ¶¼ºÀúÇ× ÃÖÀú +21%
 							case 3: // ¹°¸®¹æ¾î ÃÖÀú +21%
@@ -49126,7 +49120,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 								if (dwValue <= 3) dwValue = 3;
 								break;
 						}
-						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
+						// v2.03 912 ¾ÆÀÌÅÛ ¼ö�?ØÀÌ 2ÀÌÇ�?À�?¶§ Æ¯¼ºÄ¡ ÃÖ´ë°ªÀº 7
 						if ((iGenLevel <= 2) && (dwValue > 7)) dwValue = 7;
 
 						// ¾ÆÀÌÅÛ Sub Æ¯¼ºÄ¡ ÀÔ·Â
@@ -49136,17 +49130,17 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					}
 				}
 
-				// ë§ˆì§€ë§‰ìœ¼ë¡œ íŠ¹ì„±ì¹˜ë¥¼ íŠ¹ìˆ˜ ì•„ì�?´í…œì—�? ë§žê²Œë�?�? ë³€ê²½ 
+				// ë§ˆì§€ë§‰ìœ¼ë¡œ íŠ¹ì„±ì¹˜ë¥¼ íŠ¹ìˆ˜ ì•„ì�?´í…œì—�? ë§žê²Œë�?�? ë³€ê²½ 
 				_AdjustRareItemValue(pItem);
 			}
 		}
 
-		// ì•„ì�?´í…œì—�? ê³ ìœ  ì½�?ë“œ ìž…ë ¥ 
+		// ì•„ì�?´í…œì—�? ê³ ìœ  ì½�?ë“œ ìž…ë ¥ 
 		pItem->m_sTouchEffectType = DEF_ITET_ID;
 		pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 		pItem->m_sTouchEffectValue2 = iDice(1, 100000);
 		//pItem->m_sTouchEffectValue3 = timeGetTime();
-		// ë§ˆì§€ë§‰ ìˆ«ìž�?ëŠ�? ì•„ì�?´í…œ ìƒ�?ì„± ì›�?, ì�?¼	
+		// ë§ˆì§€ë§‰ ìˆ«ìž�?ëŠ�? ì•„ì�?´í…œ ìƒ�?ì„± ì›�?, ì�?¼	
 		SYSTEMTIME SysTime;
 		char cTemp[256];
 		GetLocalTime(&SysTime);
@@ -49154,12 +49148,12 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		wsprintf(cTemp, "%d%2d", (short) SysTime.wMonth, (short) SysTime.wDay);
 		pItem->m_sTouchEffectValue3 = atoi(cTemp);
 
-		// ì•„ì�?´í…œì�?„ ì„œìžˆëŠ�? ìœ„ì¹˜ì—�? ë–¨ì–´ëœ¨ë¦°ë‹¤. 
+		// ì•„ì�?´í…œì�?„ ì„œìžˆëŠ�? ìœ„ì¹˜ì—�? ë–¨ì–´ëœ¨ë¦°ë‹¤. 
 		m_pMapList[ m_pNpcList[iNpcH]->m_cMapIndex ]->bSetItem(m_pNpcList[iNpcH]->m_sX,
 				  m_pNpcList[iNpcH]->m_sY,
 				  pItem);
 
-		// ë‹¤ë¥¸ í�?´ë�?¼ì�?´ì–¸íŠ¸ì—�?ê²Œ ì•„ì�?´í…œì�?´ ë–¨ì–´ì§„ ê²ƒì�?„ ì•Œë¦°ë‹¤. 
+		// ë‹¤ë¥¸ í�?´ë�?¼ì�?´ì–¸íŠ¸ì—�?ê²Œ ì•„ì�?´í…œì�?´ ë–¨ì–´ì§„ ê²ƒì�?„ ì•Œë¦°ë‹¤. 
 		SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_ITEMDROP, m_pNpcList[iNpcH]->m_cMapIndex,
 				  m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY,
 				  pItem->m_sSprite, pItem->m_sSpriteFrame, pItem->m_cItemColor); //v1.4 color
@@ -50974,7 +50968,7 @@ BOOL CGame::bReadHeldenianGUIDFile(char * cFn) {
 
 	pFile = fopen(cFn, "rt");
 	if (pFile == NULL) {
-		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
+		// Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Ã€Ã‡ ÃƒÃŠÂ±Ã¢ÃˆÂ­ Ã†Ã„Ã€Ã?Ã€Â» Ã€Ã?Ã€Â» Â¼Ã¶ Â¾Ã¸Â´Ã™.
 		PutLogList("(!) Cannot open HeldenianGUID file.");
 		return FALSE;
 	} else {
@@ -51064,7 +51058,7 @@ void CGame::RequestCreatePartyHandler(int iClientH) {
 	if (m_pClientList[iClientH]->m_iAdminUserLevel > 0 && m_pClientList[iClientH]->m_iAdminUserLevel < 3) return; // v2.23 22/04/06 15:24 AdminSecurity 
 
 	if (m_pClientList[iClientH]->m_iPartyStatus != DEF_PARTYSTATUS_NULL) {
-		// ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½.
+		// ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½.
 		return;
 	}
 
@@ -51298,7 +51292,7 @@ void CGame::PartyOperationResult_Dismiss(int iClientH, char *pName, int iResult,
 PORD_LOOPBREAK:
 				;
 
-				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶Ã€Ã‡ Ã†Ã„Ã†Â¼ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡Â¼Â­ Ã‡Ã˜Ã?Â¦.
+				// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶Ã€Ã‡ Ã†Ã„Ã†Â¼ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡Â¼Â­ Ã‡Ã˜Ã?Â¦.
 				for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)
 					if (m_stPartyInfo[iPartyID].iIndex[i] == iClientH) {
 						m_stPartyInfo[iPartyID].iIndex[i] = 0;
@@ -51323,7 +51317,7 @@ PORC_LOOPBREAK1:
 					m_pClientList[iClientH]->m_iReqJoinPartyClientH = NULL;
 				}
 
-				// Â¸Ã°ÂµÃ§ Ã†Ã„Ã†Â¼Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+				// Â¸Ã°ÂµÃ§ Ã†Ã„Ã†Â¼Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 				for (i = 1; i < DEF_MAXCLIENTS; i++)
 					if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_iPartyID != NULL) && (m_pClientList[i]->m_iPartyID == iPartyID)) {
 						SendNotifyMsg(NULL, i, DEF_NOTIFY_PARTY, 6, 1, NULL, pName);
@@ -51334,13 +51328,13 @@ PORC_LOOPBREAK1:
 			if ((m_pClientList[iClientH] != NULL) && (m_pClientList[iClientH]->m_iPartyStatus != DEF_PARTYSTATUS_PROCESSING)) return;
 			if ((m_pClientList[iClientH] != NULL) && (strcmp(m_pClientList[iClientH]->m_cCharName, pName) != 0)) return;
 
-			// Â¸Ã°ÂµÃ§ Ã†Ã„Ã†Â¼Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
+			// Â¸Ã°ÂµÃ§ Ã†Ã„Ã†Â¼Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�? Â¾Ã‹Â·Ã?Ã?Ã˜Â´Ã™.
 			for (i = 1; i < DEF_MAXCLIENTS; i++)
 				if ((m_pClientList[i] != NULL) && (m_pClientList[i]->m_iPartyID != NULL) && (m_pClientList[i]->m_iPartyID == iPartyID)) {
 					SendNotifyMsg(NULL, i, DEF_NOTIFY_PARTY, 6, 1, NULL, pName);
 				}
 
-			// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶Ã€Ã‡ Ã†Ã„Ã†Â¼ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡Â¼Â­ Ã‡Ã˜Ã?Â¦.
+			// Â°Ã�?Ã€Ã“ Â¼Â­Â¹Ã¶Ã€Ã‡ Ã†Ã„Ã†Â¼ Â¸Â®Â½ÂºÃ†Â®Â¿Â¡Â¼Â­ Ã‡Ã˜Ã?Â¦.
 			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)
 				if (m_stPartyInfo[iPartyID].iIndex[i] == iClientH) {
 					m_stPartyInfo[iPartyID].iIndex[i] = 0;
@@ -51421,7 +51415,7 @@ void CGame::RequestJoinPartyHandler(int iClientH, char *pData, DWORD dwMsgSize) 
 		if ((m_pClientList[i] != NULL) && (strcmp(m_pClientList[i]->m_cCharName, cName) == 0)) {
 			// ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½Ñ´ï¿½.
 			if ((m_pClientList[i]->m_iPartyID == NULL) || (m_pClientList[i]->m_iPartyStatus != DEF_PARTYSTATUS_CONFIRM)) {
-				// ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Æ´�?´ï¿½.
+				// ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½Æ´�?´ï¿½.
 				delete pStrTok;
 				return;
 			}
@@ -51429,7 +51423,7 @@ void CGame::RequestJoinPartyHandler(int iClientH, char *pData, DWORD dwMsgSize) 
 			return;
 		}
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ï¿½ï¿½ ï¿½�?´ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 	SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PLAYERNOTONGAME, NULL, NULL, NULL, cName);
 	delete pStrTok;
 }
@@ -51498,7 +51492,7 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult) {
 				return;
 			}
 			if ((m_pClientList[iH]->m_iReqJoinPartyClientH != iClientH) || (strcmp(m_pClientList[iH]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName) != 0)) {
-				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ß´ï¿½ ï¿½×¶ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ´�?´ï¿½.
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ß´ï¿½ ï¿½×¶ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ´�?´ï¿½.
 				return;
 			}
 
@@ -51529,7 +51523,7 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult) {
 					return;
 				}
 				if ((m_pClientList[iH]->m_iReqJoinPartyClientH != iClientH) || (strcmp(m_pClientList[iH]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName) != 0)) {
-					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ß´ï¿½ ï¿½×¶ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ´�?´ï¿½.
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ß´ï¿½ ï¿½×¶ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ´�?´ï¿½.
 					return;
 				}
 			} else {
@@ -51547,12 +51541,12 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult) {
 					return;
 				}
 				if ((m_pClientList[iH]->m_iReqJoinPartyClientH != iClientH) || (strcmp(m_pClientList[iH]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName) != 0)) {
-					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ß´ï¿½ ï¿½×¶ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ´�?´ï¿½.
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ß´ï¿½ ï¿½×¶ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ´�?´ï¿½.
 					return;
 				}
 
 				if (m_pClientList[iClientH]->m_iPartyStatus == DEF_PARTYSTATUS_NULL) {
-					// ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ¹ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½. ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½�?·ï¿½ ï¿½ï¿½Ã»ï¿½Ñ´ï¿½.
+					// ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ¹ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½. ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½�?·ï¿½ ï¿½ï¿½Ã»ï¿½Ñ´ï¿½.
 					RequestCreatePartyHandler(iClientH);
 				} else {
 					// Ã³ï¿½ï¿½ ï¿½Ò°ï¿½
@@ -51569,7 +51563,7 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult) {
 				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½Ñ´ï¿½.
 				iH = m_pClientList[iClientH]->m_iReqJoinPartyClientH;
 
-				// ï¿½ï¿½Ã»ï¿½ß´ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ NULLï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½.
+				// ï¿½ï¿½Ã»ï¿½ß´ï¿½ Ä³ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ NULLï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½.
 				if ((m_pClientList[iH] != NULL) && (m_pClientList[iH]->m_iReqJoinPartyClientH == iClientH) &&
 						  (strcmp(m_pClientList[iH]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName) == 0)) {
 					// ï¿½ï¿½Ã»ï¿½ß´ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½Ìµï¿½ï¿½ ï¿½ï¿½ï¿½Â´ï¿½ ï¿½Çµå¸®ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
@@ -51586,7 +51580,7 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult) {
 	}
 }
 
-// v2.16 2002-5-21 Â°Ã­Â±Â¤Ã‡Ã¶Â¼Ã¶Ã?Â¤ : Ã‡Ã�?Â¼Ã¶ Â¸Ã°ÂµÃŽ ÂºÂ¯Â°Ã¦ÂµÃŠ
+// v2.16 2002-5-21 Â°Ã­Â±Â¤Ã‡Ã¶Â¼Ã¶Ã?Â¤ : Ã‡Ã�?Â¼Ã¶ Â¸Ã°ÂµÃŽ ÂºÂ¯Â°Ã¦ÂµÃŠ
 
 void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 	int i, iItemX, iItemY, iSoM, iSoX, iSomH, iSoxH, iCheckHeroCape; // v2.172
@@ -52351,7 +52345,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						if (iValue > 15) iValue = 15;
 						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF; // ÂºÃ±Ã†Â® Ã…Â¬Â¸Â®Â¾Ã® 
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28); // Â¾Ã·Â±Ã—Â·Â¹Ã€ÃŒÂµÃ¥ÂµÃˆ ÂºÃ±Ã†Â®Â°Âª Ã€Ã�?Â·Ã‚
+						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28); // Â¾Ã·Â±Ã—Â·Â¹Ã€ÃŒÂµÃ¥ÂµÃˆ ÂºÃ±Ã†Â®Â°Âª Ã€Ã�?Â·Ã‚
 						SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, NULL, NULL);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 						break;
@@ -52392,7 +52386,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 							// Â¾Ã·Â±Ã—Â·Â¹Ã€ÃŒÂµÃ¥ Â¼ÂºÂ°Ã¸. Â¾Ã†Ã€ÃŒÃ…Ã› Ã†Â¯Â¼Âº Â¹Ã™Â²Ã™Â°Ã­
 							dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
 							dwTemp = dwTemp & 0x0FFFFFFF; // ÂºÃ±Ã†Â® Ã…Â¬Â¸Â®Â¾Ã®
-							m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28); // Â¾Ã·Â±Ã—Â·Â¹Ã€ÃŒÂµÃ¥ÂµÃˆ ÂºÃ±Ã†Â®Â°Âª Ã€Ã�?Â·Ã‚
+							m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28); // Â¾Ã·Â±Ã—Â·Â¹Ã€ÃŒÂµÃ¥ÂµÃˆ ÂºÃ±Ã†Â®Â°Âª Ã€Ã�?Â·Ã‚
 							// Â½ÂºÃ…Ã¦ Â¿Ã€ÂºÃª Ã?Â¦Â¸Â®Â¸Â¶ Â¾Ã¸Â¾Ã˜Â´Ã™.
 							ItemDepleteHandler(iClientH, iSoxH, FALSE, TRUE);
 						}
@@ -54970,7 +54964,7 @@ void CGame::NpcBehavior_Dead(int iNpcH) {
 
 					cReadModeB = 3;
 
-					// vectorï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½�?¾ï¿½ ï¿½å¸° ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
+					// vectorï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½�?¾ï¿½ ï¿½å¸° ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 					m_pNpcConfigList[iNpcConfigListIndex]->m_vNpcItem.push_back(*pTempNpcItem);
 
 					// 2002-09-17 #1 NPCITEM Type 2ï¿½ï¿½ ï¿½ï¿½ï¿½
@@ -57564,14 +57558,14 @@ void CGame::PlayerCommandAddMaster(int iClientH, char * pData, DWORD dwMsgSize) 
 	token = pStrTok->pGet();
 
 	if (token != NULL) {
-		// tokenï¿½ï¿½ ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+		// tokenï¿½ï¿½ ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½�?°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
 		if (strlen(token) > 10)
 			memcpy(cTargetName, token, 10);
 		else memcpy(cTargetName, token, strlen(token));
 
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0)) {
-				// ï¿½ï¿½Ç¥ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ Ã£ï¿½Ò´ï¿½.     
+				// ï¿½ï¿½Ç¥ Ä³ï¿½ï¿½ï¿½�?¸ï¿½ Ã£ï¿½Ò´ï¿½.     
 
 				if (memcmp(m_pClientList[iClientH]->m_cGuildName, m_pClientList[i]->m_cGuildName, 20) != 0) {
 					// ????? ???????? ???? ?????? ????????.
@@ -57590,7 +57584,7 @@ void CGame::PlayerCommandAddMaster(int iClientH, char * pData, DWORD dwMsgSize) 
 		return;
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?´ï¿½.
 	SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PLAYERNOTONGAME, NULL, NULL, NULL, cTargetName);
 
 	delete pStrTok;
@@ -57624,14 +57618,14 @@ void CGame::PlayerOrder_DeleteGuildMaster(int iClientH, char * pData, DWORD dwMs
 	token = pStrTok->pGet();
 
 	if (token != NULL) {
-		// token?ï¿½?ï¿½ ï¿½ï¿½ ?ï¿½ï¿½?ï¿½?ï¿½?ï¿½ï¿½ ï¿½?ï¿½ï¿½ï¿½ï¿½?ï¿½?ï¿½�?°?ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½?ï¿½?ï¿½ ?ï¿½?ï¿½ï¿½ï¿½
+		// token?ï¿½?ï¿½ ï¿½ï¿½ ?ï¿½ï¿½?ï¿½?ï¿½?ï¿½ï¿½ ï¿½?ï¿½ï¿½ï¿½ï¿½?ï¿½?ï¿½�?°?ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½?ï¿½?ï¿½ ?ï¿½?ï¿½ï¿½ï¿½
 		if (strlen(token) > 10)
 			memcpy(cTargetName, token, 10);
 		else memcpy(cTargetName, token, strlen(token));
 
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != NULL) && (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0)) {
-				// ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½ï¿½?ï¿½�?¸ï¿½ ?ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½.     
+				// ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ï¿½ï¿½?ï¿½�?¸ï¿½ ?ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½.     
 
 				if (memcmp(m_pClientList[iClientH]->m_cGuildName, m_pClientList[i]->m_cGuildName, 20) != 0) {
 					// ????? ???????? ???? ?????? ????????.
@@ -57650,7 +57644,7 @@ void CGame::PlayerOrder_DeleteGuildMaster(int iClientH, char * pData, DWORD dwMs
 		return;
 	}
 
-	// ?ï¿½ï¿½?ï¿½ï¿½ ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½?ï¿½?ï¿½ ï¿½?ï¿½ï¿½�?´?ï¿½.
+	// ?ï¿½ï¿½?ï¿½ï¿½ ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½?ï¿½?ï¿½ ï¿½?ï¿½ï¿½�?´?ï¿½.
 	SendNotifyMsg(NULL, iClientH, DEF_NOTIFY_PLAYERNOTONGAME, NULL, NULL, NULL, cTargetName);
 
 	delete pStrTok;

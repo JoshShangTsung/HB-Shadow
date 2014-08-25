@@ -786,7 +786,7 @@ public:
 	char m_pMsgBuffer[DEF_MSGBUFFERSIZE + 1];
 
 	HWND m_hWnd;
-	int m_iTotalClients, m_iMaxClients, m_iTotalGameServerClients, m_iTotalGameServerMaxClients;
+	int m_iTotalClients, m_iMaxClients;
 	int m_iTotalBots, m_iMaxBots, m_iTotalGameServerBots, m_iTotalGameServerMaxBots;
 	SYSTEMTIME m_MaxUserSysTime;
 
