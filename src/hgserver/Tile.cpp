@@ -3,10 +3,10 @@
 CTile::CTile() {
 	int i;
 
-	m_bIsMoveAllowed = TRUE;
-	m_bIsTeleport = FALSE;
-	m_bIsWater = FALSE;
-	m_bIsFarm = FALSE;
+	m_bIsMoveAllowed = true;
+	m_bIsTeleport = false;
+	m_bIsWater = false;
+	m_bIsFarm = false;
 
 	m_sOwner = NULL;
 	m_cOwnerClass = NULL;
@@ -21,7 +21,7 @@ CTile::CTile() {
 	m_wDynamicObjectID = NULL;
 	m_sDynamicObjectType = NULL;
 
-	m_bIsTempMoveAllowed = TRUE;
+	m_bIsTempMoveAllowed = true;
 
 	m_iOccupyStatus = NULL;
 	m_iOccupyFlagIndex = NULL;

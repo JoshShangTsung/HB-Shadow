@@ -10,5 +10,5 @@ public:
 	int m_iDataLength, m_iCurLoc;
 
 private:
-	BOOL _bIsSeperator(char cData, char cNextData);
+	bool _bIsSeperator(char cData, char cNextData);
 };

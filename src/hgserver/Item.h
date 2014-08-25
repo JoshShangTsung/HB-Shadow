@@ -103,7 +103,7 @@ public:
 	short m_sRelatedSkill;
 
 	char m_cCategory;
-	BOOL m_bIsForSale;
+	bool m_bIsForSale;
 
 	DWORD m_dwCount;
 	short m_sTouchEffectType;
@@ -113,7 +113,7 @@ public:
 	WORD m_wCurLifeSpan;
 	DWORD m_dwAttribute;
 	void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize);
-	BOOL bReadBallSystemConfigFile(char * cFn);
+	bool bReadBallSystemConfigFile(char * cFn);
 };
 
 class CBallSystem {

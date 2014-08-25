@@ -33,5 +33,5 @@ CItem::CItem() {
 	m_cCategory = NULL;
 	m_sIDnum = 0;
 
-	m_bIsForSale = FALSE;
+	m_bIsForSale = false;
 }

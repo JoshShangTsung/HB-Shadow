@@ -9,7 +9,7 @@
 class CMsg {
 public:
 	void Get(char * pFrom, char * pData, DWORD * pSize, int * pIndex, char * pKey);
-	BOOL bPut(char cFrom, char * pData, DWORD dwSize, int iIndex, char cKey);
+	bool bPut(char cFrom, char * pData, DWORD dwSize, int iIndex, char cKey);
 	CMsg();
 	virtual ~CMsg();
 

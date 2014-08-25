@@ -8,8 +8,8 @@ public:
 	DXC_dinput();
 	virtual ~DXC_dinput();
 	void UpdateMouseState(short * pX, short * pY, short * pZ, char * pLB, char * pRB);
-	void SetAcquire(BOOL bFlag);
-	BOOL bInit(HWND hWnd, HINSTANCE hInst);
+	void SetAcquire(bool bFlag);
+	bool bInit(HWND hWnd, HINSTANCE hInst);
 
 	DIMOUSESTATE dims;
 	IDirectInput * m_pDI;

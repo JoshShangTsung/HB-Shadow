@@ -12,7 +12,7 @@ CTeleport::CTeleport() {
 	m_sTeleportCost = -1;
 	m_sTeleportMinLevel = 0;
 	m_sTeleportMaxLevel = 0;
-	m_bTeleportHunt = FALSE;
-	m_bTeleportNtrl = FALSE;
-	m_bTeleportCrmnl = FALSE;
+	m_bTeleportHunt = false;
+	m_bTeleportNtrl = false;
+	m_bTeleportCrmnl = false;
 }

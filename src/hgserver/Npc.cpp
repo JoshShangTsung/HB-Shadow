@@ -11,11 +11,11 @@ CNpc::CNpc(char * pName5) {
 	for (i = 0; i < DEF_MAXMAGICEFFECTS; i++)
 		m_cMagicEffectStatus[i] = 0;
 
-	m_bIsSummoned = FALSE;
-	m_bIsPermAttackMode = FALSE;
+	m_bIsSummoned = false;
+	m_bIsPermAttackMode = false;
 
 	m_dwRegenTime = NULL;
-	m_bIsKilled = FALSE;
+	m_bIsKilled = false;
 
 	m_sOriginalType = NULL;
 	m_iSummonControlMode = NULL;
@@ -32,11 +32,11 @@ CNpc::CNpc(char * pName5) {
 
 	m_iBuildCount = 0;
 	m_iManaStock = 0;
-	m_bIsUnsummoned = FALSE;
+	m_bIsUnsummoned = false;
 	m_cCropType = 0;
 	m_cCropSkill = 0;
 
-	m_bIsMaster = FALSE;
+	m_bIsMaster = false;
 	m_iGuildGUID = NULL;
 	m_iV1 = 0;
 

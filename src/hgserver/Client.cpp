@@ -20,7 +20,7 @@ CClient::CClient(HWND hWnd) {
 	m_iGuildRank = -1;
 	m_iGuildGUID = -1;
 
-	m_bIsInitComplete = FALSE;
+	m_bIsInitComplete = false;
 
 	//m_cLU_Str = m_cLU_Int = m_cLU_Vit = m_cLU_Dex = m_cLU_Mag = m_cLU_Char = 0;
 	m_iLU_Pool = 0;
@@ -41,7 +41,7 @@ CClient::CClient(HWND hWnd) {
 	m_iAddTransMana = 0;
 	m_iAddChargeCritical = 0;
 
-	m_bIsSafeAttackMode = FALSE;
+	m_bIsSafeAttackMode = false;
 
 	for (i = 0; i < DEF_MAXITEMEQUIPPOS; i++)
 		m_sItemEquipmentStatus[i] = -1;
@@ -50,7 +50,7 @@ CClient::CClient(HWND hWnd) {
 		m_pItemList[i] = NULL;
 		m_ItemPosList[i].x = 40;
 		m_ItemPosList[i].y = 30;
-		m_bIsItemEquipped[i] = FALSE;
+		m_bIsItemEquipped[i] = false;
 	}
 	m_cArrowIndex = -1;
 
@@ -65,7 +65,7 @@ CClient::CClient(HWND hWnd) {
 		m_cSkillMastery[i] = NULL;
 
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++) {
-		m_bSkillUsingStatus[i] = FALSE;
+		m_bSkillUsingStatus[i] = false;
 		m_iSkillUsingTimeID[i] = NULL;
 	}
 
@@ -109,7 +109,7 @@ CClient::CClient(HWND hWnd) {
 	m_iDamageAbsorption_Shield = 0;
 
 	m_iHPstock = 0;
-	m_bIsKilled = FALSE;
+	m_bIsKilled = false;
 
 	for (i = 0; i < DEF_MAXMAGICEFFECTS; i++)
 		m_cMagicEffectStatus[i] = 0;
@@ -119,9 +119,9 @@ CClient::CClient(HWND hWnd) {
 
 	m_iHungerStatus = 100; 
 
-	m_bIsWarLocation = FALSE;
+	m_bIsWarLocation = false;
 	m_dwAFKCheckTime = NULL;
-	m_bIsPoisoned = FALSE;
+	m_bIsPoisoned = false;
 	m_iPoisonLevel = NULL;
 
 	m_iAdminUserLevel = 0;
@@ -135,8 +135,8 @@ CClient::CClient(HWND hWnd) {
 	m_iRecentRunTime = 0;
 	m_sV1 = 0;
 
-	m_bIsOnServerChange = FALSE;
-	m_bInhibition = FALSE;
+	m_bIsOnServerChange = false;
+	m_bInhibition = false;
 
 	m_iExpStock = 0;
 
@@ -144,7 +144,7 @@ CClient::CClient(HWND hWnd) {
 	m_iFishChance = 0;
 
 	ZeroMemory(m_cIPaddress, sizeof (m_cIPaddress));
-	m_bIsOnWaitingProcess = FALSE;
+	m_bIsOnWaitingProcess = false;
 
 	m_iSuperAttackLeft = 0;
 	m_iSuperAttackCount = 0;
@@ -155,7 +155,7 @@ CClient::CClient(HWND hWnd) {
 	m_iAddResistMagic = 0;
 	m_iAddPhysicalDamage = 0;
 	m_iAddMagicalDamage = 0;
-	m_bIsLuckyEffect = FALSE;
+	m_bIsLuckyEffect = false;
 	m_iSideEffect_MaxHPdown = 0;
 
 	m_iAddAbsAir = 0;
@@ -186,8 +186,8 @@ CClient::CClient(HWND hWnd) {
 	}*/
 
 	m_iAbuseCount = 0;
-	m_bIsBWMonitor = FALSE;
-	m_bIsExchangeMode = FALSE;
+	m_bIsBWMonitor = false;
+	m_bIsExchangeMode = false;
 
 	m_iFightZoneTicketNumber = m_iFightzoneNumber = m_iReserveTime = 0;
 
@@ -202,7 +202,7 @@ CClient::CClient(HWND hWnd) {
 		m_iExchangeItemAmount[i] = 0;
 	}
 
-	m_bIsExchangeConfirm = FALSE;
+	m_bIsExchangeConfirm = false;
 
 	m_iQuest = NULL;
 	m_iQuestID = NULL;
@@ -213,13 +213,13 @@ CClient::CClient(HWND hWnd) {
 	m_iQuestRewardAmount = NULL;
 
 	m_iContribution = NULL;
-	m_bQuestMatchFlag_Loc = FALSE;
-	m_bIsQuestCompleted = FALSE;
+	m_bQuestMatchFlag_Loc = false;
+	m_bIsQuestCompleted = false;
 
 	m_cHeroArmourBonus = 0;
 
-	m_bIsNeutral = FALSE;
-	m_bIsObserverMode = FALSE;
+	m_bIsNeutral = false;
+	m_bIsObserverMode = false;
 
 	m_iSpecialEventID = 200081;
 
@@ -233,7 +233,7 @@ CClient::CClient(HWND hWnd) {
 
 	m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
 	m_iSpecialAbilityType = NULL;
-	m_bIsSpecialAbilityEnabled = FALSE;
+	m_bIsSpecialAbilityEnabled = false;
 	m_iSpecialAbilityLastSec = 0;
 
 	m_iSpecialAbilityEquipPos = 0;
@@ -243,7 +243,7 @@ CClient::CClient(HWND hWnd) {
 	m_iRunMsgRecvCount = 0;
 	m_iSkillMsgRecvCount = 0;
 
-	m_bIsAdminCommandEnabled = FALSE;
+	m_bIsAdminCommandEnabled = false;
 	m_iAlterItemDropIndex = -1;
 
 	m_iAutoExpAmount = 0;
@@ -271,7 +271,7 @@ CClient::CClient(HWND hWnd) {
 
 	m_iCSIsendPoint = NULL;
 
-	m_bIsSendingMapStatus = FALSE;
+	m_bIsSendingMapStatus = false;
 	ZeroMemory(m_cSendingMapName, sizeof (m_cSendingMapName));
 
 	m_iConstructionPoint = NULL;
@@ -279,13 +279,13 @@ CClient::CClient(HWND hWnd) {
 	ZeroMemory(m_cConstructMapName, sizeof (m_cConstructMapName));
 	m_iConstructLocX = m_iConstructLocY = -1;
 
-	m_bIsAdminOrderGoto = FALSE;
-	m_bIsInsideWarehouse = FALSE;
-	m_bIsInsideWizardTower = FALSE;
-	m_bIsInsideOwnTown = FALSE;
-	m_bIsOwnLocation = FALSE;
-	m_pIsProcessingAllowed = FALSE;
-	m_bIsClientConnected = FALSE;
+	m_bIsAdminOrderGoto = false;
+	m_bIsInsideWarehouse = false;
+	m_bIsInsideWizardTower = false;
+	m_bIsInsideOwnTown = false;
+	m_bIsOwnLocation = false;
+	m_pIsProcessingAllowed = false;
+	m_bIsClientConnected = false;
 
 
 
@@ -293,11 +293,11 @@ CClient::CClient(HWND hWnd) {
 	m_iBallPoints = 0;
 	m_cHeroArmorBonus = 0;
 
-	m_bIsBeingResurrected = FALSE;
-	m_bMagicConfirm = FALSE;
-	m_bMagicItem = FALSE;
+	m_bIsBeingResurrected = false;
+	m_bMagicConfirm = false;
+	m_bMagicItem = false;
 	m_iSpellCount = 0;
-	m_bMagicPauseTime = FALSE;
+	m_bMagicPauseTime = false;
 
 	m_dwDSLAT = m_dwDSLATOld = m_dwDSLATS = 0;
 	m_iDSCount = 0;
@@ -320,10 +320,10 @@ CClient::~CClient() {
 		}
 }
 
-BOOL CClient::bCreateNewParty() {
+bool CClient::bCreateNewParty() {
 	int i;
 
-	if (m_iPartyRank != -1) return FALSE;
+	if (m_iPartyRank != -1) return false;
 
 	m_iPartyRank = 0;
 	m_iPartyMemberCount = 0;
@@ -334,6 +334,6 @@ BOOL CClient::bCreateNewParty() {
 		ZeroMemory(m_stPartyMemberName[i].cName, sizeof (m_stPartyMemberName[i].cName));
 	}
 
-	return TRUE;
+	return true;
 }
 

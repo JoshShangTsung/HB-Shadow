@@ -23,7 +23,7 @@ public:
 	short m_sDynamicObjectType;
 	DWORD m_dwDynamicObjectRegisterTime;
 
-	BOOL m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
+	bool m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
 
 	// ������ ǥ�ÿ� 
 	int m_iOccupyStatus; // Aresden�̸� -������, Elvine�̸� +�� �������. �� ���� �� ������ ���⼺ 

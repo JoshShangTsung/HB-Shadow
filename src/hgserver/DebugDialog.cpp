@@ -1,7 +1,7 @@
 #include "DebugDialog.h"
 #include "resource.h"
 
-BOOL CALLBACK lpDialogFunc(HWND, UINT, WPARAM, LPARAM);
+bool CALLBACK lpDialogFunc(HWND, UINT, WPARAM, LPARAM);
 void DebugWindowThread();
 HWND m_DbgWnd;
 HWND m_DbgList;
@@ -10,7 +10,7 @@ char crlf[] = {0x0d, 0x0a, 0x0d, 0x0a};
 
 //Constructor
 
-CDebugWindow::CDebugWindow() : m_isVisible(FALSE) {
+CDebugWindow::CDebugWindow() : m_isVisible(false) {
 }
 
 // Startups The Debug Dialog
@@ -18,7 +18,7 @@ CDebugWindow::CDebugWindow() : m_isVisible(FALSE) {
 void CDebugWindow::Startup(void) {
 	DWORD lpThreadId;
 	//Create a thread for dialog
-	m_isVisible = TRUE;
+	m_isVisible = true;
 	CloseHandle(CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) DebugWindowThread, NULL, 0, &lpThreadId));
 	//Give time for dialog to startup properly
 	Sleep(10);
@@ -29,7 +29,7 @@ void DebugWindowThread() {
 	DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC) lpDialogFunc);
 }
 
-BOOL CALLBACK lpDialogFunc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+bool CALLBACK lpDialogFunc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 		case WM_INITDIALOG:
 			//Copy HWND's
@@ -47,7 +47,7 @@ BOOL CALLBACK lpDialogFunc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 void CDebugWindow::Shutdown(void) {
 	//Close Dialog
-	EndDialog(m_DbgWnd, TRUE);
+	EndDialog(m_DbgWnd, true);
 	//Close File Handle
 	CloseHandle(outHand);
 }
@@ -110,9 +110,9 @@ void CDebugWindow::ShowWindow(bool isVisible) {
 	Sleep(10);
 	if (isVisible) {
 		::ShowWindow(m_DbgWnd, SW_SHOW);
-		m_isVisible = TRUE;
+		m_isVisible = true;
 	} else {
 		::ShowWindow(m_DbgWnd, SW_HIDE);
-		m_isVisible = FALSE;
+		m_isVisible = false;
 	}
 }

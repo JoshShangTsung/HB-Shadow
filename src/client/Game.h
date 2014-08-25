@@ -154,8 +154,8 @@ public:
 
 	int iGetManaCost(int iMagicNo);
 	void UseMagic(int iMagicNo);
-	BOOL _bCheckMoveable(short sx, short sy);
-	BOOL FindGuildName(char* pName, int* ipIndex);
+	bool _bCheckMoveable(short sx, short sy);
+	bool FindGuildName(char* pName, int* ipIndex);
 	void bItemDrop_SkillDialog();
 	void bItemDrop_IconPannel(short msX, short msY);
 	void bItemDrop_Character();
@@ -175,16 +175,16 @@ public:
 	void GrandMagicResult(char * pMapName, int iV1, int iV2, int iV3, int iV4, int iHP1, int iHP2, int iHP3, int iHP4);
 	void MeteorStrikeComing(int iCode);
 	void _Draw_OnLogin(char * pAccount, char * pPassword, int msX, int msY, int iFrame = 60000);
-	void DrawNewDialogBox(char cType, int sX, int sY, int iFrame, BOOL bIsNoColorKey = FALSE, BOOL bIsTrans = FALSE);
-	void AddMapStatusInfo(char * pData, BOOL bIsLastData);
+	void DrawNewDialogBox(char cType, int sX, int sY, int iFrame, bool bIsNoColorKey = false, bool bIsTrans = false);
+	void AddMapStatusInfo(char * pData, bool bIsLastData);
 	void _RequestMapStatus(char * pMapName, int iMode);
 	int GetCharKind(char *str, int index);
 	void ReceiveString(char * pString);
 	void EndInputString();
 	void ClearInputString();
-	void ShowReceivedString(BOOL bIsHide = FALSE);
+	void ShowReceivedString(bool bIsHide = false);
 	bool GetText(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	BOOL bReadItemNameConfigFile();
+	bool bReadItemNameConfigFile();
 	void DrawDialogBoxs(short msX, short msY, short msZ, char cLB);
 	void DrawDialogBox_Character(short msX, short msY); //1
 	void DrawDialogBox_Inventory(int msX, int msY); //2
@@ -233,7 +233,7 @@ public:
 	void bItemDrop_Slates();
 	void DlgBoxClick_Slates(short msX, short msY);
 
-	BOOL _bCheckDlgBoxClick(short msX, short msY);
+	bool _bCheckDlgBoxClick(short msX, short msY);
 	void DlgBoxClick_WarningMsg(short msX, short msY);
 	void DlgBoxClick_15AgeMsg(short msX, short msY);
 	void DlgBoxClick_ItemDrop(short msX, short msY);
@@ -291,8 +291,8 @@ public:
 	void NotifyMsg_TimeChange(char * pData);
 	void NotifyMsg_Hunger(char * pData);
 	void NotifyMsg_PlayerProfile(char * pData);
-	void NotifyMsg_WhisperMode(BOOL bActive, char * pData);
-	void NotifyMsg_PlayerStatus(BOOL bOnGame, char * pData);
+	void NotifyMsg_WhisperMode(bool bActive, char * pData);
+	void NotifyMsg_PlayerStatus(bool bOnGame, char * pData);
 	void NotifyMsg_Charisma(char * pData);
 	void NotifyMsg_ItemRepaired(char * pData);
 	void NotifyMsg_RepairItemPrice(char * pData);
@@ -344,7 +344,7 @@ public:
 	void ResponsePanningHandler(char * pData);
 	void _CalcSocketClosed();
 	void UpdateScreen_OnSelectServer();
-	void StartInputString(int sX, int sY, unsigned char iLen, char * pBuffer, BOOL bIsHide = FALSE);
+	void StartInputString(int sX, int sY, unsigned char iLen, char * pBuffer, bool bIsHide = false);
 	void _SetIlusionEffect(int iOwnerH);
 	int _iGetFOE(int iStatus);
 	void NoticementHandler(char * pData);
@@ -352,10 +352,10 @@ public:
 	void GetItemName(class CItem * pItem, char * pStr1, char * pStr2, char * pStr3);
 	void _InitOnCreateNewCharacter();
 	void _LoadGameMsgTextContents();
-	BOOL _bCheckCurrentBuildItemStatus();
-	BOOL _bCheckBuildItemStatus();
-	BOOL _bDecodeBuildItemContents();
-	BOOL _bCheckBadWords(char * pMsg);
+	bool _bCheckCurrentBuildItemStatus();
+	bool _bCheckBuildItemStatus();
+	bool _bDecodeBuildItemContents();
+	bool _bCheckBadWords(char * pMsg);
 	void GetNpcName(short sType, char * pName);
 
 
@@ -373,9 +373,9 @@ public:
 	void UpdateScreen_OnGame();
 	void UpdateScreen_OnConnecting();
 	void UpdateScreen_OnWaitInitData();
-	void MakeSprite(char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
-	void MakeTileSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
-	void MakeEffectSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = TRUE);
+	void MakeSprite(char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
+	void MakeTileSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
+	void MakeEffectSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
 	void UpdateScreen_OnLoading(bool bActive);
 	void UpdateScreen_OnConnectionLost();
 	void UpdateScreen_OnLogin();
@@ -387,33 +387,33 @@ public:
 	void UpdateScreen_OnCreateNewCharacter();
 	void UpdateScreen_OnSelectCharacter();
 	void UpdateScreen_OnLogResMsg();
-	void UpdateScreen_OnSelectCharacter(short sX, short sY, short msX, short msY, BOOL bIgnoreFocus = FALSE);
+	void UpdateScreen_OnSelectCharacter(short sX, short sY, short msX, short msY, bool bIgnoreFocus = false);
 	void UpdateScreen_OnChangePassword();
 	void UpdateScreen_OnLoading_Progress();
 	void UpdateScreen_OnVersionNotMatch();
 	void NpcTalkHandler(char * pData);
 	int _iGetWeaponSkillType();
 	void SetCameraShakingEffect(short sDist, int iMul = 0);
-	BOOL bDlgBoxPress_SkillDlg(short msX, short msY);
-	BOOL bDlgBoxPress_Inventory(short msX, short msY);
-	BOOL bDlgBoxPress_Character(short msX, short msY);
+	bool bDlgBoxPress_SkillDlg(short msX, short msY);
+	bool bDlgBoxPress_Inventory(short msX, short msY);
+	bool bDlgBoxPress_Character(short msX, short msY);
 	void ClearSkillUsingStatus();
-	BOOL bCheckItemOperationEnabled(char cItemID);
+	bool bCheckItemOperationEnabled(char cItemID);
 	void _DrawThunderEffect(int sX, int sY, int dX, int dY, int rX, int rY, char cType);
 	void DrawLine2(int x0, int y0, int x1, int y1, int iR, int iG, int iB);
 	void DrawLine(int x0, int y0, int x1, int y1, int iR, int iG, int iB);
-	void SetWhetherStatus(BOOL bStart, char cType);
+	void SetWhetherStatus(bool bStart, char cType);
 	void WhetherObjectFrameCounter();
 	void DrawWhetherEffects();
-	BOOL bCheckExID(char * pName);
-	BOOL bCheckLocalChatCommand(char * pMsg);
+	bool bCheckExID(char * pName);
+	bool bCheckLocalChatCommand(char * pMsg);
 	char GetOfficialMapName(char * pMapName, char * pName);
 	int iGetLevelExp(int iLevel);
 	int _iCalcTotalWeight();
-	void DrawVersion(BOOL bAuthor = FALSE);
-	BOOL _bIsItemOnHand();
+	void DrawVersion(bool bAuthor = false);
+	bool _bIsItemOnHand();
 	void DynamicObjectHandler(char * pData);
-	BOOL _bCheckItemByType(char cType);
+	bool _bCheckItemByType(char cType);
 	void _DrawBlackRect(int iSize);
 	void DrawNpcName(short sX, short sY, short sOwnerType, int iStatus);
 	void DrawObjectName(short sX, short sY, char * pName, int iStatus);
@@ -423,12 +423,12 @@ public:
 	int _iLoadTextDlgContents2(int iType);
 	void DrawChatMsgs(short sX, short sY, short dX, short dY);
 	void RequestFullObjectData(WORD wObjectID);
-	BOOL bInitSkillCfgList();
-	BOOL bCheckImportantFile();
+	bool bInitSkillCfgList();
+	bool bCheckImportantFile();
 	void DlbBoxDoubleClick_Inventory(short msX, short msY);
 	void DlbBoxDoubleClick_Character(short msX, short msY);
 	void DlbBoxDoubleClick_GuideMap(short msX, short msY);
-	BOOL _bCheckDlgBoxDoubleClick(short msX, short msY);
+	bool _bCheckDlgBoxDoubleClick(short msX, short msY);
 	void EraseItem(char cItemID);
 	void RetrieveItemHandler(char * pData);
 	void CivilRightAdmissionHandler(char * pData);
@@ -436,10 +436,10 @@ public:
 	void ClearContents_OnSelectCharacter();
 	void ClearContents_OnCreateNewAccount();
 	void _Draw_UpdateScreen_OnCreateNewAccount();
-	BOOL _bDraw_OnCreateNewCharacter(char * pName, short msX, short msY, int iPoint);
-	BOOL _bGetIsStringIsNumber(char * pStr);
-	BOOL bInitMagicCfgList();
-	BOOL __bDecodeContentsAndBuildItemForSaleList(char * pBuffer);
+	bool _bDraw_OnCreateNewCharacter(char * pName, short msX, short msY, int iPoint);
+	bool _bGetIsStringIsNumber(char * pStr);
+	bool bInitMagicCfgList();
+	bool __bDecodeContentsAndBuildItemForSaleList(char * pBuffer);
 	void _LoadShopMenuContents(char cType);
 	void PutChatScrollList(char * pMsg, char cType);
 	void RequestTeleportAndWaitData();
@@ -447,7 +447,7 @@ public:
 	void PointCommandHandler(int indexX, int indexY, char cItemID = -1);
 	void DrawEffects();
 	void bAddNewEffect(short sType, int sX, int sY, int dX, int dY, char cStartFrame, int iV1 = 1);
-	void AddEventList(char * pTxt, char cColor = 0, BOOL bDupAllow = TRUE);
+	void AddEventList(char * pTxt, char cColor = 0, bool bDupAllow = true);
 	void ShowEventList(DWORD dwTime);
 	void SetItemCount(char * pItemName, DWORD dwCount);
 	void _ShiftGuildOperationList();
@@ -458,7 +458,7 @@ public:
 	void _GetHairColorRGB(int iColorType, int * pR, int * pG, int * pB);
 	void InitGameSettings();
 	void CommonEventHandler(char * pData);
-	BOOL _bCheckDraggingItemRelease(short msX, short msY);
+	bool _bCheckDraggingItemRelease(short msX, short msY);
 	void _SetItemOrder(char cWhere, char cItemID);
 	int iGetTopDialogBoxIndex();
 	void DisableDialogBox(int iBoxID);
@@ -466,37 +466,37 @@ public:
 	void InitItemList(char * pData);
 	int _iCheckDlgBoxFocus(short msX, short msY, char cButtonSide);
 	void GetPlayerTurn();
-	BOOL __fastcall DrawObject_OnDead(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnDying(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnMagic(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnAttack(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnAttackMove(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnStop(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnMove_ForMenu(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnMove(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnDamageMove(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnRun(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnDamage(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL __fastcall DrawObject_OnGetItem(int indexX, int indexY, int sX, int sY, BOOL bTrans, DWORD dwTime, int msX, int msY);
-	BOOL bEffectFrameCounter();
+	bool __fastcall DrawObject_OnDead(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnDying(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnMagic(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnAttack(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnAttackMove(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnStop(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnMove_ForMenu(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnMove(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnDamageMove(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnRun(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnDamage(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool __fastcall DrawObject_OnGetItem(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY);
+	bool bEffectFrameCounter();
 	void ClearGuildNameList();
 	void DrawBackground(short sDivX, short sModX, short sDivY, short sModY);
-	void DrawChatMsgBox(short sX, short sY, int iChatIndex, BOOL bIsPreDC);
+	void DrawChatMsgBox(short sX, short sY, int iChatIndex, bool bIsPreDC);
 	void ReleaseTimeoverChatMsg();
 	void ChatMsgHandler(char * pData);
 	void ReleaseUnusedSprites();
-	BOOL bReadIp();
+	bool bReadIp();
 	void OnKeyUp(WPARAM wParam);
 	void OnSysKeyDown(WPARAM wParam);
 	void OnSysKeyUp(WPARAM wParam);
 	void ChangeGameMode(char cMode);
 	void PutString(int iX, int iY, char * pString, COLORREF color);
-	void PutString(int iX, int iY, char * pString, COLORREF color, BOOL bHide, char cBGtype, BOOL bIsPreDC = FALSE);
+	void PutString(int iX, int iY, char * pString, COLORREF color, bool bHide, char cBGtype, bool bIsPreDC = false);
 	void PutString2(int iX, int iY, char * pString, short sR, short sG, short sB);
 	void PutAlignedString(int iX1, int iX2, int iY, char * pString, short sR = 0, short sG = 0, short sB = 0);
 	void PutString_SprFont(int iX, int iY, char * pStr, short sR, short sG, short sB);
 	void PutString_SprFont2(int iX, int iY, char * pStr, short sR, short sG, short sB);
-	void PutString_SprFont3(int iX, int iY, char * pStr, short sR, short sG, short sB, BOOL bTrans = FALSE, int iType = 0);
+	void PutString_SprFont3(int iX, int iY, char * pStr, short sR, short sG, short sB, bool bTrans = false, int iType = 0);
 	void PutString_SprNum(int iX, int iY, char * pStr, short sR, short sG, short sB);
 	void LogRecvMsgHandler(char * pData);
 	void LogResponseHandler(char * pData);
@@ -511,27 +511,27 @@ public:
 	void MotionResponseHandler(char * pData);
 	void GameRecvMsgHandler(DWORD dwMsgSize, char * pData);
 	void DrawObjects(short sPivotX, short sPivotY, short sDivX, short sDivY, short sModX, short sModY, short msX, short msY);
-	BOOL bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, char * pString, int iV4 = NULL); // v1.4
-	char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, BOOL bMoveCheck = FALSE, BOOL bMIM = FALSE);
+	bool bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, char * pString, int iV4 = NULL); // v1.4
+	char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, bool bMoveCheck = false, bool bMIM = false);
 	void RestoreSprites();
 	void CommandProcessor(short msX, short msY, short indexX, short indexY, char cLB, char cRB);
 	void OnGameSocketEvent(WPARAM wParam, LPARAM lParam);
 	void CalcViewPoint();
 	void OnKeyDown(WPARAM wParam);
 	void Quit();
-	BOOL bInit(HWND hWnd, HINSTANCE hInst, char * pCmdLine);
+	bool bInit(HWND hWnd, HINSTANCE hInst, char * pCmdLine);
 	void ReserveFightzoneResponseHandler(char * pData);
 	int _iGetAttackType();
-	BOOL __bDecodeBuildItemContents(char * pBuffer);
+	bool __bDecodeBuildItemContents(char * pBuffer);
 	int _iGetBankItemCount();
 	int _iGetTotalItemNum();
 	LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
-	void GoHomepage(BOOL);
+	void GoHomepage(bool);
 	void StartBGM();
 
 	//Snoopy: added function:
 	void DebugLog(char * cStr);
-	BOOL bReadLoginConfigFile(char * cFn);
+	bool bReadLoginConfigFile(char * cFn);
 	int bHasHeroSet(short Appr3, short Appr4, char OwnerType);
 	void ShowHeldenianVictory(short sSide);
 	void DrawDialogBox_Resurect(short msX, short msY);
@@ -555,7 +555,7 @@ public:
 	int m_iFriendIndex2; //dunno about that but its work :)
 
 
-	BOOL _ItemDropHistory(char * ItemName);
+	bool _ItemDropHistory(char * ItemName);
 
 	struct {
 		short sX;
@@ -572,13 +572,13 @@ public:
 	struct {
 		int sV1, sV2, sV3, sV4, sV5, sV6, sV7, sV8, sV9, sV10, sV11, sV12, sV13, sV14;
 		DWORD dwV1, dwV2, dwT1;
-		BOOL bFlag;
+		bool bFlag;
 		short sX, sY;
 		short sSizeX, sSizeY;
 		short sView;
 		char cStr[32], cStr2[32], cStr3[32], cStr4[32];
 		char cMode;
-		BOOL bIsScrollSelected;
+		bool bIsScrollSelected;
 	} m_stDialogBoxInfo[61];
 	char m_cDialogBoxOrder[61];
 	CInt m_bIsDialogEnabled[61];
@@ -617,7 +617,7 @@ public:
 	} m_stWhetherObject[DEF_MAXWHETHEROBJECTS];
 
 	struct {
-		BOOL bIsQuestCompleted;
+		bool bIsQuestCompleted;
 		short sWho, sQuestType, sContribution, sTargetType, sTargetCount, sX, sY, sRange;
 		short sCurrentCount; 
 		char cTargetName[22];
@@ -657,7 +657,7 @@ public:
 		int iMaxHP;
 		int iMP;
 		int iMaxMP;
-		BOOL bIsPoisoned;
+		bool bIsPoisoned;
 	} m_stPartyMemberNameList[DEF_MAXPARTYMEMBERS + 1];
 
 	class YWSound m_DSound;
@@ -723,53 +723,53 @@ public:
 
 
 	//v2.183 Hunter Mode;
-	BOOL m_bHunter;
-	BOOL m_bAresden;
-	BOOL m_bCitizen;
+	bool m_bHunter;
+	bool m_bAresden;
+	bool m_bCitizen;
 	//v2.183 Hunter Mode;
 
-	BOOL m_bZoomMap;
-	BOOL m_bIsProgramActive;
-	CInt m_bCommandAvailable; //was BOOL
-	BOOL m_bSoundFlag;
-	BOOL m_bSoundStat, m_bMusicStat; // On/Off
-	CInt m_bIsItemEquipped[DEF_MAXITEMS]; //was BOOL
-	CInt m_bIsItemDisabled[DEF_MAXITEMS]; //was BOOL
-	CInt m_bIsGetPointingMode; //was BOOL
-	BOOL m_bEnterPressed, m_bEscPressed, m_bCtrlPressed, m_bRunningMode, m_bShiftPressed;
+	bool m_bZoomMap;
+	bool m_bIsProgramActive;
+	CInt m_bCommandAvailable; //was bool
+	bool m_bSoundFlag;
+	bool m_bSoundStat, m_bMusicStat; // On/Off
+	CInt m_bIsItemEquipped[DEF_MAXITEMS]; //was bool
+	CInt m_bIsItemDisabled[DEF_MAXITEMS]; //was bool
+	CInt m_bIsGetPointingMode; //was bool
+	bool m_bEnterPressed, m_bEscPressed, m_bCtrlPressed, m_bRunningMode, m_bShiftPressed;
 
-	BOOL m_bDialogTrans;
-	BOOL m_bIsCombatMode;
-	BOOL m_bIsSafeAttackMode;
-	CInt m_bSkillUsingStatus; //was BOOL
-	CInt m_bItemUsingStatus; //was BOOL
-	BOOL m_bIsWhetherEffect;
-	BOOL m_bSuperAttackMode; //
-	BOOL m_bIsObserverMode, m_bIsObserverCommanded;
-	CInt m_bIsPoisoned; //was BOOL
-	BOOL m_bIsFirstConn;
-	BOOL m_bIsConfusion;
-	BOOL m_bIsRedrawPDBGS;
-	BOOL m_bDrawFlagDir;
-	BOOL m_bIsCrusadeMode;
-	CInt m_bIsSpecialAbilityEnabled; //was BOOL
-	BOOL m_bInputStatus;
-	BOOL m_bToggleScreen;
-	BOOL m_bIsSpecial;
+	bool m_bDialogTrans;
+	bool m_bIsCombatMode;
+	bool m_bIsSafeAttackMode;
+	CInt m_bSkillUsingStatus; //was bool
+	CInt m_bItemUsingStatus; //was bool
+	bool m_bIsWhetherEffect;
+	bool m_bSuperAttackMode; //
+	bool m_bIsObserverMode, m_bIsObserverCommanded;
+	CInt m_bIsPoisoned; //was bool
+	bool m_bIsFirstConn;
+	bool m_bIsConfusion;
+	bool m_bIsRedrawPDBGS;
+	bool m_bDrawFlagDir;
+	bool m_bIsCrusadeMode;
+	CInt m_bIsSpecialAbilityEnabled; //was bool
+	bool m_bInputStatus;
+	bool m_bToggleScreen;
+	bool m_bIsSpecial;
 
-	BOOL m_bIsF1HelpWindowEnabled;
-	CInt m_bIsTeleportRequested; //was BOOL
-	BOOL m_bIsPrevMoveBlocked;
-	BOOL m_bIsHideLocalCursor;
+	bool m_bIsF1HelpWindowEnabled;
+	CInt m_bIsTeleportRequested; //was bool
+	bool m_bIsPrevMoveBlocked;
+	bool m_bIsHideLocalCursor;
 
-	CInt m_bForceDisconn; //was BOOL
-	BOOL m_bForceAttack;
-	BOOL m_bParalyze;
+	CInt m_bForceDisconn; //was bool
+	bool m_bForceAttack;
+	bool m_bParalyze;
 
 	short m_sFrameCount;
 	short m_sFPS;
 	DWORD m_dwFPStime;
-	BOOL m_bShowFPS;
+	bool m_bShowFPS;
 
 	int m_iFightzoneNumber;
 	int m_iFightzoneNumberTemp;
@@ -918,11 +918,11 @@ public:
 
 	HANDLE m_hPakFile;
 
-	BOOL m_bWhisper;
-	BOOL m_bShout;
+	bool m_bWhisper;
+	bool m_bShout;
 
 
-	BOOL m_bItemDrop;
+	bool m_bItemDrop;
 	int m_iItemDropCnt;
 
 	char m_cGateMapName[12];
@@ -931,36 +931,36 @@ public:
 	int m_iHeldenianElvineLeftTower;
 	int m_iHeldenianAresdenFlags;
 	int m_iHeldenianElvineFlags;
-	BOOL m_bIllusionMVT;
+	bool m_bIllusionMVT;
 	int m_iGameServerMode;
-	BOOL m_bIsXmas;
-	BOOL m_bUsingSlate;
+	bool m_bIsXmas;
+	bool m_bUsingSlate;
 
-	BOOL m_bIsAvatarMode;
-	BOOL m_bIsAvatarMessenger;
+	bool m_bIsAvatarMode;
+	bool m_bIsAvatarMessenger;
 
 	class CBuildItem * m_pCraftItemList[DEF_MAXBUILDITEMS];
 	class CBuildItem * m_pDispCraftItemList[DEF_MAXBUILDITEMS];
 	int m_iContributionPrice;
 	char m_cTakeItemName[100];
 	char m_cTakeHeroItemName[100]; //Drajwer - hero item str
-	void TestList(char * pTxt, char cColor = 0, BOOL bDupAllow = TRUE);
+	void TestList(char * pTxt, char cColor = 0, bool bDupAllow = true);
 	DWORD dwTime;
 
 	bool bCheckItemEquiped(char itemName[]); // Beholder neck
-	BOOL bIsApocAnimationOn;
+	bool bIsApocAnimationOn;
 
-	BOOL m_bHappyHour;
+	bool m_bHappyHour;
 
 	void DrawFlagCarrier(short sX, short sY, char cFrame, DWORD dwTime);
 
-	BOOL m_bIsCTFMode;
+	bool m_bIsCTFMode;
 	short m_sElvineFlagCount;
 	short m_sAresdenFlagCount;
-	BOOL m_bIsElvineFlagStatus;
-	BOOL m_bIsAresdenFlagStatus;
+	bool m_bIsElvineFlagStatus;
+	bool m_bIsAresdenFlagStatus;
 
-	BOOL m_bShowParty;
+	bool m_bShowParty;
 	void DrawPartyStatus(DWORD dwTime);
 
 };

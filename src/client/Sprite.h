@@ -30,7 +30,7 @@ public:
 		HeapFree(GetProcessHeap(), HEAP_NO_SERIALIZE, mem);
 	};
 
-	CSprite(HANDLE hPakFile, class DXC_ddraw * pDDraw, char * cPakFileName, short sNthFile, bool bAlphaEffect = TRUE);
+	CSprite(HANDLE hPakFile, class DXC_ddraw * pDDraw, char * cPakFileName, short sNthFile, bool bAlphaEffect = true);
 	virtual ~CSprite();
 
 	void PutSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, DWORD dwTime);
@@ -66,7 +66,7 @@ public:
 
 
 	void _SetAlphaDegree();
-	BOOL _bCheckCollison(int sX, int sY, short sFrame, int msX, int msY);
+	bool _bCheckCollison(int sX, int sY, short sFrame, int msX, int msY);
 	void _GetSpriteRect(int sX, int sY, int sFrame);
 	void _iCloseSprite();
 	bool _iOpenSprite();

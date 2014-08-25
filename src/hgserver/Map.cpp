@@ -3,7 +3,7 @@
 extern void PutLogFileList(char * cStr);
 
 CMap::CMap(class CGame * pGame)
-: m_bIsSnowEnabled(FALSE) {
+: m_bIsSnowEnabled(false) {
 	int i, ix, iy;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
@@ -25,7 +25,7 @@ CMap::CMap(class CGame * pGame)
 	}
 
 	for (i = 0; i < DEF_MAXSPOTMOBGENERATOR; i++) {
-		m_stSpotMobGenerator[i].bDefined = FALSE;
+		m_stSpotMobGenerator[i].bDefined = false;
 		m_stSpotMobGenerator[i].iTotalActiveMob = 0;
 	}
 
@@ -45,7 +45,7 @@ CMap::CMap(class CGame * pGame)
 	}
 
 	for (i = 0; i < 1000; i++)
-		m_bNamingValueUsingStatus[i] = FALSE;
+		m_bNamingValueUsingStatus[i] = false;
 
 	for (i = 0; i < DEF_MAXOCCUPYFLAG; i++)
 		m_pOccupyFlag[i] = NULL;
@@ -58,7 +58,7 @@ CMap::CMap(class CGame * pGame)
 		m_stEnergySphereGoalList[i].cResult = NULL;
 	}
 
-	m_bIsHeldenianMap = FALSE;
+	m_bIsHeldenianMap = false;
 	m_iTotalActiveObject = 0;
 	m_iTotalAliveObject = 0;
 	m_iTotalItemEvents = 0;
@@ -66,7 +66,7 @@ CMap::CMap(class CGame * pGame)
 	//m_sInitialPointX = 0;
 	//m_sInitialPointY = 0;
 
-	m_bIsFixedDayMode = FALSE;
+	m_bIsFixedDayMode = false;
 
 	m_iTotalFishPoint = 0;
 	m_iMaxFish = 0;
@@ -85,19 +85,19 @@ CMap::CMap(class CGame * pGame)
 
 	m_iLevelLimit = 0;
 	m_iUpperLevelLimit = 0; // v1.4
-	m_bMineralGenerator = FALSE;
+	m_bMineralGenerator = false;
 
 	m_iTotalOccupyFlags = 0;
 
-	m_bIsAttackEnabled = TRUE;
+	m_bIsAttackEnabled = true;
 	m_cRandomMobGeneratorLevel = 0;
 
-	m_bIsFightZone = FALSE;
+	m_bIsFightZone = false;
 
 	m_iTotalEnergySphereCreationPoint = 0;
 	m_iTotalEnergySphereGoalPoint = 0;
 
-	m_bIsEnergySphereGoalEnabled = FALSE;
+	m_bIsEnergySphereGoalEnabled = false;
 	m_iCurEnergySphereGoalPointIndex = -1;
 
 	for (ix = 0; ix < DEF_MAXSECTORS; ix++)
@@ -138,7 +138,7 @@ CMap::CMap(class CGame * pGame)
 		ZeroMemory(m_stStrikePoint[i].cRelatedMapName, sizeof (m_stStrikePoint[i].cRelatedMapName));
 	}
 	m_iTotalStrikePoints = 0;
-	m_bIsDisabled = FALSE;
+	m_bIsDisabled = false;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
 		m_stCrusadeStructureInfo[i].cType = NULL;
@@ -180,7 +180,7 @@ void CMap::SetOwner(short sOwner, char cOwnerClass, short sX, short sY) {
 char _tmp_cMoveDirX[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
 char _tmp_cMoveDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 
-BOOL CMap::bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner) {
+bool CMap::bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner) {
 	class CTile * pTile;
 	short dX, dY;
 
@@ -253,57 +253,57 @@ void CMap::GetDeadOwner(short * pOwner, char * pOwnerClass, short sX, short sY) 
 	*pOwnerClass = pTile->m_cDeadOwnerClass;
 }
 
-BOOL CMap::bGetMoveable(short dX, short dY, short * pDOtype, short * pTopItem) {
+bool CMap::bGetMoveable(short dX, short dY, short * pDOtype, short * pTopItem) {
 	class CTile * pTile;
 
-	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return FALSE;
+	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return false;
 	pTile = (class CTile *)(m_pTile + dX + dY * m_sSizeY);
 
 	if (pDOtype != NULL) *pDOtype = pTile->m_sDynamicObjectType;
 	if (pTopItem != NULL) *pTopItem = pTile->m_cTotalItem;
 
-	if (pTile->m_sOwner != NULL) return FALSE;
-	if (pTile->m_bIsMoveAllowed == FALSE) return FALSE;
-	if (pTile->m_bIsTempMoveAllowed == FALSE) return FALSE;
+	if (pTile->m_sOwner != NULL) return false;
+	if (pTile->m_bIsMoveAllowed == false) return false;
+	if (pTile->m_bIsTempMoveAllowed == false) return false;
 
-	return TRUE;
+	return true;
 }
 
-BOOL CMap::bGetIsMoveAllowedTile(short dX, short dY) {
+bool CMap::bGetIsMoveAllowedTile(short dX, short dY) {
 	class CTile * pTile;
 
-	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return FALSE;
+	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return false;
 
 	pTile = (class CTile *)(m_pTile + dX + dY * m_sSizeY);
 
-	if (pTile->m_bIsMoveAllowed == FALSE) return FALSE;
-	if (pTile->m_bIsTempMoveAllowed == FALSE) return FALSE;
+	if (pTile->m_bIsMoveAllowed == false) return false;
+	if (pTile->m_bIsTempMoveAllowed == false) return false;
 
-	return TRUE;
+	return true;
 }
 
-/*BOOL CMap::sub_4C0F20(short dX, short dY)
+/*bool CMap::sub_4C0F20(short dX, short dY)
 {
  class CTile * pTile;	
 	
 	3CA18h = 0;
 
-	if ((dX < 14) || (dX >= m_sSizeX - 16) || (dY < 12) || (dY >= m_sSizeY - 14)) return FALSE;
+	if ((dX < 14) || (dX >= m_sSizeX - 16) || (dY < 12) || (dY >= m_sSizeY - 14)) return false;
 
 	pTile = (class CTile *)(m_pTile + dX + dY*m_sSizeY);
 
 }*/
 
-BOOL CMap::bGetIsTeleport(short dX, short dY) {
+bool CMap::bGetIsTeleport(short dX, short dY) {
 	class CTile * pTile;
 
-	if ((dX < 14) || (dX >= m_sSizeX - 16) || (dY < 12) || (dY >= m_sSizeY - 14)) return FALSE;
+	if ((dX < 14) || (dX >= m_sSizeX - 16) || (dY < 12) || (dY >= m_sSizeY - 14)) return false;
 
 	pTile = (class CTile *)(m_pTile + dX + dY * m_sSizeY);
 
-	if (pTile->m_bIsTeleport == FALSE) return FALSE;
+	if (pTile->m_bIsTeleport == false) return false;
 
-	return TRUE;
+	return true;
 }
 
 void CMap::ClearOwner(int iDebugCode, short sOwnerH, char cOwnerType, short sX, short sY) {
@@ -364,7 +364,7 @@ void CMap::ClearDeadOwner(short sX, short sY) {
 	pTile->m_cDeadOwnerClass = NULL;
 }
 
-BOOL CMap::bSetItem(short sX, short sY, class CItem * pItem) {
+bool CMap::bSetItem(short sX, short sY, class CItem * pItem) {
 	class CTile * pTile;
 	register int i;
 
@@ -382,7 +382,7 @@ BOOL CMap::bSetItem(short sX, short sY, class CItem * pItem) {
 
 	pTile->m_pItem[0] = pItem;
 	//pTile->m_cTotalItem++;
-	return TRUE;
+	return true;
 }
 
 class CItem * CMap::pGetItem(short sX, short sY, short * pRemainItemSprite, short * pRemainItemSpriteFrame, char * pRemainItemColor) //v1.4 color
@@ -428,12 +428,12 @@ int CMap::iCheckItem(short sX, short sY) {
 	return pItem->m_sIDnum;
 }
 
-BOOL CMap::bIsValidLoc(short sX, short sY) {
-	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return FALSE;
-	return TRUE;
+bool CMap::bIsValidLoc(short sX, short sY) {
+	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return false;
+	return true;
 }
 
-BOOL CMap::bInit(char * pName) {
+bool CMap::bInit(char * pName) {
 	int i;
 	// �������� �ε��Ѵ�.
 	ZeroMemory(m_cName, sizeof (m_cName));
@@ -441,16 +441,16 @@ BOOL CMap::bInit(char * pName) {
 
 	ZeroMemory(m_cLocationName, sizeof (m_cLocationName));
 
-	if (_bDecodeMapDataFileContents() == FALSE)
-		return FALSE;
+	if (_bDecodeMapDataFileContents() == false)
+		return false;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
 		m_pTeleportLoc[i] = NULL;
 
-	return TRUE;
+	return true;
 }
 
-BOOL CMap::_bDecodeMapDataFileContents() {
+bool CMap::_bDecodeMapDataFileContents() {
 	HANDLE hFile;
 	char cMapFileName[256], cHeader[260], cTemp[100];
 	DWORD dwFileSize, nRead;
@@ -467,7 +467,7 @@ BOOL CMap::_bDecodeMapDataFileContents() {
 	strcat(cMapFileName, ".amd");
 
 	hFile = CreateFile(cMapFileName, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE) return FALSE;
+	if (hFile == INVALID_HANDLE_VALUE) return false;
 	dwFileSize = GetFileSize(hFile, NULL);
 
 	ZeroMemory(cHeader, sizeof (cHeader));
@@ -522,23 +522,23 @@ BOOL CMap::_bDecodeMapDataFileContents() {
 			pTile = (class CTile *)(m_pTile + ix + iy * m_sSizeY);
 			if ((cTemp[8] & 0x80) != 0) {
 				// ������� �Ӽ��� ��Ʈ�Ǿ� �ִ�.
-				pTile->m_bIsMoveAllowed = FALSE;
-			} else pTile->m_bIsMoveAllowed = TRUE;
+				pTile->m_bIsMoveAllowed = false;
+			} else pTile->m_bIsMoveAllowed = true;
 
 			if ((cTemp[8] & 0x40) != 0) {
 				// �ڷ���Ʈ �Ӽ��� ��Ʈ�Ǿ� �ִ�.
-				pTile->m_bIsTeleport = TRUE;
-			} else pTile->m_bIsTeleport = FALSE;
+				pTile->m_bIsTeleport = true;
+			} else pTile->m_bIsTeleport = false;
 
 			if ((cTemp[8] & 0x20) != 0) {
-				pTile->m_bIsFarm = TRUE;
-			} else pTile->m_bIsFarm = FALSE;
+				pTile->m_bIsFarm = true;
+			} else pTile->m_bIsFarm = false;
 
 			sp = (short *) &cTemp[0];
 			if (*sp == 19) {
 				// �� Ÿ���̴�. 
-				pTile->m_bIsWater = TRUE;
-			} else pTile->m_bIsWater = FALSE;
+				pTile->m_bIsWater = true;
+			} else pTile->m_bIsWater = false;
 
 
 		}
@@ -546,10 +546,10 @@ BOOL CMap::_bDecodeMapDataFileContents() {
 	CloseHandle(hFile);
 
 	if (pStrTok != NULL) delete pStrTok;
-	return TRUE;
+	return true;
 }
 
-BOOL CMap::bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int * pDy, char * pDir) {
+bool CMap::bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int * pDy, char * pDir) {
 	register int i;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
@@ -559,10 +559,10 @@ BOOL CMap::bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int *
 			*pDx = m_pTeleportLoc[i]->m_sDestX;
 			*pDy = m_pTeleportLoc[i]->m_sDestY;
 			*pDir = m_pTeleportLoc[i]->m_cDir;
-			return TRUE;
+			return true;
 		}
 
-	return FALSE;
+	return false;
 }
 
 void CMap::SetDynamicObject(WORD wID, short sType, short sX, short sY, DWORD dwRegisterTime) {
@@ -578,11 +578,11 @@ void CMap::SetDynamicObject(WORD wID, short sType, short sX, short sY, DWORD dwR
 	pTile->m_dwDynamicObjectRegisterTime = dwRegisterTime;
 }
 
-BOOL CMap::bGetDynamicObject(short sX, short sY, short *pType, DWORD *pRegisterTime, int * pIndex) {
+bool CMap::bGetDynamicObject(short sX, short sY, short *pType, DWORD *pRegisterTime, int * pIndex) {
 	class CTile * pTile;
 
 
-	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return FALSE;
+	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return false;
 
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
 
@@ -590,16 +590,16 @@ BOOL CMap::bGetDynamicObject(short sX, short sY, short *pType, DWORD *pRegisterT
 	*pRegisterTime = pTile->m_dwDynamicObjectRegisterTime;
 	if (pIndex != NULL) *pIndex = pTile->m_wDynamicObjectID;
 
-	return TRUE;
+	return true;
 }
 
 int CMap::iGetEmptyNamingValue() {
 	register int i;
 
 	for (i = 0; i < 1000; i++)
-		if (m_bNamingValueUsingStatus[i] == FALSE) {
+		if (m_bNamingValueUsingStatus[i] == false) {
 
-			m_bNamingValueUsingStatus[i] = TRUE;
+			m_bNamingValueUsingStatus[i] = true;
 			return i;
 		}
 
@@ -607,54 +607,54 @@ int CMap::iGetEmptyNamingValue() {
 }
 
 void CMap::SetNamingValueEmpty(int iValue) {
-	m_bNamingValueUsingStatus[iValue] = FALSE;
+	m_bNamingValueUsingStatus[iValue] = false;
 }
 
-BOOL CMap::bGetIsWater(short dX, short dY) {
+bool CMap::bGetIsWater(short dX, short dY) {
 	class CTile * pTile;
 
-	if ((dX < 14) || (dX >= m_sSizeX - 16) || (dY < 12) || (dY >= m_sSizeY - 14)) return FALSE;
+	if ((dX < 14) || (dX >= m_sSizeX - 16) || (dY < 12) || (dY >= m_sSizeY - 14)) return false;
 
 	pTile = (class CTile *)(m_pTile + dX + dY * m_sSizeY);
 
-	if (pTile->m_bIsWater == FALSE) return FALSE;
+	if (pTile->m_bIsWater == false) return false;
 
-	return TRUE;
+	return true;
 }
 
 //v2.19 2002-12-16 ��� ��ų ���
 
-BOOL CMap::bRemoveCropsTotalSum() {
+bool CMap::bRemoveCropsTotalSum() {
 	if (m_iTotalAgriculture < DEF_MAXAGRICULTURE) {
 		m_iTotalAgriculture--;
 		if (m_iTotalAgriculture < 0) {
 			m_iTotalAgriculture = 0;
 		}
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 //v2.19 2002-12-16 ��� ��ų ���
 
-BOOL CMap::bAddCropsTotalSum() {
+bool CMap::bAddCropsTotalSum() {
 	if (m_iTotalAgriculture < DEF_MAXAGRICULTURE) {
 		m_iTotalAgriculture++;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL CMap::bGetIsFarm(short tX, short tY) {
+bool CMap::bGetIsFarm(short tX, short tY) {
 	class CTile * pTile;
 
-	if ((tX < 14) || (tX >= m_sSizeX - 16) || (tY < 12) || (tY >= m_sSizeY - 14)) return FALSE;
+	if ((tX < 14) || (tX >= m_sSizeX - 16) || (tY < 12) || (tY >= m_sSizeY - 14)) return false;
 
 	pTile = (class CTile *)(m_pTile + tX + tY * m_sSizeY);
 
-	if (pTile->m_bIsFarm == FALSE) return FALSE;
+	if (pTile->m_bIsFarm == false) return false;
 
-	return TRUE;
+	return true;
 }
 
 int CMap::iAnalyze(char cType, int * pX, int * pY, int * pV1, int * pV2, int * pV3) {
@@ -673,7 +673,7 @@ int CMap::iAnalyze(char cType, int * pX, int * pY, int * pV1, int * pV2, int * p
 	return 0;
 }
 
-void CMap::SetTempMoveAllowedFlag(int dX, int dY, BOOL bFlag) {
+void CMap::SetTempMoveAllowedFlag(int dX, int dY, bool bFlag) {
 	class CTile * pTile;
 
 	if ((dX < 20) || (dX >= m_sSizeX - 20) || (dY < 20) || (dY >= m_sSizeY - 20)) return;
@@ -762,7 +762,7 @@ int CMap::iGetAttribute(int dX, int dY, int iBitMask) {
 	return (pTile->m_iAttribute & iBitMask);
 }
 
-BOOL CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) {
+bool CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) {
 	register int i;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++)
@@ -773,13 +773,13 @@ BOOL CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) 
 			m_stCrusadeStructureInfo[i].sY = sY;
 
 			m_iTotalCrusadeStructures++;
-			return TRUE;
+			return true;
 		}
 
-	return FALSE;
+	return false;
 }
 
-/*BOOL CMap::bAddHeldenianTowerInfo(char cType, short sX, short sY, char cSide)
+/*bool CMap::bAddHeldenianTowerInfo(char cType, short sX, short sY, char cSide)
 {
  register int i;
 
@@ -791,7 +791,7 @@ BOOL CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) 
 		m_stHeldenianTower[i].sX = sX;
 		m_stHeldenianTower[i].sY = sY;
 		m_iHeldenianAresdenLeftTower++;
-		return TRUE;
+		return true;
 	}
 	else if (m_stHeldenianTower[i].cSide == 2) {
 		m_stHeldenianTower[i].sTypeID = sTypeID;
@@ -799,13 +799,13 @@ BOOL CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) 
 		m_stHeldenianTower[i].sX = sX;
 		m_stHeldenianTower[i].sY = sY;
 		m_iHeldenianElvineLeftTower++;
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }*/
 
-BOOL CMap::bRemoveCrusadeStructureInfo(short sX, short sY) {
+bool CMap::bRemoveCrusadeStructureInfo(short sX, short sY) {
 	register int i;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++)
@@ -817,7 +817,7 @@ BOOL CMap::bRemoveCrusadeStructureInfo(short sX, short sY) {
 			goto RCSI_REARRANGE;
 		}
 
-	return FALSE;
+	return false;
 
 RCSI_REARRANGE:
 	;
@@ -836,7 +836,7 @@ RCSI_REARRANGE:
 		}
 
 	m_iTotalCrusadeStructures--;
-	return TRUE;
+	return true;
 }
 
 void CMap::RestoreStrikePoints() {

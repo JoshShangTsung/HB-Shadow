@@ -8,6 +8,6 @@ public:
 	char m_cName[21];
 
 	int m_iLevel;
-	BOOL m_bIsUseable;
+	bool m_bIsUseable;
 	char m_cUseMethod;
 };

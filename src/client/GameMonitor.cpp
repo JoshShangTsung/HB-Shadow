@@ -49,7 +49,7 @@ int CGameMonitor::iReadBadWordFileList(char *pFn) {
 	return iIndex;
 }
 
-BOOL CGameMonitor::bCheckBadWord(char *pWord) {
+bool CGameMonitor::bCheckBadWord(char *pWord) {
 	int i;
 	char cBuffer[500];
 	ZeroMemory(cBuffer, sizeof (cBuffer));
@@ -57,9 +57,9 @@ BOOL CGameMonitor::bCheckBadWord(char *pWord) {
 	i = 0;
 	while ((m_pWordList[i] != NULL) && (strlen(m_pWordList[i]->m_pMsg) != 0)) {
 		if (memcmp(cBuffer, m_pWordList[i]->m_pMsg, strlen(m_pWordList[i]->m_pMsg)) == 0) {
-			return TRUE;
+			return true;
 		}
 		i++;
 	}
-	return FALSE;
+	return false;
 }
