@@ -531,7 +531,7 @@ public:
 
 	//Snoopy: added function:
 	void DebugLog(char * cStr);
-	bool bReadLoginConfigFile(char * cFn);
+	bool bReadLoginConfigFile(const char * cFn);
 	int bHasHeroSet(short Appr3, short Appr4, char OwnerType);
 	void ShowHeldenianVictory(short sSide);
 	void DrawDialogBox_Resurect(short msX, short msY);

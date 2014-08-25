@@ -17,6 +17,7 @@ void CInt::Set(const int & iValue) {
 
 CInt & CInt::operator=(const int &iValue) {
 	m_iKeyValue = iValue;
+	return *this;
 }
 
 CInt::operator int() {

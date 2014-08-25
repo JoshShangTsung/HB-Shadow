@@ -600,7 +600,7 @@ bool DXC_ddraw::Screenshot(LPCTSTR FileName, LPDIRECTDRAWSURFACE7 lpDDS) {
 	HBITMAP OffscrBmp = NULL; // bitmap that is converted to a DIB
 	HDC OffscrDC = NULL; // offscreen DC that we can select OffscrBmp into
 	LPBITMAPINFO lpbi = NULL; // bitmap format info; used by GetDIBits
-	LPVOID lpvBits = NULL; // pointer to bitmap bits array
+	char *lpvBits = NULL; // pointer to bitmap bits array
 	HANDLE BmpFile = INVALID_HANDLE_VALUE; // destination .bmp file
 	BITMAPFILEHEADER bmfh; // .bmp file header
 

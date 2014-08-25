@@ -14123,7 +14123,7 @@ bool CGame::bReadIp() {
 	return true;
 }
 
-bool CGame::bReadLoginConfigFile(char * cFn) {
+bool CGame::bReadLoginConfigFile(const char * cFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
@@ -18487,7 +18487,7 @@ void CGame::DrawDialogBox_Text(short msX, short msY, short msZ, char cLB) {
 					case '/': PutAlignedString(sX + 24, sX + 236, sY + 50 + i * 13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg + 1), 250, 250, 0);
 						break;
 						// Lime
-					case '�': PutAlignedString(sX + 24, sX + 236, sY + 50 + i * 13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg + 1), 0, 255, 0);
+					case '\t': PutAlignedString(sX + 24, sX + 236, sY + 50 + i * 13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg + 1), 0, 255, 0);
 						break;
 						// Green
 					case '#': PutAlignedString(sX + 24, sX + 236, sY + 50 + i * 13, (m_pMsgTextList[i + m_stDialogBoxInfo[18].sView]->m_pMsg + 1), 0, 200, 0);

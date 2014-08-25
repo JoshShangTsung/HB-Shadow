@@ -54,7 +54,7 @@ namespace {
 	}
 }
 
-void CCurse::ConvertString(char * str, int max_len) {
+void CCurse::ConvertString(char * str, std::size_t max_len) {
 	if (!str || !max_len) return;
 	std::string s(str);
 	for (std::size_t i = 0; i < s.length(); ++i) {
