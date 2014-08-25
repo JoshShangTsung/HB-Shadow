@@ -80,25 +80,25 @@ void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * p
 
 void CMisc::GetDirPoint(char cDir, int * pX, int * pY) {
 	switch (cDir) {
-		case 1: *pY--;
+		case 1: --(*pY);
 			break;
-		case 2: *pY--;
-			*pX++;
+		case 2: --(*pY);
+			++(*pX);
 			break;
-		case 3: *pX++;
+		case 3: ++(*pX);
 			break;
-		case 4: *pX++;
-			*pY++;
+		case 4: ++(*pX);
+			++(*pY);
 			break;
-		case 5: *pY++;
+		case 5: ++(*pY);
 			break;
-		case 6: *pX--;
-			*pY++;
+		case 6: --(*pX);
+			++(*pY);
 			break;
-		case 7: *pX--;
+		case 7: --(*pX);
 			break;
-		case 8: *pX--;
-			*pY--;
+		case 8: --(*pX);
+			--(*pY);
 			break;
 	}
 }
@@ -250,17 +250,17 @@ int CMisc::_iGetFileCheckSum(char * pFn) {
 	ZeroMemory(cRealFn, sizeof (cRealFn));
 	strcpy(cRealFn, pFn);
 	for (i = 0; i < strlen(cRealFn); i++)
-		if (cRealFn[i] != NULL) cRealFn[i]++;
+		if (cRealFn[i] != 0) cRealFn[i]++;
 
-	hFile = CreateFile(cRealFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL); //CreateFile(cRealFn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, NULL);
-	dwFileSize = GetFileSize(hFile, NULL);
+	hFile = CreateFile(cRealFn, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0); //CreateFile(cRealFn, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, 0);
+	dwFileSize = GetFileSize(hFile, 0);
 	CloseHandle(hFile);
 	if (hFile == INVALID_HANDLE_VALUE) {
 		return 0;
 	}
 
 	pFile = fopen(cRealFn, "rb");
-	if (pFile == NULL) return 0;
+	if (pFile == 0) return 0;
 	else {
 		pContents = new char[dwFileSize + 1];
 		ZeroMemory(pContents, dwFileSize + 1);
@@ -280,7 +280,7 @@ int CMisc::_iGetFileCheckSum(char * pFn) {
 	return abs(iCheckSum);
 }
 
-bool CMisc::_iConvertFileXor(char *pFn, char * pDestFn, char cKey) {
+bool CMisc::_iConvertFileXor(const char *pFn, const char * pDestFn, char cKey) {
 	HANDLE hFile;
 	DWORD dwFileSize;
 	FILE * pFile;
@@ -289,11 +289,11 @@ bool CMisc::_iConvertFileXor(char *pFn, char * pDestFn, char cKey) {
 	//	.mando
 	char pHeader[10];
 	char cHeaderKey = 20;
-	hFile = CreateFile(pFn, GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
-	dwFileSize = GetFileSize(hFile, NULL) - 10;
+	hFile = CreateFile(pFn, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
+	dwFileSize = GetFileSize(hFile, 0) - 10;
 	if (hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);
 	pFile = fopen(pFn, "rt");
-	if (pFile == NULL)
+	if (pFile == 0)
 		return false;
 
 	pContents = new char[dwFileSize + 1];
@@ -305,7 +305,7 @@ bool CMisc::_iConvertFileXor(char *pFn, char * pDestFn, char cKey) {
 	for (i = 0; i < (int) (dwFileSize); i++)
 		pContents[i] = pContents[i] ^ cKey;
 	pFile = fopen(pDestFn, "wt");
-	if (pFile == NULL) {
+	if (pFile == 0) {
 		delete[] pContents;
 		return false;
 	}

@@ -3,9 +3,9 @@
 XSocket::XSocket(HWND hWnd, int iBlockLimit) {
 	register int i;
 
-	m_cType = NULL;
-	m_pRcvBuffer = NULL;
-	m_pSndBuffer = NULL;
+	m_cType = 0;
+	m_pRcvBuffer = 0;
+	m_pSndBuffer = 0;
 	m_Sock = INVALID_SOCKET;
 	m_dwBufferSize = 0;
 
@@ -15,13 +15,13 @@ XSocket::XSocket(HWND hWnd, int iBlockLimit) {
 
 	for (i = 0; i < DEF_XSOCKBLOCKLIMIT; i++) {
 		m_iUnsentDataSize[i] = 0;
-		m_pUnsentDataList[i] = NULL;
+		m_pUnsentDataList[i] = 0;
 	}
 
 	m_sHead = 0;
 	m_sTail = 0;
 
-	m_WSAErr = NULL;
+	m_WSAErr = 0;
 
 	m_hWnd = hWnd;
 	m_bIsAvailable = false;
@@ -32,23 +32,23 @@ XSocket::XSocket(HWND hWnd, int iBlockLimit) {
 
 XSocket::~XSocket() {
 	register int i;
-	if (m_pRcvBuffer != NULL) delete[] m_pRcvBuffer;
-	if (m_pSndBuffer != NULL) delete[] m_pSndBuffer;
+	if (m_pRcvBuffer != 0) delete[] m_pRcvBuffer;
+	if (m_pSndBuffer != 0) delete[] m_pSndBuffer;
 	for (i = 0; i < DEF_XSOCKBLOCKLIMIT; i++)
-		if (m_pUnsentDataList[i] != NULL) delete[] m_pUnsentDataList[i];
+		if (m_pUnsentDataList[i] != 0) delete[] m_pUnsentDataList[i];
 
 	_CloseConn();
 }
 
 bool XSocket::bInitBufferSize(DWORD dwBufferSize) {
-	if (m_pRcvBuffer != NULL) delete[] m_pRcvBuffer;
-	if (m_pSndBuffer != NULL) delete[] m_pSndBuffer;
+	if (m_pRcvBuffer != 0) delete[] m_pRcvBuffer;
+	if (m_pSndBuffer != 0) delete[] m_pSndBuffer;
 
 	m_pRcvBuffer = new char[dwBufferSize + 8];
-	if (m_pRcvBuffer == NULL) return false;
+	if (m_pRcvBuffer == 0) return false;
 
 	m_pSndBuffer = new char[dwBufferSize + 8];
-	if (m_pSndBuffer == NULL) return false;
+	if (m_pSndBuffer == 0) return false;
 
 	m_dwBufferSize = dwBufferSize;
 
@@ -59,7 +59,7 @@ int XSocket::iOnSocketEvent(WPARAM wParam, LPARAM lParam) {
 	int WSAEvent;
 
 	if (m_cType != DEF_XSOCK_NORMALSOCK) return DEF_XSOCKEVENT_SOCKETMISMATCH;
-	if (m_cType == NULL) return DEF_XSOCKEVENT_NOTINITIALIZED;
+	if (m_cType == 0) return DEF_XSOCKEVENT_NOTINITIALIZED;
 
 	if ((SOCKET) wParam != m_Sock) return DEF_XSOCKEVENT_SOCKETMISMATCH;
 	WSAEvent = WSAGETSELECTEVENT(lParam);
@@ -143,7 +143,6 @@ bool XSocket::bBlockConnect(char * pAddr, int iPort, unsigned int uiMsg) {
 
 bool XSocket::bConnect(char * pAddr, int iPort, unsigned int uiMsg) {
 	SOCKADDR_IN saTemp;
-	u_long arg;
 	int iRet;
 	DWORD dwOpt;
 
@@ -153,8 +152,6 @@ bool XSocket::bConnect(char * pAddr, int iPort, unsigned int uiMsg) {
 	m_Sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_Sock == INVALID_SOCKET)
 		return false;
-
-	arg = 1;
 
 	memset(&saTemp, 0, sizeof (saTemp));
 	saTemp.sin_family = AF_INET;
@@ -258,7 +255,7 @@ int XSocket::_iOnRead() {
 int XSocket::_iSend(char * cData, int iSize, bool bSaveFlag) {
 	int iOutLen, iRet, WSAErr;
 
-	if (m_pUnsentDataList[m_sHead] != NULL) {
+	if (m_pUnsentDataList[m_sHead] != 0) {
 		if (bSaveFlag == true) {
 			iRet = _iRegisterUnsentData(cData, iSize);
 			switch (iRet) {
@@ -329,10 +326,10 @@ int XSocket::_iSend_ForInternalUse(char * cData, int iSize) {
 }
 
 int XSocket::_iRegisterUnsentData(char * cData, int iSize) {
-	if (m_pUnsentDataList[m_sTail] != NULL) return 0;
+	if (m_pUnsentDataList[m_sTail] != 0) return 0;
 
 	m_pUnsentDataList[m_sTail] = new char[iSize];
-	if (m_pUnsentDataList[m_sTail] == NULL) return -1;
+	if (m_pUnsentDataList[m_sTail] == 0) return -1;
 	memcpy(m_pUnsentDataList[m_sTail], cData, iSize);
 	m_iUnsentDataSize[m_sTail] = iSize;
 	m_sTail++;
@@ -346,13 +343,13 @@ int XSocket::_iSendUnsentData() {
 	int iRet;
 	char * pTemp;
 
-	while (m_pUnsentDataList[m_sHead] != NULL) {
+	while (m_pUnsentDataList[m_sHead] != 0) {
 
 		iRet = _iSend_ForInternalUse(m_pUnsentDataList[m_sHead], m_iUnsentDataSize[m_sHead]);
 
 		if (iRet == m_iUnsentDataSize[m_sHead]) {
 			delete[] m_pUnsentDataList[m_sHead];
-			m_pUnsentDataList[m_sHead] = NULL;
+			m_pUnsentDataList[m_sHead] = 0;
 			m_iUnsentDataSize[m_sHead] = 0;
 			m_sHead++;
 			//if (m_sHead >= DEF_XSOCKBLOCKLIMIT) m_sHead = 0;
@@ -381,7 +378,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 	if (dwSize > m_dwBufferSize) return DEF_XSOCKEVENT_MSGSIZETOOLARGE;
 
 	if (m_cType != DEF_XSOCK_NORMALSOCK) return DEF_XSOCKEVENT_SOCKETMISMATCH;
-	if (m_cType == NULL) return DEF_XSOCKEVENT_NOTINITIALIZED;
+	if (m_cType == 0) return DEF_XSOCKEVENT_NOTINITIALIZED;
 
 	m_pSndBuffer[0] = cKey;
 
@@ -389,7 +386,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 	*wp = (WORD) (dwSize + 3);
 
 	memcpy((char *) (m_pSndBuffer + 3), cData, dwSize);
-	if (cKey != NULL) {
+	if (cKey != 0) {
 		for (i = 0; i < (int) (dwSize); i++) {
 			m_pSndBuffer[3 + i] += (i ^ cKey);
 			m_pSndBuffer[3 + i] = (char) (m_pSndBuffer[3 + i] ^ (cKey ^ (dwSize - i)));
@@ -408,7 +405,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 bool XSocket::bListen(char * pAddr, int iPort, unsigned int uiMsg) {
 	SOCKADDR_IN saTemp;
 
-	if (m_cType != NULL) return false;
+	if (m_cType != 0) return false;
 	if (m_Sock != INVALID_SOCKET) closesocket(m_Sock);
 
 	m_Sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -440,13 +437,12 @@ bool XSocket::bListen(char * pAddr, int iPort, unsigned int uiMsg) {
 bool XSocket::bAccept(class XSocket * pXSock, unsigned int uiMsg) {
 	SOCKET AcceptedSock;
 	sockaddr Addr;
-	register int iLength;
 	DWORD dwOpt;
 
 	if (m_cType != DEF_XSOCK_LISTENSOCK) return false;
-	if (pXSock == NULL) return false;
+	if (pXSock == 0) return false;
 
-	iLength = sizeof (Addr);
+	int iLength = sizeof (Addr);
 	AcceptedSock = accept(m_Sock, (struct sockaddr FAR *) &Addr, (int FAR *) &iLength);
 	if (AcceptedSock == INVALID_SOCKET)
 		return false;
@@ -489,14 +485,14 @@ char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey) {
 	char cKey;
 
 	cKey = m_pRcvBuffer[0];
-	if (pKey != NULL) *pKey = cKey;
+	if (pKey != 0) *pKey = cKey;
 
 	wp = (WORD *) (m_pRcvBuffer + 1);
 	*pMsgSize = (*wp) - 3;
 	dwSize = (*wp) - 3;
 
 	// v.14 : m_pSndBuffer +3 dwSize� cKey
-	if (cKey != NULL) {
+	if (cKey != 0) {
 		for (i = 0; i < (int) (dwSize); i++) {
 			m_pRcvBuffer[3 + i] = (char) (m_pRcvBuffer[3 + i] ^ (cKey ^ (dwSize - i)));
 			m_pRcvBuffer[3 + i] -= (i ^ cKey);

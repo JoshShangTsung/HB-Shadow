@@ -19,14 +19,14 @@ char * CStrTok::pGet() {
 
 		if (m_iCurLoc <= (m_iDataLength - 2))
 			cNextData = m_pData[m_iCurLoc + 1];
-		else cNextData = NULL;
+		else cNextData = 0;
 
 		if (_bIsSeperator(m_pData[m_iCurLoc], cNextData)) {
 			bFlag = false;
 			while (bFlag == false) {
 				if (m_iCurLoc <= (m_iDataLength - 2))
 					cNextData = m_pData[m_iCurLoc + 1];
-				else cNextData = NULL;
+				else cNextData = 0;
 				if (_bIsSeperator(m_pData[m_iCurLoc], cNextData)) {
 					m_iCurLoc++;
 				} else bFlag = true;
@@ -44,16 +44,16 @@ char * CStrTok::pGet() {
 	}
 
 	if (strlen(m_cToken) != 0) return (char *) (&m_cToken);
-	return NULL;
+	return 0;
 }
 
 bool CStrTok::_bIsSeperator(char cData, char cNextData) {
 	int i = 0;
 
-	if (cData == NULL) return true;
+	if (cData == 0) return true;
 	if ((cData == 0x0D) && (cNextData == 0x0A)) return true;
 
-	while (m_pSeps[i] != NULL) {
+	while (m_pSeps[i] != 0) {
 		if (m_pSeps[i] == cData) return true;
 		i++;
 	}

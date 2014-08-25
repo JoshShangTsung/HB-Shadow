@@ -25,10 +25,10 @@ public:
 	void ColorTransferRGB(COLORREF fcolor, int * iR, int * iG, int * iB);
 	HRESULT InitFlipToGDI(HWND hWnd);
 	void ChangeDisplayMode(HWND hWnd);
-	void DrawText(LPRECT pRect, char * pString, COLORREF rgb);
+	void DrawText(LPRECT pRect, const char * pString, COLORREF rgb);
 	void _ReleaseBackBufferDC();
 	void _GetBackBufferDC();
-	void TextOut(int x, int y, char * cStr, COLORREF rgb);
+	void TextOut(int x, int y, const char * cStr, COLORREF rgb);
 	void _TestPixelFormat();
 	DWORD _dwColorMatch(IDirectDrawSurface7 * pdds4, WORD wColorKey);
 	DWORD _dwColorMatch(IDirectDrawSurface7 * pdds4, COLORREF rgb);

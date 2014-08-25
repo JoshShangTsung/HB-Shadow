@@ -19,14 +19,14 @@ void CDebugWindow::Startup(void) {
 	DWORD lpThreadId;
 	//Create a thread for dialog
 	m_isVisible = true;
-	CloseHandle(CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) DebugWindowThread, NULL, 0, &lpThreadId));
+	CloseHandle(CreateThread(0, 0, (LPTHREAD_START_ROUTINE) DebugWindowThread, 0, 0, &lpThreadId));
 	//Give time for dialog to startup properly
 	Sleep(10);
 }
 
 void DebugWindowThread() {
 	//start dialog
-	DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC) lpDialogFunc);
+	DialogBox(GetModuleHandle(0), MAKEINTRESOURCE(IDD_DIALOG1), 0, (DLGPROC) lpDialogFunc);
 }
 
 bool CALLBACK lpDialogFunc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -36,7 +36,7 @@ bool CALLBACK lpDialogFunc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			m_DbgWnd = hDlg;
 			m_DbgList = GetDlgItem(hDlg, IDC_DBGLIST);
 			//Open File For Writing
-			outHand = CreateFile("PacketData.txt", GENERIC_READ + GENERIC_WRITE, FILE_SHARE_READ + FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			outHand = CreateFile("PacketData.txt", GENERIC_READ + GENERIC_WRITE, FILE_SHARE_READ + FILE_SHARE_WRITE, 0, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 			SetEndOfFile(outHand);
 			break;
 		default:
@@ -59,8 +59,8 @@ void CDebugWindow::AddEventMsg(char* cMsg) {
 		//Highlight Last Active Message
 		SendMessage(m_DbgList, LB_SETCURSEL, SendMessage(m_DbgList, LB_GETCOUNT, 0, 0) - 1, 0);
 		//Write data to file
-		WriteFile(outHand, cMsg, strlen(cMsg), &written, NULL);
-		WriteFile(outHand, crlf, 4, &written, NULL);
+		WriteFile(outHand, cMsg, strlen(cMsg), &written, 0);
+		WriteFile(outHand, crlf, 4, &written, 0);
 	}
 }
 
@@ -75,8 +75,8 @@ void CDebugWindow::AddEventMsg(int cMsgType, char* cData, DWORD dwSize, char cKe
 		wsprintf(&DbgBuffer[8], "Size = %lu Key = 0x%.X", dwSize, cKey);
 		SendMessage(m_DbgList, LB_ADDSTRING, 0, (LPARAM) DbgBuffer);
 		//Write data to file
-		WriteFile(outHand, DbgBuffer, strlen(DbgBuffer), &written, NULL);
-		WriteFile(outHand, crlf, 2, &written, NULL);
+		WriteFile(outHand, DbgBuffer, strlen(DbgBuffer), &written, 0);
+		WriteFile(outHand, crlf, 2, &written, 0);
 
 		int i = 0;
 		while (i < dwSize) {
@@ -95,11 +95,11 @@ void CDebugWindow::AddEventMsg(int cMsgType, char* cData, DWORD dwSize, char cKe
 				DbgBuffer[strlen(DbgBuffer)] = isprint((unsigned char) cData[j]) ? cData[j] : '.';
 
 			SendMessage(m_DbgList, LB_ADDSTRING, 0, (LPARAM) DbgBuffer);
-			WriteFile(outHand, DbgBuffer, strlen(DbgBuffer), &written, NULL);
-			WriteFile(outHand, crlf, 2, &written, NULL);
+			WriteFile(outHand, DbgBuffer, strlen(DbgBuffer), &written, 0);
+			WriteFile(outHand, crlf, 2, &written, 0);
 			i = j;
 		}
-		WriteFile(outHand, crlf, 2, &written, NULL);
+		WriteFile(outHand, crlf, 2, &written, 0);
 
 		//Highlight Last Active Message
 		SendMessage(m_DbgList, LB_SETCURSEL, SendMessage(m_DbgList, LB_GETCOUNT, 0, 0) - 1, 0);

@@ -17,17 +17,17 @@ void PutPvPLogFileList(char * cStr);
 #define WM_USER_TIMERSIGNAL		WM_USER + 500
 
 char szAppClass[32];
-HWND G_hWnd = NULL;
+HWND G_hWnd = 0;
 char G_cMsgList[120 * 50];
 bool G_cMsgUpdated = false;
 char G_cTxt[512];
 char G_cData50000[50000];
-MMRESULT G_mmTimer = NULL;
+MMRESULT G_mmTimer = 0;
 
 
-class XSocket * G_pListenSock = NULL;
-class XSocket * G_pLogSock = NULL;
-class CGame * G_pGame = NULL;
+class XSocket * G_pListenSock = 0;
+class XSocket * G_pLogSock = 0;
+class CGame * G_pGame = 0;
 
 int G_iQuitProgramCount = 0;
 bool G_bIsThread = true;
@@ -36,7 +36,7 @@ FILE * pLogFile;
 
 void ThreadProc(void *ch) {
 	while (G_bIsThread == true) {
-		if (G_pGame = NULL) G_pGame->OnTimer(NULL);
+		if (G_pGame = 0) G_pGame->OnTimer(0);
 		Sleep(100);
 	}
 
@@ -63,7 +63,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			break;
 
 		case WM_USER_TIMERSIGNAL:
-			G_pGame->OnTimer(NULL);
+			G_pGame->OnTimer(0);
 			break;
 
 		case WM_USER_ACCEPT:
@@ -104,7 +104,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			return (DefWindowProc(hWnd, message, wParam, lParam));
 	}
 
-	return NULL;
+	return 0;
 }
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -126,10 +126,10 @@ bool InitApplication(HINSTANCE hInstance) {
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = sizeof (int);
 	wc.hInstance = hInstance;
-	wc.hIcon = NULL;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hIcon = 0;
+	wc.hCursor = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = 0;
 	wc.lpszClassName = szAppClass;
 
 	return (RegisterClass(&wc));
@@ -156,10 +156,10 @@ bool InitInstance(HINSTANCE hInstance, int nCmdShow) {
 			  CW_USEDEFAULT,
 			  800, //GetSystemMetrics(SM_CXSCREEN),
 			  600, //GetSystemMetrics(SM_CYSCREEN),
-			  NULL,
-			  NULL,
+			  0,
+			  0,
 			  hInstance,
-			  NULL);
+			  0);
 
 	if (!G_hWnd) return (false);
 
@@ -174,8 +174,8 @@ int EventLoop() {
 	register MSG msg;
 
 	while (1) {
-		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-			if (!GetMessage(&msg, NULL, 0, 0)) {
+		if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
+			if (!GetMessage(&msg, 0, 0, 0)) {
 				return msg.wParam;
 			}
 			TranslateMessage(&msg);
@@ -209,23 +209,23 @@ void Initialize() {
 	if (G_pGame->m_iGameServerMode == 2) {
 		G_pListenSock->bListen(G_pGame->m_cGameServerAddr, G_pGame->m_iGameServerPort, WM_USER_ACCEPT);
 	}
-	pLogFile = NULL;
+	pLogFile = 0;
 	//pLogFile = fopen("test.log","wt+");
 }
 
 void OnDestroy() {
-	if (G_pListenSock != NULL) delete G_pListenSock;
-	if (G_pLogSock != NULL) delete G_pLogSock;
+	if (G_pListenSock != 0) delete G_pListenSock;
+	if (G_pLogSock != 0) delete G_pLogSock;
 
-	if (G_pGame != NULL) {
+	if (G_pGame != 0) {
 		G_pGame->Quit();
 		delete G_pGame;
 	}
 
-	if (G_mmTimer != NULL) _StopTimer(G_mmTimer);
+	if (G_mmTimer != 0) _StopTimer(G_mmTimer);
 	_TermWinsock();
 
-	if (pLogFile != NULL) fclose(pLogFile);
+	if (pLogFile != 0) fclose(pLogFile);
 
 	PostQuitMessage(0);
 }
@@ -248,7 +248,7 @@ void PutXSocketLogList(char * cMsg) {
 
 void UpdateScreen() {
 	if (G_cMsgUpdated == true) {
-		InvalidateRect(G_hWnd, NULL, true);
+		InvalidateRect(G_hWnd, 0, true);
 		G_cMsgUpdated = false;
 	}
 }
@@ -268,7 +268,7 @@ void OnPaint() {
 		TextOut(hdc, 5, 5 + 350 - i * 16, cMsg, strlen(cMsg));
 	}
 
-	if (G_pGame != NULL)
+	if (G_pGame != 0)
 		G_pGame->DisplayInfo(hdc);
 
 	EndPaint(G_hWnd, &ps);
@@ -282,7 +282,7 @@ void OnAccept() {
 }
 
 void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2) {
-	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, NULL);
+	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, 0);
 }
 
 MMRESULT _StartTimer(DWORD dwTime) {
@@ -315,7 +315,7 @@ void PutLogFileList(char * cStr) {
 	// Original:
 	// pFile = fopen("Events.log", "at");
 	pFile = fopen("GameLogs\\Events.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == 0) return;
 	ZeroMemory(cBuffer, sizeof (cBuffer));
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
@@ -331,7 +331,7 @@ void PutAdminLogFileList(char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\AdminEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == 0) return;
 
 	ZeroMemory(cBuffer, sizeof (cBuffer));
 
@@ -350,7 +350,7 @@ void PutHackLogFileList(char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\HackEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == 0) return;
 
 	ZeroMemory(cBuffer, sizeof (cBuffer));
 
@@ -369,7 +369,7 @@ void PutPvPLogFileList(char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\PvPEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == 0) return;
 
 	ZeroMemory(cBuffer, sizeof (cBuffer));
 
@@ -388,7 +388,7 @@ void PutXSocketLogFileList(char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\XSocket.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == 0) return;
 
 	ZeroMemory(cBuffer, sizeof (cBuffer));
 
@@ -407,7 +407,7 @@ void PutItemLogFileList(char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\ItemEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == 0) return;
 
 	ZeroMemory(cBuffer, sizeof (cBuffer));
 
@@ -426,7 +426,7 @@ void PutLogEventFileList(char * cStr) {
 	SYSTEMTIME SysTime;
 
 	pFile = fopen("GameLogs\\LogEvents.log", "at");
-	if (pFile == NULL) return;
+	if (pFile == 0) return;
 
 	ZeroMemory(cBuffer, sizeof (cBuffer));
 

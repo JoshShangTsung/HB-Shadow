@@ -15,5 +15,5 @@ CFish::CFish(char cMapIndex, short sX, short sY, short sType, class CItem * pIte
 }
 
 CFish::~CFish() {
-	if (m_pItem != NULL) delete m_pItem;
+	if (m_pItem != 0) delete m_pItem;
 }

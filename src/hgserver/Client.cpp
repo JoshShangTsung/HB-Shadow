@@ -3,7 +3,7 @@
 CClient::CClient(HWND hWnd) {
 	register int i;
 
-	m_pXSock = NULL;
+	m_pXSock = 0;
 	m_pXSock = new class XSocket(hWnd, DEF_CLIENTSOCKETBLOCKLIMIT);
 	m_pXSock->bInitBufferSize(DEF_MSGBUFFERSIZE);
 
@@ -47,7 +47,7 @@ CClient::CClient(HWND hWnd) {
 		m_sItemEquipmentStatus[i] = -1;
 
 	for (i = 0; i < DEF_MAXITEMS; i++) {
-		m_pItemList[i] = NULL;
+		m_pItemList[i] = 0;
 		m_ItemPosList[i].x = 40;
 		m_ItemPosList[i].y = 30;
 		m_bIsItemEquipped[i] = false;
@@ -55,18 +55,18 @@ CClient::CClient(HWND hWnd) {
 	m_cArrowIndex = -1;
 
 	for (i = 0; i < DEF_MAXBANKITEMS; i++) {
-		m_pItemInBankList[i] = NULL;
+		m_pItemInBankList[i] = 0;
 	}
 
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
-		m_cMagicMastery[i] = NULL;
+		m_cMagicMastery[i] = 0;
 
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++)
-		m_cSkillMastery[i] = NULL;
+		m_cSkillMastery[i] = 0;
 
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++) {
 		m_bSkillUsingStatus[i] = false;
-		m_iSkillUsingTimeID[i] = NULL;
+		m_iSkillUsingTimeID[i] = 0;
 	}
 
 	m_iAngelicStr = 0;
@@ -120,9 +120,9 @@ CClient::CClient(HWND hWnd) {
 	m_iHungerStatus = 100; 
 
 	m_bIsWarLocation = false;
-	m_dwAFKCheckTime = NULL;
+	m_dwAFKCheckTime = 0;
 	m_bIsPoisoned = false;
-	m_iPoisonLevel = NULL;
+	m_iPoisonLevel = 0;
 
 	m_iAdminUserLevel = 0;
 	m_iRating = 0;
@@ -140,7 +140,7 @@ CClient::CClient(HWND hWnd) {
 
 	m_iExpStock = 0;
 
-	m_iAllocatedFish = NULL;
+	m_iAllocatedFish = 0;
 	m_iFishChance = 0;
 
 	ZeroMemory(m_cIPaddress, sizeof (m_cIPaddress));
@@ -193,7 +193,7 @@ CClient::CClient(HWND hWnd) {
 
 	m_iPenaltyBlockYear = m_iPenaltyBlockMonth = m_iPenaltyBlockDay = 0;
 
-	m_iExchangeH = NULL;
+	m_iExchangeH = 0;
 	ZeroMemory(m_cExchangeName, sizeof (m_cExchangeName));
 	ZeroMemory(m_cExchangeItemName, sizeof (m_cExchangeItemName));
 
@@ -204,15 +204,15 @@ CClient::CClient(HWND hWnd) {
 
 	m_bIsExchangeConfirm = false;
 
-	m_iQuest = NULL;
-	m_iQuestID = NULL;
-	m_iAskedQuest = NULL;
-	m_iCurQuestCount = NULL;
+	m_iQuest = 0;
+	m_iQuestID = 0;
+	m_iAskedQuest = 0;
+	m_iCurQuestCount = 0;
 
-	m_iQuestRewardType = NULL;
-	m_iQuestRewardAmount = NULL;
+	m_iQuestRewardType = 0;
+	m_iQuestRewardAmount = 0;
 
-	m_iContribution = NULL;
+	m_iContribution = 0;
 	m_bQuestMatchFlag_Loc = false;
 	m_bIsQuestCompleted = false;
 
@@ -232,7 +232,7 @@ CClient::CClient(HWND hWnd) {
 	m_iAddCD = m_iAddExp = m_iAddGold = 0;
 
 	m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
-	m_iSpecialAbilityType = NULL;
+	m_iSpecialAbilityType = 0;
 	m_bIsSpecialAbilityEnabled = false;
 	m_iSpecialAbilityLastSec = 0;
 
@@ -256,25 +256,25 @@ CClient::CClient(HWND hWnd) {
 
 	ZeroMemory(m_cLockedMapName, sizeof (m_cLockedMapName));
 	strcpy(m_cLockedMapName, "NONE");
-	m_iLockedMapTime = NULL;
+	m_iLockedMapTime = 0;
 
-	m_iCrusadeDuty = NULL;
-	m_dwCrusadeGUID = NULL;
-	m_dwHeldenianGUID = NULL;
+	m_iCrusadeDuty = 0;
+	m_dwCrusadeGUID = 0;
+	m_dwHeldenianGUID = 0;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-		m_stCrusadeStructureInfo[i].cType = NULL;
-		m_stCrusadeStructureInfo[i].cSide = NULL;
-		m_stCrusadeStructureInfo[i].sX = NULL;
-		m_stCrusadeStructureInfo[i].sY = NULL;
+		m_stCrusadeStructureInfo[i].cType = 0;
+		m_stCrusadeStructureInfo[i].cSide = 0;
+		m_stCrusadeStructureInfo[i].sX = 0;
+		m_stCrusadeStructureInfo[i].sY = 0;
 	}
 
-	m_iCSIsendPoint = NULL;
+	m_iCSIsendPoint = 0;
 
 	m_bIsSendingMapStatus = false;
 	ZeroMemory(m_cSendingMapName, sizeof (m_cSendingMapName));
 
-	m_iConstructionPoint = NULL;
+	m_iConstructionPoint = 0;
 
 	ZeroMemory(m_cConstructMapName, sizeof (m_cConstructMapName));
 	m_iConstructLocX = m_iConstructLocY = -1;
@@ -307,16 +307,16 @@ CClient::CClient(HWND hWnd) {
 CClient::~CClient() {
 	int i;
 
-	if (m_pXSock != NULL) delete m_pXSock;
+	if (m_pXSock != 0) delete m_pXSock;
 	for (i = 0; i < DEF_MAXITEMS; i++)
-		if (m_pItemList[i] != NULL) {
+		if (m_pItemList[i] != 0) {
 			delete m_pItemList[i];
-			m_pItemList[i] = NULL;
+			m_pItemList[i] = 0;
 		}
 	for (i = 0; i < DEF_MAXBANKITEMS; i++)
-		if (m_pItemInBankList[i] != NULL) {
+		if (m_pItemInBankList[i] != 0) {
 			delete m_pItemInBankList[i];
-			m_pItemInBankList[i] = NULL;
+			m_pItemInBankList[i] = 0;
 		}
 }
 

@@ -44,9 +44,9 @@ public:
 	void PutSpriteFastDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, int sY, int sFrame, DWORD dwTime);
 	void PutSpriteFastNoColorKeyDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, int sY, int sFrame, DWORD dwTime);
 
-	void PutTransSprite(int sX, int sY, int sFrame, DWORD dwTime, int alphaDepth = 30);
+	void PutTransSprite(int sX, int sY, int sFrame, DWORD dwTime);
 	void PutTransSprite2(int sX, int sY, int sFrame, DWORD dwTime);
-	void PutTransSprite_NoColorKey(int sX, int sY, int sFrame, DWORD dwTime, int alphaDepth = 0);
+	void PutTransSprite_NoColorKey(int sX, int sY, int sFrame, DWORD dwTime);
 	void PutTransSpriteRGB_NoColorKey(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, DWORD dwTime);
 	void PutTransSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, DWORD dwTime);
 	void PutTransSprite70(int sX, int sY, int sFrame, DWORD dwTime);

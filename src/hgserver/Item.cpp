@@ -30,7 +30,7 @@ CItem::CItem() {
 	m_wCurLifeSpan = 0;
 	m_dwAttribute = 0;
 
-	m_cCategory = NULL;
+	m_cCategory = 0;
 	m_sIDnum = 0;
 
 	m_bIsForSale = false;

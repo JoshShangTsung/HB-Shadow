@@ -399,7 +399,7 @@ public:
 	int iGetItemWeight(class CItem * pItem, int iCount);
 	void CancelQuestHandler(int iClientH);
 	void ActivateSpecialAbilityHandler(int iClientH);
-	void EnergySphereProcessor(bool bIsAdminCreate = false, int iClientH = NULL);
+	void EnergySphereProcessor(bool bIsAdminCreate = false, int iClientH = 0);
 	bool bCheckEnergySphereDestination(int iNpcH, short sAttackerH, char cAttackerType);
 	void JoinPartyHandler(int iClientH, int iV1, char *pMemberName);
 	void CreateNewPartyHandler(int iClientH);
@@ -428,7 +428,7 @@ public:
 	void OnSubLogRead(int iIndex);
 	void OnSubLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	void _CheckStrategicPointOccupyStatus(char cMapIndex);
-	void GetMapInitialPoint(int iMapIndex, short * pX, short * pY, char * pPlayerLocation = NULL);
+	void GetMapInitialPoint(int iMapIndex, short * pX, short * pY, char * pPlayerLocation = 0);
 	int iGetMaxHP(int iClientH);
 	int iGetMaxMP(int iClientH);
 	int iGetMaxSP(int iClientH);
@@ -462,7 +462,7 @@ public:
 	bool _bDecodeOccupyFlagSaveFileContents(char * pData, DWORD dwMsgSize);
 	void GetOccupyFlagHandler(int iClientH);
 	int _iComposeFlagStatusContents(char * pData);
-	void SetSummonMobAction(int iClientH, int iMode, DWORD dwMsgSize, char * pData = NULL);
+	void SetSummonMobAction(int iClientH, int iMode, DWORD dwMsgSize, char * pData = 0);
 	bool __bSetOccupyFlag(char cMapIndex, int dX, int dY, int iSide, int iEKNum, int iClientH, bool bAdminFlag);
 	bool _bDepleteDestTypeItemUseEffect(int iClientH, int dX, int dY, short sItemIndex, short sDestItemID);
 	void SetDownSkillIndexHandler(int iClientH, int iSkillIndex);
@@ -554,7 +554,7 @@ public:
 	void Effect_SpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
 	void Effect_SpDown_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
 	void Effect_HpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3);
-	void Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3, bool bExp, int iAttr = NULL);
+	void Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3, bool bExp, int iAttr = 0);
 	void Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
 	void UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, short sDestItemID);
 	void NpcBehavior_Stop(int iNpcH);
@@ -567,7 +567,7 @@ public:
 	void CalculateSSN_SkillIndex(int iClientH, short sSkillIndex, int iValue);
 	void CalculateSSN_ItemIndex(int iClientH, short sWeaponIndex, int iValue);
 	void CheckDynamicObjectList();
-	int iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, DWORD dwLastTime, int iV1 = NULL);
+	int iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, DWORD dwLastTime, int iV1 = 0);
 	int _iCalcMaxLoad(int iClientH);
 	void GetRewardMoneyHandler(int iClientH);
 	void _PenaltyItemDrop(int iClientH, int iTotal, bool bIsSAattacked = false);
@@ -598,8 +598,8 @@ public:
 	bool _bDecodeMagicConfigFileContents(char * pData, DWORD dwMsgSize);
 	void ReleaseFollowMode(short sOwnerH, char cOwnerType);
 	bool bSetNpcFollowMode(char * pName, char * pFollowName, char cFollowOwnerType);
-	void RequestTeleportHandler(int iClientH, char * pData, char * cMapName = NULL, int dX = -1, int dY = -1);
-	void PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool bItemEffect = false, int iV1 = NULL);
+	void RequestTeleportHandler(int iClientH, char * pData, char * cMapName = 0, int dX = -1, int dY = -1);
+	void PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool bItemEffect = false, int iV1 = 0);
 	int iClientMotion_Magic_Handler(int iClientH, short sX, short sY, char cDir);
 	void ToggleCombatModeHandler(int iClientH);
 	void GuildNotifyHandler(char * pData, DWORD dwMsgSize);
@@ -620,7 +620,7 @@ public:
 	void DismissGuildApproveHandler(int iClientH, char * pName);
 	void JoinGuildRejectHandler(int iClientH, char * pName);
 	void JoinGuildApproveHandler(int iClientH, char * pName);
-	void SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, char * pString, DWORD sV4 = NULL, DWORD sV5 = NULL, DWORD sV6 = NULL, DWORD sV7 = NULL, DWORD sV8 = NULL, DWORD sV9 = NULL, char * pString2 = NULL);
+	void SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, char * pString, DWORD sV4 = 0, DWORD sV5 = 0, DWORD sV6 = 0, DWORD sV7 = 0, DWORD sV8 = 0, DWORD sV9 = 0, char * pString2 = 0);
 	void GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char * pItemName);
 	void RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum);
 	void ResponseDisbandGuildHandler(char * pData, DWORD dwMsgSize);
@@ -643,7 +643,7 @@ public:
 	void NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, short sDamage);
 	//int  iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, bool bNearAttack = false);
 	int iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, bool bNearAttack = false, bool bIsDash = false, bool bArrowUse = false);
-	void RemoveFromTarget(short sTargetH, char cTargetType, int iCode = NULL);
+	void RemoveFromTarget(short sTargetH, char cTargetType, int iCode = 0);
 	void NpcBehavior_Attack(int iNpcH);
 	void TargetSearch(int iNpcH, short * pTarget, char * pTargetType);
 	void NpcBehavior_Move(int iNpcH);
@@ -652,7 +652,7 @@ public:
 	int iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short dX, short dY, short wType, char cDir, WORD wTargetObjectID, bool bResponse = true, bool bIsDash = false);
 	void ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize);
 	void NpcProcess();
-	int bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = NULL);
+	int bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned = false, bool bFirmBerserk = false, bool bIsMaster = false, int iGuildGUID = 0);
 	//bool bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sX, short sY);
 	bool _bReadMapInfoFiles(int iMapIndex);
 
@@ -662,13 +662,13 @@ public:
 	void GameProcess();
 	void InitPlayerData(int iClientH, char * pData, DWORD dwSize);
 	void ResponsePlayerDataHandler(char * pData, DWORD dwSize);
-	bool bSendMsgToLS(DWORD dwMsg, int iClientH, bool bFlag = true, char *pData = NULL);
+	bool bSendMsgToLS(DWORD dwMsg, int iClientH, bool bFlag = true, char *pData = 0);
 	void OnMainLogRead();
 	void OnMainLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam);
 	void CheckClientResponseTime();
 	void OnTimer(char cType);
 	int iComposeMoveMapData(short sX, short sY, int iClientH, char cDir, char * pData);
-	void SendEventToNearClient_TypeB(DWORD dwMsgID, WORD wMsgType, char cMapIndex, short sX, short sY, short sV1, short sV2, short sV3, short sV4 = NULL);
+	void SendEventToNearClient_TypeB(DWORD dwMsgID, WORD wMsgType, char cMapIndex, short sX, short sY, short sV1, short sV2, short sV3, short sV4 = 0);
 	void SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dwMsgID, WORD wMsgType, short sV1, short sV2, short sV3);
 	void DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogout = true, bool bForceCloseConn = false);
 	int iComposeInitMapData(short sX, short sY, int iClientH, char * pData);
@@ -896,7 +896,7 @@ public:
 	// �̵鷣���� ������ �����ϴ� ����ü. �̵鷣�带 ������� �ʴ� ���������� �� ������ �޾� �����Ѵ�.
 
 	struct {
-		char cType; // �̰� NULL�̸� ���ǵ��� �������� �ǹ�.
+		char cType; // �̰� 0�̸� ���ǵ��� �������� �ǹ�.
 		char cSide; // ���̵�
 		short sX, sY; // ��ġ�� ��ġ 
 	} m_stMiddleCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];

@@ -44,11 +44,11 @@
 class XSocket {
 public:
 	int iGetPeerAddress(char * pAddrString);
-	char * pGetRcvDataPointer(DWORD * pMsgSize, char * pKey = NULL);
+	char * pGetRcvDataPointer(DWORD * pMsgSize, char * pKey = 0);
 	SOCKET iGetSocket();
 	bool bAccept(class XSocket * pXSock, unsigned int uiMsg);
 	bool bListen(char * pAddr, int iPort, unsigned int uiMsg);
-	int iSendMsg(char * cData, DWORD dwSize, char cKey = NULL);
+	int iSendMsg(char * cData, DWORD dwSize, char cKey = 0);
 	bool bConnect(char * pAddr, int iPort, unsigned int uiMsg);
 	int iOnSocketEvent(WPARAM wParam, LPARAM lParam);
 	bool bInitBufferSize(DWORD dwBufferSize);

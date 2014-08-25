@@ -90,7 +90,7 @@
       <compileType>
         <ccTool>
           <standard>8</standard>
-          <commandLine>-Wall -Wextra</commandLine>
+          <commandLine>-Wall -Wextra -Wno-char-subscripts</commandLine>
           <preprocessorList>
             <Elem>_DEBUG</Elem>
           </preprocessorList>

@@ -170,14 +170,14 @@ public:
 	void CrusadeContributionResult(int iWarContribution);
 	void CannotConstruct(int iCode);
 	void DrawTopMsg();
-	void SetTopMsg(char * pString, unsigned char iLastSec);
+	void SetTopMsg(const char * pString, unsigned char iLastSec);
 	void DrawObjectFOE(int ix, int iy, int iFrame);
 	void GrandMagicResult(char * pMapName, int iV1, int iV2, int iV3, int iV4, int iHP1, int iHP2, int iHP3, int iHP4);
 	void MeteorStrikeComing(int iCode);
 	void _Draw_OnLogin(char * pAccount, char * pPassword, int msX, int msY, int iFrame = 60000);
 	void DrawNewDialogBox(char cType, int sX, int sY, int iFrame, bool bIsNoColorKey = false, bool bIsTrans = false);
 	void AddMapStatusInfo(char * pData, bool bIsLastData);
-	void _RequestMapStatus(char * pMapName, int iMode);
+	void _RequestMapStatus(const char * pMapName, int iMode);
 	int GetCharKind(char *str, int index);
 	void ReceiveString(char * pString);
 	void EndInputString();
@@ -223,8 +223,6 @@ public:
 	void DrawDialogBox_Soldier(int msX, int msY); //38
 	void DrawDialogBox_ItemDrop(short msX, short msY); //4
 	void DrawDialogBox_WarningMsg(short msX, short msY); //6
-	void DrawDialogBox_15AgeMsg(short msX, short msY); //5
-	void DrawDialogBox_FeedBackCard(short msX, short msY); //40
 	void DrawDialogBox_Slates(short msX, short msY, short msZ, char cLB); //40
 	void DisplayCommaNumber_G_cTxt(int iGold); // Name changed by Snoopy (easyer to understand...)
 
@@ -248,7 +246,6 @@ public:
 	void DlgBoxClick_Bank(short msX, short msY);
 	void DlgBoxClick_Skill(short msX, short msY);
 	void DlgBoxClick_MagicShop(short msX, short msY);
-	void DlgBoxClick_FeedBackCard(short msX, short msY);
 	void DlgBoxClick_Text(short msX, short msY);
 	void DlgBoxClick_SysMenu(short msX, short msY);
 	void DlgBoxClick_NpcActionQuery(short msX, short msY);
@@ -373,9 +370,9 @@ public:
 	void UpdateScreen_OnGame();
 	void UpdateScreen_OnConnecting();
 	void UpdateScreen_OnWaitInitData();
-	void MakeSprite(char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
-	void MakeTileSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
-	void MakeEffectSpr(char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
+	void MakeSprite(const char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
+	void MakeTileSpr(const char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
+	void MakeEffectSpr(const char* FileName, short sStart, short sCount, bool bAlphaEffect = true);
 	void UpdateScreen_OnLoading(bool bActive);
 	void UpdateScreen_OnConnectionLost();
 	void UpdateScreen_OnLogin();
@@ -406,8 +403,8 @@ public:
 	void WhetherObjectFrameCounter();
 	void DrawWhetherEffects();
 	bool bCheckExID(char * pName);
-	bool bCheckLocalChatCommand(char * pMsg);
-	char GetOfficialMapName(char * pMapName, char * pName);
+	bool bCheckLocalChatCommand(const char * pMsg);
+	char GetOfficialMapName(const char * pMapName, char * pName);
 	int iGetLevelExp(int iLevel);
 	int _iCalcTotalWeight();
 	void DrawVersion(bool bAuthor = false);
@@ -447,7 +444,7 @@ public:
 	void PointCommandHandler(int indexX, int indexY, char cItemID = -1);
 	void DrawEffects();
 	void bAddNewEffect(short sType, int sX, int sY, int dX, int dY, char cStartFrame, int iV1 = 1);
-	void AddEventList(char * pTxt, char cColor = 0, bool bDupAllow = true);
+	void AddEventList(const char * pTxt, char cColor = 0, bool bDupAllow = true);
 	void ShowEventList(DWORD dwTime);
 	void SetItemCount(char * pItemName, DWORD dwCount);
 	void _ShiftGuildOperationList();
@@ -462,7 +459,7 @@ public:
 	void _SetItemOrder(char cWhere, char cItemID);
 	int iGetTopDialogBoxIndex();
 	void DisableDialogBox(int iBoxID);
-	void EnableDialogBox(int iBoxID, int cType, int sV1, int sV2, char * pString = NULL);
+	void EnableDialogBox(int iBoxID, int cType, int sV1, int sV2, char * pString = 0);
 	void InitItemList(char * pData);
 	int _iCheckDlgBoxFocus(short msX, short msY, char cButtonSide);
 	void GetPlayerTurn();
@@ -490,14 +487,14 @@ public:
 	void OnSysKeyDown(WPARAM wParam);
 	void OnSysKeyUp(WPARAM wParam);
 	void ChangeGameMode(char cMode);
-	void PutString(int iX, int iY, char * pString, COLORREF color);
-	void PutString(int iX, int iY, char * pString, COLORREF color, bool bHide, char cBGtype, bool bIsPreDC = false);
-	void PutString2(int iX, int iY, char * pString, short sR, short sG, short sB);
-	void PutAlignedString(int iX1, int iX2, int iY, char * pString, short sR = 0, short sG = 0, short sB = 0);
-	void PutString_SprFont(int iX, int iY, char * pStr, short sR, short sG, short sB);
-	void PutString_SprFont2(int iX, int iY, char * pStr, short sR, short sG, short sB);
-	void PutString_SprFont3(int iX, int iY, char * pStr, short sR, short sG, short sB, bool bTrans = false, int iType = 0);
-	void PutString_SprNum(int iX, int iY, char * pStr, short sR, short sG, short sB);
+	void PutString(int iX, int iY, const char * pString, COLORREF color);
+	void PutString(int iX, int iY, const char * pString, COLORREF color, bool bHide, char cBGtype, bool bIsPreDC = false);
+	void PutString2(int iX, int iY, const char * pString, short sR, short sG, short sB);
+	void PutAlignedString(int iX1, int iX2, int iY, const char * pString, short sR = 0, short sG = 0, short sB = 0);
+	void PutString_SprFont(int iX, int iY, const char * pStr, short sR, short sG, short sB);
+	void PutString_SprFont2(int iX, int iY, const char * pStr, short sR, short sG, short sB);
+	void PutString_SprFont3(int iX, int iY, const char * pStr, short sR, short sG, short sB, bool bTrans = false, int iType = 0);
+	void PutString_SprNum(int iX, int iY, const char * pStr, short sR, short sG, short sB);
 	void LogRecvMsgHandler(char * pData);
 	void LogResponseHandler(char * pData);
 	void OnLogSocketEvent(WPARAM wParam, LPARAM lParam);
@@ -511,7 +508,7 @@ public:
 	void MotionResponseHandler(char * pData);
 	void GameRecvMsgHandler(DWORD dwMsgSize, char * pData);
 	void DrawObjects(short sPivotX, short sPivotY, short sDivX, short sDivY, short sModX, short sModY, short msX, short msY);
-	bool bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, char * pString, int iV4 = NULL); // v1.4
+	bool bSendCommand(DWORD dwMsgID, WORD wCommand, char cDir, int iV1, int iV2, int iV3, const char * pString, int iV4 = 0); // v1.4
 	char cGetNextMoveDir(short sX, short sY, short dstX, short dstY, bool bMoveCheck = false, bool bMIM = false);
 	void RestoreSprites();
 	void CommandProcessor(short msX, short msY, short indexX, short indexY, char cLB, char cRB);
@@ -530,7 +527,7 @@ public:
 	void StartBGM();
 
 	//Snoopy: added function:
-	void DebugLog(char * cStr);
+	void DebugLog(const char * cStr);
 	bool bReadLoginConfigFile(const char * cFn);
 	int bHasHeroSet(short Appr3, short Appr4, char OwnerType);
 	void ShowHeldenianVictory(short sSide);
@@ -944,7 +941,7 @@ public:
 	int m_iContributionPrice;
 	char m_cTakeItemName[100];
 	char m_cTakeHeroItemName[100]; //Drajwer - hero item str
-	void TestList(char * pTxt, char cColor = 0, bool bDupAllow = true);
+	void TestList(const char * pTxt, char cColor = 0, bool bDupAllow = true);
 	DWORD dwTime;
 
 	bool bCheckItemEquiped(char itemName[]); // Beholder neck

@@ -24,15 +24,15 @@ long G_lTransG25[64][64], G_lTransRB25[64][64];
 long G_lTransG2[64][64], G_lTransRB2[64][64];
 
 char szAppClass[32];
-HWND G_hWnd = NULL;
-HWND G_hEditWnd = NULL;
-HINSTANCE G_hInstance = NULL;
+HWND G_hWnd = 0;
+HWND G_hEditWnd = 0;
+HINSTANCE G_hInstance = 0;
 MMRESULT G_mmTimer;
 char G_cSpriteAlphaDegree;
 class CGame * G_pGame;
-class XSocket * G_pCalcSocket = NULL;
+class XSocket * G_pCalcSocket = 0;
 bool G_bIsCalcSocketConnected = true;
-DWORD G_dwCalcSocketTime = NULL, G_dwCalcSocketSendTime = NULL;
+DWORD G_dwCalcSocketTime = 0, G_dwCalcSocketSendTime = 0;
 
 char G_cCmdLine[256], G_cCmdLineTokenA[120], G_cCmdLineTokenA_Lowercase[120], G_cCmdLineTokenB[120], G_cCmdLineTokenC[120], G_cCmdLineTokenD[120], G_cCmdLineTokenE[120];
 
@@ -102,7 +102,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			return DefWindowProc(hWnd, message, wParam, lParam);
 
 		case WM_SETCURSOR:
-			SetCursor(NULL);
+			SetCursor(0);
 			return true;
 
 		case WM_DESTROY:
@@ -121,28 +121,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		default:
 			return (DefWindowProc(hWnd, message, wParam, lParam));
 	}
-	return NULL;
+	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 		  LPSTR lpCmdLine, int nCmdShow) {
-	srand((unsigned) time(NULL));
+	srand((unsigned) time(0));
 	G_pGame = new class CGame;
 #ifdef DEF_USING_WIN_IME
 	HINSTANCE hRichDll = LoadLibrary("Riched20.dll");
 #endif
-	sprintf(szAppClass, "Client-I%d", hInstance);
+	sprintf(szAppClass, "Client-I%d", (int) hInstance);
 	if (!InitApplication(hInstance)) return (false);
 	if (!InitInstance(hInstance, nCmdShow)) return (false);
 
 	Initialize((char *) lpCmdLine);
 
 #ifndef _DEBUG
-	if (OpenMutex(MUTEX_ALL_ACCESS, false, "0543kjg3j31%") != NULL) {
-		MessageBox(NULL, "Only one Helbreath client program allowed!", "ERROR!", MB_OK);
+	if (OpenMutex(MUTEX_ALL_ACCESS, false, "0543kjg3j31%") != 0) {
+		MessageBox(0, "Only one Helbreath client program allowed!", "ERROR!", MB_OK);
 		return 0;
 	}
-	HANDLE hMutex = CreateMutex(NULL, false, "0543kjg3j31%");
+	HANDLE hMutex = CreateMutex(0, false, "0543kjg3j31%");
 #endif
 	EventLoop();
 #ifndef _DEBUG
@@ -164,20 +164,20 @@ bool InitApplication(HINSTANCE hInstance) {
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = sizeof (int);
 	wc.hInstance = hInstance;
-	wc.hIcon = NULL;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hIcon = 0;
+	wc.hCursor = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
-	wc.lpszMenuName = NULL;
+	wc.lpszMenuName = 0;
 	wc.lpszClassName = szAppClass;
 	return (RegisterClass(&wc));
 }
 
-bool InitInstance(HINSTANCE hInstance, int nCmdShow) {
+bool InitInstance(HINSTANCE hInstance, int /*nCmdShow*/) {
 	int cx = GetSystemMetrics(SM_CXFULLSCREEN) / 2;
 	int cy = GetSystemMetrics(SM_CYFULLSCREEN) / 2;
 	if (cy > 280) cy -= 40;
-	G_hWnd = CreateWindowEx(NULL, szAppClass, "Helbreath", WS_POPUP, cx - 320, cy - 240,
-			  640, 480, NULL, NULL, hInstance, NULL);
+	G_hWnd = CreateWindowEx(0, szAppClass, "Helbreath", WS_POPUP, cx - 320, cy - 240,
+			  640, 480, 0, 0, hInstance, 0);
 	if (!G_hWnd) return false;
 	G_hInstance = hInstance;
 	ShowWindow(G_hWnd, SW_SHOWDEFAULT);
@@ -186,10 +186,10 @@ bool InitInstance(HINSTANCE hInstance, int nCmdShow) {
 }
 
 void EventLoop() {
-	register MSG msg;
+	MSG msg;
 	while (1) {
-		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-			if (!GetMessage(&msg, NULL, 0, 0)) return; // msg.wParam;
+		if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
+			if (!GetMessage(&msg, 0, 0, 0)) return; // msg.wParam;
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else if (G_pGame->m_bIsProgramActive) G_pGame->UpdateScreen();
@@ -206,8 +206,8 @@ void OnDestroy() {
 	PostQuitMessage(0);
 }
 
-void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2) {
-	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, NULL);
+void CALLBACK _TimerFunc(UINT wID, UINT /*wUser*/, DWORD /*dwUSer*/, DWORD /*dw1*/, DWORD /*dw2*/) {
+	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, 0);
 }
 
 MMRESULT _StartTimer(DWORD dwTime) {
@@ -269,7 +269,7 @@ LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata) {
 	if (retval == ERROR_SUCCESS) {
 		long datasize = MAX_PATH;
 		TCHAR data[MAX_PATH];
-		RegQueryValue(hkey, NULL, data, &datasize);
+		RegQueryValue(hkey, 0, data, &datasize);
 		lstrcpy(retdata, data);
 		RegCloseKey(hkey);
 	}
@@ -286,7 +286,7 @@ void GoHomepage() {
 	int showcmd = SW_SHOW;
 	char key[MAX_PATH + MAX_PATH];
 	// First try ShellExecute()
-	HINSTANCE result = ShellExecute(NULL, "open", url, NULL, NULL, showcmd);
+	HINSTANCE result = ShellExecute(0, "open", url, 0, 0, showcmd);
 
 	// If it failed, get the .htm regkey and lookup the program
 	if ((UINT) result <= HINSTANCE_ERROR) {
@@ -295,9 +295,9 @@ void GoHomepage() {
 			if (GetRegKey(HKEY_CLASSES_ROOT, key, key) == ERROR_SUCCESS) {
 				char *pos;
 				pos = strstr(key, "\"%1\"");
-				if (pos == NULL) { // No quotes found
+				if (pos == 0) { // No quotes found
 					pos = strstr(key, "%1"); // Check for %1, without quotes 
-					if (pos == NULL) // No parameter at all...
+					if (pos == 0) // No parameter at all...
 						pos = key + lstrlen(key) - 1;
 					else *pos = '\0'; // Remove the parameter
 				} else *pos = '\0'; // Remove the parameter

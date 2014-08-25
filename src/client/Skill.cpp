@@ -5,5 +5,5 @@ CSkill::CSkill() {
 
 	m_iLevel = 0;
 	m_bIsUseable = false;
-	m_cUseMethod = NULL;
+	m_cUseMethod = 0;
 }

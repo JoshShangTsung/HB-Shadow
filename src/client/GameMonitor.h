@@ -13,7 +13,7 @@
 class CGameMonitor {
 public:
 	bool bCheckBadWord(char * pWord);
-	int iReadBadWordFileList(char * pFn);
+	int iReadBadWordFileList(const char * pFn);
 	CGameMonitor();
 	virtual ~CGameMonitor();
 

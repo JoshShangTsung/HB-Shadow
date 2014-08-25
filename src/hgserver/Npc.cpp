@@ -14,16 +14,16 @@ CNpc::CNpc(char * pName5) {
 	m_bIsSummoned = false;
 	m_bIsPermAttackMode = false;
 
-	m_dwRegenTime = NULL;
+	m_dwRegenTime = 0;
 	m_bIsKilled = false;
 
-	m_sOriginalType = NULL;
-	m_iSummonControlMode = NULL;
+	m_sOriginalType = 0;
+	m_iSummonControlMode = 0;
 
-	m_cAttribute = NULL;
-	m_iAbsDamage = NULL;
-	m_iStatus = NULL;
-	m_sAppr2 = NULL;
+	m_cAttribute = 0;
+	m_iAbsDamage = 0;
+	m_iStatus = 0;
+	m_sAppr2 = 0;
 
 	m_iAttackRange = 1;
 	m_cSpecialAbility = 0;
@@ -37,7 +37,7 @@ CNpc::CNpc(char * pName5) {
 	m_cCropSkill = 0;
 
 	m_bIsMaster = false;
-	m_iGuildGUID = NULL;
+	m_iGuildGUID = 0;
 	m_iV1 = 0;
 
 	m_iNpcItemType = 0;

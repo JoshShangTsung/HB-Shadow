@@ -1,8 +1,8 @@
 #include "Msg.h"
-CMsg::CMsg(char cType, char * pMsg, DWORD dwTime) {
+CMsg::CMsg(char cType, const char * pMsg, DWORD dwTime) {
 	m_cType = cType;
 
-	m_pMsg = NULL;
+	m_pMsg = 0;
 	m_pMsg = new char [strlen(pMsg) + 1];
 	ZeroMemory(m_pMsg, strlen(pMsg) + 1);
 	strcpy(m_pMsg, pMsg);
@@ -11,5 +11,5 @@ CMsg::CMsg(char cType, char * pMsg, DWORD dwTime) {
 }
 
 CMsg::~CMsg() {
-	if (m_pMsg != NULL) delete m_pMsg;
+	if (m_pMsg != 0) delete m_pMsg;
 }

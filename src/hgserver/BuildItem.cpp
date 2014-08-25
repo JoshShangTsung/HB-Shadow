@@ -7,9 +7,9 @@ CBuildItem::CBuildItem() {
 	m_iSkillLimit = 0;
 
 	for (int i = 0; i < 6; i++) {
-		m_iMaterialItemID[i] = NULL;
-		m_iMaterialItemCount[i] = NULL;
-		m_iMaterialItemValue[i] = NULL;
+		m_iMaterialItemID[i] = 0;
+		m_iMaterialItemCount[i] = 0;
+		m_iMaterialItemValue[i] = 0;
 		m_iIndex[i] = -1;
 	}
 

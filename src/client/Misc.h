@@ -13,7 +13,7 @@ public:
 
 	int iGetTextLengthLoc(HDC hDC, char * pStr, int iLength);
 	int _iGetFileCheckSum(char * pFn);
-	bool _iConvertFileXor(char *pFn, char *pDestFn, char cKey);
+	bool _iConvertFileXor(const char *pFn, const char *pDestFn, char cKey);
 	bool bCheckValidName(char *pStr);
 	bool bCheckIMEString(char *str);
 	bool bDecode(char cKey, char * pStr);
