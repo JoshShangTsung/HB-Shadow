@@ -4494,7 +4494,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize) {
 	iTemp = iTemp | (iTemp2 << 28);
 	m_pClientList[iClientH]->m_iStatus = iTemp;
 
-	if (m_pClientList[iClientH]->m_iLevel > 100)
+	if (m_pClientList[iClientH]->m_iLevel >= DEF_LIMITHUNTERLEVEL)
 		if (m_pClientList[iClientH]->m_bIsPlayerCivil == TRUE)
 			ForceChangePlayMode(iClientH, FALSE);
 
@@ -23731,10 +23731,9 @@ BOOL CGame::bCheckLevelUp(int iClientH) // Sobrepaso de lvl fix.
 		return FALSE;
 	}
 
-	/*	if ((m_pClientList[iClientH]->m_iLevel > DEF_LIMITHUNTERLEVEL - 1 ) && (m_pClientList[iClientH]->m_bIsHunter == TRUE ) ) 
-		{
-			SetNoHunterMode(iClientH,TRUE) ;
-	 */
+	if ((m_pClientList[iClientH]->m_iLevel >= DEF_LIMITHUNTERLEVEL) && (m_pClientList[iClientH]->m_bIsPlayerCivil ) )  {
+			ForceChangePlayMode(iClientH,TRUE) ;
+	}
 
 	if (m_pClientList[iClientH]->m_iExp < m_pClientList[iClientH]->m_iNextLevelExp) return FALSE;
 
