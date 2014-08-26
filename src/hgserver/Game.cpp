@@ -10827,9 +10827,9 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 		// Â´Ãœ Â¼Ã’ÃˆÂ¯Â¸Ã·Ã€ÃŽ Â°Ã¦Â¿Ã¬ Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¿ÃƒÂ¸Â®Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.	 Â³ÂªÂ¸Ã“Ã?Ã¶ Â°Ã¦Ã‡Ã¨Ã„Â¡Â¸Â¦ Â¿ÃƒÂ¸Â°Â´Ã™.
 		//Happy Hour para vos 
 		if (m_bHappyHour == true) {
-			iExp = (m_pNpcList[iNpcH]->m_iExp);
+			iExp = (m_pNpcList[iNpcH]->m_iExp * 1.5);
 		} else {
-			iExp = (m_pNpcList[iNpcH]->m_iExp / 3);
+			iExp = (m_pNpcList[iNpcH]->m_iExp);
 		}
 		if (m_pNpcList[iNpcH]->m_iNoDieRemainExp > 0)
 			iExp += m_pNpcList[iNpcH]->m_iNoDieRemainExp;
@@ -16613,9 +16613,9 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 
 				pNpc->m_iExpDiceMin = m_pNpcConfigList[i]->m_iExpDiceMin;
 				pNpc->m_iExpDiceMax = m_pNpcConfigList[i]->m_iExpDiceMax; //can change exp rate here
-				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin / (rand() % 5 + 3); //gold rate
-				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax / (rand() % 5 + 3); //gold rate
-				pNpc->m_iExp = (iDice(1, (m_pNpcConfigList[i]->m_iExpDiceMax - m_pNpcConfigList[i]->m_iExpDiceMin)) + m_pNpcConfigList[i]->m_iExpDiceMin) * 500;
+				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin; //gold rate
+				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax; //gold rate
+				pNpc->m_iExp = (iDice(1, (m_pNpcConfigList[i]->m_iExpDiceMax - m_pNpcConfigList[i]->m_iExpDiceMin)) + m_pNpcConfigList[i]->m_iExpDiceMin);
 				pNpc->m_iHitDice = m_pNpcConfigList[i]->m_iHitDice;
 				pNpc->m_iDefenseRatio = m_pNpcConfigList[i]->m_iDefenseRatio;
 				pNpc->m_iHitRatio = m_pNpcConfigList[i]->m_iHitRatio;
@@ -16663,9 +16663,8 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 						dV3 = 25.0f / 100.0f;
 						dV1 = dV2 * dV3;
 						if (m_bHappyHour == true) {
-							pNpc->m_iExp += (int) dV1 * 2;
-						}// >>>Happy Hour MrKrhiz <<<
-						else {
+							pNpc->m_iExp += (int) dV1 * 1.5;
+						} else {
 							pNpc->m_iExp += (int) dV1;
 						}
 						break;
@@ -16674,7 +16673,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 						dV3 = 30.0f / 100.0f;
 						dV1 = dV2 * dV3;
 						if (m_bHappyHour == true) {
-							pNpc->m_iExp += (int) dV1 * 2;
+							pNpc->m_iExp += (int) dV1 * 1.5;
 						} else {
 							pNpc->m_iExp += (int) dV1;
 						}
@@ -16692,7 +16691,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 						dV3 = (double) abs(pNpc->m_iAbsDamage) / 100.0f;
 						dV1 = dV2 * dV3;
 						if (m_bHappyHour == true) {
-							pNpc->m_iExp += (int) dV1 * 2;
+							pNpc->m_iExp += (int) dV1 * 1.5;
 						} else {
 							pNpc->m_iExp += (int) dV1;
 						}
@@ -16712,7 +16711,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 						dV3 = (double) (pNpc->m_iAbsDamage) / 100.0f;
 						dV1 = dV2 * dV3;
 						if (m_bHappyHour == true) {
-							pNpc->m_iExp += (int) dV1 * 2;
+							pNpc->m_iExp += (int) dV1 * 1.5;
 						} else {
 							pNpc->m_iExp += (int) dV1;
 						}
@@ -16723,7 +16722,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 						dV3 = 15.0f / 100.0f;
 						dV1 = dV2 * dV3;
 						if (m_bHappyHour == true) {
-							pNpc->m_iExp += (int) dV1 * 2;
+							pNpc->m_iExp += (int) dV1 * 1.5;
 						} else {
 							pNpc->m_iExp += (int) dV1;
 						}
@@ -16735,7 +16734,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 						dV3 = 20.0f / 100.0f;
 						dV1 = dV2 * dV3;
 						if (m_bHappyHour == true) {
-							pNpc->m_iExp += (int) dV1 * 2;
+							pNpc->m_iExp += (int) dV1 * 1.5;
 						} else {
 							pNpc->m_iExp += (int) dV1;
 						}
@@ -16746,7 +16745,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass
 						dV3 = 25.0f / 100.0f;
 						dV1 = dV2 * dV3;
 						if (m_bHappyHour == true) {
-							pNpc->m_iExp += (int) dV1 * 2;
+							pNpc->m_iExp += (int) dV1 * 1.5;
 						} else {
 							pNpc->m_iExp += (int) dV1;
 						}
