@@ -3,7 +3,7 @@
 #define MSG_HOMEPAGE			"http://www.hbshadow.com"
 #define DEF_UPPERVERSION		3
 #define DEF_LOWERVERSION		82
-#define DEF_SERVER_IP			"31.186.251.51"
+#define DEF_SERVER_IP			"104.153.104.228"
 //#define DEF_SERVER_IP			"127.0.0.1"
 #define DEF_SERVER_PORT			2848
 #define DEF_MAXSTATS			200

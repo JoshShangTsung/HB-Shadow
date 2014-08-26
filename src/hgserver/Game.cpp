@@ -24121,7 +24121,7 @@ void CGame::RequestCivilRightHandler(int iClientH, char */*pData*/) {
 	else wResult = 1;
 
 	// ì¨Œì¨�?ì¨˜ì§ ?íš‘ 5 ?íš‘íš‰íš•ì¨‹ì²˜ì¨‰ì¨‰ ì©?íš„ì¨�?íš“ì§¹íš‰?ì¨© ì©?ì±µ?ì¨© ì©Œì²  ì©?ì²©ì¨ˆíš¢.
-	if (m_pClientList[iClientH]->m_iLevel < 19) wResult = 0;
+	//if (m_pClientList[iClientH]->m_iLevel < 19) wResult = 0;
 
 	if (wResult == 1) {
 		// íš‰ì² ?ì±Œ ì¨?íšŽ?íš‰ ?íš‘ì¨?ì§ ?ì¨© íš‰íš˜ì¨ˆì±Œíš‰íš—ì¨ˆíš¢.

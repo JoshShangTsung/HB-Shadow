@@ -86,168 +86,168 @@ public:
 	CMap(class CGame * pGame);
 	virtual ~CMap();
 
-	class CTile * m_pTile;
-	class CGame * m_pGame;
-	char m_cName[11];
-	char m_cLocationName[11];
-	short m_sSizeX, m_sSizeY, m_sTileDataSize;
-	class CTeleportLoc * m_pTeleportLoc[DEF_MAXTELEPORTLOC];
+	class CTile * m_pTile=0;
+	class CGame * m_pGame=0;
+	char m_cName[11]{};
+	char m_cLocationName[11]{};
+	short m_sSizeX=0, m_sSizeY=0, m_sTileDataSize=0;
+	class CTeleportLoc * m_pTeleportLoc[DEF_MAXTELEPORTLOC]{};
 
 	//short m_sInitialPointX, m_sInitialPointY;
-	POINT m_pInitialPoint[DEF_MAXINITIALPOINT];
+	POINT m_pInitialPoint[DEF_MAXINITIALPOINT]{};
 
-	bool m_bNamingValueUsingStatus[1000]; // 0~999
-	bool m_bRandomMobGenerator;
-	char m_cRandomMobGeneratorLevel;
-	int m_iTotalActiveObject;
-	int m_iTotalAliveObject;
-	int m_iMaximumObject;
+	bool m_bNamingValueUsingStatus[1000]{}; // 0~999
+	bool m_bRandomMobGenerator=0;
+	char m_cRandomMobGeneratorLevel=0;
+	int m_iTotalActiveObject=0;
+	int m_iTotalAliveObject=0;
+	int m_iMaximumObject=0;
 
-	char m_cType; // ���� ���. 0�̸� ����. 1�̸� ��������� ���˰� �ƴϴ�.
+	char m_cType=0; // ���� ���. 0�̸� ����. 1�̸� ��������� ���˰� �ƴϴ�.
 
-	bool m_bIsFixedDayMode; // �׻� �ְ��������: �ǹ� ���� �� 
-
-	struct {
-		bool bDefined;
-		char cType; // 1:RANDOMAREA   2:RANDOMWAYPOINT
-
-		char cWaypoint[10]; // RANDOMWAYPOINT ��
-		RECT rcRect; // RANDOMAREA�߻��� ��� 
-
-		int iTotalActiveMob;
-		int iMobType;
-		int iMaxMobs;
-		int iCurMobs;
-
-	} m_stSpotMobGenerator[DEF_MAXSPOTMOBGENERATOR];
-
-	POINT m_WaypointList[DEF_MAXWAYPOINTCFG];
-	RECT m_rcMobGenAvoidRect[DEF_MAXMGAR];
-	RECT m_rcNoAttackRect[DEF_MAXNMR];
-
-	POINT m_FishPointList[DEF_MAXFISHPOINT];
-	int m_iTotalFishPoint, m_iMaxFish, m_iCurFish;
-
-	int m_iApocalypseMobGenType, m_iApocalypseBossMobNpcID;
-	short m_sApocalypseBossMobRectX1, m_sApocalypseBossMobRectY1, m_sApocalypseBossMobRectX2, m_sApocalypseBossMobRectY2;
-	char m_cDynamicGateType;
-	short m_sDynamicGateCoordRectX1, m_sDynamicGateCoordRectY1, m_sDynamicGateCoordRectX2, m_sDynamicGateCoordRectY2;
-	char m_cDynamicGateCoordDestMap[11];
-	short m_sDynamicGateCoordTgtX, m_sDynamicGateCoordTgtY;
-	bool m_bIsCitizenLimit;
-	short m_sHeldenianTowerType, m_sHeldenianTowerXPos, m_sHeldenianTowerYPos;
-	char m_cHeldenianTowerSide;
-	char m_cHeldenianModeMap;
-
-	bool m_bMineralGenerator;
-	char m_cMineralGeneratorLevel;
-	POINT m_MineralPointList[DEF_MAXMINERALPOINT];
-	int m_iTotalMineralPoint, m_iMaxMineral, m_iCurMineral;
-
-	char m_cWhetherStatus; // ��� ����. 0�̸� ����. 1~3 �� 4~6 �� 7~9 ��ǳ 
-	DWORD m_dwWhetherLastTime, m_dwWhetherStartTime; // ���� ����, ���� �ð� 
-
-	int m_iLevelLimit;
-	int m_iUpperLevelLimit; // ���� �� ���� 
-
-	class COccupyFlag * m_pOccupyFlag[DEF_MAXOCCUPYFLAG];
-	int m_iTotalOccupyFlags;
-
-	class CStrategicPoint * m_pStrategicPointList[DEF_MAXSTRATEGICPOINTS];
-	bool m_bIsAttackEnabled;
-
-	bool m_bIsFightZone;
+	bool m_bIsFixedDayMode=false; // �׻� �ְ��������: �ǹ� ���� �� 
 
 	struct {
-		char cType;
-		int sX, sY;
+		bool bDefined=false;
+		char cType=0; // 1:RANDOMAREA   2:RANDOMWAYPOINT
+
+		char cWaypoint[10]{}; // RANDOMWAYPOINT ��
+		RECT rcRect{}; // RANDOMAREA�߻��� ��� 
+
+		int iTotalActiveMob=0;
+		int iMobType=0;
+		int iMaxMobs=0;
+		int iCurMobs=0;
+
+	} m_stSpotMobGenerator[DEF_MAXSPOTMOBGENERATOR]{};
+
+	POINT m_WaypointList[DEF_MAXWAYPOINTCFG]{};
+	RECT m_rcMobGenAvoidRect[DEF_MAXMGAR]{};
+	RECT m_rcNoAttackRect[DEF_MAXNMR]{};
+
+	POINT m_FishPointList[DEF_MAXFISHPOINT]{};
+	int m_iTotalFishPoint=0, m_iMaxFish=0, m_iCurFish=0;
+
+	int m_iApocalypseMobGenType=0, m_iApocalypseBossMobNpcID=0;
+	short m_sApocalypseBossMobRectX1=0, m_sApocalypseBossMobRectY1=0, m_sApocalypseBossMobRectX2=0, m_sApocalypseBossMobRectY2=0;
+	char m_cDynamicGateType=0;
+	short m_sDynamicGateCoordRectX1=0, m_sDynamicGateCoordRectY1=0, m_sDynamicGateCoordRectX2=0, m_sDynamicGateCoordRectY2=0;
+	char m_cDynamicGateCoordDestMap[11]{};
+	short m_sDynamicGateCoordTgtX=0, m_sDynamicGateCoordTgtY=0;
+	bool m_bIsCitizenLimit=0;
+	short m_sHeldenianTowerType=0, m_sHeldenianTowerXPos=0, m_sHeldenianTowerYPos=0;
+	char m_cHeldenianTowerSide=0;
+	char m_cHeldenianModeMap=0;
+
+	bool m_bMineralGenerator=0;
+	char m_cMineralGeneratorLevel=0;
+	POINT m_MineralPointList[DEF_MAXMINERALPOINT]{};
+	int m_iTotalMineralPoint=0, m_iMaxMineral=0, m_iCurMineral=0;
+
+	char m_cWhetherStatus=0; // ��� ����. 0�̸� ����. 1~3 �� 4~6 �� 7~9 ��ǳ 
+	DWORD m_dwWhetherLastTime=0, m_dwWhetherStartTime=0; // ���� ����, ���� �ð� 
+
+	int m_iLevelLimit=0;
+	int m_iUpperLevelLimit=0; // ���� �� ���� 
+
+	class COccupyFlag * m_pOccupyFlag[DEF_MAXOCCUPYFLAG]{};
+	int m_iTotalOccupyFlags=0;
+
+	class CStrategicPoint * m_pStrategicPointList[DEF_MAXSTRATEGICPOINTS]={};
+	bool m_bIsAttackEnabled=true;
+
+	bool m_bIsFightZone=false;
+
+	struct {
+		char cType=0;
+		int sX=0, sY=0;
 
 	} m_stEnergySphereCreationList[DEF_MAXENERGYSPHERES];
 
-	int m_iTotalEnergySphereCreationPoint;
+	int m_iTotalEnergySphereCreationPoint=0;
 
 	struct {
-		char cResult;
-		int aresdenX, aresdenY, elvineX, elvineY;
+		char cResult=0;
+		int aresdenX=0, aresdenY=0, elvineX=0, elvineY=0;
 	} m_stEnergySphereGoalList[DEF_MAXENERGYSPHERES];
 
-	int m_iTotalEnergySphereGoalPoint;
+	int m_iTotalEnergySphereGoalPoint=0;
 
-	bool m_bIsEnergySphereGoalEnabled;
-	int m_iCurEnergySphereGoalPointIndex;
+	bool m_bIsEnergySphereGoalEnabled=0;
+	int m_iCurEnergySphereGoalPointIndex=0;
 
 	struct {
-		bool m_bIsGateMap;
-		char m_cDynamicGateMap[11];
-		int m_iDynamicGateX;
-		int m_iDynamicGateY;
+		bool m_bIsGateMap=0;
+		char m_cDynamicGateMap[11]{};
+		int m_iDynamicGateX=0;
+		int m_iDynamicGateY=0;
 	} m_stDynamicGateCoords[DEF_MAXDYNAMICGATES];
 
 	// ���� �ʿ����� �÷��̾���� Ȱ�� ������ �ľ��ϴ� ���̺�.
 
 	struct {
-		int iPlayerActivity;
-		int iNeutralActivity;
-		int iAresdenActivity;
-		int iElvineActivity;
-		int iMonsterActivity;
+		int iPlayerActivity=0;
+		int iNeutralActivity=0;
+		int iAresdenActivity=0;
+		int iElvineActivity=0;
+		int iMonsterActivity=0;
 
 	} m_stSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS], m_stTempSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS];
-	short sMobEventAmount;
-	int m_iTotalItemEvents;
+	short sMobEventAmount=0;
+	int m_iTotalItemEvents=0;
 
 	struct {
-		char cItemName[21];
-		int iAmount;
-		int iTotal;
-		int iMonth;
-		int iDay;
-		int iTotalNum;
+		char cItemName[21]{};
+		int iAmount=0;
+		int iTotal=0;
+		int iMonth=0;
+		int iDay=0;
+		int iTotalNum=0;
 	} m_stItemEventList[DEF_MAXITEMEVENTS];
 
 	struct {
-		char cDir;
-		short dX;
-		short dY;
+		char cDir=0;
+		short dX=0;
+		short dY=0;
 	} m_stHeldenianGateDoor[DEF_MAXHELDENIANDOOR];
 
 	struct {
-		short sTypeID;
-		short dX;
-		short dY;
-		char cSide;
+		short sTypeID=0;
+		short dX=0;
+		short dY=0;
+		char cSide=0;
 	} m_stHeldenianTower[DEF_MAXHELDENIANTOWER];
 
-	int m_iMaxNx, m_iMaxNy, m_iMaxAx, m_iMaxAy, m_iMaxEx, m_iMaxEy, m_iMaxMx, m_iMaxMy, m_iMaxPx, m_iMaxPy;
+	int m_iMaxNx = 0, m_iMaxNy = 0, m_iMaxAx= 0, m_iMaxAy=0, m_iMaxEx=0, m_iMaxEy=0, m_iMaxMx=0, m_iMaxMy=0, m_iMaxPx=0, m_iMaxPy=0;
 
 	struct {
-		char cRelatedMapName[11];
-		int iMapIndex;
-		int dX, dY;
-		int iHP, iInitHP;
+		char cRelatedMapName[11] = "";
+		int iMapIndex = 0;
+		int dX = 0, dY = 0;
+		int iHP = 0, iInitHP = 0;
 
-		int iEffectX[5];
-		int iEffectY[5];
+		int iEffectX[5] = {};
+		int iEffectY[5] = {};
 
 	} m_stStrikePoint[DEF_MAXSTRIKEPOINTS];
-	int m_iTotalStrikePoints;
+	int m_iTotalStrikePoints = 0;
 
-	bool m_bIsDisabled; // ������� ����� ����� ��� 
-	int m_iTotalAgriculture;
+	bool m_bIsDisabled = false; // ������� ����� ����� ��� 
+	int m_iTotalAgriculture = 0;
 
 	struct {
-		char cType; // �̰� 0�̸� ���ǵ��� �������� �ǹ�.
-		char cSide; // ���̵�
-		short sX, sY; // ��ġ�� ��ġ 
+		char cType = 0; // �̰� 0�̸� ���ǵ��� �������� �ǹ�.
+		char cSide = 0; // ���̵�
+		short sX = 0, sY = 0; // ��ġ�� ��ġ 
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
-	int m_iTotalCrusadeStructures;
-	bool m_bIsEnergySphereAutoCreation;
+	int m_iTotalCrusadeStructures = 0;
+	bool m_bIsEnergySphereAutoCreation = false;
 private:
 	bool _bDecodeMapDataFileContents();
 public:
 	// Snow BOOLean for certain maps to snow instead of rain
-	bool m_bIsSnowEnabled;
-	bool m_bIsRecallImpossible;
-	bool m_bIsApocalypseMap;
-	bool m_bIsHeldenianMap;
+	bool m_bIsSnowEnabled = false;
+	bool m_bIsRecallImpossible = false;
+	bool m_bIsApocalypseMap = false;
+	bool m_bIsHeldenianMap = false;
 };
