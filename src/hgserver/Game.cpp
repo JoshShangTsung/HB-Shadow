@@ -45177,22 +45177,21 @@ void CGame::GetExp(int iClientH, int iExp, bool bIsAttackerOwn) {
 	if (m_pClientList[iClientH] == 0) return;
 	if (iExp <= 0) return;
 
-	if (m_pClientList[iClientH]->m_iLevel <= 80) {
+	/*if (m_pClientList[iClientH]->m_iLevel <= 80) {
 		dV1 = (double) (80 - m_pClientList[iClientH]->m_iLevel);
-		dV2 = dV1 * 0.025f;
+		dV2 = dV1 * 0.025f + 1.025f;
 		dV3 = (double) iExp;
-		dV1 = (dV2 + 1.025f) * dV3;
+		dV1 = dV2 * dV3;
 		iExp = (int) dV1;
-		iExp = (iExp / 64);
 	} else { //Lower exp
 		if ((m_pClientList[iClientH]->m_iLevel >= 100) &&((strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "aresden") == 0)
 				  || (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "elvine") == 0))) {
-			iExp = (iExp / 64);
+			//iExp = (iExp / 64);
 		} else if ((strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "aresden") == 0)
 				  || (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "elvine") == 0)) {
-			iExp = (iExp / 64);
+			//iExp = (iExp / 64);
 		}
-	}
+	}*/
 
 	//Check for party status, else give exp to player
 	//if ((m_pClientList[iClientH]->m_iPartyID != 0) && (m_pClientList[iClientH]->m_iPartyStatus == DEF_PARTYSTATUS_CONFIRM) &&
@@ -45266,21 +45265,21 @@ void CGame::GetExp(int iClientH, int iExp, bool bIsAttackerOwn) {
 					//Exp gain based on lvl
 					if ((m_pClientList[iH]->m_iStatus & 0x10000) != 0)
 						iUnitValue *= 3;
-					m_pClientList[iH]->m_iExpStock += (iUnitValue / 64);
+					m_pClientList[iH]->m_iExpStock += (iUnitValue);
 					iUnitValue = (int) dV3;
 				}
 			}
 		} else {
 			if ((m_pClientList[iClientH]->m_iStatus & 0x10000) != 0)
 				iExp *= 3;
-			m_pClientList[iClientH]->m_iExpStock += (iExp / 64);
+			m_pClientList[iClientH]->m_iExpStock += (iExp);
 		}
 	} else {
 		if ((m_pClientList[iClientH]->m_iStatus & 0x10000) != 0)
 			iExp *= 3;
 
 		//Add exp to player
-		m_pClientList[iClientH]->m_iExpStock += (iExp / 64);
+		m_pClientList[iClientH]->m_iExpStock += (iExp);
 	}
 }
 
