@@ -1,6 +1,6 @@
 #include "Npc.h"
 
-CNpc::CNpc(char * pName5) {
+CNpc::CNpc(const char * pName5) {
 	int i;
 	ZeroMemory(m_cName, sizeof (m_cName));
 	memcpy(m_cName, pName5, 5);

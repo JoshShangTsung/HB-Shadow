@@ -29,7 +29,7 @@ void DebugWindowThread() {
 	DialogBox(GetModuleHandle(0), MAKEINTRESOURCE(IDD_DIALOG1), 0, (DLGPROC) lpDialogFunc);
 }
 
-bool CALLBACK lpDialogFunc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+bool CALLBACK lpDialogFunc(HWND hDlg, UINT uMsg, WPARAM /*wParam*/, LPARAM /*lParam*/) {
 	switch (uMsg) {
 		case WM_INITDIALOG:
 			//Copy HWND's
@@ -78,11 +78,11 @@ void CDebugWindow::AddEventMsg(int cMsgType, char* cData, DWORD dwSize, char cKe
 		WriteFile(outHand, DbgBuffer, strlen(DbgBuffer), &written, 0);
 		WriteFile(outHand, crlf, 2, &written, 0);
 
-		int i = 0;
+		DWORD i = 0;
 		while (i < dwSize) {
 			memset(DbgBuffer, 0, sizeof (DbgBuffer));
 			strcpy(DbgBuffer, "DATA -> ");
-			for (int j = i; j < i + 16 && j < dwSize; j++)
+			for (DWORD j = i; j < i + 16 && j < dwSize; j++)
 				wsprintf(&DbgBuffer[strlen(DbgBuffer)], "%.2X ", (unsigned char) cData[j]);
 
 			//Align Spacing
@@ -90,7 +90,7 @@ void CDebugWindow::AddEventMsg(int cMsgType, char* cData, DWORD dwSize, char cKe
 				strcat(DbgBuffer, "   ");
 
 			strcat(DbgBuffer, "\t\t\t");
-			int j = i;
+			DWORD j = i;
 			for (; j < i + 16 && j < dwSize; j++)
 				DbgBuffer[strlen(DbgBuffer)] = isprint((unsigned char) cData[j]) ? cData[j] : '.';
 

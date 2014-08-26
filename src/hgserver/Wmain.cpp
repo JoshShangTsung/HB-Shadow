@@ -10,9 +10,9 @@
 #include "UserMessages.h"
 #include "resource.h"
 
-void PutAdminLogFileList(char * cStr);
-void PutHackLogFileList(char * cStr);
-void PutPvPLogFileList(char * cStr);
+void PutAdminLogFileList(const char * cStr);
+void PutHackLogFileList(const char * cStr);
+void PutPvPLogFileList(const char * cStr);
 
 #define WM_USER_TIMERSIGNAL		WM_USER + 500
 
@@ -34,9 +34,9 @@ bool G_bIsThread = true;
 
 FILE * pLogFile;
 
-void ThreadProc(void *ch) {
+void ThreadProc(void */*ch*/) {
 	while (G_bIsThread == true) {
-		if (G_pGame = 0) G_pGame->OnTimer(0);
+		if (G_pGame == 0) G_pGame->OnTimer(0);
 		Sleep(100);
 	}
 
@@ -230,7 +230,7 @@ void OnDestroy() {
 	PostQuitMessage(0);
 }
 
-void PutLogList(char * cMsg) {
+void PutLogList(const char * cMsg) {
 	char cTemp[120 * 50];
 
 	G_cMsgUpdated = true;
@@ -241,7 +241,7 @@ void PutLogList(char * cMsg) {
 	PutAdminLogFileList(cMsg);
 }
 
-void PutXSocketLogList(char * cMsg) {
+void PutXSocketLogList(const char * cMsg) {
 	PutXSocketLogFileList(cMsg);
 
 }
@@ -307,7 +307,7 @@ void _StopTimer(MMRESULT timerid) {
 	}
 }
 
-void PutLogFileList(char * cStr) {
+void PutLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -325,7 +325,7 @@ void PutLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutAdminLogFileList(char * cStr) {
+void PutAdminLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[1024 * 5];
 	SYSTEMTIME SysTime;
@@ -344,7 +344,7 @@ void PutAdminLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutHackLogFileList(char * cStr) {
+void PutHackLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -363,7 +363,7 @@ void PutHackLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutPvPLogFileList(char * cStr) {
+void PutPvPLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -382,7 +382,7 @@ void PutPvPLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutXSocketLogFileList(char * cStr) {
+void PutXSocketLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -401,7 +401,7 @@ void PutXSocketLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutItemLogFileList(char * cStr) {
+void PutItemLogFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;
@@ -420,7 +420,7 @@ void PutItemLogFileList(char * cStr) {
 	fclose(pFile);
 }
 
-void PutLogEventFileList(char * cStr) {
+void PutLogEventFileList(const char * cStr) {
 	FILE * pFile;
 	char cBuffer[512];
 	SYSTEMTIME SysTime;

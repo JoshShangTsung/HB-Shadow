@@ -21,7 +21,7 @@
 
 class CNpc {
 public:
-	CNpc(char * pName5);
+	CNpc(const char * pName5);
 
 	char m_pMagicConfigList[100];
 

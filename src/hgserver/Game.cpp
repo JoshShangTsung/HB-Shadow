@@ -1,15 +1,15 @@
 #include "Game.h"
 
 class CDebugWindow *DbgWnd;
-extern void PutLogList(char * cMsg);
+extern void PutLogList(const char * cMsg);
 extern char G_cTxt[512];
 extern char G_cData50000[50000];
-extern void PutLogFileList(char * cStr);
-extern void PutAdminLogFileList(char * cStr);
-extern void PutItemLogFileList(char * cStr);
-extern void PutLogEventFileList(char * cStr);
-extern void PutHackLogFileList(char * cStr);
-extern void PutPvPLogFileList(char * cStr);
+extern void PutLogFileList(const char * cStr);
+extern void PutAdminLogFileList(const char * cStr);
+extern void PutItemLogFileList(const char * cStr);
+extern void PutLogEventFileList(const char * cStr);
+extern void PutHackLogFileList(const char * cStr);
+extern void PutPvPLogFileList(const char * cStr);
 
 // extern void PutDebugMsg(char * cStr);	// 2002-09-09 #2
 
@@ -265,7 +265,7 @@ CGame::~CGame() {
 }
 
 bool CGame::bAccept(class XSocket * pXSock) {
-	register int i;
+	int i;
 	class XSocket * pTmpSock;
 
 	if ((m_bIsLogSockAvailable == false) ||
@@ -329,7 +329,7 @@ CLOSE_ANYWAY:
 
 void CGame::OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 	UINT iTmp;
-	register int iClientH, iRet;
+	int iClientH, iRet;
 	DWORD dwTime = timeGetTime();
 
 	iTmp = WM_ONCLIENTSOCKETEVENT;
@@ -371,9 +371,7 @@ void CGame::OnClientSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 }
 
 bool CGame::bInit() {
-	char * cp, cTxt[120];
-	DWORD * dwp;
-	WORD * wp;
+	char cTxt[120];
 	int i;
 	SYSTEMTIME SysTime;
 	DWORD dwTime = timeGetTime();
@@ -773,7 +771,7 @@ void CGame::OnClientRead(int iClientH) {
 }
 
 void CGame::DisplayInfo(HDC hdc) {
-	char cTxt[350], cDave[350];
+	char cTxt[350];
 	int i, iLine;
 
 	// NTÂ¿Â¡Â¼Â­ Â¿Â¡Â·Â¯Â³Â²! Ã?Ã–Ã€Ã‡
@@ -785,9 +783,9 @@ void CGame::DisplayInfo(HDC hdc) {
 	//	strcpy(cTxt, "ì?¸ì ‘í•œ í?´ë?¼ì?´ì–¸íŠ¸ë“¤ì—?ê²Œ ë°©í–¥ì „í™˜ ì?´ë²¤íŠ¸ë¥¼ ì•Œë¦°ë‹¤. ********** TEST SERVER MODE **********");
 	//	TextOut(hdc, 5, 25, cTxt, strlen(cTxt));
 	//#endif
-
-	GayDave(cDave, "Bobobob");
-	TextOut(hdc, 5, 25, cDave, strlen(cDave));
+	
+	const char text[] = " ********* Helbreath Shadow **********";
+	TextOut(hdc, 5, 25, text, strlen(text));
 
 
 	iLine = 0;
@@ -803,20 +801,6 @@ void CGame::DisplayInfo(HDC hdc) {
 			TextOut(hdc, 5, 400 + iLine * 15, G_cTxt, strlen(G_cTxt));
 			iLine++;
 		}
-}
-
-void CGame::GayDave(char cDave[350], char cInput[350]) {
-	char * pDisplay, * wdap, * pInput;
-	pInput = cInput;
-	pDisplay = cDave;
-
-	wdap = (char *) pDisplay;
-	memcpy(wdap, " ", 1);
-	pDisplay++;
-	wdap = (char *) pDisplay;
-	memcpy(wdap, "                                                           ********** Helbreath Shadow made by Gigia  [v3.3] **********               ", 160);
-	pDisplay++;
-	return;
 }
 
 void CGame::ClientMotionHandler(int iClientH, char * pData) {
@@ -1303,8 +1287,8 @@ int CGame::iClientMotion_Move_Handler(int iClientH, short sX, short sY, char cDi
 }
 
 void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
-	register int i;
-	char * cp, cCharName[11], cAccountName[11], cAccountPassword[11], cTxt[120], cPoints = 0;
+	int i;
+	char * cp, cCharName[11], cAccountName[11], cAccountPassword[11], cTxt[120];
 	bool bIsObserverMode;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -1409,15 +1393,13 @@ void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
 	bSendMsgToLS(MSGID_REQUEST_PLAYERDATA, iClientH);
 }
 
-// 05/22/2004 - Hypnotoad - sends client to proper location after dieing
-
 void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	bool bFlag;
 	char * pBuffer = 0;
 	short * sp;
 	DWORD * dwp;
 	WORD * wp;
-	char * cp, cPlayerName[11], cTxt[120], cPoints = 0;
+	char * cp, cPlayerName[11], cTxt[120];
 	int sSummonPoints;
 	int * ip, i, iTotalItemA, iTotalItemB, iSize, iRet, iStats;
 	SYSTEMTIME SysTime;
@@ -1744,15 +1726,6 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 			if (pBuffer != 0) delete pBuffer;
 			return;
 	}
-
-	// new - Heldenian From 3.00 Source =P
-	if (m_pClientList[iClientH]->m_pIsProcessingAllowed == true) {
-		cPoints = 0;
-		if ((m_pClientList[iClientH]->m_cSide != m_sLastHeldenianWinner) && (m_sLastHeldenianWinner != 0)) {
-			cPoints = 100;
-		}
-	}
-
 	// Ã¬Â¨Â?Ã­Å¡Å½Ã¬Â¨â€°Ã¬Â§Å“?Ã­Å¡â€˜Ã­Å¡â€¡Ã­Å¡â€™Ã¬Â¨Â?Ã¬Â§Â? ?Ã¬Â²Â´Ã¬Â©Å’Ã­Å¡Â¤Ã­Å¡â€°Ã­Å¡â€�?Ã¬Â¨Ë†Ã­Å¡Â¢.
 	dwp = (DWORD *) (pBuffer + DEF_INDEX4_MSGID);
 	*dwp = MSGID_RESPONSE_INITDATA;
@@ -2081,7 +2054,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 }
 
 int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
-	register int * ip, ix, iy, iSize, iTileExists;
+	int * ip, ix, iy, iSize, iTileExists;
 	class CTile * pTileSrc, * pTile;
 	unsigned char ucHeader;
 	short * sp, * pTotal;
@@ -2406,9 +2379,7 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 
 void CGame::DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogout, bool bForceCloseConn) {
 	int i, iExH;
-	char * cp, cData[120], cTmpMap[30];
-	DWORD * dwp;
-	WORD * wp;
+	char cTmpMap[30];
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == true) {
@@ -2589,7 +2560,7 @@ DC_LOOPBREAK1:
 }
 
 void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dwMsgID, WORD wMsgType, short sV1, short sV2, short sV3) {
-	int * ip, i, iRet, iShortCutIndex;
+	int * ip, i, iShortCutIndex;
 	char * cp_a, * cp_s, * cp_sv, cData_All[200], cData_Srt[200], cData_Srt_Av[200];
 	DWORD * dwp;
 	WORD * wp;
@@ -2807,45 +2778,45 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 							case DEF_MSGTYPE_REJECT:
 							case DEF_OBJECTNULLACTION:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
 								break;
 
 							case DEF_OBJECTATTACK:
 							case DEF_OBJECTATTACKMOVE:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								break;
 
 							case DEF_OBJECTMAGIC:
 							case DEF_OBJECTDAMAGE:
 							case DEF_OBJECTDAMAGEMOVE:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								break;
 
 							case DEF_OBJECTDYING:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								break;
 
 							default:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 9, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 9, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 9, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 9, cKey);
 								break;
 						} //Switch
 					}// If 2
@@ -2855,45 +2826,45 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 							case DEF_MSGTYPE_REJECT:
 							case DEF_OBJECTNULLACTION:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
 								break;
 
 							case DEF_OBJECTATTACK:
 							case DEF_OBJECTATTACKMOVE:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								break;
 
 							case DEF_OBJECTMAGIC:
 							case DEF_OBJECTDAMAGE:
 							case DEF_OBJECTDAMAGEMOVE:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								break;
 
 							case DEF_OBJECTDYING:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								break;
 
 							default:
 								if (cOwnerSend == true)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
 								else
 									if (i != sOwnerH)
-									iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
+									m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 43, cKey);
 								break;
 						} //Switch
 					} //else
@@ -3009,25 +2980,25 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 							case DEF_MSGTYPE_CONFIRM:
 							case DEF_MSGTYPE_REJECT:
 							case DEF_OBJECTNULLACTION:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 27, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 27, cKey);
 								break;
 
 							case DEF_OBJECTDYING:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								break;
 
 							case DEF_OBJECTDAMAGE:
 							case DEF_OBJECTDAMAGEMOVE:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								break;
 
 							case DEF_OBJECTATTACK:
 							case DEF_OBJECTATTACKMOVE:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								break;
 
 							default:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 9, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 9, cKey);
 								break;
 
 						} //Switch
@@ -3036,25 +3007,25 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 							case DEF_MSGTYPE_CONFIRM:
 							case DEF_MSGTYPE_REJECT:
 							case DEF_OBJECTNULLACTION:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 27, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 27, cKey);
 								break;
 
 							case DEF_OBJECTDYING:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 15, cKey);
 								break;
 
 							case DEF_OBJECTDAMAGE:
 							case DEF_OBJECTDAMAGEMOVE:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt, 11, cKey);
 								break;
 
 							case DEF_OBJECTATTACK:
 							case DEF_OBJECTATTACKMOVE:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_Srt_Av, 13, cKey);
 								break;
 
 							default:
-								iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 27, cKey);
+								m_pClientList[i]->m_pXSock->iSendMsg(cData_All, 27, cKey);
 								break;
 
 						} //Switch
@@ -3065,7 +3036,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, DWORD dw
 }
 
 int CGame::iComposeMoveMapData(short sX, short sY, int iClientH, char cDir, char * pData) {
-	register int * ip, ix, iy, iSize, iTileExists, iIndex;
+	int * ip, ix, iy, iSize, iTileExists, iIndex;
 	class CTile * pTileSrc, * pTile;
 	unsigned char ucHeader;
 	short * sp, * pTotal;
@@ -3393,7 +3364,7 @@ int CGame::iComposeMoveMapData(short sX, short sY, int iClientH, char cDir, char
 }
 
 void CGame::CheckClientResponseTime() {
-	register int i, iPlusTime, iMaxSuperAttack, iValue;
+	int i, iPlusTime, iMaxSuperAttack, iValue;
 	short sTemp;
 	DWORD dwTime;
 	short sItemIndex;
@@ -3545,7 +3516,7 @@ void CGame::CheckClientResponseTime() {
 
 				// v1.432 Ã†Â¯Â¼Ã¶ Â´Ã‰Â·Ã‚ Â»Ã§Â¿Ã«Ã?ÃŸÃ€ÃŽ Â½ÃƒÂ°Â£Ã€Â» ÃƒÂ¼Ã…Â©
 				if (m_pClientList[i]->m_bIsSpecialAbilityEnabled == true) {
-					if (((dwTime - m_pClientList[i]->m_dwSpecialAbilityStartTime) / 1000) > m_pClientList[i]->m_iSpecialAbilityLastSec) {
+					if (((dwTime - m_pClientList[i]->m_dwSpecialAbilityStartTime) / 1000) > (uint32_t) m_pClientList[i]->m_iSpecialAbilityLastSec) {
 						// Â»Ã§Â¿Ã«Â½ÃƒÂ°Â£Ã€ÃŒ Â´Ã™ ÂµÃ‡Â¾ÃºÂ´Ã™.
 						SendNotifyMsg(0, i, DEF_NOTIFY_SPECIALABILITYSTATUS, 3, 0, 0, 0);
 						m_pClientList[i]->m_bIsSpecialAbilityEnabled = false;
@@ -3775,7 +3746,7 @@ void CGame::CheckClientResponseTime() {
 	}
 }
 
-void CGame::OnMainLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
+void CGame::OnMainLogSocketEvent(UINT /*message*/, WPARAM wParam, LPARAM lParam) {
 	int iRet;
 
 	if (m_pMainLogSock == 0) return;
@@ -4280,7 +4251,7 @@ bool CGame::bSendMsgToLS(DWORD dwMsg, int iClientH, bool bFlag, char* pData) {
 			cp += 4;
 
 			ip = (int *) cp;
-			ip = (int *) m_cHeldenianModeType;
+			*ip = (int) m_cHeldenianModeType;
 			cp += 4;
 
 			iRet = m_pSubLogSock[m_iCurSubLogSockIndex]->iSendMsg(G_cData50000, 21);
@@ -4426,7 +4397,7 @@ void CGame::ResponsePlayerDataHandler(char * pData, DWORD dwSize) {
 
 void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize) {
 
-	char * cp, cName[11], cData[256], cTxt[256], cPoints = 0, cGuildStatus, cQuestRemain;
+	char * cp, cName[11], cData[256], cTxt[256], cGuildStatus, cQuestRemain;
 	DWORD * dwp;
 	WORD * wp;
 	int iRet, i, iTotalPoints;
@@ -4541,14 +4512,6 @@ void CGame::InitPlayerData(int iClientH, char * pData, DWORD dwSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_GUILDDISBANDED, 0, 0, 0, m_pClientList[iClientH]->m_cGuildName);
 	}
 
-	// new - handles cPoints
-	if (m_pClientList[iClientH]->m_pIsProcessingAllowed == true) {
-		cPoints = 0;
-		if ((m_pClientList[iClientH]->m_cSide != m_sLastHeldenianWinner) && (m_sLastHeldenianWinner != 0)) {
-			cPoints = 100;
-		}
-	}
-
 	if (m_pClientList[iClientH]->m_iQuest != 0) {
 		cQuestRemain = (m_pQuestConfigList[m_pClientList[iClientH]->m_iQuest]->m_iMaxCount - m_pClientList[iClientH]->m_iCurQuestCount);
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_QUESTCOUNTER, cQuestRemain, 0, 0, 0);
@@ -4623,7 +4586,7 @@ void CGame::GameProcess() {
 	DelayEventProcess();
 }
 
-bool CGame::bReadProgramConfigFile(char * cFn) {
+bool CGame::bReadProgramConfigFile(const char * cFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
@@ -4860,11 +4823,11 @@ bool CGame::bReadProgramConfigFile(char * cFn) {
 	return true;
 }
 
-bool CGame::bReadSettingsConfigFile(char * cFn) {
+bool CGame::bReadSettingsConfigFile(const char * cFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
-	char * cp, * token, cReadMode, cTxt[120], cGSMode[16] = "", len;
+	char * cp, * token, cReadMode, cTxt[120], len;
 	char seps[] = "= \t\n";
 	class CStrTok * pStrTok;
 
@@ -5019,22 +4982,22 @@ bool CGame::bReadSettingsConfigFile(char * cFn) {
 
 					case 13:
 						if ((memcmp(token, "player", 6) == 0) || (memcmp(token, "PLAYER", 6) == 0)) {
-							m_bLogChatOption = 1;
+							m_iLogChatOption = 1;
 							wsprintf(cTxt, "(*) Logging Player Chat.");
 							PutLogList(cTxt);
 						}
 						if ((memcmp(token, "gm", 2) == 0) || (memcmp(token, "GM", 2) == 0)) {
-							m_bLogChatOption = 2;
+							m_iLogChatOption = 2;
 							wsprintf(cTxt, "(*) Logging GM Chat.");
 							PutLogList(cTxt);
 						}
 						if ((memcmp(token, "all", 3) == 0) || (memcmp(token, "ALL", 3) == 0)) {
-							m_bLogChatOption = 3;
+							m_iLogChatOption = 3;
 							wsprintf(cTxt, "(*) Logging All Chat.");
 							PutLogList(cTxt);
 						}
 						if ((memcmp(token, "none", 4) == 0) || (memcmp(token, "NONE", 4) == 0)) {
-							m_bLogChatOption = 4;
+							m_iLogChatOption = 4;
 							wsprintf(cTxt, "(*) Not Logging Any Chat.");
 							PutLogList(cTxt);
 						}
@@ -8178,8 +8141,8 @@ DICFC_STOPDECODING:
 	return true;
 }
 
-bool CGame::_bInitItemAttr(class CItem * pItem, char * pItemName) {
-	register int i;
+bool CGame::_bInitItemAttr(class CItem * pItem, const char * pItemName) {
+	int i;
 	char cTmpName[21];
 
 	ZeroMemory(cTmpName, sizeof (cTmpName));
@@ -8248,7 +8211,7 @@ bool CGame::_bReadMapInfoFiles(int iMapIndex) {
 }
 
 bool CGame::bSetNpcFollowMode(char * pName, char * pFollowName, char cFollowOwnerType) {
-	register int i, iIndex, iMapIndex, iFollowIndex;
+	int i, iIndex, iMapIndex, iFollowIndex;
 	char cTmpName[11], cFollowSide;
 
 	ZeroMemory(cTmpName, sizeof (cTmpName));
@@ -8305,8 +8268,8 @@ NEXT_STEP_SNFM2:
 	return true;
 }
 
-int CGame::bCreateNewNpc(char * pNpcName, char * pName, char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
-	register int i, t, j, k, iMapIndex;
+int CGame::bCreateNewNpc(const char * pNpcName, char * pName, const char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
+	int i, t, j, k, iMapIndex;
 	char cTmpName[11], cTxt[120];
 	short sX, sY, sRange;
 	bool bFlag;
@@ -8632,7 +8595,7 @@ GET_VALIDLOC_SUCCESS:
 }
 
 void CGame::NpcProcess() {
-	register int i, iMaxHP;
+	int i, iMaxHP;
 	DWORD dwTime, dwActionTime;
 
 	dwTime = timeGetTime();
@@ -8739,10 +8702,9 @@ void CGame::NpcProcess() {
 // 05/29/2004 - Hypnotoad - GM chat tweak
 
 void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
-	register int i, iRet;
+	int i, iRet;
 	WORD * wp;
-	int * ip;
-	char * cp, * cp2;
+	char * cp;
 	char cBuffer[256], cTemp[256], cSendMode = 0;
 
 	m_pClientList[iClientH]->m_dwAFKCheckTime = timeGetTime();
@@ -8779,7 +8741,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 	// ÃƒÂ¤Ã†Ãƒ Â¸ÃžÂ½ÃƒÃ?Ã¶Ã€Ã‡ Â½ÃƒÃ€Ã› Ã€Â§Ã„Â¡. ()
 	cp = (char *) (pData + 21);
 
-	switch (m_bLogChatOption) {
+	switch (m_iLogChatOption) {
 			// Chat Logs of only players
 		case 1:
 			if (m_pClientList[iClientH]->m_iAdminUserLevel == 0) {
@@ -9586,7 +9548,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 		if (m_pClientList[ m_pClientList[iClientH]->m_iWhisperPlayerIndex ] != 0 &&
 				  strcmp(m_pClientList[iClientH]->m_cWhisperPlayerName, m_pClientList[ m_pClientList[iClientH]->m_iWhisperPlayerIndex ]->m_cCharName) == 0) {
 			iRet = m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_pXSock->iSendMsg(pData, dwMsgSize);
-			switch (m_bLogChatOption) {
+			switch (m_iLogChatOption) {
 
 				case 1:
 					if (m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_iAdminUserLevel == 0) {
@@ -9635,11 +9597,10 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, DWORD dwMsgSize) {
 }
 
 void CGame::ChatMsgHandlerGSM(int iMsgType, int iV1, char * pName, char * pData, DWORD dwMsgSize) {
-	register int i, iRet;
 	DWORD * dwp;
 	WORD * wp;
 	short * sp;
-	char * cp, cTemp[256], cSendMode = 0;
+	char * cp, cTemp[256];
 
 	ZeroMemory(cTemp, sizeof (cTemp));
 
@@ -9669,21 +9630,21 @@ void CGame::ChatMsgHandlerGSM(int iMsgType, int iV1, char * pName, char * pData,
 
 	switch (iMsgType) {
 		case 1: // Â´Ã™Â¸Â¥ Â¼Â­Â¹Ã¶Â¿Â¡Â¼Â­ Â¿Ã‚ Â±Ã¦ÂµÃ¥ Â¸ÃžÂ½ÃƒÃ?Ã¶
-			for (i = 1; i < DEF_MAXCLIENTS; i++)
+			for (int i = 1; i < DEF_MAXCLIENTS; i++)
 				if (m_pClientList[i] != 0) {
 					if (m_pClientList[i]->m_bIsInitComplete == false) break;
 					if ((m_pClientList[i]->m_iGuildGUID == iV1) && (m_pClientList[i]->m_iGuildGUID != 0)) {
 						// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥ Â¸ÃžÂ½ÃƒÃ?Ã¶ Ã€Ã¼Â¼Ã›
-						iRet = m_pClientList[i]->m_pXSock->iSendMsg(cTemp, dwMsgSize + 22);
+						m_pClientList[i]->m_pXSock->iSendMsg(cTemp, dwMsgSize + 22);
 					}
 				}
 			break;
 
 		case 2: // Â´Ã™Â¸Â¥ Â¼Â­Â¹Ã¶Â¿Â¡Â¼Â­ Â¿Ã‚ Ã€Ã¼ÃƒÂ¼ Â¸ÃžÂ½ÃƒÃ?Ã¶
 		case 10: // Â´Ã™Â¸Â¥ Â¼Â­Â¹Ã¶Â¿Â¡Â¼Â­ Â¿Ã‚ Â°Ã¸Ã?Ã¶ Â¸ÃžÂ½ÃƒÃ?Ã¶
-			for (i = 1; i < DEF_MAXCLIENTS; i++)
+			for (int i = 1; i < DEF_MAXCLIENTS; i++)
 				if (m_pClientList[i] != 0) {
-					iRet = m_pClientList[i]->m_pXSock->iSendMsg(cTemp, dwMsgSize + 22);
+					m_pClientList[i]->m_pXSock->iSendMsg(cTemp, dwMsgSize + 22);
 				}
 			break;
 	}
@@ -9938,9 +9899,9 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 }
 
 char CGame::cGetNextMoveDir(short sX, short sY, short dstX, short dstY, char cMapIndex, char cTurn, int * pError) {
-	register char cDir, cTmpDir;
-	register int aX, aY, dX, dY;
-	register int i, iResX, iResY;
+	char cDir, cTmpDir;
+	int aX, aY, dX, dY;
+	int i, iResX, iResY;
 
 	if ((sX == dstX) && (sY == dstY)) return 0;
 
@@ -9980,7 +9941,7 @@ char _tmp_cEmptyPosX[] = {0, 1, 1, 0, -1, -1, -1, 0, 1, 2, 2, 2, 2, 1, 0, -1, -2
 char _tmp_cEmptyPosY[] = {0, 0, 1, 1, 1, 0, -1, -1, -1, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2};
 
 bool CGame::bGetEmptyPosition(short * pX, short * pY, char cMapIndex) {
-	register int i;
+	int i;
 	short sX, sY;
 	// Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Â³Âª NPCÂ°Â¡ Ã€Â§Ã„Â¡Ã‡Ã’ Â¼Ã¶ Ã€Ã–Â´Ã‚ Â¿ÂµÂ¿ÂªÃ€Â» ÃƒÂ£Â´Ã‚Â´Ã™.
 
@@ -10157,8 +10118,8 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 }
 
 void CGame::TargetSearch(int iNpcH, short * pTarget, char * pTargetType) {
-	register int ix, iy, iPKCount;
-	register short sX, sY, rX, rY, dX, dY;
+	int ix, iy, iPKCount;
+	short sX, sY, rX, rY, dX, dY;
 	short sOwner, sTargetOwner, sDistance, sTempDistance;
 	char cOwnerType, cTargetType, cTargetSide;
 	int iInv;
@@ -10769,7 +10730,7 @@ NBA_CHASE:
 }
 
 void CGame::RemoveFromTarget(short sTargetH, char cTargetType, int iCode) {
-	register int i;
+	int i;
 	DWORD dwTime = timeGetTime();
 
 	for (i = 0; i < DEF_MAXNPCS; i++)
@@ -10812,9 +10773,9 @@ void CGame::RemoveFromTarget(short sTargetH, char cTargetType, int iCode) {
 
 void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, short sDamage) {
 	short sAttackerWeapon;
-	int * ip, i, iQuestIndex, iExp, iConstructionPoint, iWarContribution;
+	int i, iQuestIndex, iExp, iConstructionPoint, iWarContribution;
 	double dTmp1, dTmp2, dTmp3;
-	char * cp, cData[120], cQuestRemain;
+	char cQuestRemain;
 
 	if (m_pNpcList[iNpcH] == 0) return;
 	if (m_pNpcList[iNpcH]->m_bIsKilled == true) return;
@@ -11125,7 +11086,7 @@ NKH_GOTOPOINT1:
 }
 
 int CGame::iGetDangerValue(int iNpcH, short dX, short dY) {
-	register int ix, iy, iDangerValue;
+	int ix, iy, iDangerValue;
 	short sOwner, sDOType;
 	char cOwnerType;
 	DWORD dwRegisterTime;
@@ -11246,10 +11207,9 @@ void CGame::NpcBehavior_Flee(int iNpcH) {
 void CGame::MsgProcess() {
 	char * pData, cFrom, cKey;
 	DWORD dwMsgSize, * dwpMsgID;
-	WORD * wpMsgType, * wp;
+	WORD * wpMsgType;
 	int i, iClientH;
 	char m_msgBuff[1000];
-	char *cp, cData[120];
 	DWORD dwTime;
 	dwTime = timeGetTime();
 
@@ -12349,7 +12309,7 @@ int CGame::iClientMotion_GetItem_Handler(int iClientH, short sX, short sY, char 
 }
 
 bool CGame::_bAddClientItemList(int iClientH, class CItem * pItem, int * pDelReq) {
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return false;
 	if (pItem == 0) return false;
@@ -12357,11 +12317,11 @@ bool CGame::_bAddClientItemList(int iClientH, class CItem * pItem, int * pDelReq
 	// Ã?Ã½Ã€Â» Â¾Ã†Ã€ÃŒÃ…Ã› Ã?ÃŸÂ·Â®Â°Ã¨Â»Ãª
 	if ((pItem->m_cItemType == DEF_ITEMTYPE_CONSUME) || (pItem->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 		// Â¼Ã¶Â·Â®Â°Â³Â³Ã¤Ã€ÃŒ Ã€Ã–Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›
-		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, pItem->m_dwCount)) > (DWORD) _iCalcMaxLoad(iClientH))
+		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, pItem->m_dwCount)) > _iCalcMaxLoad(iClientH))
 			return false;
 	} else {
 		// Â¼Ã¶Â·Â® Â°Â³Â³Ã¤Ã€ÃŒ Â¾Ã¸Â´Ã‚ Â¾Ã†Ã€ÃŒÃ…Ã›
-		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, 1)) > (DWORD) _iCalcMaxLoad(iClientH))
+		if ((m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, 1)) > _iCalcMaxLoad(iClientH))
 			return false;
 	}
 
@@ -12807,7 +12767,7 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify) {
 	}
 
 	cHeroArmorType = _cCheckHeroItemEquipped(iClientH);
-	if (cHeroArmorType != 0x0FFFFFFFF) m_pClientList[iClientH]->m_cHeroArmourBonus = cHeroArmorType;
+	if (cHeroArmorType != 0) m_pClientList[iClientH]->m_cHeroArmourBonus = cHeroArmorType;
 
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 	CalcTotalItemEffect(iClientH, sItemIndex, bNotify);
@@ -12951,8 +12911,8 @@ int CGame::iClientMotion_Stop_Handler(int iClientH, short sX, short sY, char cDi
 	return 1;
 }
 
-void CGame::ResponseCreateNewGuildHandler(char * pData, DWORD dwMsgSize) {
-	register int i;
+void CGame::ResponseCreateNewGuildHandler(char * pData, DWORD /*dwMsgSize*/) {
+	int i;
 	WORD * wp, wResult;
 	DWORD * dwp;
 	char * cp, cCharName[11], cData[100], cTxt[120];
@@ -13018,7 +12978,7 @@ void CGame::ResponseCreateNewGuildHandler(char * pData, DWORD dwMsgSize) {
 	PutLogList(cTxt);
 }
 
-void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, DWORD dwMsgSize) {
+void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, DWORD /*dwMsgSize*/) {
 	char * cp, cGuildName[21], cTxt[120], cData[100];
 	DWORD * dwp;
 	WORD * wp;
@@ -13083,7 +13043,7 @@ void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, DWORD dwMsg
 	}
 }
 
-void CGame::RequestDisbandGuildHandler(int iClientH, char * pData, DWORD dwMsgSize) {
+void CGame::RequestDisbandGuildHandler(int iClientH, char * pData, DWORD /*dwMsgSize*/) {
 	char * cp, cGuildName[21], cTxt[120];
 
 	if (m_bIsCrusadeMode == true) return;
@@ -13108,8 +13068,8 @@ void CGame::RequestDisbandGuildHandler(int iClientH, char * pData, DWORD dwMsgSi
 	}
 }
 
-void CGame::ResponseDisbandGuildHandler(char * pData, DWORD dwMsgSize) {
-	register int i;
+void CGame::ResponseDisbandGuildHandler(char * pData, DWORD /*dwMsgSize*/) {
+	int i;
 	WORD * wp, wResult;
 	DWORD * dwp;
 	char * cp, cCharName[11], cData[100], cTxt[120];
@@ -13445,7 +13405,7 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 }
 
 void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char * pItemName) {
-	register int iRet, iEraseReq;
+	int iRet, iEraseReq;
 	short * sp, sOwnerH;
 	char * cp, cOwnerType, cData[100], cCharName[21];
 	DWORD * dwp;
@@ -14023,7 +13983,7 @@ REMOVE_ITEM_PROCEDURE:
 	iCalcTotalWeight(iClientH);
 }
 
-void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, char * pString, DWORD sV4, DWORD sV5, DWORD sV6, DWORD sV7, DWORD sV8, DWORD sV9, char * pString2) {
+void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD sV2, DWORD sV3, const char * pString, DWORD sV4, DWORD sV5, DWORD sV6, DWORD sV7, DWORD sV8, DWORD sV9, char * pString2) {
 	char cData[1000];
 	DWORD * dwp;
 	WORD * wp;
@@ -14437,15 +14397,10 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 		case DEF_NOTIFY_BUILDITEMSUCCESS:
 		case DEF_NOTIFY_BUILDITEMFAIL:
 
-			if (sV1 >= 0) {
-				sp = (short *) cp;
-				*sp = (short) sV1;
-				cp += 2;
-			} else {
-				sp = (short *) cp;
-				*sp = (short) sV1 + 10000;
-				cp += 2;
-			}
+			
+			sp = (short *) cp;
+			*sp = (short) sV1;
+			cp += 2;
 
 			sp = (short *) cp;
 			*sp = (short) sV2;
@@ -15592,8 +15547,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, WORD wMsgType, DWORD sV1, DWORD 
 }
 
 void CGame::JoinGuildApproveHandler(int iClientH, char * pName) {
-	register int i;
-	bool bIsExist = false;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
@@ -15637,7 +15591,7 @@ void CGame::JoinGuildApproveHandler(int iClientH, char * pName) {
 }
 
 void CGame::JoinGuildRejectHandler(int iClientH, char * pName) {
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
@@ -15657,7 +15611,7 @@ void CGame::JoinGuildRejectHandler(int iClientH, char * pName) {
 }
 
 void CGame::DismissGuildApproveHandler(int iClientH, char * pName) {
-	register int i;
+	int i;
 
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -15683,7 +15637,7 @@ void CGame::DismissGuildApproveHandler(int iClientH, char * pName) {
 }
 
 void CGame::DismissGuildRejectHandler(int iClientH, char * pName) {
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
@@ -15702,8 +15656,8 @@ void CGame::DismissGuildRejectHandler(int iClientH, char * pName) {
 	// Ã…Â»Ã…Ã°Â¸Â¦ Â½Ã…ÃƒÂ»Ã‡Ã‘ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ ÃƒÂ£Ã€Â»Â¼Ã¶ Â¾Ã¸Â´Ã™.(Ã?Â¢Â¼Ã“Ã€ÃŒ Â±Ã—Â»Ã§Ã€ÃŒ Â²Ã·Â°Ã¥Â´Ã™Â´Ã¸Ã?Ã¶) Â¹Â«ÃˆÂ¿Ã€Ã“
 }
 
-DWORD CGame::dwGetItemCount(int iClientH, char * pName) {
-	register int i;
+DWORD CGame::dwGetItemCount(int iClientH, const char * pName) {
+	int i;
 	char cTmpName[21];
 
 	if (m_pClientList[iClientH] == 0) return 0;
@@ -15720,8 +15674,8 @@ DWORD CGame::dwGetItemCount(int iClientH, char * pName) {
 	return 0;
 }
 
-int CGame::SetItemCount(int iClientH, char * pItemName, DWORD dwCount) {
-	register int i;
+int CGame::SetItemCount(int iClientH, const char * pItemName, DWORD dwCount) {
+	int i;
 	char cTmpName[21];
 	WORD wWeight;
 
@@ -15771,9 +15725,9 @@ int CGame::SetItemCount(int iClientH, int iItemIndex, DWORD dwCount) {
 }
 
 void CGame::ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType, short sDamage) {
-	char * cp, cAttackerName[21], cData[120], cEKMsg[1000];
+	char cAttackerName[21], cEKMsg[1000];
 	short sAttackerWeapon;
-	int * ip, i, iExH;
+	int i, iExH;
 	bool bIsSAattacked = false;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -16088,7 +16042,7 @@ void CGame::ReleaseItemHandler(int iClientH, short sItemIndex, bool bNotice) {
 	if (m_pClientList[iClientH]->m_bIsItemEquipped[sItemIndex] == false) return;
 
 	cHeroArmorType = _cCheckHeroItemEquipped(iClientH);
-	if (cHeroArmorType != 0x0FFFFFFFF) m_pClientList[iClientH]->m_cHeroArmourBonus = 0;
+	if (cHeroArmorType != 0) m_pClientList[iClientH]->m_cHeroArmourBonus = 0;
 
 	cEquipPos = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos;
 	if (cEquipPos == DEF_EQUIPPOS_RHAND) {
@@ -16632,8 +16586,8 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, DWORD dwMsgSize) {
 	return true;
 }
 
-bool CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char cSA) {
-	register int i, iTemp;
+bool CGame::_bInitNpcAttr(class CNpc * pNpc, const char * pNpcName, short sClass, char cSA) {
+	int i, iTemp;
 	char cTmpName[21];
 	int sTemp;
 	double dV1, dV2, dV3;
@@ -16827,7 +16781,7 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char
  **	return value		:: int																						**
  **********************************************************************************************************************/
 int CGame::iDice(int iThrow, int iRange) {
-	register int i, iRet;
+	int i, iRet;
 
 	if (iRange <= 0) return 0;
 	iRet = 0;
@@ -16885,7 +16839,7 @@ void CGame::OnStartGameSignal()
 }*/
 
 void CGame::CalculateGuildEffect(int iVictimH, char cVictimType, short sAttackerH) {
-	register int ix, iy, iExp;
+	int ix, iy, iExp;
 	short sOwnerH;
 	char cOwnerType;
 
@@ -16931,7 +16885,7 @@ void CGame::CalculateGuildEffect(int iVictimH, char cVictimType, short sAttacker
 }
 
 void CGame::TimeManaPointsUp(int iClientH) {
-	register int iMaxMP, iTotal;
+	int iMaxMP, iTotal;
 	double dV1, dV2, dV3;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -16962,7 +16916,7 @@ void CGame::TimeManaPointsUp(int iClientH) {
 // 05/29/2004 - Hypnotoad - fixed infinite sp bug
 
 void CGame::TimeStaminarPointsUp(int iClientH) {
-	register int iMaxSP, iTotal = 0;
+	int iMaxSP, iTotal = 0;
 	double dV1, dV2, dV3;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -17003,12 +16957,12 @@ void CGame::DelayEventProcess() {
 
 }
 
-void CGame::SendGuildMsg(int iClientH, WORD wNotifyMsgType, short sV1, short sV2, char * pString) {
+void CGame::SendGuildMsg(int iClientH, WORD wNotifyMsgType, short /*sV1*/, short /*sV2*/, char * pString) {
 	char cData[500];
 	DWORD * dwp;
 	WORD * wp;
 	char * cp;
-	register int i, iRet;
+	int i, iRet;
 
 	// Â°Â°Ã€Âº Â±Ã¦ÂµÃ¥Â¿Ã¸ÂµÃ©Â¿Â¡Â°Ã�?Â¸Â¸ ÂºÂ¸Â³Â»Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶ÂµÃ©
 	if (m_pClientList[iClientH] == 0) return;
@@ -17080,7 +17034,7 @@ void CGame::SendGuildMsg(int iClientH, WORD wNotifyMsgType, short sV1, short sV2
 
 }
 
-void CGame::GuildNotifyHandler(char * pData, DWORD dwMsgSize) {
+void CGame::GuildNotifyHandler(char * pData, DWORD /*dwMsgSize*/) {
 	// Â´Ã™Â¸Â¥ Â°Ã�?Ã€Ã“Â¼Â­Â¹Ã¶Â·ÃŽÂºÃŽÃ…Ã? Â±Ã¦ÂµÃ¥ Ã€ÃŒÂºÂ¥Ã†Â®Â°Â¡ ÂµÂµÃ‚Ã¸Ã‡ÃŸÂ´Ã™.
 	char * cp, cCharName[11], cGuildName[21];
 
@@ -19880,7 +19834,7 @@ MAGIC_NOEFFECT:
 void CGame::NpcMagicHandler(int iNpcH, short dX, short dY, short sType) {
 	short sOwnerH;
 	char cOwnerType;
-	register int i, iErr, ix, iy, sX, sY, tX, tY, iResult, iWhetherBonus, iMagicAttr;
+	int i, iErr, ix, iy, sX, sY, tX, tY, iResult, iWhetherBonus, iMagicAttr;
 	DWORD dwTime = timeGetTime();
 
 	if (m_pNpcList[iNpcH] == 0) return;
@@ -20240,7 +20194,7 @@ NMH_NOEFFECT:
 
 }
 
-void CGame::RequestTeleportHandler(int iClientH, char * pData, char * cMapName, int dX, int dY) {
+void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char * cMapName, int dX, int dY) {
 	char * pBuffer, cTempMapName[21];
 	DWORD * dwp;
 	WORD * wp;
@@ -20883,7 +20837,7 @@ RTH_NEXTSTEP:
 }
 
 void CGame::ReleaseFollowMode(short sOwnerH, char cOwnerType) {
-	register int i;
+	int i;
 
 	for (i = 0; i < DEF_MAXNPCS; i++)
 		if ((i != sOwnerH) && (m_pNpcList[i] != 0)) {
@@ -21484,7 +21438,7 @@ void CGame::RequestStudyMagicHandler(int iClientH, char * pName, bool bIsPurchas
 }
 
 int CGame::_iGetMagicNumber(char * pMagicName, int * pReqInt, int * pCost) {
-	register int i;
+	int i;
 	char cTmpName[31];
 
 	ZeroMemory(cTmpName, sizeof (cTmpName));
@@ -21647,7 +21601,7 @@ void CGame::TrainSkillResponse(bool bSuccess, int iClientH, int iSkillNum, int i
 }
 
 int CGame::_iGetSkillNumber(char * pSkillName) {
-	register int i;
+	int i;
 	char cTmpName[21];
 
 	ZeroMemory(cTmpName, sizeof (cTmpName));
@@ -21665,7 +21619,7 @@ int CGame::_iGetSkillNumber(char * pSkillName) {
 }
 
 bool CGame::bPlayerItemToBank(int iClientH, short sItemIndex) {
-	register int i, iIndex;
+	int i, iIndex;
 
 	if (m_pClientList[iClientH] == 0) return false;
 
@@ -21703,7 +21657,7 @@ NEXT_STEP_PLTB:
 }
 
 bool CGame::bBankItemToPlayer(int iClientH, short sItemIndex) {
-	register int i, iIndex;
+	int i, iIndex;
 
 	if (m_pClientList[iClientH] == 0) return false;
 
@@ -23613,8 +23567,9 @@ RMI_SKIPDECODING:
 	// Crusade Â°Ã¸Â°Ã? ÂºÃ’Â°Â¡Â´Ã‰ Â¿ÂµÂ¿ÂªÃ€Â» Ã…Â¸Ã€Ã?Â¿Â¡ Ã‡Â¥Â½ÃƒÃ‡Ã‘Â´Ã™.
 	m_pMapList[iMapIndex]->_SetupNoAttackArea();
 	//Heldenian 3.00 Source
-	strncmp(m_cHeldenianMapName, m_pMapList[iMapIndex]->m_cName, 11);
-	m_bIsHeldenianReady = true;
+	if(strncmp(m_cHeldenianMapName, m_pMapList[iMapIndex]->m_cName, 11) == 0) {
+		m_bIsHeldenianReady = true;
+	}
 
 	return true;
 
@@ -23764,7 +23719,7 @@ bool CGame::bCheckLevelUp(int iClientH) // Sobrepaso de lvl fix.
 	return false;
 }
 
-void CGame::StateChangeHandler(int iClientH, char * pData, DWORD dwMsgSize) {
+void CGame::StateChangeHandler(int iClientH, char * pData, DWORD /*dwMsgSize*/) {
 	char * cp, cStateChange1, cStateChange2, cStateChange3;
 	char cStr, cVit, cDex, cInt, cMag, cChar;
 	int iOldStr, iOldVit, iOldDex, iOldInt, iOldMag, iOldChar;
@@ -23934,7 +23889,7 @@ bool CGame::bChangeState(char cStateChange, char *cStr, char *cVit, char *cDex, 
 
 //50Cent - LU Fix
 
-void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD dwMsgSize) {
+void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD /*dwMsgSize*/) {
 	char * cp;
 	int * ip;
 	int iStr, iVit, iDex, iInt, iMag, iChar;
@@ -24029,118 +23984,7 @@ void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD dwMsgSize) 
 
 }
 
-/*
-void CGame::LevelUpSettingsHandler(int iClientH, char * pData, DWORD dwMsgSize)
-{
-	char * cp, cStr, cVit, cDex, cInt, cMag, cChar;
-
-	if (m_pClientList[iClientH] == 0) return;
-	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-
-	cp = (char *)(pData + DEF_INDEX2_MSGTYPE + 2);
-
-	m_pClientList[iClientH]->m_iLU_Pool += DEF_TOTALLEVELUPPOINT;
-	wsprintf(G_cTxt, "(*) Level Up: Char(%s) Level (%d) DEF_TOTALLEVELUPPOINT (%d) m_pClientList[iClientH]->m_iLU_Pool (%d)", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_iLevel, DEF_TOTALLEVELUPPOINT, m_pClientList[iClientH]->m_iLU_Pool);
-	PutLogList(G_cTxt);
-
-	cStr = *cp;
-	cp++;
-
-	cVit = *cp;
-	cp++;
-
-	cDex = *cp;
-	cp++;
-
-	cInt = *cp;
-	cp++;
-
-	cMag = *cp;
-	cp++;
-
-	cChar = *cp;
-	cp++;
-
-	// Level-Up SettingÂ°ÂªÂ¿Â¡ Â¿Ã€Â·Ã¹Â°Â¡ Ã€Ã–Â´Ã‚Ã?Ã¶ Â°Ã‹Â»Ã§Ã‡Ã‘Â´Ã™.
-	if ((cStr > DEF_TOTALLEVELUPPOINT) || (cStr < 0))
-		return;
-
-	if ((cDex > DEF_TOTALLEVELUPPOINT) || (cDex < 0))
-		return;
-
-	if ((cInt > DEF_TOTALLEVELUPPOINT) || (cInt < 0))
-		return;
-
-	if ((cVit > DEF_TOTALLEVELUPPOINT) || (cVit < 0))
-		return;
-
-	if ((cMag > DEF_TOTALLEVELUPPOINT) || (cMag < 0))
-		return;
-
-	if ((cChar > DEF_TOTALLEVELUPPOINT) || (cChar < 0))
-		return;
-
-	if ( (cStr + cVit + cDex + cInt + cMag + cChar) > DEF_TOTALLEVELUPPOINT)
-		return;
-
-	// Â¿Ã€Â·Ã¹Â°Â¡ Â¾Ã¸Ã€Â¸Â¸Ã© Â°ÂªÃ€Â» Ã‡Ã’Â´Ã§Ã‡Ã‘Â´Ã™.
-
-	//m_pClientList[iClientH]->m_cLU_Str  = cStr;
-	//m_pClientList[iClientH]->m_cLU_Vit  = cVit;
-	//m_pClientList[iClientH]->m_cLU_Dex  = cDex;
-	//m_pClientList[iClientH]->m_cLU_Int  = cInt;
-	//m_pClientList[iClientH]->m_cLU_Mag  = cMag;
-	//m_pClientList[iClientH]->m_cLU_Char = cChar;
-
-	/*
-	m_pClientList[iClientH]->m_cLU_Str = *cp;
-	cp++;
-
-	m_pClientList[iClientH]->m_cLU_Vit = *cp;
-	cp++;
-
-	m_pClientList[iClientH]->m_cLU_Dex = *cp;
-	cp++;
-
-	m_pClientList[iClientH]->m_cLU_Int = *cp;
-	cp++;
-
-	m_pClientList[iClientH]->m_cLU_Mag = *cp;
-	cp++;
-
-	m_pClientList[iClientH]->m_cLU_Char = *cp;
-	cp++;
-
-	if ((m_pClientList[iClientH]->m_cLU_Str > DEF_TOTALLEVELUPPOINT) || (m_pClientList[iClientH]->m_cLU_Str < 0))
-	m_pClientList[iClientH]->m_cLU_Str = 0;
-
-	if ((m_pClientList[iClientH]->m_cLU_Vit > DEF_TOTALLEVELUPPOINT) || (m_pClientList[iClientH]->m_cLU_Vit < 0))
-	m_pClientList[iClientH]->m_cLU_Vit = 0;
-
-	if ((m_pClientList[iClientH]->m_cLU_Dex > DEF_TOTALLEVELUPPOINT) || (m_pClientList[iClientH]->m_cLU_Dex < 0))
-	m_pClientList[iClientH]->m_cLU_Dex = 0;
-
-	if ((m_pClientList[iClientH]->m_cLU_Int > DEF_TOTALLEVELUPPOINT) || (m_pClientList[iClientH]->m_cLU_Int < 0))
-	m_pClientList[iClientH]->m_cLU_Int = 0;
-
-	if ((m_pClientList[iClientH]->m_cLU_Mag > DEF_TOTALLEVELUPPOINT) || (m_pClientList[iClientH]->m_cLU_Mag < 0))
-	m_pClientList[iClientH]->m_cLU_Mag = 0;
-
-	if ((m_pClientList[iClientH]->m_cLU_Char > DEF_TOTALLEVELUPPOINT) || (m_pClientList[iClientH]->m_cLU_Char < 0))
-	m_pClientList[iClientH]->m_cLU_Char = 0;
-
-	if ( (m_pClientList[iClientH]->m_cLU_Str + m_pClientList[iClientH]->m_cLU_Vit + m_pClientList[iClientH]->m_cLU_Dex +
-	m_pClientList[iClientH]->m_cLU_Int + m_pClientList[iClientH]->m_cLU_Mag + m_pClientList[iClientH]->m_cLU_Char) > DEF_TOTALLEVELUPPOINT) {
-	// Level-Up SettingÂ°ÂªÂ¿Â¡ Â¿Ã€Â·Ã¹Â°Â¡ Ã€Ã–Â´Ã™.
-	m_pClientList[iClientH]->m_cLU_Str = m_pClientList[iClientH]->m_cLU_Vit = m_pClientList[iClientH]->m_cLU_Dex =
-	m_pClientList[iClientH]->m_cLU_Int = m_pClientList[iClientH]->m_cLU_Mag = m_pClientList[iClientH]->m_cLU_Char = 0;
-	}
- */
-//}
-
-// v1.4311-3 ÃƒÃŸÂ°Â¡ Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  Ã‡Ã�?Â¼Ã¶ FightzoneReserveHandler
-
-void CGame::FightzoneReserveHandler(int iClientH, char * pData, DWORD dwMsgSize) {
+void CGame::FightzoneReserveHandler(int iClientH, char * pData, DWORD /*dwMsgSize*/) {
 	char cData[100];
 	int iFightzoneNum, * ip, iEnableReserveTime;
 	DWORD * dwp, dwGoldCount;
@@ -24263,7 +24107,7 @@ bool CGame::bCheckLimitedUser(int iClientH) {
 	return false;
 }
 
-void CGame::RequestCivilRightHandler(int iClientH, char *pData) {
+void CGame::RequestCivilRightHandler(int iClientH, char */*pData*/) {
 	char * cp, cData[100];
 	DWORD * dwp;
 	WORD * wp, wResult;
@@ -24321,7 +24165,7 @@ void CGame::RequestCivilRightHandler(int iClientH, char *pData) {
 
 void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 	char * cp, cBankItemIndex, cMsg[100];
-	register int i, j, iRet, iItemWeight;
+	int i, j, iRet, iItemWeight;
 	DWORD * dwp;
 	WORD * wp;
 
@@ -24522,7 +24366,7 @@ RRIH_NOQUANTITY:
 }
 
 bool CGame::bSetItemToBankItem(int iClientH, short sItemIndex) {
-	register int i, iRet;
+	int i, iRet;
 	DWORD * dwp;
 	WORD * wp;
 	char * cp;
@@ -24713,9 +24557,6 @@ void CGame::ApplyPKpenalty(short sAttackerH, short sVictumH) {
 		}
 	}
 }
-
-
-// 05/17/2004 - Hypnotoad - register pk log
 
 void CGame::PK_KillRewardHandler(short sAttackerH, short sVictumH) {
 	if (m_pClientList[sAttackerH] == 0) return;
@@ -25007,8 +24848,6 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 	}
 }
 
-// 05/22/2004 - Hypnotoad - register in pk log
-
 void CGame::ApplyCombatKilledPenalty(int iClientH, int cPenaltyLevel, bool bIsSAattacked) {
 	int iExp;
 
@@ -25066,7 +24905,7 @@ void CGame::ApplyCombatKilledPenalty(int iClientH, int cPenaltyLevel, bool bIsSA
 // 05/29/2004 - Hypnotoad - Limits some items from not dropping
 
 void CGame::_PenaltyItemDrop(int iClientH, int iTotal, bool bIsSAattacked) {
-	register int i, j, iRemainItem;
+	int i, j, iRemainItem;
 	char cItemIndexList[DEF_MAXITEMS], cItemIndex;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -25276,7 +25115,7 @@ int CGame::_iCalcMaxLoad(int iClientH) {
 }
 
 int CGame::iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, char cMapIndex, short sX, short sY, DWORD dwLastTime, int iV1) {
-	register int i;
+	int i;
 	short sPreType;
 	DWORD dwTime, dwRegisterTime;
 
@@ -25336,7 +25175,7 @@ int CGame::iAddDynamicObjectList(short sOwner, char cOwnerType, short sType, cha
 }
 
 void CGame::CheckDynamicObjectList() {
-	register int i;
+	int i;
 	DWORD dwTime = timeGetTime(), dwRegisterTime;
 	short sType;
 
@@ -25775,7 +25614,7 @@ void CGame::CalculateSSN_SkillIndex(int iClientH, short sSkillIndex, int iValue)
 }
 
 void CGame::MobGenerator() {
-	register int i, x, j, iNamingValue, iResult, iTotalMob;
+	int i, x, j, iNamingValue, iResult, iTotalMob;
 	char cNpcName[21], cName_Master[11], cName_Slave[11], cWaypoint[11];
 	char cSA;
 	int pX, pY, iMapLevel, iProbSA, iKindSA, iResultNum, iNpcID;
@@ -27360,7 +27199,7 @@ void CGame::MobGenerator() {
 
 void CGame::CalcNextWayPointDestination(int iNpcH) {
 	short sRange, sX, sY;
-	register int i, j, iMapIndex;
+	int i, j, iMapIndex;
 	bool bFlag;
 
 	switch (m_pNpcList[iNpcH]->m_cMoveType) {
@@ -28018,7 +27857,7 @@ void CGame::RequestFullObjectData(int iClientH, char *pData) {
 }
 
 int CGame::_iGetArrowItemIndex(int iClientH) {
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return -1;
 
@@ -28664,7 +28503,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 	int iPartyID, iDamage, iSideCondition, iIndex, iRemainLife, iTemp, iExp, iMaxSuperAttack, iRepDamage;
 	char cAttackerSide, cDamageMoveDir;
 	DWORD dwTime;
-	register double dTmp1, dTmp2, dTmp3;
+	double dTmp1, dTmp2, dTmp3;
 	short sAtkX, sAtkY, sTgtX, sTgtY, dX, dY, sItemIndex;
 
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER)
@@ -29152,7 +28991,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 	int iPartyID, iDamage, iSideCondition, iIndex, iRemainLife, iTemp, iExp, iMaxSuperAttack, iRepDamage;
 	char cAttackerSide, cDamageMoveDir, cDamageMinimum;
 	DWORD dwTime;
-	register double dTmp1, dTmp2, dTmp3;
+	double dTmp1, dTmp2, dTmp3;
 	short sTgtX, sTgtY, sItemIndex;
 
 	if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH] == 0)) return;
@@ -29588,7 +29427,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 	DWORD dwTime, wWeaponType;
 	char cDamageMod[256];
 	char cAttackerSide, cDamageMoveDir;
-	register double dTmp1, dTmp2, dTmp3;
+	double dTmp1, dTmp2, dTmp3;
 	int iPartyID, iMoveDamage;
 	short sTgtX, sTgtY;
 
@@ -30091,7 +29930,6 @@ EDSD_SKIPDAMAGEMOVE:
 
 void CGame::Effect_HpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3) {
 	int iHP, iMaxHP;
-	DWORD dwTime = timeGetTime();
 
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER)
 		if (m_pClientList[sAttackerH] == 0) return;
@@ -30129,7 +29967,6 @@ void CGame::Effect_HpUp_Spot(short sAttackerH, char cAttackerType, short sTarget
 
 void CGame::Effect_SpDown_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3) {
 	int iSP, iMaxSP;
-	DWORD dwTime = timeGetTime();
 
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER)
 		if (m_pClientList[sAttackerH] == 0) return;
@@ -30166,7 +30003,6 @@ void CGame::Effect_SpDown_Spot(short sAttackerH, char cAttackerType, short sTarg
 
 void CGame::Effect_SpUp_Spot(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sV1, short sV2, short sV3) {
 	int iSP, iMaxSP;
-	DWORD dwTime = timeGetTime();
 
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER)
 		if (m_pClientList[sAttackerH] == 0) return;
@@ -30258,7 +30094,7 @@ bool CGame::bCheckResistingMagicSuccess(char cAttackerDir, short sTargetH, char 
 	return true;
 }
 
-bool CGame::bCheckResistingIceSuccess(char cAttackerDir, short sTargetH, char cTargetType, int iHitRatio) {
+bool CGame::bCheckResistingIceSuccess(char /*cAttackerDir*/, short sTargetH, char cTargetType, int /*iHitRatio*/) {
 	// ï¿½Ãµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î°ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	int iTargetIceResistRatio, iResult;
 
@@ -30316,7 +30152,7 @@ bool CGame::bCheckResistingIceSuccess(char cAttackerDir, short sTargetH, char cT
 
 
 bool CGame::bSetItemToBankItem(int iClientH, class CItem * pItem) {
-	register int i, iRet;
+	int i, iRet;
 	DWORD * dwp;
 	WORD * wp;
 	char * cp;
@@ -30417,7 +30253,7 @@ bool CGame::bSetItemToBankItem(int iClientH, class CItem * pItem) {
 }
 
 bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill) {
-	register int i;
+	int i;
 	int iRemainPoint, iTotalPoints, iWeaponIndex, iDownSkillSSN, iDownPoint;
 	short sDownSkillIndex;
 
@@ -30525,7 +30361,7 @@ bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill) {
 
 bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill)
 {
- register int i;
+ int i;
  int iRemainPoint, iTotalPoints, iWeaponIndex, iDownSkillSSN, iDownPoint;
  short sDownSkillIndex;
 
@@ -30621,7 +30457,7 @@ bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill)
 /*
 bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill)
 {
- register int i, j;
+ int i, j;
  int iRemainPoint, iTotalPoints, iWeaponIndex;
  short sDownSkillIndex, sDownSkillLevel;
 
@@ -30691,7 +30527,7 @@ bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill)
 /*
 bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill)
 {
- register int i, j;
+ int i, j;
  int iTotalPoints, iWeaponIndex;
  short sDownSkillIndex, sComSSN;
 
@@ -30747,7 +30583,7 @@ bool CGame::bCheckTotalSkillMasteryPoints(int iClientH, int iSkill)
  */
 
 
-void CGame::OnKeyDown(WPARAM wParam, LPARAM lParam) {
+void CGame::OnKeyDown(WPARAM wParam, LPARAM /*lParam*/) {
 	switch (wParam) {
 		case VK_F1:
 			m_bF1pressed = true;
@@ -30764,7 +30600,7 @@ void CGame::OnKeyDown(WPARAM wParam, LPARAM lParam) {
 	}
 }
 
-void CGame::OnKeyUp(WPARAM wParam, LPARAM lParam) {
+void CGame::OnKeyUp(WPARAM wParam, LPARAM /*lParam*/) {
 	int i;
 
 	switch (wParam) {
@@ -30890,7 +30726,7 @@ void CGame::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 }
 
 int CGame::iGetFollowerNumber(short sOwnerH, char cOwnerType) {
-	register int i, iTotal;
+	int i, iTotal;
 
 	iTotal = 0;
 
@@ -30912,7 +30748,7 @@ int CGame::iGetFollowerNumber(short sOwnerH, char cOwnerType) {
  **	return value		:: bool																						**
  **********************************************************************************************************************/
 bool CGame::bRegisterDelayEvent(int iDelayType, int iEffectType, DWORD dwLastTime, int iTargetH, char cTargetType, char cMapIndex, int dX, int dY, int iV1, int iV2, int iV3) {
-	register int i;
+	int i;
 
 	for (i = 0; i < DEF_MAXDELAYEVENTS; i++)
 		if (m_pDelayEventList[i] == 0) {
@@ -30934,7 +30770,7 @@ bool CGame::bRegisterDelayEvent(int iDelayType, int iEffectType, DWORD dwLastTim
 }
 
 void CGame::DelayEventProcessor() {
-	register int i, iSkillNum, iResult;
+	int i, iSkillNum, iResult;
 	DWORD dwTime = timeGetTime();
 	int iTemp;
 
@@ -31170,7 +31006,7 @@ void CGame::DelayEventProcessor() {
 }
 
 bool CGame::bRemoveFromDelayEventList(int iH, char cType, int iEffectType) {
-	register int i;
+	int i;
 
 	for (i = 0; i < DEF_MAXDELAYEVENTS; i++)
 		if (m_pDelayEventList[i] != 0) {
@@ -31231,7 +31067,7 @@ void CGame::SendObjectMotionRejectMsg(int iClientH) {
 }
 
 int CGame::_iGetTotalClients() {
-	register int i, iTotal;
+	int i, iTotal;
 
 	iTotal = 0;
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
@@ -31241,7 +31077,7 @@ int CGame::_iGetTotalClients() {
 }
 
 void CGame::DynamicObjectEffectProcessor() {
-	register int i, ix, iy, iIndex;
+	int i, ix, iy, iIndex;
 	short sOwnerH, iDamage, sType;
 	char cOwnerType;
 	DWORD dwTime = timeGetTime(), dwRegisterTime;
@@ -31619,7 +31455,7 @@ char _tmp_cCorpseX[] = {0, 1, 1, 1, 0, -1, -1, -1, 0, 0, 0, 0};
 char _tmp_cCorpseY[] = {-1, -1, 0, 1, 1, 1, 0, -1, 0, 0, 0};
 
 void CGame::ClearSkillUsingStatus(int iClientH) {
-	register int i;
+	int i;
 	short tX, fX, tY, fY;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -31746,7 +31582,7 @@ int CGame::iCalculateUseSkillItemEffect(int iOwnerH, char cOwnerType, char cOwne
 	return 1;
 }
 
-void CGame::UseSkillHandler(int iClientH, int iV1, int iV2, int iV3) {
+void CGame::UseSkillHandler(int iClientH, int iV1, int /*iV2*/, int /*iV3*/) {
 	char cOwnerType;
 	short sAttackerWeapon, sOwnerH;
 	int iResult, iPlayerSkillLevel;
@@ -31850,7 +31686,7 @@ void CGame::UseSkillHandler(int iClientH, int iV1, int iV2, int iV3) {
 	m_pClientList[iClientH]->m_bSkillUsingStatus[iV1] = true;
 }
 
-void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int iNum, char * pItemName) {
+void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int iNum, char */*pItemName*/) {
 	char cItemCategory, cItemName[21];
 	short sRemainLife;
 	int iPrice;
@@ -31865,7 +31701,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 	if ((cItemID < 0) || (cItemID >= 50)) return;
 	if (m_pClientList[iClientH]->m_pItemList[cItemID] == 0) return;
 	if (iNum <= 0) return;
-	if (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwCount < iNum) return;
+	if (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwCount < (uint32_t) iNum) return;
 
 	iCalcTotalWeight(iClientH);
 
@@ -31897,7 +31733,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 				if (iPrice <= 0) iPrice = 1;
 				if (iPrice > 1000000) iPrice = 1000000;
 
-				if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(m_pGold, iPrice) > (DWORD) _iCalcMaxLoad(iClientH)) {
+				if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(m_pGold, iPrice) > _iCalcMaxLoad(iClientH)) {
 					// v2.12 Ã†Ãˆ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â°Â¡ ÃƒÃŠÂ°ÃºÂµÃ‡Â¾Ã®Â¼Â­ Ã†Ãˆ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_CANNOTSELLITEM, cItemID, 4, 0, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName);
 				} else SendNotifyMsg(0, iClientH, DEF_NOTIFY_SELLITEMPRICE, cItemID, sRemainLife, iPrice, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName, iNum);
@@ -32054,7 +31890,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 					if (iPrice <= 0) iPrice = 1;
 					if (iPrice > 1000000) iPrice = 1000000;
 
-					if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(m_pGold, iPrice) > (DWORD) _iCalcMaxLoad(iClientH)) {
+					if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(m_pGold, iPrice) > _iCalcMaxLoad(iClientH)) {
 						// v2.12 Ã†Ãˆ Â°Ã¦Â¿Ã¬ Â¹Â«Â°Ã�?Â°Â¡ ÃƒÃŠÂ°ÃºÂµÃ‡Â¾Ã®Â¼Â­ Ã†Ãˆ Â¼Ã¶ Â¾Ã¸Â´Ã™.
 						SendNotifyMsg(0, iClientH, DEF_NOTIFY_CANNOTSELLITEM, cItemID, 4, 0, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName);
 					} else SendNotifyMsg(0, iClientH, DEF_NOTIFY_SELLITEMPRICE, cItemID, sRemainLife, iPrice, m_pClientList[iClientH]->m_pItemList[cItemID]->m_cName, iNum);
@@ -32069,7 +31905,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 	if (m_pGold != 0) delete m_pGold;
 }
 
-void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char * pString) {
+void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char * /*pString*/) {
 	class CItem * pItemGold;
 	short sRemainLife;
 	int iPrice;
@@ -32088,7 +31924,7 @@ void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char
 	if ((cItemID < 0) || (cItemID >= 50)) return;
 	if (m_pClientList[iClientH]->m_pItemList[cItemID] == 0) return;
 	if (iNum <= 0) return;
-	if (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwCount < iNum) return;
+	if (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwCount < (uint32_t) iNum) return;
 
 	// New 18/05/2004
 	if (m_pClientList[iClientH]->m_pIsProcessingAllowed == false) return;
@@ -32425,7 +32261,7 @@ void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char
 	}
 }
 
-void CGame::ReqRepairItemHandler(int iClientH, char cItemID, char cRepairWhom, char * pString) {
+void CGame::ReqRepairItemHandler(int iClientH, char cItemID, char cRepairWhom, char * /*pString*/) {
 	char cItemCategory;
 	short sRemainLife, sPrice;
 	double d1, d2, d3;
@@ -32499,7 +32335,7 @@ void CGame::ReqRepairItemHandler(int iClientH, char cItemID, char cRepairWhom, c
 	}
 }
 
-void CGame::ReqRepairItemCofirmHandler(int iClientH, char cItemID, char * pString) {
+void CGame::ReqRepairItemCofirmHandler(int iClientH, char cItemID, char */*pString*/) {
 	short sRemainLife, sPrice;
 	char * cp, cItemCategory, cData[120];
 	double d1, d2, d3;
@@ -32590,7 +32426,7 @@ void CGame::ReqRepairItemCofirmHandler(int iClientH, char cItemID, char * pStrin
 }
 
 int CGame::iCalcTotalWeight(int iClientH) {
-	register int i, iWeight;
+	int i, iWeight;
 	short sItemIndex;
 
 	if (m_pClientList[iClientH] == 0) return 0;
@@ -32625,7 +32461,7 @@ void CGame::CheckAndNotifyPlayerConnection(int iClientH, char * pMsg, DWORD dwSi
 	char seps[] = "= \t\n";
 	char * token, * cp, cName[11], cBuff[256], cPlayerLocation[120];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 	WORD * wp;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -32679,9 +32515,7 @@ void CGame::ToggleWhisperPlayer(int iClientH, char * pMsg, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cName[11], cBuff[256];
 	class CStrTok * pStrTok;
-	register int i;
-	char *cp;
-	WORD *wp;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (dwMsgSize <= 0) return;
@@ -32733,7 +32567,7 @@ void CGame::ToggleWhisperPlayer(int iClientH, char * pMsg, DWORD dwMsgSize) {
 
 void CGame::SetPlayerProfile(int iClientH, char * pMsg, DWORD dwMsgSize) {
 	char cTemp[256];
-	register int i;
+	int i;
 
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -32757,7 +32591,7 @@ void CGame::GetPlayerProfile(int iClientH, char * pMsg, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cName[11], cBuff[256], cBuff2[500];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -33161,7 +32995,7 @@ void CGame::___RestorePlayerCharacteristics(int iClientH) {
 }
 
 void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, bool bNotify) {
-	register short sItemIndex;
+	short sItemIndex;
 	int i, iArrowIndex, iPrevSAType, iTemp;
 	char cEquipPos;
 	double dV1, dV2, dV3;
@@ -33833,7 +33667,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, bool bNotify) {
 }
 
 int CGame::_iGetPlayerNumberOnSpot(short dX, short dY, char cMapIndex, char cRange) {
-	register int ix, iy, iSum = 0;
+	int ix, iy, iSum = 0;
 	short sOwnerH;
 	char cOwnerType;
 
@@ -33847,7 +33681,7 @@ int CGame::_iGetPlayerNumberOnSpot(short dX, short dY, char cMapIndex, char cRan
 	return iSum;
 }
 
-void CGame::RequestAdminUserMode(int iClientH, char * pData) {
+void CGame::RequestAdminUserMode(int /*iClientH*/, char * /*pData*/) {
 	// Â¿Ã®Â¿ÂµÃ€Ãš Â¸Ã°ÂµÃ¥Â¸Â¦ ÃˆÂ®Ã€ÃŽÃ‡Ã?Â±Ã¢ Ã€Â§Ã‡Ã˜Â¼Â­Â´Ã‚ Ã€Ã?Â´Ãœ Ã€ÃŒ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ Ã€Ã¼Â¼Ã›Ã‡Ã?Â´Ã‚ Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â¸Â¦ Â°Â®Â°Ã­ Ã€Ã–Â¾Ã®Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 	// Â¶Ã‡Ã‡Ã‘ Â³Â¯Ã‚Â¥Â¸Â¦ Ã?Â¶Ã‡Ã•Ã‡Ã˜Â¼Â­ Â»Ã½Â¼ÂºÂµÃ‡Â´Ã‚ ÃˆÂ®Ã€ÃŽ Ã„ÃšÂµÃ¥Â°Â¡ Ã€Ã?Ã„Â¡Ã‡Ã˜Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 
@@ -33934,7 +33768,7 @@ bool CGame::_bGetIsPlayerHostile(int iClientH, int sOwnerH) {
 }
 
 void CGame::bSetNpcAttackMode(char * cName, int iTargetH, char cTargetType, bool bIsPermAttack) {
-	register int i, iIndex;
+	int i, iIndex;
 
 	for (i = 1; i < DEF_MAXNPCS; i++)
 		if ((m_pNpcList[i] != 0) && (memcmp(m_pNpcList[i]->m_cName, cName, 5) == 0)) {
@@ -33973,7 +33807,7 @@ NEXT_STEP_SNAM1:
 	//PutLogList("bSetNpcAttackMode - complete");
 }
 
-void CGame::PoisonEffect(int iClientH, int iV1) {
+void CGame::PoisonEffect(int iClientH, int /*iV1*/) {
 	int iPoisonLevel, iDamage, iPrevHP, iProb;
 
 	// Ã?ÃŸÂµÂ¶Ã€Â¸Â·ÃŽ Ã?Ã—Ã?Ã¶Â´Ã‚ Â¾ÃŠÂ´Ã‚Â´Ã™. Â´Ã™Â¸Â¸ ÃƒÂ¼Â·Ã‚Ã€ÃŒ Â°Ã¨Â¼Ã“ Â±Ã¯Ã€ÃŒÂ°Ã­ ÃƒÃ–Â¼Ã’ 1Â¸Â¸ Â³Â²Â´Ã‚Â´Ã™.
@@ -34049,7 +33883,7 @@ void CGame::CheckDayOrNightMode() {
 	char cPrevMode;
 	int i;
 
-	if (m_bManualTime = true) return;
+	if (m_bManualTime == true) return;
 
 	// Ã‡Ã¶Ã€Ã§ Â½ÃƒÂ°Â£Â¿Â¡ ÂµÃ»Â¶Ã³ Â³Â· ÃˆÂ¤Ã€Âº Â¹Ã£Ã€Â» Â°Ã¡Ã?Â¤Ã‡Ã‘Â´Ã™.
 	// Ã?Ã–, Â¾ÃŸÂ°Â£ Â¸Ã°ÂµÃ¥ Â¼Â³Ã?Â¤
@@ -34076,7 +33910,7 @@ void CGame::ShutUpPlayer(int iClientH, char * pMsg, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cName[11], cBuff[256];
 	class CStrTok * pStrTok;
-	register int i, iTime;
+	int i, iTime;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -34134,7 +33968,7 @@ void CGame::SetPlayerReputation(int iClientH, char * pMsg, char cValue, DWORD dw
 	char seps[] = "= \t\n";
 	char * token, cName[11], cBuff[256];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -34194,7 +34028,7 @@ void CGame::SetPlayerReputation(int iClientH, char * pMsg, char cValue, DWORD dw
 	return;
 }
 
-bool CGame::bReadNotifyMsgListFile(char * cFn) {
+bool CGame::bReadNotifyMsgListFile(const char * cFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
@@ -34259,7 +34093,7 @@ LNML_NEXTSTEP1:
 void CGame::NoticeHandler() {
 	char cTemp, cBuffer[1000], cKey;
 	DWORD dwSize, dwTime = timeGetTime();
-	register int i, iMsgIndex, iTemp;
+	int i, iMsgIndex, iTemp;
 
 	// Â°Ã¸Ã?Ã¶Â»Ã§Ã‡Ã—Ã€ÃŒ 1Â°Â³ Ã€ÃŒÃ‡Ã?Â¶Ã³Â¸Ã© ÂºÂ¸Â³Â¾ Ã‡ÃŠÂ¿Ã¤Â°Â¡ Â¾Ã¸Â´Ã™.
 	if (m_iTotalNoticeMsg <= 1) return;
@@ -34285,9 +34119,9 @@ void CGame::NoticeHandler() {
 	}
 }
 
-void CGame::ResponseSavePlayerDataReplyHandler(char * pData, DWORD dwMsgSize) {
+void CGame::ResponseSavePlayerDataReplyHandler(char * pData, DWORD /*dwMsgSize*/) {
 	char * cp, cCharName[11];
-	register int i;
+	int i;
 
 	ZeroMemory(cCharName, sizeof (cCharName));
 
@@ -34364,7 +34198,7 @@ void CGame::___RestorePlayerRating(int iClientH) {
 }
 
 int CGame::iGetExpLevel(int iExp) {
-	register int i;
+	int i;
 
 	// Â°Ã¦Ã‡Ã¨Ã„Â¡Â°Â¡ Â¾Ã®Â´Ã€ Â·Â¹ÂºÂ§ Â¼Ã¶Ã?Ã˜Â¿Â¡ Â¼Ã“Ã‡Ã?Â´Ã‚Ã?Ã¶ Ã†Ã‡Â´ÃœÃ‡Ã‘Â´Ã™.
 	for (i = 1; i < 1001; i++)
@@ -34377,7 +34211,7 @@ void CGame::AdminOrder_CallGuard(int iClientH, char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cName[11], cTargetName[11], cBuff[256], cNpcName[21], cNpcWaypoint[11];
 	class CStrTok * pStrTok;
-	register int i, iNamingValue, tX, tY;
+	int i, iNamingValue, tX, tY;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -34452,7 +34286,7 @@ void CGame::AdminOrder_Kill(int iClientH, char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cName[11], cTargetName[11], cBuff[256], cNpcName[21], cNpcWaypoint[11];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 	int sAttackerWeapon, sDamage, iExH;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -34551,7 +34385,7 @@ void CGame::AdminOrder_Revive(int iClientH, char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cName[11], cTargetName[11], cBuff[256], cNpcName[21], cNpcWaypoint[11];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 	int sAttackerWeapon, sDamage, sHP;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -34634,7 +34468,7 @@ void CGame::AdminOrder_Revive(int iClientH, char * pData, DWORD dwMsgSize) {
 
 void CGame::AdminOrder_SummonDemon(int iClientH) {
 	char cName[21], cNpcName[21], cNpcWaypoint[11];
-	register int iNamingValue, tX, tY;
+	int iNamingValue, tX, tY;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == false) return;
@@ -34677,7 +34511,7 @@ void CGame::AdminOrder_SummonDemon(int iClientH) {
 
 void CGame::AdminOrder_SummonDeath(int iClientH) {
 	char cName[21], cNpcName[21], cNpcWaypoint[11];
-	register int iNamingValue, tX, tY;
+	int iNamingValue, tX, tY;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == false) return;
@@ -34784,7 +34618,7 @@ void CGame::AdminOrder_CloseConn(int iClientH, char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cTargetName[11], cBuff[256];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -34846,7 +34680,7 @@ void CGame::UserCommand_BanGuildsman(int iClientH, char * pData, DWORD dwMsgSize
 	char seps[] = "= \t\n";
 	char * token, cTargetName[11], cBuff[256];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -34914,12 +34748,12 @@ void CGame::UserCommand_BanGuildsman(int iClientH, char * pData, DWORD dwMsgSize
 	return;
 }
 
-void CGame::UserCommand_DissmissGuild(int iClientH, char * pData, DWORD dwMsgSize) {
+void CGame::UserCommand_DissmissGuild(int /*iClientH*/, char */*pData*/, DWORD /*dwMsgSize*/) {
 
 }
 
 int CGame::iCreateFish(char cMapIndex, short sX, short sY, short sType, class CItem * pItem, int iDifficulty, DWORD dwLastTime) {
-	register int i, iDynamicHandle;
+	int i, iDynamicHandle;
 
 	// Â¸ÃŠÃ€Ã‡ Ã€Â§Ã„Â¡Â°Â¡ Â¹Â°Ã€ÃŽÃ?Ã¶ ÃˆÂ®Ã€ÃŽÃ‡Ã‘Â´Ã™.
 	if ((cMapIndex < 0) || (cMapIndex >= DEF_MAXMAPS)) return 0;
@@ -34968,7 +34802,7 @@ int CGame::iCreateFish(char cMapIndex, short sX, short sY, short sType, class CI
 }
 
 bool CGame::bDeleteFish(int iHandle, int iDelMode) {
-	register int i, iH;
+	int i, iH;
 	DWORD dwTime;
 
 	if (m_pFish[iHandle] == 0) return false;
@@ -35006,7 +34840,7 @@ bool CGame::bDeleteFish(int iHandle, int iDelMode) {
 }
 
 int CGame::iCheckFish(int iClientH, char cMapIndex, short dX, short dY) {
-	register int i;
+	int i;
 	short sDistX, sDistY;
 
 	if (m_pClientList[iClientH] == 0) return 0;
@@ -35051,7 +34885,7 @@ int CGame::iCheckFish(int iClientH, char cMapIndex, short dX, short dY) {
 }
 
 void CGame::FishProcessor() {
-	register int i, iSkillLevel, iResult, iChangeValue;
+	int i, iSkillLevel, iResult, iChangeValue;
 
 	// ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ ï¿½Ò´ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½Ñ´ï¿½.
 	for (i = 1; i < DEF_MAXCLIENTS; i++) {
@@ -35094,7 +34928,7 @@ void CGame::AdminOrder_CreateFish(int iClientH, char * pData, DWORD dwMsgSize) {
 	char * token, cBuff[256], cItemName[21];
 	class CStrTok * pStrTok;
 	class CItem * pItem;
-	register int tX, tY, iType;
+	int tX, tY, iType;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -35150,7 +34984,7 @@ void CGame::AdminOrder_Teleport(int iClientH, char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cBuff[256], cMapName[256];
 	class CStrTok * pStrTok;
-	register int dX, dY;
+	int dX, dY;
 	bool bFlag;
 
 	dX = dY = -1;
@@ -35285,7 +35119,7 @@ void CGame::AdminOrder_Teleport(int iClientH, char * pData, DWORD dwMsgSize) {
 }
 
 void CGame::ReqGetFishThisTimeHandler(int iClientH) {
-	register int iResult, iFishH;
+	int iResult, iFishH;
 	class CItem * pItem;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -35337,7 +35171,7 @@ void CGame::ReqGetFishThisTimeHandler(int iClientH) {
 }
 
 void CGame::FishGenerator() {
-	register int i, iP, tX, tY, iRet;
+	int i, iP, tX, tY, iRet;
 	char cItemName[21];
 	short sDifficulty;
 	DWORD dwLastTime;
@@ -35454,7 +35288,7 @@ void CGame::FishGenerator() {
 }
 
 int CGame::_iCalcPlayerNum(char cMapIndex, short dX, short dY, char cRadius) {
-	register int ix, iy, iRet;
+	int ix, iy, iRet;
 	class CTile * pTile;
 
 	// ÃƒÂ³Â¸Â® Â¼Ã“ÂµÂµÂ¸Â¦ Â³Ã´Ã€ÃŒÂ±Ã¢ Ã€Â§Ã‡Ã˜ Ã‡Ã�?Â¼Ã¶Â¸Â¦ Ã„Ã?Ã‡Ã?Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
@@ -35518,7 +35352,7 @@ void CGame::WhetherProcessor() {
 // v1.4311-3 ÃƒÃŸÂ°Â¡ Ã‡Ã�?Â¼Ã¶  Â»Ã§Ã…ÃµÃ€Ã¥ Â¿Â¹Â¾Ã  ÃƒÃŠÂ±Ã¢ÃˆÂ­Â¹Ã— Â»Ã§Â¿Ã«Ã€ÃšÂ¿Â¡Â°Ã�? Â¿Â¹Â¾Ã Ã€ÃŒ ÃƒÃ«Â¼Ã’ ÂµÃ‡Â¾ÃºÃ€Â½ Â¾Ã‹Â¸Â°Â´Ã™.FightzoneReserveProcessor
 
 void CGame::FightzoneReserveProcessor() {/*
- register int i;
+ int i;
 
 	PutLogList("CAN FIGHTZONE RESERVE!!");
 
@@ -35782,7 +35616,7 @@ int CGame::iGetNpcRelationship_SendEvent(int iNpcH, int iOpponentH) {
 }
 
 int CGame::iGetMapIndex(char * pMapName) {
-	register int i, iMapIndex;
+	int i, iMapIndex;
 	char cTmpName[256];
 
 	ZeroMemory(cTmpName, sizeof (cTmpName));
@@ -35799,7 +35633,7 @@ int CGame::iGetMapIndex(char * pMapName) {
 }
 
 int CGame::_iForcePlayerDisconect(int iNum) {
-	register int i, iCnt;
+	int i, iCnt;
 
 	iCnt = 0;
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
@@ -35836,7 +35670,7 @@ void CGame::AdminOrder_CheckIP(int iClientH, char *pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cBuff[256], cIP[21], cInfoString[500];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -35892,7 +35726,7 @@ void CGame::ToggleSafeAttackModeHandler(int iClientH) //v1.1
 }
 
 void CGame::NpcRequestAssistance(int iNpcH) {
-	register int ix, iy, sX, sY;
+	int ix, iy, sX, sY;
 	short sOwnerH;
 	char cOwnerType;
 
@@ -35921,7 +35755,7 @@ void CGame::NpcRequestAssistance(int iNpcH) {
 }
 
 void CGame::ForceDisconnectAccount(char *pAccountName, WORD wCount) {
-	register int i;
+	int i;
 
 	// Ã?ÃŸÂºÂ¹ÂµÃˆ Â°Ã¨Ã?Â¤Ã€Â» Â°Â®Â°Ã­Ã€Ã–Â´Ã‚ Ã„Â³Â¸Â¯Ã…Ã?Â¸Â¦ Â»Ã¨Ã?Â¦Ã‡Ã‘Â´Ã™.
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
@@ -36459,7 +36293,7 @@ RCPH_LOOPBREAK:
 			if ((sItemIndex[i] >= 0) && (sItemIndex[i] >= DEF_MAXITEMS)) return;
 			if (m_pClientList[iClientH]->m_pItemList[sItemIndex[i]] == 0) return;
 			// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Â°Â¹Â¼Ã¶Â°Â¡ Â¿Ã€Â¹Ã¶Ã‡Ã˜ÂµÂµ Â¸Â®Ã…Ã?.
-			if (m_pClientList[iClientH]->m_pItemList[sItemIndex[i]]->m_dwCount < sItemNumber[i]) return;
+			if (m_pClientList[iClientH]->m_pItemList[sItemIndex[i]]->m_dwCount < (uint32_t) sItemNumber[i]) return;
 		}
 
 	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¾Ã†Ã€ÃŒÃ…Ã› Â¾Ã†Ã€ÃŒÂµÃ° Â¹Ã¸ÃˆÂ£Â°Â¡ Ã…Â« Â¼Ã¸Â¼Â­ÂºÃŽÃ…Ã? Ã?Â¤Â·Ã„Ã‡Ã‘Â´Ã™. Bubble Sort
@@ -36982,7 +36816,7 @@ void CGame::LocalSavePlayerData(int iClientH) {
 }
 
 void CGame::MineralGenerator() {
-	register int i, iP, tX, tY, iRet;
+	int i, iP, tX, tY, iRet;
 
 	for (i = 0; i < DEF_MAXMAPS; i++) {
 		if ((iDice(1, 4) == 1) && (m_pMapList[i] != 0) &&
@@ -37001,7 +36835,7 @@ void CGame::MineralGenerator() {
 }
 
 int CGame::iCreateMineral(char cMapIndex, int tX, int tY, char cLevel) {
-	register int i, iDynamicHandle, iMineralType;
+	int i, iDynamicHandle, iMineralType;
 
 	if ((cMapIndex < 0) || (cMapIndex >= DEF_MAXMAPS)) return 0;
 	if (m_pMapList[cMapIndex] == 0) return 0;
@@ -37414,8 +37248,8 @@ void CGame::NpcTalkHandler(int iClientH, int iWho) {
 }
 
 void CGame::CheckFireBluring(char cMapIndex, int sX, int sY) {
-	register int ix, iy;
-	register short sSpr, sSprFrame;
+	int ix, iy;
+	short sSpr, sSprFrame;
 	char cItemColor;
 	class CItem * pItem;
 
@@ -37440,7 +37274,7 @@ void CGame::AdminOrder_GetNpcStatus(int iClientH, char * pData, DWORD dwMsgSize)
 	char seps[] = "= \t\n";
 	char * token, cBuff[256], cNpcName[256];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -37637,7 +37471,7 @@ bool CGame::_bDepleteDestTypeItemUseEffect(int iClientH, int dX, int dY, short s
 }
 
 bool CGame::__bSetOccupyFlag(char cMapIndex, int dX, int dY, int iSide, int iEKNum, int iClientH, bool bAdminFlag) {
-	register int ix, iy;
+	int ix, iy;
 	int iDynamicObjectIndex, iIndex;
 	class CTile * pTile;
 	DWORD dwTime;
@@ -37730,7 +37564,7 @@ bool CGame::__bSetOccupyFlag(char cMapIndex, int dX, int dY, int iSide, int iEKN
 }
 
 void CGame::SetSummonMobAction(int iClientH, int iMode, DWORD dwMsgSize, char *pData) {
-	register int i, iTargetIndex;
+	int i, iTargetIndex;
 	char seps[] = "= \t\n";
 	char * token, cTargetName[11], cBuff[256];
 	class CStrTok * pStrTok;
@@ -38149,7 +37983,6 @@ bool CGame::_bDecodeOccupyFlagSaveFileContents(char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char cReadModeA = 0;
 	char cReadModeB = 0;
-	int iFlagIndex = 0;
 	int iSide;
 	class CStrTok * pStrTok;
 	int dX, dY, iEKNum, iTotalFlags;
@@ -38259,7 +38092,7 @@ bool CGame::_bDecodeOccupyFlagSaveFileContents(char * pData, DWORD dwMsgSize) {
 }
 //Hero Code by Zabuza
 
-void CGame::GetHeroMantleHandler(int iClientH, ItemId iItemID, char * pString) {
+void CGame::GetHeroMantleHandler(int iClientH, ItemId iItemID, char * /*pString*/) {
 	int i, iNum, iRet, iEraseReq;
 	char * cp, cData[256], cItemName[21];
 	class CItem * pItem;
@@ -38510,7 +38343,7 @@ void CGame::_SetItemPos(int iClientH, char *pData) {
 }
 
 void CGame::CheckUniqueItemEquipment(int iClientH) {
-	register int i, iDamage;
+	int i, iDamage;
 
 	if (m_pClientList[iClientH] == 0) return;
 	// v1.3 Ã€Â¯Â´Ã?Ã…Â© Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Ã‡ Ã€Ã¥Ã‚Ã¸ Â»Ã³Ã…Ã‚Â¸Â¦ Ã†Ã‡Â´ÃœÃ‡Ã‘Â´Ã™. Ã†Â¯Ã?Â¤Ã€ÃŽÂ¸Â¸Ã€ÃŒ Ã‚Ã¸Â¿Ã« Â°Â¡Â´Ã‰Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã€Ã¥Ã‚Ã¸Ã‡Ã‘ Â°Ã¦Â¿Ã¬ Â¹Ã¾Â°ÃœÃ?Ã¸Â´Ã™.
@@ -38540,7 +38373,7 @@ void CGame::CheckUniqueItemEquipment(int iClientH) {
 		}
 }
 
-void CGame::_BWM_Init(int iClientH, char *pData) {
+void CGame::_BWM_Init(int iClientH, char */*pData*/) {
 	if (m_pClientList[iClientH] == 0) return;
 
 	m_pClientList[iClientH]->m_bIsBWMonitor = true;
@@ -38550,7 +38383,7 @@ void CGame::_BWM_Init(int iClientH, char *pData) {
 
 void CGame::_BWM_Command_Shutup(char *pData) {
 	char * cp, cName[11];
-	register int i;
+	int i;
 
 	cp = (char *) (pData + 16);
 
@@ -38572,7 +38405,7 @@ void CGame::_BWM_Command_Shutup(char *pData) {
 		}
 }
 
-void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char *pItemName) {
+void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, short dX, short dY, WORD wObjectID, char */*pItemName*/) {
 	short sOwnerH;
 	char cOwnerType;
 
@@ -38580,7 +38413,7 @@ void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, sho
 	if ((sItemIndex < 0) || (sItemIndex >= DEF_MAXITEMS)) return;
 	if ((m_bAdminSecurity == true) && (m_pClientList[iClientH]->m_iAdminUserLevel > 0)) return;
 	if (m_pClientList[iClientH]->m_pItemList[sItemIndex] == 0) return;
-	if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwCount < iAmount) return;
+	if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwCount < (uint32_t) iAmount) return;
 	if (m_pClientList[iClientH]->m_bIsOnServerChange == true) return;
 	if (m_pClientList[iClientH]->m_bIsExchangeMode == true) return;
 	if (wObjectID >= DEF_MAXCLIENTS) return;
@@ -38695,7 +38528,7 @@ void CGame::SetExchangeItem(int iClientH, int iItemIndex, int iAmount) {
 			// ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â´ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ñ´ï¿½.
 			if ((iItemIndex < 0) || (iItemIndex >= DEF_MAXITEMS)) return;
 			if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == 0) return;
-			if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwCount < iAmount) return;
+			if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwCount < (uint32_t) iAmount) return;
 
 			//No Duplicate items
 			for (int i = 0; i < m_pClientList[iClientH]->iExchangeCount; i++) {
@@ -38813,7 +38646,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 						if ((m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
 								  (m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 
-							if (m_pClientList[iClientH]->m_iExchangeItemAmount[i] > m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_dwCount) {
+							if (((uint32_t) m_pClientList[iClientH]->m_iExchangeItemAmount[i]) > m_pClientList[iClientH]->m_pItemList[m_pClientList[iClientH]->m_cExchangeItemIndex[i]]->m_dwCount) {
 								// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½×µï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½ï¿½.
 								_ClearExchangeStatus(iClientH);
 								_ClearExchangeStatus(iExH);
@@ -38844,7 +38677,7 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 						if ((m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_CONSUME) ||
 								  (m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_cItemType == DEF_ITEMTYPE_ARROW)) {
 
-							if (m_pClientList[iExH]->m_iExchangeItemAmount[i] > m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_dwCount) {
+							if (((uint32_t) m_pClientList[iExH]->m_iExchangeItemAmount[i]) > m_pClientList[iExH]->m_pItemList[m_pClientList[iExH]->m_cExchangeItemIndex[i]]->m_dwCount) {
 								// ï¿½ï¿½È¯ï¿½�?°ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½×µï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½ï¿½.
 								_ClearExchangeStatus(iClientH);
 								_ClearExchangeStatus(iExH);
@@ -38961,7 +38794,7 @@ int CGame::_iGetItemSpaceLeft(int iClientH) {
 	return (DEF_MAXITEMS - iTotalItem);
 }
 
-bool CGame::bAddItem(int iClientH, CItem * pItem, char cMode) {
+bool CGame::bAddItem(int iClientH, CItem * pItem, char /*cMode*/) {
 	char * cp, cData[256];
 	DWORD * dwp;
 	WORD * wp;
@@ -39196,7 +39029,7 @@ int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMod
 	return -4;
 }
 
-int CGame::_iTalkToNpcResult_Guard(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange) {
+int CGame::_iTalkToNpcResult_Guard(int iClientH, int * /*pQuestType*/, int * /*pMode*/, int * /*pRewardType*/, int * /*pRewardAmount*/, int * /*pContribution*/, char * /*pTargetName*/, int * /*pTargetType*/, int * /*pTargetCount*/, int * /*pX*/, int * /*pY*/, int * /*pRange*/) {
 	// Â°Ã¦ÂºÃ±ÂºÂ´Â°ÃºÃ€Ã‡ Â´Ã«ÃˆÂ­. Ã‡ÃƒÂ·Â¹Ã€ÃŒÂ¾Ã®Ã€Ã‡ Ã€Â§Ã„Â¡Â¿Â¡ Ã€Ã»Ã€Ã½Ã‡Ã‘ Â´Ã«ÃˆÂ­ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂµÃ°Â½ÂºÃ‡ÃƒÂ·Â¹Ã€ÃŒÃ‡Ã‘Â´Ã™.
 	if (m_pClientList[iClientH] == 0) return 0;
 
@@ -39979,7 +39812,7 @@ bool CGame::_bCheckItemReceiveCondition(int iClientH, CItem *pItem) {
 			return false;
 	}
 	 */
-	if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, pItem->m_dwCount) > (DWORD) _iCalcMaxLoad(iClientH))
+	if (m_pClientList[iClientH]->m_iCurWeightLoad + iGetItemWeight(pItem, pItem->m_dwCount) > _iCalcMaxLoad(iClientH))
 		return false;
 
 	// Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Â¹ÃžÃ€Â» Â¿Â©Ã€Â¯Â°Ã¸Â°Â£ Ã€Â¯Â¹Â« Ã†Ã‡Â´Ãœ.
@@ -40080,7 +39913,7 @@ void CGame::_CheckStrategicPointOccupyStatus(char cMapIndex) {
 
 void CGame::OnSubLogSocketEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 	UINT iTmp;
-	register int iLogSockH, iRet;
+	int iLogSockH, iRet;
 
 	iTmp = (WM_ONLOGSOCKETEVENT + 1);
 	iLogSockH = message - iTmp;
@@ -40713,7 +40546,7 @@ void CGame::BuildItemHandler(int iClientH, char *pData) {
 							if ((cElementItemID[z] != -1) && (bItemFlag[z] == false)) {
 
 								if ((m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_sIDnum == m_pBuildItemList[i]->m_iMaterialItemID[x]) &&
-										  (m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_dwCount >= m_pBuildItemList[i]->m_iMaterialItemCount[x]) &&
+										  (m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_dwCount >= (uint32_t) m_pBuildItemList[i]->m_iMaterialItemCount[x]) &&
 										  (iItemCount[cElementItemID[z]] > 0)) {
 									// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½�?³ï¿½ï¿½ï¿½ Ã£ï¿½Ò´ï¿½.
 									iTemp = m_pClientList[iClientH]->m_pItemList[cElementItemID[z]]->m_sItemSpecEffectValue2;
@@ -41539,8 +41372,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, DWORD dwMsgSize) {
 void CGame::AdminOrder_SummonAll(int iClientH, char *pData, DWORD dwMsgSize) {
 
 	char seps[] = "= \t\n";
-	char * token, * cp, cBuff[256], cLocation[11], cMapName[11];
-	WORD *wp;
+	char * token, cBuff[256], cLocation[11], cMapName[11];
 	int pX, pY, i;
 	class CStrTok * pStrTok;
 
@@ -41589,8 +41421,7 @@ void CGame::AdminOrder_SummonAll(int iClientH, char *pData, DWORD dwMsgSize) {
 
 void CGame::AdminOrder_SummonPlayer(int iClientH, char *pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
-	char * token, * cp, cBuff[256], cMapName[11], cName[11];
-	WORD *wp;
+	char * token, cBuff[256], cMapName[11], cName[11];
 	int pX, pY, i;
 	class CStrTok * pStrTok;
 
@@ -41688,7 +41519,7 @@ void CGame::CheckSpecialEvent(int iClientH) {
 	}
 }
 
-void CGame::AdminOrder_DisconnectAll(int iClientH, char *pData, DWORD dwMsgSize) {
+void CGame::AdminOrder_DisconnectAll(int iClientH, char */*pData*/, DWORD dwMsgSize) {
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -41907,7 +41738,7 @@ void CGame::RequestNoticementHandler(int iClientH, char * pData) {
 	ip = (int *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	iClientSize = *ip;
 
-	if (iClientSize != m_dwNoticementDataSize) {
+	if ((uint32_t) iClientSize != m_dwNoticementDataSize) {
 		// Ã…Â¬Â¶Ã³Ã€ÃŒÂ¾Ã°Ã†Â®Â°Â¡ Â°Â®Â°Ã­ Ã€Ã–Â´Ã‚ Ã†Ã„Ã€Ã? Â»Ã§Ã€ÃŒÃ?Ã®Â¿Ã? Â´Ã™Â¸Â£Â¸Ã© Â³Â»Â¿Ã«Ã€Â» Â¸Ã°ÂµÃŽ ÂºÂ¸Â³Â½Â´Ã™.
 		cp = new char[m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2];
 		ZeroMemory(cp, m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2);
@@ -41934,7 +41765,7 @@ void CGame::RequestNoticementHandler(int iClientH, char * pData) {
 	// Â¿Â¡Â·Â¯ Â¹ÃŸÂ»Ã½Ã‡Ã˜ÂµÂµ Â²Ã·Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™.
 }
 
-void CGame::_bDecodeNoticementFileContents(char *pData, DWORD dwMsgSize) {
+void CGame::_bDecodeNoticementFileContents(char *pData, DWORD /*dwMsgSize*/) {
 	char * cp;
 
 	cp = (pData);
@@ -41954,7 +41785,7 @@ void CGame::_bDecodeNoticementFileContents(char *pData, DWORD dwMsgSize) {
 	PutLogList(G_cTxt);
 }
 
-void CGame::RequestCheckAccountPasswordHandler(char *pData, DWORD dwMsgSize) {
+void CGame::RequestCheckAccountPasswordHandler(char *pData, DWORD /*dwMsgSize*/) {
 	int * ip, i, iLevel;
 	char * cp, cAccountName[11], cAccountPassword[11];
 
@@ -42653,10 +42484,7 @@ void CGame::CreateNewPartyHandler(int iClientH) {
 }
 
 void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
-	char * cp, cData[120];
 	short sAppr2;
-	DWORD * dwp;
-	WORD * wp;
 	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -43127,7 +42955,7 @@ void CGame::AgingMapSectorInfo() {
 		}
 }
 
-bool CGame::__bSetConstructionKit(int iMapIndex, int dX, int dY, int iType, int iTimeCost, int iClientH) {
+bool CGame::__bSetConstructionKit(int /*iMapIndex*/, int dX, int dY, int iType, int /*iTimeCost*/, int iClientH) {
 	int iNamingValue, ix, iy, tX, tY;
 	char cNpcName[21], cName[21], cNpcWaypoint[11], cOwnerType;
 	short sOwnerH;
@@ -43357,9 +43185,8 @@ void CGame::CreateCrusadeStructures() {
 }
 
 void CGame::RequestSetGuildConstructLocHandler(int iClientH, int dX, int dY, int iGuildGUID, char * pMapName) {
-	char * cp, cData[120];
-	register int i;
-	int *ip, iIndex;
+	int i;
+	int iIndex;
 	DWORD dwTemp, dwTime;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -43419,7 +43246,7 @@ void CGame::RequestSetGuildConstructLocHandler(int iClientH, int dX, int dY, int
 
 void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType, char cNum, char cMode) {
 	char cName[6], cNpcName[21], cMapName[11], cNpcWayPoint[11], cOwnerType;
-	register int i, x;
+	int i, x;
 	int iNamingValue, tX, tY, ix, iy;
 	bool bRet;
 	short sOwnerH;
@@ -43744,7 +43571,7 @@ void CGame::SelectCrusadeDutyHandler(int iClientH, int iDuty) {
 }
 
 void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 
@@ -43813,7 +43640,7 @@ void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
 }
 
 void CGame::_SendMapStatus(int iClientH) {
-	register int i, iDataSize;
+	int i, iDataSize;
 	char *cp, cData[DEF_MAXCRUSADESTRUCTURES * 6];
 	short * sp;
 
@@ -43869,7 +43696,7 @@ SMS_ENDOFDATA:
 }
 
 void CGame::RemoveCrusadeStructures() {
-	register int i;
+	int i;
 
 	for (i = 0; i < DEF_MAXNPCS; i++)
 		if (m_pNpcList[i] != 0) {
@@ -43889,7 +43716,7 @@ void CGame::RemoveCrusadeStructures() {
 
 void CGame::RequestHelpHandler(int iClientH) {
 	// Ã‡Ã¯Ã‡Ã? Â¿Ã¤ÃƒÂ»Ã€ÃŒÂ´Ã™. Â±Ã¦ÂµÃ¥ Â¸Â¶Â½ÂºÃ…Ã?Â¿Â¡Â°Ã�? Ã?Ã‚Ã‡Â¥Â¸Â¦ Ã€Ã¼Â´ÃžÃ‡Ã˜ Ã?Ã˜Â´Ã™.
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_iGuildRank == -1) return;
@@ -43957,8 +43784,6 @@ void CGame::DoMeteorStrikeDamageHandler(int iMapIndex) {
 
 void CGame::SyncMiddlelandMapInfo() {
 	int i;
-	char * cp;
-	short * sp;
 
 	if (m_iMiddlelandMapIndex != -1) {
 		for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
@@ -46228,7 +46053,7 @@ void CGame::RemoveCrusadeRecallTime(void) {
 
 // New 13/05/2004
 
-bool CGame::_bCrusadeLog(int iAction, int iClientH, int iData, char * cName) {
+bool CGame::_bCrusadeLog(int iAction, int iClientH, int iData, const char * cName) {
 	char cTxt[200];
 
 	//  Â·ÃŽÂ±Ã— Â³Â²Â±Ã¤Â´Ã™.
@@ -46294,7 +46119,7 @@ int CGame::iGetPlayerABSStatus(int iClientH) {
 //Init item based in its ID
 
 bool CGame::_bInitItemAttr(class CItem * pItem, ItemId iItemID) {
-	register int i;
+	int i;
 
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
 		if (m_pItemConfigList[i] != 0) {
@@ -46674,7 +46499,7 @@ void CGame::ShowVersion(int iClientH) {
 void CGame::GSM_RequestShutupPlayer(char * pGMName, WORD wReqServerID, WORD wReqClientH, WORD wTime, char * pPlayer) {
 	char * cp, cTemp[120];
 	WORD * wp;
-	register int i;
+	int i;
 
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != 0) && (strcmp(m_pClientList[i]->m_cCharName, pPlayer) == 0)) {
@@ -47309,7 +47134,7 @@ void CGame::OnStartGameSignal() {
 }
 
 void CGame::RequestGuildTeleportHandler(int iClientH) {
-	register int i;
+	int i;
 	char cMapName[11];
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -47410,9 +47235,9 @@ void CGame::GSM_SetGuildTeleportLoc(int iGuildGUID, int dX, int dY, char * pMapN
 	m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 }
 
-void CGame::RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int iGuildGUID, char * pMapName) {
+void CGame::RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int iGuildGUID, const char * pMapName) {
 	char * cp, cData[120];
-	register int i;
+	int i;
 	int *ip, iIndex;
 	DWORD dwTemp, dwTime;
 
@@ -49183,7 +49008,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 	}
 }
 
-bool CGame::bReadAdminSetConfigFile(char * cFn) {
+bool CGame::bReadAdminSetConfigFile(const char * cFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
@@ -49713,7 +49538,7 @@ void CGame::AdminOrder_CheckRep(int iClientH, char *pData, DWORD dwMsgSize) {
 	class CStrTok * pStrTok;
 	short m_iRating;
 	char * token, cName[11], cTargetName[11], cRepMessage[256], cTemp[256], seps[] = "= \t\n", cBuff[256];
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	ZeroMemory(cTemp, sizeof (cTemp));
@@ -49774,8 +49599,8 @@ void CGame::AdminOrder_Pushplayer(int iClientH, char * pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char * token, cBuff[256], cMapName[256], cName[11], cTargetName[11];
 	class CStrTok * pStrTok;
-	register int dX, dY;
-	register int i;
+	int dX, dY;
+	int i;
 	bool bFlag;
 	ZeroMemory(cTargetName, sizeof (cTargetName));
 	ZeroMemory(cName, sizeof (cName));
@@ -50148,7 +49973,7 @@ void CGame::AdminOrder_CheckStats(int iClientH, char *pData, DWORD dwMsgSize) {
 	char cBuff[256];
 	class CStrTok * pStrTok;
 	char * token, cName[11], cTargetName[11];
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_iAdminUserLevel < 1) {
@@ -50260,7 +50085,7 @@ bool CGame::bCheckIsItemUpgradeSuccess(int iClientH, int iItemIndex, int iSomH, 
 	return false;
 }
 
-bool CGame::bReadAdminListConfigFile(char *pFn) {
+bool CGame::bReadAdminListConfigFile(const char *pFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
@@ -50326,7 +50151,7 @@ bool CGame::bReadAdminListConfigFile(char *pFn) {
 	return true;
 }
 
-bool CGame::bReadBannedListConfigFile(char *pFn) {
+bool CGame::bReadBannedListConfigFile(const char *pFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
@@ -50464,7 +50289,7 @@ void CGame::AdminOrder_CleanMap(int iClientH, char * pData, DWORD dwMsgSize) {
 	return;
 }
 
-void CGame::ShowClientMsg(int iClientH, char* pMsg) {
+void CGame::ShowClientMsg(int iClientH, const char* pMsg) {
 	char * cp, cTemp[256];
 	DWORD * dwp, dwMsgSize;
 	WORD * wp;
@@ -50565,7 +50390,7 @@ void CGame::Command_YellowBall(int iClientH, char* pData, DWORD dwMsgSize) {
 
 void CGame::Command_RedBall(int iClientH, char *pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n", cName[21], cNpcName[21], cNpcWaypoint[11];
-	register int iNamingValue, tX, tY, i, x, iNpcID;
+	int iNamingValue, tX, tY, i, x, iNpcID;
 	int iSoxH, iSoX;
 
 	if (m_pClientList[iClientH] == 0) return;
@@ -50640,7 +50465,7 @@ void CGame::Command_BlueBall(int iClientH, char *pData, DWORD dwMsgSize) {
 	char seps[] = "= \t\n";
 	char cName_Master[10], cName_Slave[10], cNpcName[256], cWaypoint[11], cSA;
 	int pX, pY, j, iNum, iNamingValue, iNpcID;
-	register int i, x;
+	int i, x;
 	bool bMaster;
 	int iSoxH, iSoX;
 
@@ -52651,7 +52476,7 @@ short itemeq;
 }*/
 
 void CGame::TimeHitPointsUp(int iClientH) {
-	register int iMaxHP, iTemp, iTotal;
+	int iMaxHP, iTemp, iTotal;
 	double dV1, dV2, dV3;
 
 	/*
@@ -55481,7 +55306,7 @@ void CGame::StormBringer(int iClientH, short dX, short dY) {
 }
 
 bool CGame::_bCheckCharacterData(int iClientH) {
-	register int i;
+	int i;
 
 	if ((m_pClientList[iClientH]->m_iStr > m_sCharStatLimit) || (m_pClientList[iClientH]->m_iVit > m_sCharStatLimit) || (m_pClientList[iClientH]->m_iDex > m_sCharStatLimit) ||
 			  (m_pClientList[iClientH]->m_iMag > m_sCharStatLimit) || (m_pClientList[iClientH]->m_iInt > m_sCharStatLimit) || (m_pClientList[iClientH]->m_iCharisma > m_sCharStatLimit)) {
@@ -55561,7 +55386,7 @@ void CGame::GlobalEndHeldenianMode() {
 }
 
 void CGame::LocalEndHeldenianMode() {
-	register int i, x;
+	int i, x;
 
 	if (m_bIsHeldenianMode == false) return;
 	m_bIsHeldenianMode = false;
@@ -55627,7 +55452,7 @@ bool CGame::bNotifyHeldenianWinner() {
 
 void CGame::RemoveOccupyFlags(int iMapIndex) {
 	DWORD dwTime = timeGetTime();
-	register int i;
+	int i;
 	short dX, dY;
 	int iDynamicObjectIndex;
 	class COccupyFlag * iOccupyFlagIndex;
@@ -56303,7 +56128,7 @@ void CGame::CheckHeldenianResultCalculation(int iClientH) {
 }
 
 void CGame::NotifyStartHeldenianFightMode() {
-	register int i, x;
+	int i, x;
 
 	if ((m_bIsHeldenianMode != true) && (m_bHeldenianInitiated != true) && (m_bIsHeldenianReady != true)) return;
 	PutLogList("Heldenian Fight Start");
@@ -56326,7 +56151,7 @@ void CGame::NotifyStartHeldenianFightMode() {
 }
 
 bool CGame::UpdateHeldenianStatus() {
-	register int i;
+	int i;
 	bool bFlag;
 	int iShortCutIndex, iClientH;
 
@@ -56439,7 +56264,7 @@ void CGame::SendThunder(int iClient, short sX, short sY, short sV3, short sV4) {
 
 void CGame::DoAbaddonThunderDamageHandler(char cMapIndex) {
 	int iResult;
-	register int i;
+	int i;
 	//if (m_bIsApocalypseMode != true) return;
 	if (iDice(1, 15) != 13) return;
 	DWORD dwTime = timeGetTime();
@@ -57342,7 +57167,7 @@ void CGame::AdminOrder_BanIP(int iClientH, char *pData, DWORD dwMsgSize) {
 }
 
 void CGame::AFKChecker() {
-	register int i;
+	int i;
 	int sX, sY;
 	DWORD dwTimeNow = timeGetTime();
 	for (i = 1; i < DEF_MAXCLIENTS; i++) {
@@ -57579,7 +57404,7 @@ void CGame::PlayerCommandAddMaster(int iClientH, char * pData, DWORD dwMsgSize) 
 	char seps[] = "= \t\n";
 	char * token, cName[11], cTargetName[11], cBuff[256], cNpcName[21], cNpcWaypoint[11];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -57639,7 +57464,7 @@ void CGame::PlayerOrder_DeleteGuildMaster(int iClientH, char * pData, DWORD dwMs
 	char seps[] = "= \t\n";
 	char * token, cName[11], cTargetName[11], cBuff[256], cNpcName[21], cNpcWaypoint[11];
 	class CStrTok * pStrTok;
-	register int i;
+	int i;
 
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -57924,7 +57749,7 @@ void CGame::AdminOrder_SetRep(int iClientH, char *pData, DWORD dwMsgSize) {
 	delete pStrTok;
 }
 
-bool CGame::bReadBallSystemConfigFile(char * cFn) {
+bool CGame::bReadBallSystemConfigFile(const char * cFn) {
 	FILE * pFile;
 	HANDLE hFile;
 	DWORD dwFileSize;
