@@ -12,7 +12,6 @@
 #include <malloc.h>
 #include "DebugDialog.h"
 #include <iostream>
-#include <strstream>
 #include <string>
 
 #define DEF_XSOCK_LISTENSOCK			1

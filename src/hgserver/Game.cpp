@@ -27010,7 +27010,8 @@ void CGame::MobGenerator() {
 						if ((iResult != 35) && (iResult != 36) && (iResult != 37) && (iResult != 49)
 								  && (iResult != 51) && (iResult != 15) && (iResult != 16) && (iResult != 21)) iTotalMob = 12;
 						for (x = 1; x < DEF_MAXCLIENTS; x++)
-							if ((iNpcID != -1) && (m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true)) {
+							if ((iNpcID != -1) && (m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true) &&
+								m_pClientList[x]->m_cMapIndex == i) {
 								SendNotifyMsg(0, x, DEF_NOTIFY_SPAWNEVENT, pX, pY, iNpcID, 0, 0, 0);
 							}
 						break;
@@ -50603,8 +50604,10 @@ void CGame::Command_RedBall(int iClientH, char *pData, DWORD dwMsgSize) {
 			}
 		}
 
+		const auto mapIndex = m_pClientList[iClientH]->m_cMapIndex;
 		for (x = 1; x < DEF_MAXCLIENTS; x++)
-			if ((m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true)) {
+			if ((m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true) &&
+					  m_pClientList[x]->m_cMapIndex == mapIndex) {
 				SendNotifyMsg(0, x, DEF_NOTIFY_SPAWNEVENT, tX, tY, iNpcID, 0, 0, 0);
 			}
 		ItemDepleteHandler(iClientH, iSoxH, true, true);
@@ -50812,8 +50815,10 @@ void CGame::Command_BlueBall(int iClientH, char *pData, DWORD dwMsgSize) {
 		}
 	}
 
+	const auto mapIndex = m_pClientList[iClientH]->m_cMapIndex;
 	for (x = 1; x < DEF_MAXCLIENTS; x++)
-		if ((m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true)) {
+		if ((m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true) &&
+					  m_pClientList[x]->m_cMapIndex == mapIndex) {
 			SendNotifyMsg(0, x, DEF_NOTIFY_SPAWNEVENT, pX, pY, iNpcID, 0, 0, 0);
 		}
 	ItemDepleteHandler(iClientH, iSoxH, true, true);
