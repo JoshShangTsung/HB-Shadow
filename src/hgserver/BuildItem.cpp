@@ -2,12 +2,12 @@
 
 CBuildItem::CBuildItem() {
 	ZeroMemory(m_cName, sizeof (m_cName));
-	m_sItemID = -1;
+	m_sItemID = ItemId::none;
 
 	m_iSkillLimit = 0;
 
 	for (int i = 0; i < 6; i++) {
-		m_iMaterialItemID[i] = 0;
+		m_iMaterialItemID[i] = ItemId::none;
 		m_iMaterialItemCount[i] = 0;
 		m_iMaterialItemValue[i] = 0;
 		m_iIndex[i] = -1;

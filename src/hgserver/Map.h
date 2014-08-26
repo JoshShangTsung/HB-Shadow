@@ -57,7 +57,7 @@ public:
 	void ClearTempSectorInfo();
 	void ClearSectorInfo();
 	int iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI);
-	int iCheckItem(short sX, short sY);
+	ItemId iCheckItem(short sX, short sY);
 	void SetTempMoveAllowedFlag(int dX, int dY, bool bFlag);
 	int iAnalyze(char cType, int *pX, int *pY, int * pV1, int *pV2, int * pV3);
 	bool bGetIsWater(short dX, short dY);

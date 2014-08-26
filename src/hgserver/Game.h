@@ -191,7 +191,7 @@ class CGame {
 public:
 
 	int iUpgradeHeroCapeRequirements(int iClientH, int iItemIndex);
-	int HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide);
+	ItemId HeroItemChecker(ItemId iItemID, short sEnemyKill, char cContribution, char cSide);
 	void AdminOrder_GetFightzoneTicket(int iClientH);
 
 	void GetAngelHandler(int iClientH, char * pData, DWORD dwMsgSize);
@@ -341,7 +341,7 @@ public:
 	void SetIllusionFlag(short sOwnerH, char cOwnerType, bool bStatus);
 
 	void RequestChangePlayMode(int iClientH);
-	void GetHeroMantleHandler(int iClientH, int iItemID, char * pString);
+	void GetHeroMantleHandler(int iClientH, ItemId iItemID, char * pString);
 	void AdminOrder_Weather(int iClientH, char * pData, DWORD dwMsgSize);
 	void AdminOrder_SendMSG(int iClientH, char *pData, DWORD dwMsgSize);
 	void SendMsg(short sOwnerH, char cOwnerType, bool bStatus, long lPass);
@@ -395,7 +395,7 @@ public:
 	void AgingMapSectorInfo();
 	void UpdateMapSectorInfo();
 	//bool bGetItemNameWhenDeleteNpc(char * pItemName, short sNpcType);
-	bool bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType);
+	bool bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType);
 	int iGetItemWeight(class CItem * pItem, int iCount);
 	void CancelQuestHandler(int iClientH);
 	void ActivateSpecialAbilityHandler(int iClientH);
@@ -725,7 +725,7 @@ public:
 	// MultiDrops
 	bool bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY,
 			  int iItemSpreadType, int iSpreadRange,
-			  int *iItemIDs, POINT *BasePos, int *iNumItem);
+			  ItemId *iItemIDs, POINT *BasePos, int *iNumItem);
 
 	// Majestic Code By Diuuude
 	int m_iMajesticPointsPerLevel;
@@ -1066,7 +1066,7 @@ public:
 	void RemoveCrusadeRecallTime(void);
 	bool _bCrusadeLog(int iAction, int iClientH, int iData, char * cName);
 	int iGetPlayerABSStatus(int iClientH);
-	bool _bInitItemAttr(class CItem * pItem, int iItemID);
+	bool _bInitItemAttr(class CItem * pItem, ItemId iItemID);
 	void ReqCreateSlateHandler(int iClientH, char* pData);
 	void SetSlateFlag(int iClientH, short sType, bool bFlag);
 	void CheckForceRecallTime(int iClientH);

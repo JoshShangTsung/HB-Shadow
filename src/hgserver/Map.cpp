@@ -415,15 +415,15 @@ class CItem * CMap::pGetItem(short sX, short sY, short * pRemainItemSprite, shor
 	return pItem;
 }
 
-int CMap::iCheckItem(short sX, short sY) {
+ItemId CMap::iCheckItem(short sX, short sY) {
 	class CTile * pTile;
 	class CItem * pItem;
 
-	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return 0;
+	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return ItemId::none;
 
 	pTile = (class CTile *)(m_pTile + sX + sY * m_sSizeY);
 	pItem = pTile->m_pItem[0];
-	if (pTile->m_cTotalItem == 0) return 0;
+	if (pTile->m_cTotalItem == 0) return ItemId::none;
 
 	return pItem->m_sIDnum;
 }

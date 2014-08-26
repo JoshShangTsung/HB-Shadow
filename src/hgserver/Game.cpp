@@ -3,7 +3,7 @@
 class CDebugWindow *DbgWnd;
 extern void PutLogList(char * cMsg);
 extern char G_cTxt[512];
-extern char G_cData50000[50000]; 
+extern char G_cData50000[50000];
 extern void PutLogFileList(char * cStr);
 extern void PutAdminLogFileList(char * cStr);
 extern void PutItemLogFileList(char * cStr);
@@ -116,10 +116,6 @@ int _tmp_iMoveLocY[9][37] = {
 char _tmp_cTmpDirX[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
 char _tmp_cTmpDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 
-
-
-
-
 extern bool G_bIsThread;
 extern void ThreadProc(void *ch);
 
@@ -202,7 +198,7 @@ CGame::CGame(HWND hWnd) {
 	for (i = 0; i < DEF_MAXDUPITEMID; i++)
 		m_pDupItemIDList[i] = 0;
 
-	
+
 	for (i = 0; i < DEF_MAXCLIENTS; i++) {
 		m_stPartyInfo[i].iTotalMembers = 0;
 		for (x = 0; x < DEF_MAXPARTYMEMBERS; x++)
@@ -258,7 +254,7 @@ CGame::CGame(HWND hWnd) {
 	//DbgWnd = new CDebugWindow();
 	//DbgWnd->Startup();
 	//DbgWnd->AddEventMsg("CGame Startup");
-	
+
 	m_bReceivedItemList = false;
 
 }
@@ -280,14 +276,14 @@ bool CGame::bAccept(class XSocket * pXSock) {
 			  (m_bIsGameStarted == false))
 		goto CLOSE_ANYWAY;
 
-	
+
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if (m_pClientList[i] == 0) {
 
 			m_pClientList[i] = new class CClient(m_hWnd);
-			
+
 			bAddClientShortCut(i);
-			
+
 			m_pClientList[i]->m_dwSPTime = m_pClientList[i]->m_dwMPTime =
 					  m_pClientList[i]->m_dwHPTime = m_pClientList[i]->m_dwAutoSaveTime =
 					  m_pClientList[i]->m_dwTime = m_pClientList[i]->m_dwHungerTime = m_pClientList[i]->m_dwExpStockTime =
@@ -295,7 +291,7 @@ bool CGame::bAccept(class XSocket * pXSock) {
 
 			pXSock->bAccept(m_pClientList[i]->m_pXSock, WM_ONCLIENTSOCKETEVENT + i);
 
-			
+
 			ZeroMemory(m_pClientList[i]->m_cIPaddress, sizeof (m_pClientList[i]->m_cIPaddress));
 			m_pClientList[i]->m_pXSock->iGetPeerAddress(m_pClientList[i]->m_cIPaddress);
 
@@ -308,22 +304,22 @@ bool CGame::bAccept(class XSocket * pXSock) {
 			m_iTotalClients++;
 
 			if (m_iTotalClients > m_iMaxClients) {
-				
+
 				m_iMaxClients = m_iTotalClients;
 				//GetLocalTime(&m_MaxUserSysTime);
 				//wsprintf(cTxt, "Maximum Players: %d", m_iMaxClients);
 				//PutLogFileList(cTxt);
 			}
 
-			
-			
+
+
 			return true;
 		}
 
 CLOSE_ANYWAY:
 	;
 
-	
+
 	pTmpSock = new class XSocket(m_hWnd, DEF_SERVERSOCKETBLOCKLIMIT);
 	pXSock->bAccept(pTmpSock, 0);
 	delete pTmpSock;
@@ -460,7 +456,7 @@ bool CGame::bInit() {
 		m_stHeldenianSchedule[i].EndiMinute = -1;
 	}
 
-	
+
 	m_iNpcConstructionPoint[1] = 100; // MS
 	m_iNpcConstructionPoint[2] = 100; // MS
 	m_iNpcConstructionPoint[3] = 100; // MS
@@ -3536,7 +3532,7 @@ void CGame::CheckClientResponseTime() {
 					// After the time up, add magic back
 					sItemIndex = m_pClientList[i]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
 					if (sItemIndex != -1) {
-						if ((m_pClientList[i]->m_pItemList[sItemIndex]->m_sIDnum == 865) || (m_pClientList[i]->m_pItemList[sItemIndex]->m_sIDnum == 866)) {
+						if ((m_pClientList[i]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::resur_wand_ms20) || (m_pClientList[i]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::resur_wand_ms10)) {
 							if ((m_pClientList[i]->m_iInt + m_pClientList[i]->m_iAngelicInt) > 99 && (m_pClientList[i]->m_iMag + m_pClientList[i]->m_iAngelicMag) > 99) {
 								m_pClientList[i]->m_cMagicMastery[94] = true;
 								SendNotifyMsg(0, i, DEF_NOTIFY_STATECHANGE_SUCCESS, 0, 0, 0, 0);
@@ -5556,7 +5552,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 								return false;
 							}
 							m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = atoi(token);
-							if(m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x < -10) m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = -10;
+							if (m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x < -10) m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = -10;
 							cReadModeB = 14;
 							break;
 						case 14:
@@ -5568,7 +5564,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 								return false;
 							}
 							m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = atoi(token);
-							if(m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y < -10) m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = -10;
+							if (m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y < -10) m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = -10;
 							cReadModeB = 15;
 							break;
 						case 15:
@@ -5580,23 +5576,23 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 								return false;
 							}
 							if ((atoi(token)) && (m_pClientList[iClientH]->m_pItemList[iItemIndex] != 0)) {
-								
+
 								if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType == DEF_ITEMTYPE_EQUIP)
 									m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = true;
 								else m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = false;
 							} else m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = false;
 
 							if ((m_pClientList[iClientH] != 0) && (m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] == true)) {
-								
+
 								if (bEquipItemHandler(iClientH, iItemIndex) == false) // false
-									m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = false; 
+									m_pClientList[iClientH]->m_bIsItemEquipped[iItemIndex] = false;
 							}
-							
+
 							if (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType == DEF_ITET_UNIQUE_OWNER) {
 								if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 != m_pClientList[iClientH]->m_sCharIDnum1) ||
 										  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 != m_pClientList[iClientH]->m_sCharIDnum2) ||
 										  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 != m_pClientList[iClientH]->m_sCharIDnum3)) {
-									
+
 									wsprintf(cTxt, "(!) Â´Ã™Â¸Â¥ Â»Ã§Â¶Ã·Ã€Ã‡ Â¾Ã†Ã€ÃŒÃ…Ã› Â¼Ã’ï¿½?Ã¶: Player(%s) Item(%s) %d %d %d - %d %d %d", m_pClientList[iClientH]->m_cCharName, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
 											  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1,
 											  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2,
@@ -5629,7 +5625,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 							// v1.433
 							if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan == 0) &&
 									  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP)) {
-								
+
 								wsprintf(G_cTxt, "(!) Ã„Â³Â¸Â¯Ã…ï¿½?(%s) Â¼Ã¶Â¸Ã­ 0Ã‚Â¥Â¸Â® ÃˆÃ±Â»Ã½Â¼Â® Â¼Ã’ï¿½?Ã¶!", m_pClientList[iClientH]->m_cCharName);
 								PutLogFileList(G_cTxt);
 								// Â¼Ã¶Â¸Ã­ 1Â·ÃŽ ÃˆÂ¯Â¿Ã¸
@@ -6156,7 +6152,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, DWORD dwS
 							// v1.433
 							if ((m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_wCurLifeSpan == 0) &&
 									  (m_pClientList[iClientH]->m_pItemInBankList[iItemInBankIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ALTERITEMDROP)) {
-								
+
 								wsprintf(G_cTxt, "(!) Ã„Â³Â¸Â¯Ã…ï¿½?(%s) Â¼Ã¶Â¸Ã­ 0Ã‚Â¥Â¸Â® ÃˆÃ±Â»Ã½Â¼Â® Â¼Ã’ï¿½?Ã¶!", m_pClientList[iClientH]->m_cCharName);
 								PutLogFileList(G_cTxt);
 								// Â¼Ã¶Â¸Ã­ 1Â·ÃŽ ÃˆÂ¯Â¿Ã¸
@@ -7857,7 +7853,7 @@ bool CGame::_bDecodeItemConfigFileContents(char * pData, DWORD dwMsgSize) {
 								return false;
 							}
 							m_pItemConfigList[iItemConfigListIndex] = new class CItem;
-							m_pItemConfigList[iItemConfigListIndex]->m_sIDnum = iItemConfigListIndex;
+							m_pItemConfigList[iItemConfigListIndex]->m_sIDnum = (ItemId) iItemConfigListIndex;
 							cReadModeB = 2;
 							break;
 						case 2:
@@ -9798,7 +9794,7 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 			sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
 			if (sItemIndex != -1) {
 				if (m_pClientList[iClientH]->m_pItemList[sItemIndex] == 0) return 0;
-				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 845) {
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::storm_bringer) {
 					if ((sAbsX > 4) || (sAbsY > 4)) wType = 0;
 				} else {
 					if ((sAbsX > 1) || (sAbsY > 1)) wType = 0;
@@ -9810,7 +9806,7 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 			sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[ DEF_EQUIPPOS_TWOHAND ];
 			if (sItemIndex != -1) {
 				if (m_pClientList[iClientH]->m_pItemList[sItemIndex] == 0) return 0;
-				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 845) {
+				if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::storm_bringer) {
 					cDir = m_Misc.cGetNextMoveDir(sX, sY, dX, dY);
 					if ((m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bCheckFlySpaceAvailable(sX, sY, cDir, sOwner)) != false) {
 						wType = 0;
@@ -9841,7 +9837,7 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 			if ((m_pClientList[iClientH]->m_pIsProcessingAllowed == false) && (m_pClientList[iClientH]->m_bIsInsideOwnTown == false)) {
 				sItemIndex = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
 				if (sItemIndex != -1 && m_pClientList[iClientH]->m_pItemList[sItemIndex] != 0) {
-					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 874) { // Directional bow
+					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::direction_bow) { // Directional bow
 						iErr = 0;
 						for (i = 1; i < 2; i++) {
 							m_Misc.GetPoint2(sX, sY, dX, dY, &tX, &tY, &iErr, i);
@@ -9888,7 +9884,7 @@ int CGame::iClientMotion_Attack_Handler(int iClientH, short sX, short sY, short 
 								}
 							}
 						}
-					} else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 873) { // Firebow
+					} else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::fire_bow) { // Firebow
 						if ((strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "aresden") == 0) ||
 								  (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "elvine") == 0) ||
 								  (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "arefarm") == 0) ||
@@ -11875,7 +11871,7 @@ void CGame::ClientCommonHandler(int iClientH, char * pData) {
 
 		case DEF_COMMONTYPE_REQ_GETHEROMANTLE:
 			//DbgWnd->AddEventMsg("RECV -> DEF_MSGFROM_CLIENT -> MSGID_COMMAND_COMMON -> DEF_COMMONTYPE_REQ_GETHEROMANTLE");
-			GetHeroMantleHandler(iClientH, iV1, pString);
+			GetHeroMantleHandler(iClientH, (ItemId) iV1, pString);
 			break;
 
 		case DEF_COMMONTYPE_REQ_GETTRADEEK: // By Luqah
@@ -12510,7 +12506,7 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify) {
 
 	if (cEquipPos == DEF_EQUIPPOS_TWOHAND) {
 		// Stormbringer
-		if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 845) {
+		if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::storm_bringer) {
 			if ((m_pClientList[iClientH]->m_iInt + m_pClientList[iClientH]->m_iInt) < 65) {
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[iClientH]->m_iSpecialAbilityEquipPos, sItemIndex, 0, 0);
 				ReleaseItemHandler(iClientH, sItemIndex, true);
@@ -12521,7 +12517,7 @@ bool CGame::bEquipItemHandler(int iClientH, short sItemIndex, bool bNotify) {
 
 	if (cEquipPos == DEF_EQUIPPOS_RHAND) {
 		// Resurrection wand(MS.10) or Resurrection wand(MS.20)
-		if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 865) || (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 866)) {
+		if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::resur_wand_ms20) || (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::resur_wand_ms10)) {
 			if ((m_pClientList[iClientH]->m_iInt + m_pClientList[iClientH]->m_iAngelicInt) > 99 && (m_pClientList[iClientH]->m_iMag + m_pClientList[iClientH]->m_iAngelicMag) > 99 && m_pClientList[iClientH]->m_iSpecialAbilityTime < 1) {
 				m_pClientList[iClientH]->m_cMagicMastery[94] = true;
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_STATECHANGE_SUCCESS, 0, 0, 0, 0);
@@ -13753,7 +13749,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 				// v2.03 Å©ï¿½ç¼¼ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½Î°ï¿½ìµµ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½�?´ï¿½.
 
 				// v2.17 2002-7-31 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Ñ´ï¿½.
-				if (pItem->m_sIDnum == 88) {
+				if (pItem->m_sIDnum == ItemId::guild_admission_ticket) {
 
 					// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ iClientH ï¿½ï¿½ sOwnerHï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½
 					// sOwnerHï¿½ï¿½ ï¿½ï¿½å¸¶ï¿½ï¿½ï¿½�?¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´�?¶ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
@@ -13774,7 +13770,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 				}
 
 				// v2.17 2002-7-31 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Ñ´ï¿½.
-				if ((m_bIsCrusadeMode == false) && (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 89)) {
+				if ((m_bIsCrusadeMode == false) && (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::guild_secession_ticket)) {
 
 					// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ iClientH ï¿½ï¿½ sOwnerHï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å»ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½
 					// sOwnerHï¿½ï¿½ ï¿½ï¿½å¸¶ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ iClientHï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ iClientHï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½
@@ -13940,7 +13936,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					}
 				} else if (memcmp(m_pNpcList[sOwnerH]->m_cNpcName, "Kennedy", 7) == 0) {
 					// Â±Ã¦ÂµÃ¥ Â»Ã§Â¹Â«Ã€Ã¥Â¿Â¡Â°Ã�? Â±Ã¦ÂµÃ¥ Ã…Â»Ã…Ã° Â½Ã…ÃƒÂ»Â¼Â­Â¸Â¦ Ã?Ã–Â¾ÃºÂ´Ã™Â¸Ã© Â±Ã¦ÂµÃ¥Â¸Â¦ Ã…Â»Ã…Ã°Ã‡Ã‘Â´Ã™.
-					if ((m_bIsCrusadeMode == false) && (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 89)) {
+					if ((m_bIsCrusadeMode == false) && (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::guild_secession_ticket)) {
 
 						if ((m_pClientList[iClientH]->m_iGuildRank != 0) && (m_pClientList[iClientH]->m_iGuildRank != -1)) {
 							// Ã…Â»Ã…Ã° Â½Ã…ÃƒÂ»Ã€ÃšÂ¿Â¡Â°Ã�? Ã…Â»Ã…Ã° Â¼ÂºÂ°Ã¸Ã‡ÃŸÃ€Â½Ã€Â» Â¾Ã‹Â¸Â®Â´Ã‚ Â¸ÃžÂ½ÃƒÃ?Ã¶Â¸Â¦ ÂºÂ¸Â³Â»Ã?Ã˜Â´Ã™.
@@ -16097,7 +16093,7 @@ void CGame::ReleaseItemHandler(int iClientH, short sItemIndex, bool bNotice) {
 	cEquipPos = m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos;
 	if (cEquipPos == DEF_EQUIPPOS_RHAND) {
 		if (m_pClientList[iClientH]->m_pItemList[sItemIndex] != 0) {
-			if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 865) || (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 866)) {
+			if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::resur_wand_ms20) || (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::resur_wand_ms10)) {
 				m_pClientList[iClientH]->m_cMagicMastery[94] = false;
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_STATECHANGE_SUCCESS, 0, 0, 0, 0);
 			}
@@ -16663,8 +16659,8 @@ bool CGame::_bInitNpcAttr(class CNpc * pNpc, char * pNpcName, short sClass, char
 
 				pNpc->m_iExpDiceMin = m_pNpcConfigList[i]->m_iExpDiceMin;
 				pNpc->m_iExpDiceMax = m_pNpcConfigList[i]->m_iExpDiceMax; //can change exp rate here
-				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin /(rand() % 5 + 3); //gold rate
-				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax /(rand() % 5 + 3); //gold rate
+				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin / (rand() % 5 + 3); //gold rate
+				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax / (rand() % 5 + 3); //gold rate
 				pNpc->m_iExp = (iDice(1, (m_pNpcConfigList[i]->m_iExpDiceMax - m_pNpcConfigList[i]->m_iExpDiceMin)) + m_pNpcConfigList[i]->m_iExpDiceMin) * 500;
 				pNpc->m_iHitDice = m_pNpcConfigList[i]->m_iHitDice;
 				pNpc->m_iDefenseRatio = m_pNpcConfigList[i]->m_iDefenseRatio;
@@ -17283,7 +17279,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 	if (m_pMagicConfigList[sType]->m_sType == 32) { // Invisiblity
 		sEqStatus = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
 		if ((sEqStatus != -1) && (m_pClientList[iClientH]->m_pItemList[sEqStatus] != 0)) {
-			if ((m_pClientList[iClientH]->m_pItemList[sEqStatus]->m_sIDnum == 865) || (m_pClientList[iClientH]->m_pItemList[sEqStatus]->m_sIDnum == 866)) {
+			if ((m_pClientList[iClientH]->m_pItemList[sEqStatus]->m_sIDnum == ItemId::resur_wand_ms20) || (m_pClientList[iClientH]->m_pItemList[sEqStatus]->m_sIDnum == ItemId::resur_wand_ms10)) {
 				bItemEffect = true;
 			}
 		}
@@ -23731,8 +23727,8 @@ bool CGame::bCheckLevelUp(int iClientH) // Sobrepaso de lvl fix.
 		return false;
 	}
 
-	if ((m_pClientList[iClientH]->m_iLevel >= DEF_LIMITHUNTERLEVEL) && (m_pClientList[iClientH]->m_bIsPlayerCivil ) )  {
-			ForceChangePlayMode(iClientH,true) ;
+	if ((m_pClientList[iClientH]->m_iLevel >= DEF_LIMITHUNTERLEVEL) && (m_pClientList[iClientH]->m_bIsPlayerCivil)) {
+		ForceChangePlayMode(iClientH, true);
 	}
 
 	if (m_pClientList[iClientH]->m_iExp < m_pClientList[iClientH]->m_iNextLevelExp) return false;
@@ -25131,9 +25127,9 @@ PID_DROP:
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sTouchEffectValue3 == m_pClientList[iClientH]->m_sCharIDnum3)) {
 			// Â°Â³Ã€ÃŽÂ¿Â¡Â°Ã�? Â¼Ã“Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â¸Â·ÃŽ Â¶Â³Â¾Ã®Ã?Ã¶Ã?Ã¶ Â¾ÃŠÂ´Ã‚Â´Ã™. Â¸Ã?Ã…Ã¤Â°Â°Ã€Âº Â°Â³Ã€ÃŽÂ¿Ã« Â¾Ã†Ã€ÃŒÃ…Ã›
 		} else if (
-				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum >= 400) &&
-				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum != 402) &&
-				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum <= 428)) {
+				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum >= ItemId::aresden_hero_cape) &&
+				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum != ItemId::cape) &&
+				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sIDnum <= ItemId::elvine_hero_cape_plus_1)) {
 		} else if (((m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY) ||
 				  (m_pClientList[iClientH]->m_pItemList[cItemIndex]->m_sItemEffectType == DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY)) &&
 				  (bIsSAattacked == false)) {
@@ -27011,7 +27007,7 @@ void CGame::MobGenerator() {
 								  && (iResult != 51) && (iResult != 15) && (iResult != 16) && (iResult != 21)) iTotalMob = 12;
 						for (x = 1; x < DEF_MAXCLIENTS; x++)
 							if ((iNpcID != -1) && (m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true) &&
-								m_pClientList[x]->m_cMapIndex == i) {
+									  m_pClientList[x]->m_cMapIndex == i) {
 								SendNotifyMsg(0, x, DEF_NOTIFY_SPAWNEVENT, pX, pY, iNpcID, 0, 0, 0);
 							}
 						break;
@@ -27436,7 +27432,10 @@ CNW_GET_VALIDLOC_SUCCESS:
 }
 
 void CGame::DeleteNpc(int iNpcH) {
-	int i, iNamingValue, iNumItem, iItemID, iItemIDs[MAX_NPCITEMDROP], iSlateID;
+	int i, iNamingValue, iNumItem;
+	ItemId iSlateID;
+	ItemId iItemID = ItemId::none; // No current item
+	ItemId iItemIDs[MAX_NPCITEMDROP];
 	char cTmp[21], cItemName[21];
 	class CItem * pItem, * pItem2;
 	DWORD dwCount, dwTime;
@@ -27449,7 +27448,6 @@ void CGame::DeleteNpc(int iNpcH) {
 
 	//Init number of items to 1 unless its a multidrop;
 	iNumItem = 0;
-	iItemID = 0; // No current item
 
 	//Ã¬Â£Â½Ã¬â€“Â´Ã¬Å¾Ë†Ã«Â?Ëœ Ã¬Å“â€žÃ¬Â¹ËœÃ¬â€�?Â?Ã¬â€žÅ“ Ã¬â€šÂ­Ã¬Â Å“ 
 	SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
@@ -27501,13 +27499,13 @@ void CGame::DeleteNpc(int iNpcH) {
 		switch (m_pNpcList[iNpcH]->m_sType) {
 
 			case 10: // Slime
-				if (iDice(1, 25) == 1) iItemID = 220;
+				if (iDice(1, 25) == 1) iItemID = ItemId::slime_jelly;
 				break; // SlimeJelly 
 				break;
 
 			case 11: // Skeleton
 				switch (iDice(1, 2)) {
-					case 1:if (iDice(1, 20) == 1) iItemID = 219;
+					case 1:if (iDice(1, 20) == 1) iItemID = ItemId::skeleton_bones;
 						break; // SkeletonBones
 					case 2: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27517,7 +27515,7 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 12: // Stone-Golem
 				switch (iDice(1, 2)) {
-					case 1: if (iDice(1, 30) == 1) iItemID = 221;
+					case 1: if (iDice(1, 30) == 1) iItemID = ItemId::stone_golem_piece;
 						break; // StoneGolemPiece
 					case 2: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27527,15 +27525,15 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 13: // Cyclops
 				switch (iDice(1, 6)) {
-					case 1: if (iDice(1, 36) == 1) iItemID = 194;
+					case 1: if (iDice(1, 36) == 1) iItemID = ItemId::cyclops_eye;
 						break; // CyclopsEye
-					case 2: if (iDice(1, 40) == 1) iItemID = 195;
+					case 2: if (iDice(1, 40) == 1) iItemID = ItemId::cyclops_hand_edge;
 						break; // CyclopsHandEdge
-					case 3: if (iDice(1, 30) == 1) iItemID = 196;
+					case 3: if (iDice(1, 30) == 1) iItemID = ItemId::cyclops_heart;
 						break; // CyclopsHeart
-					case 4: if (iDice(1, 22) == 1) iItemID = 197;
+					case 4: if (iDice(1, 22) == 1) iItemID = ItemId::cyclops_meat;
 						break; // CyclopsMeat
-					case 5: if (iDice(1, 40) == 1) iItemID = 198;
+					case 5: if (iDice(1, 40) == 1) iItemID = ItemId::cyclops_leather;
 						break; // CyclopsLeather
 					case 6: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27545,11 +27543,11 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 14: // Orc, Orc-Mage
 				switch (iDice(1, 4)) {
-					case 1: if (iDice(1, 11) == 1) iItemID = 206;
+					case 1: if (iDice(1, 11) == 1) iItemID = ItemId::orc_meat;
 						break; // OrcMeat
-					case 2: if (iDice(1, 20) == 1) iItemID = 207;
+					case 2: if (iDice(1, 20) == 1) iItemID = ItemId::orc_leather;
 						break; // OrcLeather
-					case 3: if (iDice(1, 21) == 1) iItemID = 208;
+					case 3: if (iDice(1, 21) == 1) iItemID = ItemId::orc_teeth;
 						break; // OrcTeeth
 					case 4: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27559,9 +27557,9 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 16: //Giant-Ant
 				switch (iDice(1, 3)) {
-					case 1: if (iDice(1, 9) == 1) iItemID = 192;
+					case 1: if (iDice(1, 9) == 1) iItemID = ItemId::ant_leg;
 						break; // AntLeg
-					case 2: if (iDice(1, 10) == 1) iItemID = 193;
+					case 2: if (iDice(1, 10) == 1) iItemID = ItemId::ant_feeler;
 						break; // AntFeeler
 					case 3: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27571,13 +27569,13 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 17: //Scorpion
 				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 50) == 1) iItemID = 215;
+					case 1: if (iDice(1, 50) == 1) iItemID = ItemId::scorpion_pincers;
 						break; // ScorpionPincers
-					case 2: if (iDice(1, 20) == 1) iItemID = 216;
+					case 2: if (iDice(1, 20) == 1) iItemID = ItemId::scorpion_meat;
 						break; // ScorpionMeat
-					case 3: if (iDice(1, 50) == 1) iItemID = 217;
+					case 3: if (iDice(1, 50) == 1) iItemID = ItemId::scorpion_sting;
 						break; // ScorpionSting
-					case 4: if (iDice(1, 40) == 1) iItemID = 218;
+					case 4: if (iDice(1, 40) == 1) iItemID = ItemId::scorpion_skin;
 						break; // ScorpionSkin
 					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27592,13 +27590,13 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 22: //Amphis
 				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 15) == 1) iItemID = 188;
+					case 1: if (iDice(1, 15) == 1) iItemID = ItemId::snake_meat;
 						break; // SnakeMeat
-					case 2: if (iDice(1, 16) == 1) iItemID = 189;
+					case 2: if (iDice(1, 16) == 1) iItemID = ItemId::snake_skin;
 						break; // SnakeSkin
-					case 3: if (iDice(1, 16) == 1) iItemID = 190;
+					case 3: if (iDice(1, 16) == 1) iItemID = ItemId::snake_teeth;
 						break; // SnakeTeeth
-					case 4: if (iDice(1, 17) == 1) iItemID = 191;
+					case 4: if (iDice(1, 17) == 1) iItemID = ItemId::snake_tongue;
 						break; // SnakeTongue
 					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27608,7 +27606,7 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 23: //Clay-Golem
 				switch (iDice(1, 2)) {
-					case 1: if (iDice(1, 30) == 1) iItemID = 205;
+					case 1: if (iDice(1, 30) == 1) iItemID = ItemId::lumpof_clay;
 						break; // LumpofClay
 					case 2: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27619,17 +27617,17 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 27: //Hellbound
 				switch (iDice(1, 7)) {
-					case 1: if (iDice(1, 40) == 1) iItemID = 199;
+					case 1: if (iDice(1, 40) == 1) iItemID = ItemId::helbound_heart;
 						break; // HelboundHeart
-					case 2: if (iDice(1, 38) == 1) iItemID = 200;
+					case 2: if (iDice(1, 38) == 1) iItemID = ItemId::helbound_leather;
 						break; // HelboundLeather
-					case 3: if (iDice(1, 38) == 1) iItemID = 201;
+					case 3: if (iDice(1, 38) == 1) iItemID = ItemId::helbound_tail;
 						break; // HelboundTail
-					case 4: if (iDice(1, 36) == 1) iItemID = 202;
+					case 4: if (iDice(1, 36) == 1) iItemID = ItemId::helbound_teeth;
 						break; // HelboundTeeth
-					case 5: if (iDice(1, 36) == 1) iItemID = 203;
+					case 5: if (iDice(1, 36) == 1) iItemID = ItemId::helbound_claw;
 						break; // HelboundClaw
-					case 6: if (iDice(1, 50) == 1) iItemID = 204;
+					case 6: if (iDice(1, 50) == 1) iItemID = ItemId::helbound_tongue;
 						break; // HelboundTongue
 					case 7: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27639,13 +27637,13 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 28: //Troll
 				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 35) == 1) iItemID = 222;
+					case 1: if (iDice(1, 35) == 1) iItemID = ItemId::troll_heart;
 						break; // TrollHeart
-					case 2: if (iDice(1, 23) == 1) iItemID = 223;
+					case 2: if (iDice(1, 23) == 1) iItemID = ItemId::troll_meat;
 						break; // TrollMeat
-					case 3: if (iDice(1, 25) == 1) iItemID = 224;
+					case 3: if (iDice(1, 25) == 1) iItemID = ItemId::troll_leather;
 						break; // TrollLeather
-					case 4: if (iDice(1, 27) == 1) iItemID = 225;
+					case 4: if (iDice(1, 27) == 1) iItemID = ItemId::troll_claw;
 						break; // TrollClaw
 					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27655,17 +27653,17 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 29: //Orge
 				switch (iDice(1, 7)) {
-					case 1: if (iDice(1, 20) == 1) iItemID = 209;
+					case 1: if (iDice(1, 20) == 1) iItemID = ItemId::ogre_hair;
 						break; // OgreHair
-					case 2: if (iDice(1, 22) == 1) iItemID = 210;
+					case 2: if (iDice(1, 22) == 1) iItemID = ItemId::ogre_heart;
 						break; // OgreHeart
-					case 3: if (iDice(1, 25) == 1) iItemID = 211;
+					case 3: if (iDice(1, 25) == 1) iItemID = ItemId::ogre_meat;
 						break; // OgreMeat
-					case 4: if (iDice(1, 25) == 1) iItemID = 212;
+					case 4: if (iDice(1, 25) == 1) iItemID = ItemId::ogre_leather;
 						break; // OgreLeather
-					case 5: if (iDice(1, 28) == 1) iItemID = 213;
+					case 5: if (iDice(1, 28) == 1) iItemID = ItemId::ogre_teeth;
 						break; // OgreTeeth
-					case 6: if (iDice(1, 28) == 1) iItemID = 214;
+					case 6: if (iDice(1, 28) == 1) iItemID = ItemId::ogre_claw;
 						break; // OgreClaw
 					case 7: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27680,13 +27678,13 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 31: //Demon
 				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 400) == 123) iItemID = 541;
+					case 1: if (iDice(1, 400) == 123) iItemID = ItemId::demon_heart;
 						break; // DemonHeart
-					case 2: if (iDice(1, 1000) == 123) iItemID = 542;
+					case 2: if (iDice(1, 1000) == 123) iItemID = ItemId::demon_meat;
 						break; // DemonMeat
-					case 3: if (iDice(1, 200) == 123) iItemID = 543;
+					case 3: if (iDice(1, 200) == 123) iItemID = ItemId::demon_leather;
 						break; // DemonLeather
-					case 4: if (iDice(1, 300) == 123) iItemID = 540;
+					case 4: if (iDice(1, 300) == 123) iItemID = ItemId::demon_eye;
 						break; // DemonEye
 					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27696,13 +27694,13 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 32: //Unicorn
 				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 3000) == 396) iItemID = 544;
+					case 1: if (iDice(1, 3000) == 396) iItemID = ItemId::unicorn_heart;
 						break; // UnicornHeart
-					case 2: if (iDice(1, 500) == 3) iItemID = 545;
+					case 2: if (iDice(1, 500) == 3) iItemID = ItemId::unicorn_horn;
 						break; // UnicornHorn
-					case 3: if (iDice(1, 100) == 3) iItemID = 546;
+					case 3: if (iDice(1, 100) == 3) iItemID = ItemId::unicorn_meat;
 						break; // UnicornMeat
-					case 4: if (iDice(1, 200) == 3) iItemID = 547;
+					case 4: if (iDice(1, 200) == 3) iItemID = ItemId::unicorn_leather;
 						break; // UnicornLeather
 					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27712,19 +27710,19 @@ void CGame::DeleteNpc(int iNpcH) {
 
 			case 33: //WereWolf
 				switch (iDice(1, 8)) {
-					case 1: if (iDice(1, 30) == 3) iItemID = 551;
+					case 1: if (iDice(1, 30) == 3) iItemID = ItemId::werewolf_tail;
 						break; // WerewolfTail
-					case 2: if (iDice(1, 28) == 3) iItemID = 548;
+					case 2: if (iDice(1, 28) == 3) iItemID = ItemId::werewolf_heart;
 						break; // WerewolfHeart
-					case 3: if (iDice(1, 25) == 3) iItemID = 550;
+					case 3: if (iDice(1, 25) == 3) iItemID = ItemId::werewolf_meat;
 						break; // WerewolfMeat
-					case 4: if (iDice(1, 35) == 3) iItemID = 553;
+					case 4: if (iDice(1, 35) == 3) iItemID = ItemId::werewolf_leather;
 						break; // WerewolfLeather
-					case 5: if (iDice(1, 28) == 3) iItemID = 552;
+					case 5: if (iDice(1, 28) == 3) iItemID = ItemId::werewolf_teeth;
 						break; // WerewolfTeeth
-					case 6: if (iDice(1, 28) == 3) iItemID = 554;
+					case 6: if (iDice(1, 28) == 3) iItemID = ItemId::werewolf_claw;
 						break; // WerewolfClaw
-					case 7: if (iDice(1, 38) == 3) iItemID = 549;
+					case 7: if (iDice(1, 38) == 3) iItemID = ItemId::werewolf_nail;
 						break; // WerewolfNail
 					case 8: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 						break;
@@ -27807,7 +27805,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					delete pItem;
 					pItem = 0;
 				} else {
-					if (iItemIDs[j] == 90) // Gold
+					if (iItemIDs[j] == ItemId::gold) // Gold
 						pItem->m_dwCount = iDice(10, 15000);
 					else
 						pItem->m_dwCount = dwCount;
@@ -27844,13 +27842,13 @@ void CGame::DeleteNpc(int iNpcH) {
 		if (iDice(1, 100000) < 10) {
 			pItem2 = new class CItem;
 			switch (iDice(1, 4)) {
-				case 1: iSlateID = 868;
+				case 1: iSlateID = ItemId::ancient_tablet_lu;
 					break;
-				case 2: iSlateID = 869;
+				case 2: iSlateID = ItemId::ancient_tablet_ld;
 					break;
-				case 3: iSlateID = 870;
+				case 3: iSlateID = ItemId::ancient_tablet_ru;
 					break;
-				case 4: iSlateID = 871;
+				case 4: iSlateID = ItemId::ancient_tablet_rd;
 					break;
 			}
 			if (_bInitItemAttr(pItem2, iSlateID) == false) {
@@ -28047,12 +28045,12 @@ void CGame::ItemDepleteHandler(int iClientH, short sItemIndex, bool bIsUseItemRe
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_DEPLETE) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_USE_DEPLETE_DEST) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == DEF_ITEMTYPE_MATERIAL) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 380) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 381) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 382)) {
+			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::ice_storm_manual) ||
+			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::mass_fire_strike_manual) ||
+			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::bloody_shock_w_manual)) {
 		_bItemLog(DEF_ITEMLOG_DEPLETE, iClientH, -1, m_pClientList[iClientH]->m_pItemList[sItemIndex], false);
-	} else if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 247) ||
-			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 248)) {
+	} else if ((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::aresden_flag) ||
+			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::elvine_flag)) {
 		_bItemLog(DEF_ITEMLOG_DEPLETE, iClientH, -1, m_pClientList[iClientH]->m_pItemList[sItemIndex], false);
 	}
 	ReleaseItemHandler(iClientH, sItemIndex, true);
@@ -28200,7 +28198,7 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 			case DEF_ITEMEFFECTTYPE_SLATES:
 				if (m_pClientList[iClientH]->m_pItemList[sItemIndex] != 0) {
 					// Full Ancient Slate ??
-					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == 867) {
+					if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::ancient_tablet) {
 						// Slates dont work on Heldenian Map
 						switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2) {
 							case 2: // Bezerk slate
@@ -28690,14 +28688,14 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
 
-					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 861 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 862) {
+					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::berserk_wand_ms20 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::berserk_wand_ms10) {
 						float damageTemp = (float) iDamage;
 						damageTemp *= 1.5; // O el valor con punto flotante que ustedes dispongan...
 
 						iDamage = (int) damageTemp;
 					}
 
-					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 863 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 864) {
+					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_wand_ms20 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_wand_ms10) {
 						if (m_pClientList[sAttackerH]->m_iRating > 0) {
 							iRepDamage = m_pClientList[sAttackerH]->m_iRating / 100;
 							if (iRepDamage < 5) iRepDamage = 5;
@@ -28716,7 +28714,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 				}
 				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness  
+					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::necklace_of_kloness) { // NecklaceOfKloness  
 						if (cTargetType == DEF_OWNERTYPE_PLAYER) {
 							if (m_pClientList[sTargetH] != 0) {
 								iRepDamage = (abs(m_pClientList[sTargetH]->m_iRating) / 20);
@@ -28861,19 +28859,20 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 			if ((iIndex != -1) && (iIndex >= 0) && (iIndex < DEF_MAXITEMS)) {
 
 				switch (m_pClientList[sTargetH]->m_pItemList[iIndex]->m_sIDnum) {
-					case 335:
+					case ItemId::emerald_ring:
 						dTmp1 = (double) iDamage;
 						dTmp2 = dTmp1 * 0.2f;
 						dTmp3 = dTmp1 - dTmp2;
 						iDamage = (int) (dTmp3 + 0.5f);
 						break;
 
-					case 337:
+					case ItemId::ruby_ring:
 						dTmp1 = (double) iDamage;
 						dTmp2 = dTmp1 * 0.1f;
 						dTmp3 = dTmp1 - dTmp2;
 						iDamage = (int) (dTmp3 + 0.5f);
 						break;
+					default: break;
 				}
 				if (iDamage <= 0) iDamage = 0;
 
@@ -29174,10 +29173,10 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 			if ((m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND] == -1) || (m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND] == -1)) {
 				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 861 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 862) {
+					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::berserk_wand_ms20 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::berserk_wand_ms10) {
 						iDamage *= (int) 1.3;
 					}
-					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 863 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 864) {
+					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_wand_ms20 || m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_wand_ms10) {
 						if (m_pClientList[sAttackerH]->m_iRating > 0) {
 							iRepDamage = m_pClientList[sAttackerH]->m_iRating / 100;
 							if (iRepDamage < 5) iRepDamage = 5;
@@ -29196,7 +29195,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 				}
 				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
 				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness
+					if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::necklace_of_kloness) { // NecklaceOfKloness
 						if (cTargetType == DEF_OWNERTYPE_PLAYER) {
 							if (m_pClientList[sTargetH] != 0) {
 								iRepDamage = (abs(m_pClientList[sTargetH]->m_iRating) / 20);
@@ -29335,19 +29334,20 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 			if ((iIndex != -1) && (iIndex >= 0) && (iIndex < DEF_MAXITEMS)) {
 
 				switch (m_pClientList[sTargetH]->m_pItemList[iIndex]->m_sIDnum) {
-					case 335:
+					case ItemId::emerald_ring:
 						dTmp1 = (double) iDamage;
 						dTmp2 = dTmp1 * 0.2f;
 						dTmp3 = dTmp1 - dTmp2;
 						iDamage = (int) (dTmp3 + 0.5f);
 						break;
 
-					case 337:
+					case ItemId::ruby_ring:
 						dTmp1 = (double) iDamage;
 						dTmp2 = dTmp1 * 0.1f;
 						dTmp3 = dTmp1 - dTmp2;
 						iDamage = (int) (dTmp3 + 0.5f);
 						break;
+					default:break;
 				}
 				if (iDamage <= 0) iDamage = 0;
 
@@ -29764,19 +29764,20 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 
 				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½.
 				switch (m_pClientList[sTargetH]->m_pItemList[iIndex]->m_sIDnum) {
-					case 335: // ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 20%
+					case ItemId::emerald_ring: // ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 20%
 						dTmp1 = (double) iDamage;
 						dTmp2 = dTmp1 * 0.2f;
 						dTmp3 = dTmp1 - dTmp2;
 						iDamage = (int) (dTmp3 + 0.5f);
 						break;
 
-					case 337: // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 10%
+					case ItemId::ruby_ring: // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 10%
 						dTmp1 = (double) iDamage;
 						dTmp2 = dTmp1 * 0.1f;
 						dTmp3 = dTmp1 - dTmp2;
 						iDamage = (int) (dTmp3 + 0.5f);
 						break;
+					default: break;
 				}
 				if (iDamage <= 0) iDamage = 0;
 
@@ -34933,17 +34934,17 @@ int CGame::iCreateFish(char cMapIndex, short sX, short sY, short sType, class CI
 
 			// Dynamic ObjectÂ¸Â¦ Â¹ÃŸÂ»Ã½Â½ÃƒÃ…Â²Â´Ã™. OwnerÂ¿Â¡ Fish Ã€ÃŽÂµÂ¦Â½ÂºÂ¸Â¦ Â³Ã–Â´Ã‚Â´Ã™.
 			switch (pItem->m_sIDnum) {
-				case 101: // Â»Â¡Â°Â­Â¹Â°Â°Ã­Â±Ã¢
-				case 102: // ÃƒÃŠÂ·Ã?Â¹Â°Â°Ã­Â±Ã¢
-				case 103: // Â³Ã«Â¶Ã»Â¹Â°Â°Ã­Â±Ã¢
-				case 570:
-				case 571:
-				case 572:
-				case 573:
-				case 574:
-				case 575:
-				case 576:
-				case 577:
+				case ItemId::red_fish: // Â»Â¡Â°Â­Â¹Â°Â°Ã­Â±Ã¢
+				case ItemId::green_fish: // ÃƒÃŠÂ·Ã?Â¹Â°Â°Ã­Â±Ã¢
+				case ItemId::yellow_fish: // Â³Ã«Â¶Ã»Â¹Â°Â°Ã­Â±Ã¢
+				case ItemId::red_carp:
+				case ItemId::green_carp:
+				case ItemId::gold_carp:
+				case ItemId::crucian_carp:
+				case ItemId::blue_sea_bream:
+				case ItemId::salmon:
+				case ItemId::red_sea_bream:
+				case ItemId::gray_mullet:
 					iDynamicHandle = iAddDynamicObjectList(i, 0, DEF_DYNAMICOBJECT_FISH, cMapIndex, sX, sY, dwLastTime);
 					break;
 				default:
@@ -36392,7 +36393,9 @@ void CGame::ReqCreatePortionHandler(int iClientH, char *pData) {
 	char * cp, cI[6], cPortionName[21], cData[120];
 	int iRet, i, j, iEraseReq, iSkillLimit, iSkillLevel, iResult, iDifficulty;
 	short * sp, sItemIndex[6], sTemp;
-	short sItemNumber[6], sItemArray[12];
+	
+	CPortion::E sItemArray[6];
+	short sItemNumber[6];
 	bool bDup, bFlag;
 	class CItem * pItem;
 
@@ -36505,10 +36508,10 @@ RCPH_LOOPBREAK:
 	j = 0;
 	for (i = 0; i < 6; i++) {
 		if (sItemIndex[i] != -1)
-			sItemArray[j] = m_pClientList[iClientH]->m_pItemList[sItemIndex[i]]->m_sIDnum;
-		else sItemArray[j] = sItemIndex[i];
-		sItemArray[j + 1] = sItemNumber[i];
-		j += 2;
+			sItemArray[j].id_ = m_pClientList[iClientH]->m_pItemList[sItemIndex[i]]->m_sIDnum;
+		else sItemArray[j].id_ = ItemId::none;
+		sItemArray[j].num_ = sItemNumber[i];
+		++j;
 	}
 
 	//testcode
@@ -36529,7 +36532,7 @@ RCPH_LOOPBREAK:
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++)
 		if (m_pPortionConfigList[i] != 0) {
 			bFlag = false;
-			for (j = 0; j < 12; j++)
+			for (j = 0; j < 6; j++)
 				if (m_pPortionConfigList[i]->m_sArray[j] != sItemArray[j]) bFlag = true;
 
 			if (bFlag == false) {
@@ -36758,16 +36761,24 @@ bool CGame::_bDecodePortionConfigFileContents(char *pData, DWORD dwMsgSize) {
 							cReadModeB = 3;
 							break;
 
-						default: // m_sArray[0~10]
+						default:{ // m_sArray[0~10] {
 							if (_bGetIsStringIsNumber(token) == false) {
 								PutLogList("(!!!) CRITICAL ERROR! POTION configuration file error - Wrong Data format.");
 								delete pContents;
 								delete pStrTok;
 								return false;
 							}
-							m_pPortionConfigList[iPortionConfigListIndex]->m_sArray[cReadModeB - 3] = atoi(token);
+							auto i = (cReadModeB - 3)/2;
+							bool q = (cReadModeB - 3)%2;
+							auto &r = m_pPortionConfigList[iPortionConfigListIndex]->m_sArray[i];
+							if(q) {
+								r.id_ = (ItemId) atoi(token);
+							} else {
+								r.num_ = atoi(token);
+							}
+							
 							cReadModeB++;
-							break;
+					} break;
 
 						case 14: // m_sArray[11]
 							if (_bGetIsStringIsNumber(token) == false) {
@@ -36776,7 +36787,7 @@ bool CGame::_bDecodePortionConfigFileContents(char *pData, DWORD dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pPortionConfigList[iPortionConfigListIndex]->m_sArray[11] = atoi(token);
+							m_pPortionConfigList[iPortionConfigListIndex]->m_sArray[5].num_ = atoi(token);
 							cReadModeB = 15;
 							break;
 
@@ -36831,16 +36842,23 @@ bool CGame::_bDecodePortionConfigFileContents(char *pData, DWORD dwMsgSize) {
 							cReadModeB = 3;
 							break;
 
-						default: // m_sArray[0~10]
+						default: { // m_sArray[0~10]
 							if (_bGetIsStringIsNumber(token) == false) {
 								PutLogList("(!!!) CRITICAL ERROR! CRAFTING configuration file error - Wrong Data format.");
 								delete pContents;
 								delete pStrTok;
 								return false;
 							}
-							m_pCraftingConfigList[iCraftingConfigListIndex]->m_sArray[cReadModeB - 3] = atoi(token);
+							auto i = (cReadModeB-3)/2;
+							bool q = (cReadModeB-3)%2;
+							auto &e = m_pCraftingConfigList[iCraftingConfigListIndex]->m_sArray[i];
+							if(q) {
+								e.num_ = atoi(token);
+							} else {
+								e.id_ = (ItemId) atoi(token);
+							}
 							cReadModeB++;
-							break;
+						} break;
 
 						case 14: // m_sArray[11]
 							if (_bGetIsStringIsNumber(token) == false) {
@@ -36849,7 +36867,7 @@ bool CGame::_bDecodePortionConfigFileContents(char *pData, DWORD dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pCraftingConfigList[iCraftingConfigListIndex]->m_sArray[11] = atoi(token);
+							m_pCraftingConfigList[iCraftingConfigListIndex]->m_sArray[5].num_ = atoi(token);
 							cReadModeB = 15;
 							break;
 
@@ -37060,7 +37078,8 @@ int CGame::iCreateMineral(char cMapIndex, int tX, int tY, char cLevel) {
 void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 	short sType;
 	DWORD dwRegisterTime;
-	int iDynamicIndex, iSkillLevel, iResult, iItemID;
+	int iDynamicIndex, iSkillLevel, iResult;
+	ItemId iItemID = ItemId::none;
 	class CItem * pItem;
 	WORD wWeaponType;
 
@@ -37101,15 +37120,15 @@ void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 							case 1:
 							case 2:
 							case 3:
-								iItemID = 355; // Coal
+								iItemID = ItemId::coal; // Coal
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 4:
-								iItemID = 357; // IronOre
+								iItemID = ItemId::iron_ore; // IronOre
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 5:
-								iItemID = 507; // BlondeStone
+								iItemID = ItemId::blonde_stone; // BlondeStone
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 						}
@@ -37119,20 +37138,20 @@ void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 						switch (iDice(1, 5)) {
 							case 1:
 							case 2:
-								iItemID = 355; // Coal
+								iItemID = ItemId::coal; // Coal
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 3:
 							case 4:
-								iItemID = 357; // IronOre
+								iItemID = ItemId::iron_ore; // IronOre
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 5:
 								if (iDice(1, 3) == 2) {
-									iItemID = 356; // SilverNugget
+									iItemID = ItemId::silver_nugget; // SilverNugget
 									m_pClientList[iClientH]->m_iExpStock += iDice(1, 4);
 								} else {
-									iItemID = 507; // BlondeStone
+									iItemID = ItemId::blonde_stone; // BlondeStone
 									m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								}
 								break;
@@ -37142,28 +37161,28 @@ void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 					case 3:
 						switch (iDice(1, 6)) {
 							case 1:
-								iItemID = 355; // Coal
+								iItemID = ItemId::coal; // Coal
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 2:
 							case 3:
 							case 4:
 							case 5:
-								iItemID = 357; // IronOre
+								iItemID = ItemId::iron_ore; // IronOre
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 6:
 								if (iDice(1, 8) == 3) {
 									if (iDice(1, 2) == 1) {
-										iItemID = 356; // SilverNugget
+										iItemID = ItemId::silver_nugget; // SilverNugget
 										m_pClientList[iClientH]->m_iExpStock += iDice(1, 4);
 									} else {
-										iItemID = 357; // IronOre
+										iItemID = ItemId::iron_ore; // IronOre
 										m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 									}
 									break;
 								} else {
-									iItemID = 357; // IronOre
+									iItemID = ItemId::iron_ore; // IronOre
 									m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								}
 								break;
@@ -37173,43 +37192,43 @@ void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 					case 4:
 						switch (iDice(1, 6)) {
 							case 1:
-								iItemID = 355; // Coal
+								iItemID = ItemId::coal; // Coal
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 2:
 								if (iDice(1, 3) == 2) {
-									iItemID = 356; // SilverNugget
+									iItemID = ItemId::silver_nugget; // SilverNugget
 									m_pClientList[iClientH]->m_iExpStock += iDice(1, 4);
 								}
 								break;
 							case 3:
 							case 4:
 							case 5:
-								iItemID = 357; // IronOre
+								iItemID = ItemId::iron_ore; // IronOre
 								m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 								break;
 							case 6:
 								if (iDice(1, 8) == 3) {
 									if (iDice(1, 4) == 3) {
 										if (iDice(1, 4) < 3) {
-											iItemID = 508; // Mithral
+											iItemID = ItemId::mithral; // Mithral
 											m_pClientList[iClientH]->m_iExpStock += iDice(1, 6);
 										} else {
-											iItemID = 354; // GoldNugget
+											iItemID = ItemId::gold_nugget; // GoldNugget
 											m_pClientList[iClientH]->m_iExpStock += iDice(1, 5);
 										}
 										break;
 									} else {
-										iItemID = 356; // SilverNugget
+										iItemID = ItemId::silver_nugget; // SilverNugget
 										m_pClientList[iClientH]->m_iExpStock += iDice(1, 4);
 									}
 									break;
 								} else {
 									if (iDice(1, 2) == 1) {
-										iItemID = 354; // GoldNugget
+										iItemID = ItemId::gold_nugget; // GoldNugget
 										m_pClientList[iClientH]->m_iExpStock += iDice(1, 5);
 									} else {
-										iItemID = 357; // IronOre
+										iItemID = ItemId::iron_ore; // IronOre
 										m_pClientList[iClientH]->m_iExpStock += iDice(1, 3);
 									}
 									break;
@@ -37221,11 +37240,11 @@ void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 					case 5:
 						switch (iDice(1, 19)) {
 							case 3:
-								iItemID = 352; // Sapphire
+								iItemID = ItemId::sapphire; // Sapphire
 								m_pClientList[iClientH]->m_iExpStock += iDice(2, 3);
 								break;
 							default:
-								iItemID = 358; // Crystal
+								iItemID = ItemId::crystal; // Crystal
 								m_pClientList[iClientH]->m_iExpStock += iDice(2, 3);
 								break;
 						}
@@ -37235,41 +37254,41 @@ void CGame::_CheckMiningAction(int iClientH, int dX, int dY) {
 						switch (iDice(1, 5)) {
 							case 1:
 								if (iDice(1, 6) == 3) {
-									iItemID = 353; // Emerald
+									iItemID = ItemId::emerald; // Emerald
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 4);
 								} else {
-									iItemID = 358; // Crystal
+									iItemID = ItemId::crystal; // Crystal
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 3);
 								}
 								break;
 							case 2:
 								if (iDice(1, 6) == 3) {
-									iItemID = 352; // Saphire
+									iItemID = ItemId::sapphire; // Saphire
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 4);
 								} else {
-									iItemID = 358; // Crystal
+									iItemID = ItemId::crystal; // Crystal
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 3);
 								}
 								break;
 							case 3:
 								if (iDice(1, 6) == 3) {
-									iItemID = 351; // Ruby
+									iItemID = ItemId::ruby; // Ruby
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 4);
 								} else {
-									iItemID = 358; // Crystal
+									iItemID = ItemId::crystal; // Crystal
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 3);
 								}
 								break;
 							case 4:
-								iItemID = 358; // Crystal
+								iItemID = ItemId::crystal; // Crystal
 								m_pClientList[iClientH]->m_iExpStock += iDice(2, 3);
 								break;
 							case 5:
 								if (iDice(1, 12) == 3) {
-									iItemID = 350; // Diamond
+									iItemID = ItemId::diamond; // Diamond
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 5);
 								} else {
-									iItemID = 358; // Crystal
+									iItemID = ItemId::crystal; // Crystal
 									m_pClientList[iClientH]->m_iExpStock += iDice(2, 3);
 								}
 								break;
@@ -37395,7 +37414,7 @@ void CGame::NpcTalkHandler(int iClientH, int iWho) {
 }
 
 void CGame::CheckFireBluring(char cMapIndex, int sX, int sY) {
-	register int ix, iy, iItemNum;
+	register int ix, iy;
 	register short sSpr, sSprFrame;
 	char cItemColor;
 	class CItem * pItem;
@@ -37403,10 +37422,9 @@ void CGame::CheckFireBluring(char cMapIndex, int sX, int sY) {
 	for (ix = sX - 1; ix <= sX + 1; ix++)
 		for (iy = sY - 1; iy <= sY + 1; iy++) {
 			// Â¸Â¸Â¾Ã  Ã€ÃŒ Ã€Â§Ã„Â¡Â¿Â¡ Â¹ÃŸÃˆÂ­Â¼Âº Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒ Ã€Ã–Â´Ã™Â¸Ã© Ã?Ã¶Â¿Ã¬Â°Ã­ ÂºÃ’ Â¿Ã€ÂºÃªÃ?Â§Ã†Â®Â¸Â¦ Â³ÃµÂ´Ã‚Â´Ã™.
-			iItemNum = m_pMapList[cMapIndex]->iCheckItem(ix, iy);
+			ItemId iItemNum = m_pMapList[cMapIndex]->iCheckItem(ix, iy);
 
-			switch (iItemNum) {
-				case 355:
+			if(iItemNum == ItemId::coal) {
 					// Â¼Â®Ã…ÂºÃ€ÃŒÂ´Ã™. Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Â» Ã?Ã¶Â¿Ã¬Â°Ã­ ÂºÃ’Ã€Â» Â¸Â¸ÂµÃ§Â´Ã™.
 					pItem = m_pMapList[cMapIndex]->pGetItem(ix, iy, &sSpr, &sSprFrame, &cItemColor);
 					if (pItem != 0) delete pItem;
@@ -37414,7 +37432,6 @@ void CGame::CheckFireBluring(char cMapIndex, int sX, int sY) {
 
 					SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_SETITEM, cMapIndex,
 							  ix, iy, sSpr, sSprFrame, cItemColor);
-					break;
 			}
 		}
 }
@@ -38242,7 +38259,7 @@ bool CGame::_bDecodeOccupyFlagSaveFileContents(char * pData, DWORD dwMsgSize) {
 }
 //Hero Code by Zabuza
 
-void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
+void CGame::GetHeroMantleHandler(int iClientH, ItemId iItemID, char * pString) {
 	int i, iNum, iRet, iEraseReq;
 	char * cp, cData[256], cItemName[21];
 	class CItem * pItem;
@@ -38259,21 +38276,21 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
 	}
 
 	//Prevents a crash if item dosent exist
-	if (m_pItemConfigList[iItemID] == 0) return;
+	if (m_pItemConfigList[(int) iItemID] == 0) return;
 
 	switch (iItemID) {
 			// Hero Cape
-		case 400: //Aresden HeroCape
-		case 401: //Elvine HeroCape
+		case ItemId::aresden_hero_cape: //Aresden HeroCape
+		case ItemId::elvine_hero_cape: //Elvine HeroCape
 			if (m_pClientList[iClientH]->m_iEnemyKillCount < 300) return;
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 300;
 			break;
 
 			// Hero Helm
-		case 403: //Aresden HeroHelm(M)
-		case 404: //Aresden HeroHelm(W)
-		case 405: //Elvine HeroHelm(M)
-		case 406: //Elvine HeroHelm(W)
+		case ItemId::a_hero_helm_m: //Aresden HeroHelm(M)
+		case ItemId::a_hero_helm_w: //Aresden HeroHelm(W)
+		case ItemId::e_hero_helm_m: //Elvine HeroHelm(M)
+		case ItemId::e_hero_helm_w: //Elvine HeroHelm(W)
 			if (m_pClientList[iClientH]->m_iEnemyKillCount < 150) return;
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 150;
 			if (m_pClientList[iClientH]->m_iContribution < 20) return;
@@ -38281,10 +38298,10 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
 			break;
 
 			// Hero Cap
-		case 407: //Aresden HeroCap(M)
-		case 408: //Aresden HeroCap(W)
-		case 409: //Elvine HeroHelm(M)
-		case 410: //Elvine HeroHelm(W)
+		case ItemId::a_hero_cap_m: //Aresden HeroCap(M)
+		case ItemId::a_hero_cap_w: //Aresden HeroCap(W)
+		case ItemId::e_hero_cap_m: //Elvine HeroHelm(M)
+		case ItemId::e_hero_cap_w: //Elvine HeroHelm(W)
 			if (m_pClientList[iClientH]->m_iEnemyKillCount < 100) return;
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 100;
 			if (m_pClientList[iClientH]->m_iContribution < 20) return;
@@ -38292,10 +38309,10 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
 			break;
 
 			// Hero Armour
-		case 411: //Aresden HeroArmour(M)
-		case 412: //Aresden HeroArmour(W)
-		case 413: //Elvine HeroArmour(M)
-		case 414: //Elvine HeroArmour(W)
+		case ItemId::a_hero_armor_m: //Aresden HeroArmour(M)
+		case ItemId::a_hero_armor_w: //Aresden HeroArmour(W)
+		case ItemId::e_hero_armor_m: //Elvine HeroArmour(M)
+		case ItemId::e_hero_armor_w: //Elvine HeroArmour(W)
 			if (m_pClientList[iClientH]->m_iEnemyKillCount < 300) return;
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 300;
 			if (m_pClientList[iClientH]->m_iContribution < 30) return;
@@ -38303,10 +38320,10 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
 			break;
 
 			// Hero Robe
-		case 415: //Aresden HeroRobe(M)
-		case 416: //Aresden HeroRobe(W)
-		case 417: //Elvine HeroRobe(M)
-		case 418: //Elvine HeroRobe(W)
+		case ItemId::a_hero_robe_m: //Aresden HeroRobe(M)
+		case ItemId::a_hero_robe_w: //Aresden HeroRobe(W)
+		case ItemId::e_hero_robe_m: //Elvine HeroRobe(M)
+		case ItemId::e_hero_robe_w: //Elvine HeroRobe(W)
 			if (m_pClientList[iClientH]->m_iEnemyKillCount < 200) return;
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 200;
 			if (m_pClientList[iClientH]->m_iContribution < 20) return;
@@ -38314,10 +38331,10 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
 			break;
 
 			// Hero Hauberk
-		case 419: //Aresden HeroHauberk(M)
-		case 420: //Aresden HeroHauberk(W)
-		case 421: //Elvine HeroHauberk(M)
-		case 422: //Elvine HeroHauberk(W)
+		case ItemId::a_hero_hauberk_m: //Aresden HeroHauberk(M)
+		case ItemId::a_hero_hauberk_w: //Aresden HeroHauberk(W)
+		case ItemId::e_hero_hauberk_m: //Elvine HeroHauberk(M)
+		case ItemId::e_hero_hauberk_w: //Elvine HeroHauberk(W)
 			if (m_pClientList[iClientH]->m_iEnemyKillCount < 100) return;
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 100;
 			if (m_pClientList[iClientH]->m_iContribution < 10) return;
@@ -38325,10 +38342,10 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
 			break;
 
 			// Hero Leggings
-		case 423: //Aresden HeroLeggings(M)
-		case 424: //Aresden HeroLeggings(W)
-		case 425: //Elvine HeroLeggings(M)
-		case 426: //Elvine HeroLeggings(W)
+		case ItemId::a_hero_leggings_m: //Aresden HeroLeggings(M)
+		case ItemId::a_hero_leggings_w: //Aresden HeroLeggings(W)
+		case ItemId::e_hero_leggings_m: //Elvine HeroLeggings(M)
+		case ItemId::e_hero_leggings_w: //Elvine HeroLeggings(W)
 			if (m_pClientList[iClientH]->m_iEnemyKillCount < 150) return;
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 150;
 			if (m_pClientList[iClientH]->m_iContribution < 15) return;
@@ -38341,12 +38358,12 @@ void CGame::GetHeroMantleHandler(int iClientH, int iItemID, char * pString) {
 	}
 
 	ZeroMemory(cItemName, sizeof (cItemName));
-	memcpy(cItemName, m_pItemConfigList[iItemID]->m_cName, 20);
+	memcpy(cItemName, m_pItemConfigList[(int) iItemID]->m_cName, 20);
 	// ReqPurchaseItemHandler
 	iNum = 1;
 	for (i = 1; i <= iNum; i++) {
 		pItem = new class CItem;
-		if (_bInitItemAttr(pItem, cItemName) == false) {
+		if (_bInitItemAttr(pItem, iItemID) == false) {
 			delete pItem;
 		} else {
 
@@ -40282,7 +40299,7 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, DWORD dwMsgSize) {
 								return false;
 							}
 
-							m_pBuildItemList[iIndex]->m_iMaterialItemID[0] = atoi(token);
+							m_pBuildItemList[iIndex]->m_iMaterialItemID[0] = (ItemId) atoi(token);
 							cReadModeB = 4;
 							break;
 
@@ -40319,7 +40336,7 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, DWORD dwMsgSize) {
 								return false;
 							}
 
-							m_pBuildItemList[iIndex]->m_iMaterialItemID[1] = atoi(token);
+							m_pBuildItemList[iIndex]->m_iMaterialItemID[1] = (ItemId) atoi(token);
 							cReadModeB = 7;
 							break;
 
@@ -40356,7 +40373,7 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, DWORD dwMsgSize) {
 								return false;
 							}
 
-							m_pBuildItemList[iIndex]->m_iMaterialItemID[2] = atoi(token);
+							m_pBuildItemList[iIndex]->m_iMaterialItemID[2] = (ItemId) atoi(token);
 							cReadModeB = 10;
 							break;
 
@@ -40394,7 +40411,7 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, DWORD dwMsgSize) {
 								return false;
 							}
 
-							m_pBuildItemList[iIndex]->m_iMaterialItemID[3] = atoi(token);
+							m_pBuildItemList[iIndex]->m_iMaterialItemID[3] = (ItemId) atoi(token);
 							cReadModeB = 13;
 							break;
 
@@ -40431,7 +40448,7 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, DWORD dwMsgSize) {
 								return false;
 							}
 
-							m_pBuildItemList[iIndex]->m_iMaterialItemID[4] = atoi(token);
+							m_pBuildItemList[iIndex]->m_iMaterialItemID[4] = (ItemId) atoi(token);
 							cReadModeB = 16;
 							break;
 
@@ -40470,7 +40487,7 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, DWORD dwMsgSize) {
 								return false;
 							}
 
-							m_pBuildItemList[iIndex]->m_iMaterialItemID[5] = atoi(token);
+							m_pBuildItemList[iIndex]->m_iMaterialItemID[5] = (ItemId) atoi(token);
 							cReadModeB = 19;
 							break;
 
@@ -42388,15 +42405,15 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, DWORD dwMsgSize) {
 
 	// if the item id is
 	switch (pItem->m_sIDnum) {
-		case 511: // ArenaTicket
-		case 513: // ArenaTicket(2)
-		case 515: // ArenaTicket(3)
-		case 517: // ArenaTicket(4)
-		case 530: // ArenaTicket(5)
-		case 531: // ArenaTicket(6)
-		case 532: // ArenaTicket(7)
-		case 533: // ArenaTicket(8)
-		case 534: // ArenaTicket(9)
+		case ItemId::arena_ticket: // ArenaTicket
+		case ItemId::arena_ticket_2: // ArenaTicket(2)
+		case ItemId::arena_ticket_3: // ArenaTicket(3)
+		case ItemId::arena_ticket_4: // ArenaTicket(4)
+		case ItemId::arena_ticket_5: // ArenaTicket(5)
+		case ItemId::arena_ticket_6: // ArenaTicket(6)
+		case ItemId::arena_ticket_7: // ArenaTicket(7)
+		case ItemId::arena_ticket_8: // ArenaTicket(8)
+		case ItemId::arena_ticket_9: // ArenaTicket(9)
 			GetLocalTime(&SysTime);
 			pItem->m_sTouchEffectType = DEF_ITET_DATE;
 			// v1.4311-3 ï¿½ï¿½ï¿½ï¿½ ï¿½î¿µï¿½Ú°ï¿½ ï¿½ß±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ï¿½ï¿½ ï¿½×»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ..
@@ -43024,7 +43041,7 @@ int CGame::iGetItemWeight(CItem *pItem, int iCount) {
 	iWeight = (pItem->m_wWeight);
 	if (iCount < 0) iCount = 1;
 	iWeight = iWeight * iCount;
-	if (pItem->m_sIDnum == 90) iWeight = iWeight / 20;
+	if (pItem->m_sIDnum == ItemId::gold) iWeight = iWeight / 20;
 	if (iWeight <= 0) iWeight = 1;
 
 	return iWeight;
@@ -45163,122 +45180,122 @@ bool CGame::_bItemLog(int iAction, int iClientH, char * cName, class CItem * pIt
 bool CGame::_bCheckGoodItem(class CItem * pItem) {
 	if (pItem == 0) return false;
 
-	if (pItem->m_sIDnum == 90) {
+	if (pItem->m_sIDnum == ItemId::gold) {
 		if (pItem->m_dwCount > 10000) return true; //GoldÂ¿Â¡ Ã‡Ã‘Ã‡Ã˜ 10000Â¿Ã¸ Ã€ÃŒÂ»Ã³Â¸Â¸ Â·ÃŽÂ±Ã—Â¿Â¡ Â³Â²Â±Ã¤Â´Ã™.
 		else return false;
 	}
 	switch (pItem->m_sIDnum) {
 			//	case 90: // Gold ÃƒÃŸÂ°Â¡
-		case 259:
-		case 290:
-		case 291:
-		case 292:
-		case 300:
-		case 305:
-		case 308:
-		case 311:
-		case 334:
-		case 335:
-		case 336:
-		case 338:
-		case 380:
-		case 381:
-		case 382:
-		case 391:
-		case 400:
-		case 401:
-		case 490:
-		case 491:
-		case 492:
-		case 508:
-		case 581:
-		case 610:
-		case 611:
-		case 612:
-		case 613:
-		case 614:
-		case 616: // ÂµÂ¥Â¸Ã³-Â½Â½Â·Â¹Ã€ÃŒÂ¾Ã®
-		case 618: // Â´Ã™Ã…Â©Â¿Â¤Ã‡Ã?-ÂºÂ¸Â¿Ã¬
+		case ItemId::magic_wand_mshield:
+		case ItemId::flameberge_plus_3_llf:
+		case ItemId::magic_wand_m_s30_llf:
+		case ItemId::golden_axe_llf:
+		case ItemId::magic_necklace_rm10:
+		case ItemId::magic_necklace_dm1:
+		case ItemId::magic_necklace_ms10:
+		case ItemId::magic_necklace_df10:
+		case ItemId::lucky_gold_ring:
+		case ItemId::emerald_ring:
+		case ItemId::sapphire_ring:
+		case ItemId::memorial_ring:
+		case ItemId::ice_storm_manual:
+		case ItemId::mass_fire_strike_manual:
+		case ItemId::bloody_shock_w_manual:
+		case ItemId::super_pg_potion:
+		case ItemId::aresden_hero_cape:
+		case ItemId::elvine_hero_cape:
+		case ItemId::blood_sword:
+		case ItemId::blood_axe:
+		case ItemId::blood_rapier:
+		case ItemId::mithral:
+		case ItemId::battle_axe_plus_2:
+		case ItemId::xelima_blade:
+		case ItemId::xelima_axe:
+		case ItemId::xelima_rapier:
+		case ItemId::sword_of_medusa:
+		case ItemId::sword_of_ice_elemental:
+		case ItemId::demon_slayer: // ÂµÂ¥Â¸Ã³-Â½Â½Â·Â¹Ã€ÃŒÂ¾Ã®
+		case ItemId::dark_elf_bow: // Â´Ã™Ã…Â©Â¿Â¤Ã‡Ã?-ÂºÂ¸Â¿Ã¬
 
-		case 620:
-		case 621:
-		case 622:
-		case 623:
+		case ItemId::merien_shield:
+		case ItemId::merien_plate_mail_m:
+		case ItemId::merien_plate_mail_w:
+		case ItemId::gm_shield:
 
-		case 630:
-		case 631:
+		case ItemId::ringofthe_xelima:
+		case ItemId::ringofthe_abaddon:
 
-		case 632:
-		case 633:
-		case 634:
-		case 635:
-		case 636:
-		case 637:
-		case 638:
-		case 639:
-		case 640:
-		case 641:
+		case ItemId::ringof_ogrepower:
+		case ItemId::ringof_demonpower:
+		case ItemId::ringof_wizard:
+		case ItemId::ringof_mage:
+		case ItemId::ringof_grand_mage:
+		case ItemId::knecklace_of_light_pro:
+		case ItemId::knecklace_of_fire_pro:
+		case ItemId::knecklace_of_poison_pro:
+		case ItemId::knecklace_of_sufferent:
+		case ItemId::knecklace_of_medusa:
 
-		case 642:
-		case 643:
+		case ItemId::knecklace_of_ice_pro:
+		case ItemId::knecklace_of_ice_ele:
 
-		case 644:
-		case 645:
-		case 646:
-		case 647:
+		case ItemId::knecklace_of_air_ele:
+		case ItemId::knecklace_of_efreet:
+		case ItemId::necklace_of_beholder:
+		case ItemId::necklace_of_stone_golem:
 
-		case 650:
-		case 654:
-		case 655:
-		case 656:
-		case 657:
+		case ItemId::zemstoneof_sacrifice:
+		case ItemId::blue_ball:
+		case ItemId::pearl_ball:
+		case ItemId::stone_of_xelima:
+		case ItemId::stone_of_merien:
 
-		case 700: // v2.03 Â»Ã³Â¾Ã® Â¾Ã†Ã€ÃŒÃ…Ã›
-		case 701:
-		case 702:
-		case 703:
-		case 704:
-		case 705:
-		case 706:
-		case 707:
-		case 708:
-		case 709:
-		case 710:
-		case 711:
-		case 712:
-		case 713:
-		case 714:
-		case 715:
+		case ItemId::sang_ah_hauberk: // v2.03 Â»Ã³Â¾Ã® Â¾Ã†Ã€ÃŒÃ…Ã›
+		case ItemId::sang_ah_full_hel:
+		case ItemId::sang_ah_leggings:
+		case ItemId::sang_ah_flameberge:
+		case ItemId::sang_ah_plate_mail:
+		case ItemId::sang_ah_jewel:
+		case ItemId::dark_knight_hauberk:
+		case ItemId::dark_knight_full_helm:
+		case ItemId::dark_knight_leggings:
+		case ItemId::dark_knight_flameberge:
+		case ItemId::dark_knight_plate_mail:
+		case ItemId::dark_mage_hauberk:
+		case ItemId::dark_mage_chain_mail:
+		case ItemId::dark_mage_leggings:
+		case ItemId::dark_mage_magic_staff:
+		case ItemId::dark_mage_robe:
 
-		case 720:
-		case 721:
-		case 722:
-		case 723:
+		case ItemId::songpyon:
+		case ItemId::ginseng:
+		case ItemId::beef_rib_set:
+		case ItemId::wine:
 
-		case 724:
-		case 725:
-		case 726:
-		case 727:
-		case 728:
-		case 729:
-		case 730:
-		case 731:
-		case 732:
-		case 733:
+		case ItemId::dark_knight_hauberk_w:
+		case ItemId::dark_knight_full_helm_w:
+		case ItemId::dark_knight_leggings_w:
+		case ItemId::dark_knight_flameberg_w:
+		case ItemId::dark_knight_plate_mail_w:
+		case ItemId::dark_mage_hauberk_w:
+		case ItemId::dark_mage_chain_mail_w:
+		case ItemId::dark_mage_leggings_w:
+		case ItemId::dark_mage_magic_staff_w:
+		case ItemId::dark_mage_robe_w:
 
-		case 734:
-		case 735:
+		case ItemId::ring_of_arcmage:
+		case ItemId::ring_of_dragonpower:
 
-		case 736: // Â»ÃµÂ·ÃŽÂ¿Ã® Â»Ã³Â¾Ã®Ã€Ã‡ Ã€ÃšÃ€ÃŒÂ¾Ã°Ã†Â® Â¼Ã’ÂµÃ¥
-		case 737: // Â»ÃµÂ·ÃŽÂ¿Ã® ÃˆÃ¦Â±Ã¢Â»Ã§Ã€Ã‡ Ã€ÃšÃ€ÃŒÂ¾Ã°Ã†Â® Â¼Ã’ÂµÃ¥
-		case 738: // Â»ÃµÂ·ÃŽÂ¿Ã® ÃˆÃ¦Â¸Â¶Â¹Ã½Â»Ã§Ã€Ã‡Â¸Ã…Ã?Ã·Â¿Ã¸ÂµÃ¥
+		case ItemId::sang_ah_giant_sword: // Â»ÃµÂ·ÃŽÂ¿Ã® Â»Ã³Â¾Ã®Ã€Ã‡ Ã€ÃšÃ€ÃŒÂ¾Ã°Ã†Â® Â¼Ã’ÂµÃ¥
+		case ItemId::dark_knight_giant_sword: // Â»ÃµÂ·ÃŽÂ¿Ã® ÃˆÃ¦Â±Ã¢Â»Ã§Ã€Ã‡ Ã€ÃšÃ€ÃŒÂ¾Ã°Ã†Â® Â¼Ã’ÂµÃ¥
+		case ItemId::dark_mage_magic_wand: // Â»ÃµÂ·ÃŽÂ¿Ã® ÃˆÃ¦Â¸Â¶Â¹Ã½Â»Ã§Ã€Ã‡Â¸Ã…Ã?Ã·Â¿Ã¸ÂµÃ¥
 
 			return true; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€ÃŒÂ±Ã¢ Â¶Â«Â½Ãƒ Â±Ã¢Â·Ã?...
 			break;
 		default:
 			// v2.17 2002-7-31 Ã?Â¦Ã€Ã› Â¾Ã†Ã€ÃŒÃ…Ã›ÂµÂµ Â·ÃŽÂ±Ã—Â¿Â¡ Â³Â²Â°Ã�? Ã‡Ã‘Â´Ã™.
 			if ((pItem->m_dwAttribute & 0xF0F0F001) == 0) return false; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›ÂµÃŽ Â¾Ã†Â´Ã?Â±Â¸ Ã†Â¯Â¼ÂºÃ„Â¡ÂµÂµ Â¾Ã¸Â´Ã™Â¸Ã© ÂºÂ°Â·Ã§..
-			else if (pItem->m_sIDnum > 30) return true; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Âº Â¾Ã†Â´Ã?Ã?Ã¶Â¸Â¸ Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã–Â°Ã­ Â´ÃœÂ°Ã‹Â·Ã¹Â°Â¡ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Ã?Ã?Ã€Âº Â¾Ã†Ã…Ã›..
+			else if (pItem->m_sIDnum > ItemId::falchion_plus_2) return true; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›Ã€Âº Â¾Ã†Â´Ã?Ã?Ã¶Â¸Â¸ Ã†Â¯Â¼ÂºÃ„Â¡Â°Â¡ Ã€Ã–Â°Ã­ Â´ÃœÂ°Ã‹Â·Ã¹Â°Â¡ Â¾Ã†Â´Ã?Â¶Ã³Â¸Ã© Ã?Ã?Ã€Âº Â¾Ã†Ã…Ã›..
 			else return false; //Ã†Â¯ÂºÂ°Ã‡Ã‘ Â¾Ã†Ã€ÃŒÃ…Ã›ÂµÃŽ Â¾Ã†Â´Ã?Â±Â¸ Ã†Â¯Â¼ÂºÃ„Â¡Â´Ã‚ Ã€Ã–Ã?Ã¶Â¸Â¸ Â´ÃœÂ°Ã‹Â·Ã¹Â¶Ã³Â¸Ã© ÂºÂ°Â·Ã§...
 	}
 }
@@ -45386,7 +45403,7 @@ void CGame::GetExp(int iClientH, int iExp, bool bIsAttackerOwn) {
 		dV3 = (double) iExp;
 		dV1 = (dV2 + 1.025f) * dV3;
 		iExp = (int) dV1;
-                iExp = (iExp / 64);
+		iExp = (iExp / 64);
 	} else { //Lower exp
 		if ((m_pClientList[iClientH]->m_iLevel >= 100) &&((strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "aresden") == 0)
 				  || (strcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, "elvine") == 0))) {
@@ -45576,48 +45593,49 @@ bool CGame::bCheckAndConvertPlusWeaponItem(int iClientH, int iItemIndex) {
 	if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == 0) return false;
 
 	switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
-		case 4: // Dagger +1
-		case 9: // Short Sword +1
-		case 13: // Main Gauge +1
-		case 16: // Gradius +1
-		case 18: // Long Sword +1
-		case 19: // Long Sword +2
-		case 21: // Excaliber +1
-		case 24: // Sabre +1
-		case 26: // Scimitar +1
-		case 27: // Scimitar +2
-		case 29: // Falchoin +1
-		case 30: // Falchion +2
-		case 32: // Esterk +1
-		case 33: // Esterk +2
-		case 35: // Rapier +1
-		case 36: // Rapier +2
-		case 39: // Broad Sword +1
-		case 40: // Broad Sword +2
-		case 43: // Bastad Sword +1
-		case 44: // Bastad Sword +2
-		case 47: // Claymore +1
-		case 48: // Claymore +2
-		case 51: // Great Sword +1
-		case 52: // Great Sword +2
-		case 55: // Flameberge +1
-		case 56: // Flameberge +2
-		case 60: // Light Axe +1
-		case 61: // Light Axe +2
-		case 63: // Tomahoc +1
-		case 64: // Tomohoc +2
-		case 66: // Sexon Axe +1
-		case 67: // Sexon Axe +2
-		case 69: // Double Axe +1
-		case 70: // Double Axe +2
-		case 72: // War Axe +1
-		case 73: // War Axe +2
+		case ItemId::dagger_plus_1: // Dagger +1
+		case ItemId::short_sword_plus_1: // Short Sword +1
+		case ItemId::main_gauche_plus_1: // Main Gauge +1
+		case ItemId::gradius_plus_1: // Gradius +1
+		case ItemId::long_sword_plus_1: // Long Sword +1
+		case ItemId::long_sword_plus_2: // Long Sword +2
+		//case ItemId::21: // Excaliber +1
+		case ItemId::sabre_plus_1: // Sabre +1
+		case ItemId::scimitar_plus_1: // Scimitar +1
+		case ItemId::scimitar_plus_2: // Scimitar +2
+		case ItemId::falchion_plus_1: // Falchoin +1
+		case ItemId::falchion_plus_2: // Falchion +2
+		case ItemId::esterk_plus_1: // Esterk +1
+		case ItemId::esterk_plus_2: // Esterk +2
+		case ItemId::rapier_plus_1: // Rapier +1
+		case ItemId::rapier_plus_2: // Rapier +2
+		case ItemId::broad_sword_plus_1: // Broad Sword +1
+		case ItemId::broad_sword_plus_2: // Broad Sword +2
+		case ItemId::bastad_sword_plus_1: // Bastad Sword +1
+		case ItemId::bastad_sword_plus_2: // Bastad Sword +2
+		case ItemId::claymore_plus_1: // Claymore +1
+		case ItemId::claymore_plus_2: // Claymore +2
+		case ItemId::great_sword_plus_1: // Great Sword +1
+		case ItemId::great_sword_plus_2: // Great Sword +2
+		case ItemId::flameberge_plus_1: // Flameberge +1
+		case ItemId::flameberge_plus_2: // Flameberge +2
+		case ItemId::light_axe_plus_1: // Light Axe +1
+		case ItemId::light_axe_plus_2: // Light Axe +2
+		case ItemId::tomahoc_plus_1: // Tomahoc +1
+		case ItemId::tomahoc_plus_2: // Tomohoc +2
+		case ItemId::sexon_axe_plus_1: // Sexon Axe +1
+		case ItemId::sexon_axe_plus_2: // Sexon Axe +2
+		case ItemId::double_axe_plus_1: // Double Axe +1
+		case ItemId::double_axe_plus_2: // Double Axe +2
+		case ItemId::war_axe_plus_1: // War Axe +1
+		case ItemId::war_axe_plus_2: // War Axe +2
 
-		case 580: // Battle Axe +1
-		case 581: // Battle Axe +2
-		case 582: // Sabre +2
+		case ItemId::battle_axe_plus_1: // Battle Axe +1
+		case ItemId::battle_axe_plus_2: // Battle Axe +2
+		case ItemId::sabre_plus_2: // Sabre +2
 			return true;
 			break;
+		default: break;
 	}
 	return false;
 }
@@ -46275,7 +46293,7 @@ int CGame::iGetPlayerABSStatus(int iClientH) {
 
 //Init item based in its ID
 
-bool CGame::_bInitItemAttr(class CItem * pItem, int iItemID) {
+bool CGame::_bInitItemAttr(class CItem * pItem, ItemId iItemID) {
 	register int i;
 
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
@@ -46362,13 +46380,13 @@ void CGame::ReqCreateSlateHandler(int iClientH, char* pData) {
 			}
 
 			//No duping
-			if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == 868) // LU
+			if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == ItemId::ancient_tablet_lu) // LU
 				ctr[0] = 1;
-			else if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == 869) // LD
+			else if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == ItemId::ancient_tablet_ld) // LD
 				ctr[1] = 1;
-			else if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == 870) // RU
+			else if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == ItemId::ancient_tablet_ru) // RU
 				ctr[2] = 1;
-			else if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == 871) // RD
+			else if (m_pClientList[iClientH]->m_pItemList[cItemID[i]]->m_sIDnum == ItemId::ancient_tablet_rd) // RD
 				ctr[3] = 1;
 		}
 	} catch (...) {
@@ -46434,7 +46452,7 @@ void CGame::ReqCreateSlateHandler(int iClientH, char* pData) {
 	ZeroMemory(cData, sizeof (cData));
 
 	// Create slates
-	if (_bInitItemAttr(pItem, 867) == false) {
+	if (_bInitItemAttr(pItem, ItemId::ancient_tablet) == false) {
 		delete pItem;
 		return;
 	} else {
@@ -46995,34 +47013,34 @@ void CGame::OnTimer(char cType) {
 
 	if ((dwTime - m_dwGameTime7) > 100000) { //Timer
 		// switch (iDice(1, 19)) { //Pick a random advert
-				//Change these to whatever you want to display
-			// case 1: wsprintf(cAdvert, "Server-Info: Criticals: Ctrl + C (300 Criticals = 5000 Gold).");
-				// break;
-			// case 2: wsprintf(cAdvert, "Server-Info: MIDDLELAND NO TIENE PITS (SOLO SE USA EN CRUSADE).");
-				// break;
-			// case 3: wsprintf(cAdvert, "Server-Info: Lista de Drops y demas guias en la Web!.");
-				// break;
-			// case 4: wsprintf(cAdvert, "Server-Info: Max Barrack lvl 200 || PL: No Max lvl!.");
-				// break;
-			// case 5: wsprintf(cAdvert, "Server-Info: Druncian PITS: HC,TW,Dark-Elf,Liche,Uni,Barlog & G.Lizard.");
-				// break;
-			// case 6: wsprintf(cAdvert, "Server-Info: MIDDLELAND DON'T HAVE PITS!. (ONLY USED IN CRUSADE).");
-				// break;
-			// case 7: wsprintf(cAdvert, "Server-Info: PL PITS: Ettin,Demon,Gargoyle,Orges,Ice-Golems,Wyverns & Abbaddon.");
-				// break;
-			// case 8: wsprintf(cAdvert, "Server-Info: City PITS: Cyclops, WereWolf, Scorp, Clay Golems & Hellhound.");
-				// break;
-			// case 9: wsprintf(cAdvert, "Server-Info: Drop List and other Guides in the Website!.");
-				// break;
-			// case 10: wsprintf(cAdvert, "SERVER-Info: Pedimos disculpas a todos los afectados por la caida del primer dia!.");
-				// break;
+		//Change these to whatever you want to display
+		// case 1: wsprintf(cAdvert, "Server-Info: Criticals: Ctrl + C (300 Criticals = 5000 Gold).");
+		// break;
+		// case 2: wsprintf(cAdvert, "Server-Info: MIDDLELAND NO TIENE PITS (SOLO SE USA EN CRUSADE).");
+		// break;
+		// case 3: wsprintf(cAdvert, "Server-Info: Lista de Drops y demas guias en la Web!.");
+		// break;
+		// case 4: wsprintf(cAdvert, "Server-Info: Max Barrack lvl 200 || PL: No Max lvl!.");
+		// break;
+		// case 5: wsprintf(cAdvert, "Server-Info: Druncian PITS: HC,TW,Dark-Elf,Liche,Uni,Barlog & G.Lizard.");
+		// break;
+		// case 6: wsprintf(cAdvert, "Server-Info: MIDDLELAND DON'T HAVE PITS!. (ONLY USED IN CRUSADE).");
+		// break;
+		// case 7: wsprintf(cAdvert, "Server-Info: PL PITS: Ettin,Demon,Gargoyle,Orges,Ice-Golems,Wyverns & Abbaddon.");
+		// break;
+		// case 8: wsprintf(cAdvert, "Server-Info: City PITS: Cyclops, WereWolf, Scorp, Clay Golems & Hellhound.");
+		// break;
+		// case 9: wsprintf(cAdvert, "Server-Info: Drop List and other Guides in the Website!.");
+		// break;
+		// case 10: wsprintf(cAdvert, "SERVER-Info: Pedimos disculpas a todos los afectados por la caida del primer dia!.");
+		// break;
 		// }
 		// for (q = 1; q < DEF_MAXCLIENTS; q++) // Check all clients
 		// {
-			// if ((m_pClientList[q] != 0)) // Check if client is active
-			// { //Send message to server.
-				// SendNotifyMsg(0, q, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cAdvert);
-			// }
+		// if ((m_pClientList[q] != 0)) // Check if client is active
+		// { //Send message to server.
+		// SendNotifyMsg(0, q, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cAdvert);
+		// }
 		// }
 		m_dwGameTime7 = dwTime; //Reset timer so it doesn't spam :D
 	}
@@ -47793,10 +47811,10 @@ int ITEMSPREAD_FIEXD_COORD [25][2] = {
 
 bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY,
 		  int iItemSpreadType, int iSpreadRange,
-		  int *iItemIDs, POINT *BasePos, int *iNumItem) {
+		  ItemId *iItemIDs, POINT *BasePos, int *iNumItem) {
 	int iProb = 100;
 	float fProb, fProbA, fProbB, fProbC;
-	int iItemID;
+	ItemId iItemID;
 	int iNum = 0;
 
 	for (int i = 0; i < iMax; i++) {
@@ -47811,35 +47829,35 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 		fProbB = fProbB * 4.0f;
 		fProbC = fProbC;
 
-		iItemID = 0;
+		iItemID = ItemId::none;
 
 		switch (sNpcType) {
 			case 69: // Wyvern
 				switch (iDice(1, 4)) {
-					case 1: if (iDice(1, 8000) == 1) iItemID = 849;
+					case 1: if (iDice(1, 8000) == 1) iItemID = ItemId::kloness_blade;
 						break; // Kloness Blade
-					case 2: if (iDice(1, 2) == 2) iItemID = 20;
+					case 2: if (iDice(1, 2) == 2) iItemID = ItemId::excaliber;
 						break; // Excaliber
-					case 3: if (iDice(1, 500) == 2) iItemID = 610;
+					case 3: if (iDice(1, 500) == 2) iItemID = ItemId::xelima_blade;
 						break; // Xelima's Blade
-					case 4: if (iDice(1, 1500) == 2) iItemID = 636;
+					case 4: if (iDice(1, 1500) == 2) iItemID = ItemId::ringof_grand_mage;
 						break; // Ring of Grand Mage
-					case 5: if (iDice(1, 250) == 2) iItemID = 633;
+					case 5: if (iDice(1, 250) == 2) iItemID = ItemId::ringof_demonpower;
 						break; // Ring of Demon Power
 				}
 
 				// Â»Ã³Â±Ãž
-				if (iItemID == 0) {
+				if (iItemID == ItemId::none) {
 					switch (iDice(1, 5)) {
-						case 1: if (iDice(1, 500) == 2) iItemID = 642;
+						case 1: if (iDice(1, 500) == 2) iItemID = ItemId::knecklace_of_ice_pro;
 							break; // KnecklaceOfIcePro       
-						case 2: if (iDice(1, 500) == 3) iItemID = 636;
+						case 2: if (iDice(1, 500) == 3) iItemID = ItemId::ringof_grand_mage;
 							break; // RingofGrandMage         	
-						case 3: if (iDice(1, 1500) == 3) iItemID = 734;
+						case 3: if (iDice(1, 1500) == 3) iItemID = ItemId::ring_of_arcmage;
 							break; // RingOfArcmage           
-						case 4: if (iDice(1, 250) == 3) iItemID = 634;
+						case 4: if (iDice(1, 250) == 3) iItemID = ItemId::ringof_wizard;
 							break; // RingofWizard            
-						case 5: if (iDice(1, 1500) == 2) iItemID = 643;
+						case 5: if (iDice(1, 1500) == 2) iItemID = ItemId::knecklace_of_ice_ele;
 							break; // KnecklaceOfIceEle 
 
 					}
@@ -47851,39 +47869,39 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 			case 73: // Fire-Wyvern
 				// ÃƒÃ–Â»Ã³Â±Ãž
 				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, (45 * fProbA)) == 3) iItemID = 847;
+					case 1: if (iDice(1, (45 * fProbA)) == 3) iItemID = ItemId::dark_executor;
 						break; // DarkExecutor            
-					case 2: if (iDice(1, (35 * fProbA)) == 3) iItemID = 630;
+					case 2: if (iDice(1, (35 * fProbA)) == 3) iItemID = ItemId::ringofthe_xelima;
 						break; // RingoftheXelima
-					case 3: if (iDice(1, (40 * fProbA)) == 3) iItemID = 860;
+					case 3: if (iDice(1, (40 * fProbA)) == 3) iItemID = ItemId::necklace_of_xelima;
 						break; // NecklaceOfXelima        
-					case 4: if (iDice(1, (1 * fProbA)) == 1) iItemID = 735;
+					case 4: if (iDice(1, (1 * fProbA)) == 1) iItemID = ItemId::ring_of_dragonpower;
 						break; // RingOfDragonpower       
-					case 5: if (iDice(1, (2 * fProbA)) == 1) iItemID = 851;
+					case 5: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::kloness_esterk;
 						break; // Kloness Esterk
 
 				}
 
 				// Â»Ã³Â±Ãž
-				if (iItemID == 0) {
+				if (iItemID == ItemId::none) {
 					switch (iDice(1, 9)) {
-						case 1: if (iDice(1, (700 * fProbB)) == 2) iItemID = 645;
+						case 1: if (iDice(1, (700 * fProbB)) == 2) iItemID = ItemId::knecklace_of_efreet;
 							break; // KnecklaceOfEfreet       	
-						case 2: if (iDice(1, (500 * fProbB)) == 2) iItemID = 638;
+						case 2: if (iDice(1, (500 * fProbB)) == 2) iItemID = ItemId::knecklace_of_fire_pro;
 							break; // KnecklaceOfFirePro			
-						case 3: if (iDice(1, (700 * fProbB)) == 3) iItemID = 636;
+						case 3: if (iDice(1, (700 * fProbB)) == 3) iItemID = ItemId::ringof_grand_mage;
 							break; // RingofGrandMage	
-						case 4: if (iDice(1, (800 * fProbB)) == 3) iItemID = 734;
+						case 4: if (iDice(1, (800 * fProbB)) == 3) iItemID = ItemId::ring_of_arcmage;
 							break; // RingOfArcmage           
-						case 5: if (iDice(1, (600 * fProbB)) == 3) iItemID = 634;
+						case 5: if (iDice(1, (600 * fProbB)) == 3) iItemID = ItemId::ringof_wizard;
 							break; // RingofWizard            
-						case 6: if (iDice(1, (300 * fProbB)) == 2) iItemID = 290;
+						case 6: if (iDice(1, (300 * fProbB)) == 2) iItemID = ItemId::flameberge_plus_3_llf;
 							break; // Flameberge+3(LLF)
-						case 7: if (iDice(1, (300 * fProbB)) == 3) iItemID = 490;
+						case 7: if (iDice(1, (300 * fProbB)) == 3) iItemID = ItemId::blood_sword;
 							break; // BloodSword              
-						case 8: if (iDice(1, (300 * fProbB)) == 3) iItemID = 491;
+						case 8: if (iDice(1, (300 * fProbB)) == 3) iItemID = ItemId::blood_axe;
 							break; // BloodAxe              
-						case 9: if (iDice(1, (300 * fProbB)) == 3) iItemID = 492;
+						case 9: if (iDice(1, (300 * fProbB)) == 3) iItemID = ItemId::blood_rapier;
 							break; // BloodRapier
 					}
 				}
@@ -47894,44 +47912,44 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 
 				// ÃƒÃ–Â»Ã³Â±Ãž
 				switch (iDice(1, 7)) {
-					case 1: if (iDice(1, (4 * fProbA)) == 1) iItemID = 846;
+					case 1: if (iDice(1, (4 * fProbA)) == 1) iItemID = ItemId::the_devastator;
 						break; // The_Devastator
-					case 2: if (iDice(1, (2 * fProbA)) == 1) iItemID = 850;
+					case 2: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::kloness_axe;
 						break; // Kloness Axe
-					case 3: if (iDice(1, (1 * fProbA)) == 1) iItemID = 860;
+					case 3: if (iDice(1, (1 * fProbA)) == 1) iItemID = ItemId::necklace_of_xelima;
 						break; // NecklaceOfXelima
-					case 4: if (iDice(1, (2 * fProbA)) == 1) iItemID = 982;
+					case 4: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::resur_wand_ms30;
 						break; // ResurWand(MS.30)
-					case 5: if (iDice(1, (1 * fProbA)) == 1) iItemID = 631;
+					case 5: if (iDice(1, (1 * fProbA)) == 1) iItemID = ItemId::ringofthe_abaddon;
 						break; // RingoftheAbaddon
-					case 6: if (iDice(1, (2 * fProbA)) == 1) iItemID = 980;
+					case 6: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::berserk_wand_ms30;
 						break; // BerserkWand(MS.30)
-					case 7: if (iDice(1, (3 * fProbA)) == 1) iItemID = 983;
+					case 7: if (iDice(1, (3 * fProbA)) == 1) iItemID = ItemId::abaddon_wand_ms40;
 						break; // AbaddonWand(MS.40)
 				}
 
 				// Â»Ã³Â±Ãž
-				if (iItemID == 0) {
+				if (iItemID == ItemId::none) {
 					switch (iDice(1, 10)) {
-						case 1: if (iDice(1, (4 * fProbB)) == 3) iItemID = 762;
+						case 1: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::giant_battle_hammer;
 							break; // GBattleHammer
-						case 2: if (iDice(1, (4 * fProbB)) == 3) iItemID = 491;
+						case 2: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::blood_axe;
 							break; // BloodAxe
-						case 3: if (iDice(1, (4 * fProbB)) == 3) iItemID = 492;
+						case 3: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::blood_rapier;
 							break; // BloodRapier
-						case 4: if (iDice(1, (4 * fProbB)) == 3) iItemID = 611;
+						case 4: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::xelima_axe;
 							break; // XelimaAxe
-						case 5: if (iDice(1, (4 * fProbB)) == 3) iItemID = 610;
+						case 5: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::xelima_blade;
 							break; // XelimaBlade
-						case 6: if (iDice(1, (4 * fProbB)) == 3) iItemID = 613;
+						case 6: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::sword_of_medusa;
 							break; // Medusa Sword
-						case 7: if (iDice(1, (4 * fProbB)) == 3) iItemID = 645;
+						case 7: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::knecklace_of_efreet;
 							break; // KnecklaceOfEfreet
-						case 8: if (iDice(1, (4 * fProbB)) == 3) iItemID = 638;
+						case 8: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::knecklace_of_fire_pro;
 							break; // KnecklaceOfFirePro
-						case 9: if (iDice(1, (4 * fProbB)) == 3) iItemID = 3043;
+						case 9: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::sotg_manual;
 							break; // Strike of the Ghosts Manual
-						case 10: if (iDice(1, (4 * fProbB)) == 3) iItemID = 259;
+						case 10: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::magic_wand_mshield;
 							break; // MagicWand(M.Shield)
 
 					}
@@ -47940,54 +47958,54 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 		} // switch
 
 		// Ã€Ã?Â¹Ã? Â¾Ã†Ã€ÃŒÃ…Ã› ....dumb korean idiots
-		if (iItemID == 0) {
+		if (iItemID == ItemId::none) {
 			switch (iDice(1, 19)) {
-				case 1: if (iDice(1, (2 * fProbC)) == 2) iItemID = 871;
+				case 1: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::ancient_tablet_rd;
 					break; // AncientTablets
-				case 2: if (iDice(1, (2 * fProbC)) == 2) iItemID = 870;
+				case 2: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::ancient_tablet_ru;
 					break; // AncientTablets
-				case 3: if (iDice(1, (2 * fProbC)) == 2) iItemID = 869;
+				case 3: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::ancient_tablet_ld;
 					break; // AncientTablet
-				case 4: if (iDice(1, (2 * fProbC)) == 2) iItemID = 868;
+				case 4: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::ancient_tablet_lu;
 					break; // AcientTablet(LU)
-				case 5: if (iDice(1, (2 * fProbC)) == 2) iItemID = 650;
+				case 5: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::zemstoneof_sacrifice;
 					break; // ZemstoneOfSacrifice
-				case 6: if (iDice(1, (2 * fProbC)) == 2) iItemID = 656;
+				case 6: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::stone_of_xelima;
 					break; // StoneOfXelima
-				case 7: if (iDice(1, (2 * fProbC)) == 2) iItemID = 657;
+				case 7: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::stone_of_merien;
 					break; // StoneOfMerien
-				case 8: if (iDice(1, (2 * fProbC)) == 2) iItemID = 333;
+				case 8: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::platinum_ring;
 					break; // PlatinumRing
-				case 9: if (iDice(1, (2 * fProbC)) == 2) iItemID = 334;
+				case 9: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::lucky_gold_ring;
 					break; // LuckyGoldRing
-				case 10: if (iDice(1, (2 * fProbC)) == 2) iItemID = 335;
+				case 10: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::emerald_ring;
 					break; // EmeraldRing
-				case 11: if (iDice(1, (2 * fProbC)) == 2) iItemID = 336;
+				case 11: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::sapphire_ring;
 					break; // SapphireRing
-				case 12: if (iDice(1, (2 * fProbC)) == 2) iItemID = 653;
+				case 12: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::yellow_ball;
 					break; // Yellow Ball
-				case 13: if (iDice(1, (2 * fProbC)) == 2) iItemID = 290;
+				case 13: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::flameberge_plus_3_llf;
 					break; // Flameberge+3(LLF)
-				case 14: if (iDice(1, (2 * fProbC)) == 2) iItemID = 292;
+				case 14: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::golden_axe_llf;
 					break; // GoldenAxe(LLF)
-				case 15: if (iDice(1, (2 * fProbC)) == 2) iItemID = 300;
+				case 15: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::magic_necklace_rm10;
 					break; // MagicNecklace(RM10)
-				case 16: if (iDice(1, (2 * fProbC)) == 2) iItemID = 311;
+				case 16: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::magic_necklace_df10;
 					break; // MagicNecklace(DF+10)
-				case 17: if (iDice(1, (2 * fProbC)) == 2) iItemID = 305;
+				case 17: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::magic_necklace_dm1;
 					break; // MagicNecklace(DM+1)
-				case 18: if (iDice(1, (2 * fProbC)) == 2) iItemID = 308;
+				case 18: if (iDice(1, (2 * fProbC)) == 2) iItemID = ItemId::magic_necklace_ms10;
 					break; // MagicNecklace(MS10)
-				case 19: if (iDice(1, (3 * fProbC)) == 2) iItemID = 654;
+				case 19: if (iDice(1, (3 * fProbC)) == 2) iItemID = ItemId::blue_ball;
 					break; // Blue Ball
 			}
 		}
 
 		// ÃˆÂ®Â·Ã¼Ã€ÃŒ 100 Ã€ÃŽÂµÂ¥ Â¾Ã†Â¹Â« Â°Ã?ÂµÂµ Â³ÂªÂ¿Ã€Ã?Ã¶ Â¾ÃŠÂ¾Ã’Â´Ã™.
 		// Gold Ã?Ã˜Â´Ã™. retarded koreans -_-
-		if (iItemID == 0 && iProb == 100) iItemID = 90; // Gold
+		if (iItemID == ItemId::none && iProb == 100) iItemID = ItemId::gold; // Gold
 
-		if (iItemID != 0) {
+		if (iItemID != ItemId::none) {
 			// item id
 			iItemIDs[iNum] = iItemID;
 
@@ -48016,11 +48034,13 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 
 // 05/21/2004 - Hypnotoad - Balances to drop status
 // Primary Drops
+
 void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType) {
 	class CItem * pItem;
 	char cColor, cItemName[21];
 	bool bIsGold;
-	int iGenLevel, iResult, iItemID;
+	int iGenLevel, iResult;
+	ItemId iItemID = ItemId::none;
 	DWORD dwType, dwValue;
 	double dTmp1, dTmp2, dTmp3;
 
@@ -48044,7 +48064,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		// 35% Drop 60% of that is gold
 		// 35% Chance of drop (35/100)
 		if (iDice(1, 10000) <= 4000) {
-			iItemID = 90; // Gold: (35/100) * (60/100) = 21%
+			iItemID = ItemId::gold; // Gold: (35/100) * (60/100) = 21%
 			// If a non-existing itemID is given create no item
 			pItem = new class CItem;
 			if (_bInitItemAttr(pItem, iItemID) == false) {
@@ -48085,67 +48105,67 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 
 				switch (dwValue) {
-					case 1: iItemID = 95;
+					case 1: iItemID = ItemId::green_potion;
 						break; // Green Potion
-					case 2: iItemID = 91;
+					case 2: iItemID = ItemId::red_potion;
 						break; // Red Potion
-					case 3: iItemID = 93;
+					case 3: iItemID = ItemId::blue_potion;
 						break; // Blue Potion
-					case 4: iItemID = 96;
+					case 4: iItemID = ItemId::big_green_potion;
 						break; // Big Green Potion
-					case 5: iItemID = 92;
+					case 5: iItemID = ItemId::big_red_potion;
 						break; // Big Red Potion
-					case 6: iItemID = 94;
+					case 6: iItemID = ItemId::big_blue_potion;
 						break; // Big Blue Potion
 					case 7: switch (iDice(1, 2)) {
-							case 1: iItemID = 390;
+							case 1: iItemID = ItemId::power_green_potion;
 								break; // Power Green Potion
-							case 2: iItemID = 95;
+							case 2: iItemID = ItemId::green_potion;
 								break; // Green Potion
 						}
 						break;
 					case 8: switch (iDice(1, 6)) {
-							case 1: iItemID = 391;
+							case 1: iItemID = ItemId::super_pg_potion;
 								break; // Super Power Green Potion
-							case 2: iItemID = 650;
+							case 2: iItemID = ItemId::zemstoneof_sacrifice;
 								break; // Zemstone of Sacrifice
-							case 3: iItemID = 656;
+							case 3: iItemID = ItemId::stone_of_xelima;
 								break; // Xelima Stone
-							case 4: iItemID = 657;
+							case 4: iItemID = ItemId::stone_of_merien;
 								break; // Merien Stone
-							case 5: iItemID = 95;
+							case 5: iItemID = ItemId::green_potion;
 								break; // Green Potion
 							case 6: switch (iDice(1, 5)) {
-									case 1: iItemID = 651;
+									case 1: iItemID = ItemId::green_ball;
 										break; // GreenBall
-									case 2: iItemID = 652;
+									case 2: iItemID = ItemId::red_ball;
 										break; // RedBall
-									case 3: iItemID = 653;
+									case 3: iItemID = ItemId::yellow_ball;
 										break; // YellowBall
-									case 4: iItemID = 654;
+									case 4: iItemID = ItemId::blue_ball;
 										break; // BlueBall
 									case 5: switch (iDice(1, 11)) {
-											case 1: iItemID = 881;
+											case 1: iItemID = ItemId::magin_diamond;
 												break; // ArmorDye(Indigo)
-											case 2: iItemID = 882;
+											case 2: iItemID = ItemId::magin_ruby;
 												break; // ArmorDye(Crimson-Red)
-											case 3: iItemID = 883;
+											case 3: iItemID = ItemId::magic_emerald;
 												break; // ArmorDye(Gold)
-											case 4: iItemID = 884;
+											case 4: iItemID = ItemId::magic_sapphire;
 												break; // ArmorDye(Aqua)
-											case 5: iItemID = 885;
+											case 5: iItemID = ItemId::lucky_prize_ticket;
 												break; // ArmorDye(Pink)
-											case 6: iItemID = 886;
+											case 6: iItemID = ItemId::magic_necklace_df_plus_15;
 												break; // ArmorDye(Violet)
-											case 7: iItemID = 887;
+											case 7: iItemID = ItemId::magic_necklace_df_plus_20;
 												break; // ArmorDye(Blue)
-											case 8: iItemID = 888;
+											case 8: iItemID = ItemId::magic_necklace_df_plus_25;
 												break; // ArmorDye(Khaki)
-											case 9: iItemID = 889;
+											case 9: iItemID = ItemId::magic_necklace_df_plus_30;
 												break; // ArmorDye(Yellow)
-											case 10: iItemID = 890;
+											case 10: iItemID = ItemId::magic_necklace_dm_plus_2;
 												break; // ArmorDye(Red)
-											case 11: iItemID = 655;
+											case 11: iItemID = ItemId::pearl_ball;
 												break; // PearlBall
 										}
 										break;
@@ -48157,15 +48177,15 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					case 9:
 						SYSTEMTIME SysTime;
 						GetLocalTime(&SysTime);
-						if (((short) SysTime.wMonth == 12) && (m_pNpcList[iNpcH]->m_sType == 61 || 55)) {
+						if (((short) SysTime.wMonth == 12) && (m_pNpcList[iNpcH]->m_sType == 61 || m_pNpcList[iNpcH]->m_sType == 55)) {
 							switch (iDice(1, 4)) {
-								case 1: iItemID = 780;
+								case 1: iItemID = ItemId::red_candy;
 									break; // Red Candy
-								case 2: iItemID = 781;
+								case 2: iItemID = ItemId::blue_candy;
 									break; // Blue Candy
-								case 3: iItemID = 782;
+								case 3: iItemID = ItemId::green_candy;
 									break; // Green Candy
-								case 4: iItemID = 91;
+								case 4: iItemID = ItemId::red_potion;
 									break; // Red Potion
 							}
 						}
@@ -48265,52 +48285,52 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 						// 70% the Weapon is Melee
 						switch (iGenLevel) {
 
-	case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
+							case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
 								switch (iDice(1, 3)) {
-									case 1: iItemID = 1;
+									case 1: iItemID = ItemId::dagger;
 										break; // Dagger
-									case 2: iItemID = 8;
+									case 2: iItemID = ItemId::short_sword;
 										break; // ShortSword
-									case 3: iItemID = 59;
+									case 3: iItemID = ItemId::light_axe;
 										break; // LightAxe
 								}
 								break;
 
 							case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie
 								switch (iDice(1, 6)) {
-									case 1: iItemID = 12;
+									case 1: iItemID = ItemId::main_gauche;
 										break; // MainGauche
-									case 2: iItemID = 15;
+									case 2: iItemID = ItemId::gradius;
 										break; // Gradius
-									case 3: iItemID = 65;
+									case 3: iItemID = ItemId::sexon_axe;
 										break; // SexonAxe
-									case 4: iItemID = 62;
+									case 4: iItemID = ItemId::tomahoc;
 										break; // Tomahoc
-									case 5: iItemID = 23;
+									case 5: iItemID = ItemId::sabre;
 										break; // Sabre
-									case 6: iItemID = 31;
+									case 6: iItemID = ItemId::esterk;
 										break; // Esterk
 								}
 								break;
 
 							case 3: // Stone-Golem, Clay-Golem
 								switch (iDice(1, 4)) {
-									case 1: iItemID = 17;
+									case 1: iItemID = ItemId::long_sword;
 										break; // LongSword
-									case 2: iItemID = 68;
+									case 2: iItemID = ItemId::double_axe;
 										break; // DoubleAxe
-									case 3: iItemID = 23;
+									case 3: iItemID = ItemId::sabre;
 										break; // Sabre
-									case 4: iItemID = 31;
+									case 4: iItemID = ItemId::esterk;
 										break; // Esterk
 								}
 								break;
 
 							case 4: // Hellbound, Rudolph
 								switch (iDice(1, 2)) {
-									case 1: iItemID = 25;
+									case 1: iItemID = ItemId::scimitar;
 										break; // Scimitar
-									case 2: iItemID = 31;
+									case 2: iItemID = ItemId::esterk;
 										break; // Esterk
 
 								}
@@ -48318,82 +48338,82 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 							case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
 								switch (iDice(1, 4)) {
-									case 1: iItemID = 31;
+									case 1: iItemID = ItemId::esterk;
 										break; // Esterk
-									case 2: iItemID = 34;
+									case 2: iItemID = ItemId::rapier;
 										break; // Rapier
-									case 3: iItemID = 71;
+									case 3: iItemID = ItemId::war_axe;
 										break; // WarAxe
-                                                                        case 4: iItemID = 50;
-                                                                                break; // greatsword
+									case 4: iItemID = ItemId::great_sword;
+										break; // greatsword
 								}
 								break;
 
 							case 6: // Orge, WereWolf, Dark-Elf, Ice-Golem, minatours
 								switch (iDice(1, 3)) {
-									case 1: iItemID = 54;
+									case 1: iItemID = ItemId::flameberge;
 										break; // Flameberge
-									case 2: iItemID = 615;
+									case 2: iItemID = ItemId::giant_sword;
 										break; // Giant Sword
-									//case 3: iItemID = 560;
-									//	break; // Battle Axe
-                                                                        case 3: iItemID = 51;
+										//case 3: iItemID = ItemId::battle_axe;
+										//	break; // Battle Axe
+									case 3: iItemID = ItemId::great_sword_plus_1;
 										break; // Great Sword
 								}
 								break;
 
 							case 7: // Liche, Frost
-								switch (iDice(1,4)) {
-									case 1: iItemID = 54;
+								switch (iDice(1, 4)) {
+									case 1: iItemID = ItemId::flameberge;
 										break; // Flameberge
-									case 2: iItemID = 760;
+									case 2: iItemID = ItemId::hammer;
 										break; // Hammer
-                                                                    case 3: iItemID = 51;
-                                                                            break; // Great Sword
-                                                                    case 4: iItemID = 615;
-                                                                    break; // Giant Sword
+									case 3: iItemID = ItemId::great_sword_plus_1;
+										break; // Great Sword
+									case 4: iItemID = ItemId::giant_sword;
+										break; // Giant Sword
 								}
 								break;
 
 							case 8: // Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
 								switch (iDice(1, 4)) {
-									case 1: iItemID = 844;
+									case 1: iItemID = ItemId::black_shadow_sword;
 										break; // Black Shadow Sword
-									case 2: iItemID = 615;
+									case 2: iItemID = ItemId::giant_sword;
 										break; // Giant Sword
-									case 3: iItemID = 560;
+									case 3: iItemID = ItemId::battle_axe;
 										break; // BattleAxe
-                                                                    case 4: iItemID = 760;  
-                                                                    break; //Hammer
+									case 4: iItemID = ItemId::hammer;
+										break; //Hammer
 								}
 								break;
 
 							case 9: // MountainGiant
 								switch (iDice(1, 2)) {
-									case 1: iItemID = 761;
+									case 1: iItemID = ItemId::battle_hammer;
 										break; // Battle Hammer
-									case 2: iItemID = 760;
+									case 2: iItemID = ItemId::hammer;
 										break; // Hammer
-									/*case 3: iItemID = 28;
-										break; // Falchion
-									case 4: iItemID = 31;
-										break; // Esterk
-									case 5: iItemID = 34;
-										break; // Rapier
-									case 6: iItemID = 760;
-										break; // Hammer*/
+										/*case 3: iItemID = ItemId::falchion;
+											break; // Falchion
+										case 4: iItemID = ItemId::esterk;
+											break; // Esterk
+										case 5: iItemID = ItemId::rapier;
+											break; // Rapier
+										case 6: iItemID = ItemId::hammer;
+											break; // Hammer*/
 								}
 								break;
 
 							case 10: // Ettin
 								switch (iDice(1, 3)) {
-									case 1: iItemID = 844;
+									case 1: iItemID = ItemId::black_shadow_sword;
 										break; // Black Shadow Sword
-									case 2: iItemID = 761;
+									case 2: iItemID = ItemId::battle_hammer;
 										break; // BattleHammer
-									//case 3: iItemID = 843;
-									//	break; // Barbarian Hammer
-									case 3: iItemID = 760;
+										//case 3: iItemID = ItemId::barbarian_hammer;
+										//	break; // Barbarian Hammer
+									case 3: iItemID = ItemId::hammer;
 										break; // Hammer
 								}
 								break;
@@ -48404,16 +48424,16 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 
 							case 2:
 							case 3:
-								iItemID = 258;
+								iItemID = ItemId::magic_wand_ms0;
 								break; // MagicWand(MS0)
 							case 4:
 							case 5:
 							case 6:
-								iItemID = 257;
+								iItemID = ItemId::magic_wand_ms10;
 								break; // MagicWand(MS10)
 							case 7:
 							case 8:
-								iItemID = 256;
+								iItemID = ItemId::magic_wand_ms20;
 								break; // MagicWand(MS20) //Changed 03-03-12
 							case 9:
 							case 10:
@@ -48425,363 +48445,363 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					switch (iGenLevel) {
 
 						case 1: // Slime, Giant-Ant, Amphis, Rabbit, Cat
-                                                    switch (iDice(1,11)) {
-                                                        case 1: iItemID = 453;
-                                                                break; // Shirt M
-                                                        case 2: iItemID = 471;
-                                                                break; // Shirt W
-                                                        case 3: iItemID = 459;
-                                                                break; // Trousers M
-                                                        case 4: iItemID = 480;
-                                                                break; // Trousers W
-                                                        case 5: iItemID = 460;
-                                                                break; // Knee Trousers M
-                                                        case 6: iItemID = 481;
-                                                                break; // Knee Trousers W
-                                                        case 7: iItemID = 470;
-                                                                break; // Chemise W
-                                                        case 8: iItemID = 473;
-                                                                break; // Bodice W
-                                                        case 9: iItemID = 474;
-                                                                break; // Long Bodice W
-                                                        case 10: iItemID = 479;
-                                                                break; // Skirt W
-                                                        case 11: iItemID = 484;
-                                                                break; // Tunic M
-                                                    }
-                                                    break;
+							switch (iDice(1, 11)) {
+								case 1: iItemID = ItemId::shirt_m;
+									break; // Shirt M
+								case 2: iItemID = ItemId::shirt_w;
+									break; // Shirt W
+								case 3: iItemID = ItemId::trousers_m;
+									break; // Trousers M
+								case 4: iItemID = ItemId::trousers_w;
+									break; // Trousers W
+								case 5: iItemID = ItemId::knee_trousers_m;
+									break; // Knee Trousers M
+								case 6: iItemID = ItemId::knee_trousers_w;
+									break; // Knee Trousers W
+								case 7: iItemID = ItemId::chemise_w;
+									break; // Chemise W
+								case 8: iItemID = ItemId::bodice_w;
+									break; // Bodice W
+								case 9: iItemID = ItemId::long_bodice_w;
+									break; // Long Bodice W
+								case 10: iItemID = ItemId::skirt_w;
+									break; // Skirt W
+								case 11: iItemID = ItemId::tunic_m;
+									break; // Tunic M
+							}
+							break;
 						case 2: // Skeleton, Orc, Orc-Mage, Scorpion, Zombie
 							switch (iDice(1, 2)) {
-								case 1: iItemID = 79;
+								case 1: iItemID = ItemId::wood_shield;
 									break; // WoodShield
-								case 2: iItemID = 81;
+								case 2: iItemID = ItemId::targe_shield;
 									break; // TargeShield
 							}
 							break;
 
 						case 3: switch (iDice(1, 2)) {// Stone-Golem, Clay-Golem
-								case 1: iItemID = 79;
+								case 1: iItemID = ItemId::wood_shield;
 									break; // WoodShield
-								case 2: iItemID = 81;
+								case 2: iItemID = ItemId::targe_shield;
 									break; // TargeShield
 							}
 							break;
 
 						case 4: // Hellbound, Rudolph
 							switch (iDice(1, 6)) {
-								case 1: iItemID = 450; // Shoes
-                                                                break;
-								case 2: iItemID = 454; // Hauberk M
-                                                                break;
-								case 3: iItemID = 84;// IronShield
-								break;
-                                                            case 4: iItemID = 472; // Hauberk W
-                                                            break;
-                                                            case 5: iItemID = 461; // ChainHose M
-                                                            break;
-                                                            case 6: iItemID = 482; // ChainHose W
-                                                            break;
-                                                        }
+								case 1: iItemID = ItemId::shoes; // Shoes
+									break;
+								case 2: iItemID = ItemId::hauberk_m; // Hauberk M
+									break;
+								case 3: iItemID = ItemId::iron_shield; // IronShield
+									break;
+								case 4: iItemID = ItemId::hauberk_w; // Hauberk W
+									break;
+								case 5: iItemID = ItemId::chain_hose_m; // ChainHose M
+									break;
+								case 6: iItemID = ItemId::chain_hose_w; // ChainHose W
+									break;
+							}
 							break;
 
 						case 5: // Cyclops, Troll, Beholder, Cannibal-Plant, DireBoar
 							//switch (iDice(1, 12)) {
-                                                            switch (iDice(1, 7)) {
-								case 1: iItemID = 454; // Hauberk M
-                                                                break;
-								case 2: iItemID = 85;// LagiShield
-								break;
-                                                            case 3: iItemID = 472; // Hauberk W
-                                                            break;
-                                                            case 4: iItemID = 461; // ChainHose M
-                                                            break;
-                                                            case 5: iItemID = 482; // ChainHose W
-                                                            break;
-                                                                case 6: iItemID = 600; // Helm M
-                                                                break;
-                                                                case 7: iItemID = 602; // Helm W
-                                                                break;
-								/*case 1: iItemID = 916;
-									break; // Dream Plate (M)
-								case 2: iItemID = 917;
-									break; // Dream Plate (W
-								case 3: iItemID = 918;
-									break; // Dream Leggings(M)
-								case 4: iItemID = 919;
-									break; // Dream Leggings(W)
-								case 5: iItemID = 920;
-									break; // Dream Hauberk(M)
-								case 6: iItemID = 921;
-									break; // Dream Hauberk(W)
-								case 7: iItemID = 922;
-									break; // Dream Hauberk(M)
-								case 8: iItemID = 923;
-									break; // Dream Hauberk(W)
-								case 9: iItemID = 924;
-									break; // Dream Helm (M)
-								case 10: iItemID = 925;
-									break; // Dream Helm (W)
-								case 11: iItemID = 926;
-									break; // Dream Helm (M)
-								case 12: iItemID = 927;
-									break; // Dream Helm (W)*/
+							switch (iDice(1, 7)) {
+								case 1: iItemID = ItemId::hauberk_m; // Hauberk M
+									break;
+								case 2: iItemID = ItemId::lagi_shield; // LagiShield
+									break;
+								case 3: iItemID = ItemId::hauberk_w; // Hauberk W
+									break;
+								case 4: iItemID = ItemId::chain_hose_m; // ChainHose M
+									break;
+								case 5: iItemID = ItemId::chain_hose_w; // ChainHose W
+									break;
+								case 6: iItemID = ItemId::helm_m; // Helm M
+									break;
+								case 7: iItemID = ItemId::helm_w; // Helm W
+									break;
+									/*case 1: iItemID = ItemId::dream_plate_mail_m;
+										break; // Dream Plate (M)
+									case 2: iItemID = ItemId::dream_plate_mail_w;
+										break; // Dream Plate (W
+									case 3: iItemID = ItemId::dream_leggings_m;
+										break; // Dream Leggings(M)
+									case 4: iItemID = ItemId::dream_leggings_w;
+										break; // Dream Leggings(W)
+									case 5: iItemID = ItemId::dream_hauberk_m;
+										break; // Dream Hauberk(M)
+									case 6: iItemID = ItemId::dream_hauberk_w;
+										break; // Dream Hauberk(W)
+									case 7: iItemID = ItemId::dream_chain_mail_w;
+										break; // Dream Hauberk(M)
+									case 8: iItemID = ItemId::dream_chain_mail_m;
+										break; // Dream Hauberk(W)
+									case 9: iItemID = ItemId::dream_hat_m;
+										break; // Dream Helm (M)
+									case 10: iItemID = ItemId::dream_hat_w;
+										break; // Dream Helm (W)
+									case 11: iItemID = ItemId::dream_helm_m;
+										break; // Dream Helm (M)
+									case 12: iItemID = ItemId::dream_helm_w;
+										break; // Dream Helm (W)*/
 
 							}
 							break;
 
 						case 6: // Orge, WereWolf, Stalker, Dark-Elf, Ice-Golem
-                                                            switch (iDice(1, 9)) {
-								case 1: iItemID = 454; // Hauberk M
-                                                                break;
-								case 2: iItemID = 85;// LagiShield
-								break;
-                                                            case 3: iItemID = 472; // Hauberk W
-                                                            break;
-                                                            case 4: iItemID = 461; // ChainHose M
-                                                            break;
-                                                            case 5: iItemID = 482; // ChainHose W
-                                                            break;
-                                                                case 6: iItemID = 600; // Helm M
-                                                                break;
-                                                                case 7: iItemID = 602; // Helm W
-                                                                break;
-                                                                case 8: iItemID = 752; // Wizard Cap M
-                                                                break;
-                                                                case 9: iItemID = 756; // Wizard Cap W
-                                                                break;
-                                                    /*switch (iDice(1, 12)) {
-								case 1: iItemID = 934;
-									break; // ExtasisMail(M)
-								case 2: iItemID = 935;
-									break; // ExtasisMail(W)
-								case 3: iItemID = 928;
-									break; // ExtasisPlateMail(M)
-								case 4: iItemID = 929;
-									break; // ExtasisPlateMail(W)
-								case 5: iItemID = 938;
-									break; // ExtasisWings-Helm(M)
-								case 6: iItemID = 939;
-									break; // ExtasisWings-Helm(W)
-								case 7: iItemID = 936;
-									break; // Wizard-Hat(M)
-								case 8: iItemID = 937;
-									break; // Wizard-Hat(W)
-								case 9: iItemID = 932;
-									break; // ExtasisHauberk(M)
-								case 10: iItemID = 933;
-									break; // ExtasisHauberk(W)
-								case 11: iItemID = 930;
-									break; // ExtasisChainHose(M)
-								case 12: iItemID = 931;
-									break; // ExtasisChainHose(W)*/
+							switch (iDice(1, 9)) {
+								case 1: iItemID = ItemId::hauberk_m; // Hauberk M
+									break;
+								case 2: iItemID = ItemId::lagi_shield; // LagiShield
+									break;
+								case 3: iItemID = ItemId::hauberk_w; // Hauberk W
+									break;
+								case 4: iItemID = ItemId::chain_hose_m; // ChainHose M
+									break;
+								case 5: iItemID = ItemId::chain_hose_w; // ChainHose W
+									break;
+								case 6: iItemID = ItemId::helm_m; // Helm M
+									break;
+								case 7: iItemID = ItemId::helm_w; // Helm W
+									break;
+								case 8: iItemID = ItemId::wizard_cap_m; // Wizard Cap M
+									break;
+								case 9: iItemID = ItemId::wizard_cap_w; // Wizard Cap W
+									break;
+									/*switch (iDice(1, 12)) {
+									case 1: iItemID = ItemId::extasis_chain_mail_w;
+  break; // ExtasisMail(M)
+									case 2: iItemID = ItemId::extasis_chain_mail_m;
+  break; // ExtasisMail(W)
+									case 3: iItemID = ItemId::extasis_plate_mail_m;
+  break; // ExtasisPlateMail(M)
+									case 4: iItemID = ItemId::extasis_plate_mail_w;
+  break; // ExtasisPlateMail(W)
+									case 5: iItemID = ItemId::extasis_helm_m;
+  break; // ExtasisWings-Helm(M)
+									case 6: iItemID = ItemId::extasis_helm_w;
+  break; // ExtasisWings-Helm(W)
+									case 7: iItemID = ItemId::extasis_hat_m;
+  break; // Wizard-Hat(M)
+									case 8: iItemID = ItemId::extasis_hat_w;
+  break; // Wizard-Hat(W)
+									case 9: iItemID = ItemId::extasis_hauberk_m;
+  break; // ExtasisHauberk(M)
+									case 10: iItemID = ItemId::extasis_hauberk_w;
+  break; // ExtasisHauberk(W)
+									case 11: iItemID = ItemId::extasis_leggings_m;
+  break; // ExtasisChainHose(M)
+									case 12: iItemID = ItemId::extasis_leggings_w;
+  break; // ExtasisChainHose(W)*/
 
 							}
 							break;
 
 						case 7: // Liche, Frost, Ettin & Lizards
-                                                    switch (iDice(1, 11)) {
-								case 1: iItemID = 454; // Hauberk M
-                                                                break;
-								case 2: iItemID = 751;// Wings-Helm M
-								break;
-                                                                case 3: iItemID = 472; // Hauberk W
-                                                                break;
-                                                                case 4: iItemID = 461; // ChainHose M
-                                                                break;
-                                                                case 5: iItemID = 482; // ChainHose W
-                                                                break;
-                                                                case 6: iItemID = 600; // Helm M
-                                                                break;
-                                                                case 7: iItemID = 602; // Helm W
-                                                                break;
-                                                                case 8: iItemID = 752; // Wizard Cap M
-                                                                break;
-                                                                case 9: iItemID = 756; // Wizard Cap W
-                                                                break;
-                                                                case 10: iItemID = 755; // Wings-Helm W
-                                                                break;
-                                                                case 11: iItemID = 87; // TowerShield
-                                                                break;
-							/*switch (iDice(1, 12)) {
-								case 1: iItemID = 944;
-									break; // RuneHauberk(M)
-								case 2: iItemID = 945;
-									break; // RuneHauberk(W)
-								case 3: iItemID = 940;
-									break; // RunePlateMail(M)
-								case 4: iItemID = 941;
-									break; // RunePlateMail(W)
-								case 5: iItemID = 942;
-									break; // RuneLeggings(M)
-								case 6: iItemID = 943;
-									break; // RuneLeggings(W)
-								case 7: iItemID = 948;
-									break; // RuneHat(M)
-								case 8: iItemID = 949;
-									break; // RuneHat(M)
-								case 9: iItemID = 950;
-									break; // RuneFull-Helm(M)
-								case 10: iItemID = 951;
-									break; // RuneFull-Helm(M)
-								case 11: iItemID = 946;
-									break; //Rune Chain Mail(M)
-								case 12: iItemID = 947;
-									break; // Rune Chain Mail (W)*/
+							switch (iDice(1, 11)) {
+								case 1: iItemID = ItemId::hauberk_m; // Hauberk M
+									break;
+								case 2: iItemID = ItemId::wings_helm_m; // Wings-Helm M
+									break;
+								case 3: iItemID = ItemId::hauberk_w; // Hauberk W
+									break;
+								case 4: iItemID = ItemId::chain_hose_m; // ChainHose M
+									break;
+								case 5: iItemID = ItemId::chain_hose_w; // ChainHose W
+									break;
+								case 6: iItemID = ItemId::helm_m; // Helm M
+									break;
+								case 7: iItemID = ItemId::helm_w; // Helm W
+									break;
+								case 8: iItemID = ItemId::wizard_cap_m; // Wizard Cap M
+									break;
+								case 9: iItemID = ItemId::wizard_cap_w; // Wizard Cap W
+									break;
+								case 10: iItemID = ItemId::wings_helm_w; // Wings-Helm W
+									break;
+								case 11: iItemID = ItemId::tower_shield; // TowerShield
+									break;
+									/*switch (iDice(1, 12)) {
+										case 1: iItemID = ItemId::rune_hauberk_m;
+											break; // RuneHauberk(M)
+										case 2: iItemID = ItemId::rune_hauberk_w;
+											break; // RuneHauberk(W)
+										case 3: iItemID = ItemId::rune_plate_mail_m;
+											break; // RunePlateMail(M)
+										case 4: iItemID = ItemId::rune_plate_mail_w;
+											break; // RunePlateMail(W)
+										case 5: iItemID = ItemId::rune_leggings_m;
+											break; // RuneLeggings(M)
+										case 6: iItemID = ItemId::rune_leggings_w;
+											break; // RuneLeggings(W)
+										case 7: iItemID = ItemId::rune_hat_m;
+											break; // RuneHat(M)
+										case 8: iItemID = ItemId::rune_hat_w;
+											break; // RuneHat(M)
+										case 9: iItemID = ItemId::rune_helm_m;
+											break; // RuneFull-Helm(M)
+										case 10: iItemID = ItemId::rune_helm_w;
+											break; // RuneFull-Helm(M)
+										case 11: iItemID = ItemId::rune_chain_mail_w;
+											break; //Rune Chain Mail(M)
+										case 12: iItemID = ItemId::rune_chain_mail_m;
+											break; // Rune Chain Mail (W)*/
 							}
 							break;
 
 						case 8: switch (iDice(1, 23)) {// Demon, Unicorn, Hellclaw, Tigerworm, Gagoyle
-								case 1: iItemID = 402; // Cape
-                                                                break;
-								case 2: iItemID = 450; //Shoes.
-                                                                break;
-                                                                case 3: iItemID = 87; // TowerShield
-                                                                break;
-                                                                case 4: iItemID = 458; // PlateMail M
-                                                                        break;
-                                                                case 5: iItemID = 478; // PlateMail W
-                                                                break;
-                                                                case 6: iItemID = 456; // ChainMail M
-                                                                break;
-                                                                case 7: iItemID = 476; // ChainMail W
-                                                                break;
-                                                    case 8: iItemID = 601; // FullHelm M
-                                                    break;
-                                                    case 9: iItemID = 603; // FullHelm W
-                                                    break;
-                                                    case 10: iItemID = 753; // Wizard Hat M
-                                                    break;
-                                                    case 11: iItemID = 757; // Wizard Hat W
-                                                    break;
-                                                    case 12: iItemID = 750; // Horned Helm M
-                                                    break;
-                                                    case 13: iItemID = 754; // Horned Helm W
-                                                    break;
-                                                                case 14: iItemID = 454; // Hauberk M
-                                                                break;
-								case 15: iItemID = 751;// Wings-Helm M
-								break;
-                                                                case 16: iItemID = 472; // Hauberk W
-                                                                break;
-                                                                case 17: iItemID = 461; // ChainHose M
-                                                                break;
-                                                                case 18: iItemID = 482; // ChainHose W
-                                                                break;
-                                                                case 19: iItemID = 600; // Helm M
-                                                                break;
-                                                                case 20: iItemID = 602; // Helm W
-                                                                break;
-                                                                case 21: iItemID = 752; // Wizard Cap M
-                                                                break;
-                                                                case 22: iItemID = 756; // Wizard Cap W
-                                                                break;
-                                                                case 23: iItemID = 755; // Wings-Helm W
-                                                                break;
+								case 1: iItemID = ItemId::cape; // Cape
+									break;
+								case 2: iItemID = ItemId::shoes; //Shoes.
+									break;
+								case 3: iItemID = ItemId::tower_shield; // TowerShield
+									break;
+								case 4: iItemID = ItemId::plate_mail_m; // PlateMail M
+									break;
+								case 5: iItemID = ItemId::plate_mail_w; // PlateMail W
+									break;
+								case 6: iItemID = ItemId::chain_mail_m; // ChainMail M
+									break;
+								case 7: iItemID = ItemId::chain_mail_w; // ChainMail W
+									break;
+								case 8: iItemID = ItemId::full_helm_m; // FullHelm M
+									break;
+								case 9: iItemID = ItemId::full_helm_w; // FullHelm W
+									break;
+								case 10: iItemID = ItemId::wizard_hat_m; // Wizard Hat M
+									break;
+								case 11: iItemID = ItemId::wizard_hat_w; // Wizard Hat W
+									break;
+								case 12: iItemID = ItemId::horned_helm_m; // Horned Helm M
+									break;
+								case 13: iItemID = ItemId::horned_helm_w; // Horned Helm W
+									break;
+								case 14: iItemID = ItemId::hauberk_m; // Hauberk M
+									break;
+								case 15: iItemID = ItemId::wings_helm_m; // Wings-Helm M
+									break;
+								case 16: iItemID = ItemId::hauberk_w; // Hauberk W
+									break;
+								case 17: iItemID = ItemId::chain_hose_m; // ChainHose M
+									break;
+								case 18: iItemID = ItemId::chain_hose_w; // ChainHose W
+									break;
+								case 19: iItemID = ItemId::helm_m; // Helm M
+									break;
+								case 20: iItemID = ItemId::helm_w; // Helm W
+									break;
+								case 21: iItemID = ItemId::wizard_cap_m; // Wizard Cap M
+									break;
+								case 22: iItemID = ItemId::wizard_cap_w; // Wizard Cap W
+									break;
+								case 23: iItemID = ItemId::wings_helm_w; // Wings-Helm W
+									break;
 							}
 							break;
 
 						case 9: switch (iDice(1, 10)) {
-								case 1: iItemID = 454; // Hauberk M
-                                                                break;
-								case 2: iItemID = 601;// Full-Helm M
-								break;
-                                                                case 3: iItemID = 472; // Hauberk W
-                                                                break;
-                                                                case 4: iItemID = 461; // ChainHose M
-                                                                break;
-                                                                case 5: iItemID = 482; // ChainHose W
-                                                                break;
-                                                                case 6: iItemID = 600; // Helm M
-                                                                break;
-                                                                case 7: iItemID = 602; // Helm W
-                                                                break;
-                                                                case 8: iItemID = 752; // Wizard Cap M
-                                                                break;
-                                                                case 9: iItemID = 756; // Wizard Cap W
-                                                                break;
-                                                                case 10: iItemID = 603; // Full-Helm W
-                                                                break;
-                                                    /*switch (iDice(1, 12)) { //M-G only.
-								case 1: iItemID = 944;
-									break; // RuneHauberk(M)
-								case 2: iItemID = 945;
-									break; // RuneHauberk(W)
-								case 3: iItemID = 940;
-									break; // RunePlateMail(M)
-								case 4: iItemID = 941;
-									break; // RunePlateMail(W)
-								case 5: iItemID = 942;
-									break; // RuneLeggings(M)
-								case 6: iItemID = 943;
-									break; // RuneLeggings(W)
-								case 7: iItemID = 948;
-									break; // RuneHat(M)
-								case 8: iItemID = 949;
-									break; // RuneHat(M)
-								case 9: iItemID = 950;
-									break; // RuneFull-Helm(M)
-								case 10: iItemID = 951;
-									break; // RuneFull-Helm(M)
-								case 11: iItemID = 946;
-									break; //Rune Chain Mail(M)
-								case 12: iItemID = 947;
-									break; // Rune Chain Mail (W)*/
+								case 1: iItemID = ItemId::hauberk_m; // Hauberk M
+									break;
+								case 2: iItemID = ItemId::full_helm_m; // Full-Helm M
+									break;
+								case 3: iItemID = ItemId::hauberk_w; // Hauberk W
+									break;
+								case 4: iItemID = ItemId::chain_hose_m; // ChainHose M
+									break;
+								case 5: iItemID = ItemId::chain_hose_w; // ChainHose W
+									break;
+								case 6: iItemID = ItemId::helm_m; // Helm M
+									break;
+								case 7: iItemID = ItemId::helm_w; // Helm W
+									break;
+								case 8: iItemID = ItemId::wizard_cap_m; // Wizard Cap M
+									break;
+								case 9: iItemID = ItemId::wizard_cap_w; // Wizard Cap W
+									break;
+								case 10: iItemID = ItemId::full_helm_w; // Full-Helm W
+									break;
+									/*switch (iDice(1, 12)) { //M-G only.
+									case 1: iItemID = ItemId::rune_hauberk_m;
+  break; // RuneHauberk(M)
+									case 2: iItemID = ItemId::rune_hauberk_w;
+  break; // RuneHauberk(W)
+									case 3: iItemID = ItemId::rune_plate_mail_m;
+  break; // RunePlateMail(M)
+									case 4: iItemID = ItemId::rune_plate_mail_w;
+  break; // RunePlateMail(W)
+									case 5: iItemID = ItemId::rune_leggings_m;
+  break; // RuneLeggings(M)
+									case 6: iItemID = ItemId::rune_leggings_w;
+  break; // RuneLeggings(W)
+									case 7: iItemID = ItemId::rune_hat_m;
+  break; // RuneHat(M)
+									case 8: iItemID = ItemId::rune_hat_w;
+  break; // RuneHat(M)
+									case 9: iItemID = ItemId::rune_helm_m;
+  break; // RuneFull-Helm(M)
+									case 10: iItemID = ItemId::rune_helm_w;
+  break; // RuneFull-Helm(M)
+									case 11: iItemID = ItemId::rune_chain_mail_w;
+  break; //Rune Chain Mail(M)
+									case 12: iItemID = ItemId::rune_chain_mail_m;
+  break; // Rune Chain Mail (W)*/
 							}
 							break;
 
 						case 10: switch (iDice(1, 10)) {
-								case 1: iItemID = 454; // Hauberk M
-                                                                break;
-								case 2: iItemID = 601;// Full-Helm M
-								break;
-                                                                case 3: iItemID = 472; // Hauberk W
-                                                                break;
-                                                                case 4: iItemID = 461; // ChainHose M
-                                                                break;
-                                                                case 5: iItemID = 482; // ChainHose W
-                                                                break;
-                                                                case 6: iItemID = 600; // Helm M
-                                                                break;
-                                                                case 7: iItemID = 602; // Helm W
-                                                                break;
-                                                                case 8: iItemID = 752; // Wizard Cap M
-                                                                break;
-                                                                case 9: iItemID = 756; // Wizard Cap W
-                                                                break;
-                                                                case 10: iItemID = 603; // Full-Helm W
-                                                                break;
-                                                                   case 11: iItemID = 87; // TowerShield
-                                                                break;
-                                                                case 12: iItemID = 456; // ChainMail M
-                                                                break;
-                                                                case 13: iItemID = 476; // ChainMail W
-                                                                break;
-                                                                //HElm,FullHelm,TowerShield,Chainhose,ChainMail,Berk,WizCap,WingsHelm
-                                                    /*switch (iDice(1, 12)) { //Master Mage ORc..
-								case 1: iItemID = 944;
-									break; // RuneHauberk(M)
-								case 2: iItemID = 945;
-									break; // RuneHauberk(W)
-								case 3: iItemID = 940;
-									break; // RunePlateMail(M)
-								case 4: iItemID = 941;
-									break; // RunePlateMail(W)
-								case 5: iItemID = 942;
-									break; // RuneLeggings(M)
-								case 6: iItemID = 943;
-									break; // RuneLeggings(W)
-								case 7: iItemID = 948;
-									break; // RuneHat(M)
-								case 8: iItemID = 949;
-									break; // RuneHat(M)
-								case 9: iItemID = 950;
-									break; // RuneFull-Helm(M)
-								case 10: iItemID = 951;
-									break; // RuneFull-Helm(M)
-								case 11: iItemID = 946;
-									break; //Rune Chain Mail(M)
-								case 12: iItemID = 947;
-									break; // Rune Chain Mail (W)*/
+								case 1: iItemID = ItemId::hauberk_m; // Hauberk M
+									break;
+								case 2: iItemID = ItemId::full_helm_m; // Full-Helm M
+									break;
+								case 3: iItemID = ItemId::hauberk_w; // Hauberk W
+									break;
+								case 4: iItemID = ItemId::chain_hose_m; // ChainHose M
+									break;
+								case 5: iItemID = ItemId::chain_hose_w; // ChainHose W
+									break;
+								case 6: iItemID = ItemId::helm_m; // Helm M
+									break;
+								case 7: iItemID = ItemId::helm_w; // Helm W
+									break;
+								case 8: iItemID = ItemId::wizard_cap_m; // Wizard Cap M
+									break;
+								case 9: iItemID = ItemId::wizard_cap_w; // Wizard Cap W
+									break;
+								case 10: iItemID = ItemId::full_helm_w; // Full-Helm W
+									break;
+								case 11: iItemID = ItemId::tower_shield; // TowerShield
+									break;
+								case 12: iItemID = ItemId::chain_mail_m; // ChainMail M
+									break;
+								case 13: iItemID = ItemId::chain_mail_w; // ChainMail W
+									break;
+									//HElm,FullHelm,TowerShield,Chainhose,ChainMail,Berk,WizCap,WingsHelm
+									/*switch (iDice(1, 12)) { //Master Mage ORc..
+									case 1: iItemID = ItemId::rune_hauberk_m;
+  break; // RuneHauberk(M)
+									case 2: iItemID = ItemId::rune_hauberk_w;
+  break; // RuneHauberk(W)
+									case 3: iItemID = ItemId::rune_plate_mail_m;
+  break; // RunePlateMail(M)
+									case 4: iItemID = ItemId::rune_plate_mail_w;
+  break; // RunePlateMail(W)
+									case 5: iItemID = ItemId::rune_leggings_m;
+  break; // RuneLeggings(M)
+									case 6: iItemID = ItemId::rune_leggings_w;
+  break; // RuneLeggings(W)
+									case 7: iItemID = ItemId::rune_hat_m;
+  break; // RuneHat(M)
+									case 8: iItemID = ItemId::rune_hat_w;
+  break; // RuneHat(M)
+									case 9: iItemID = ItemId::rune_helm_m;
+  break; // RuneFull-Helm(M)
+									case 10: iItemID = ItemId::rune_helm_w;
+  break; // RuneFull-Helm(M)
+									case 11: iItemID = ItemId::rune_chain_mail_w;
+  break; //Rune Chain Mail(M)
+									case 12: iItemID = ItemId::rune_chain_mail_m;
+  break; // Rune Chain Mail (W)*/
 							}
 							break;
 					}
@@ -50496,9 +50516,10 @@ void CGame::Command_YellowBall(int iClientH, char* pData, DWORD dwMsgSize) {
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 			switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-				case 653: iSoX++;
+				case ItemId::yellow_ball: iSoX++;
 					iSoxH = i;
 					break; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				default: break;
 			}
 		}
 	if (iSoX > 0) {
@@ -50557,9 +50578,10 @@ void CGame::Command_RedBall(int iClientH, char *pData, DWORD dwMsgSize) {
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 			switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-				case 652: iSoX++;
+				case ItemId::red_ball: iSoX++;
 					iSoxH = i;
 					break; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				default: break;
 			}
 		}
 	if (iSoX > 0) {
@@ -50633,9 +50655,10 @@ void CGame::Command_BlueBall(int iClientH, char *pData, DWORD dwMsgSize) {
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 			switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-				case 654: iSoX++;
+				case ItemId::blue_ball: iSoX++;
 					iSoxH = i;
 					break; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				default: break;
 			}
 		}
 	if (iSoX > 0) {
@@ -50818,7 +50841,7 @@ void CGame::Command_BlueBall(int iClientH, char *pData, DWORD dwMsgSize) {
 	const auto mapIndex = m_pClientList[iClientH]->m_cMapIndex;
 	for (x = 1; x < DEF_MAXCLIENTS; x++)
 		if ((m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true) &&
-					  m_pClientList[x]->m_cMapIndex == mapIndex) {
+				  m_pClientList[x]->m_cMapIndex == mapIndex) {
 			SendNotifyMsg(0, x, DEF_NOTIFY_SPAWNEVENT, pX, pY, iNpcID, 0, 0, 0);
 		}
 	ItemDepleteHandler(iClientH, iSoxH, true, true);
@@ -51595,7 +51618,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 	if (m_pClientList[iClientH] == 0) return;
 	if ((iItemIndex < 0) || (iItemIndex >= DEF_MAXITEMS)) return;
 	if (m_pClientList[iClientH]->m_pItemList[iItemIndex] == 0) return;
-	if (HeroItemChecker(m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum, 0, 0, 0) != 0) {
+	if (HeroItemChecker(m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum, 0, 0, 0) != ItemId::none) {
 		if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 != m_pClientList[iClientH]->m_sCharIDnum1) ||
 				  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 != m_pClientList[iClientH]->m_sCharIDnum2) ||
 				  (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 != m_pClientList[iClientH]->m_sCharIDnum3)) {
@@ -51625,7 +51648,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, 0);
 		return;
 	}
-	if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 717) && (iValue >= 7) && (iValue < 0)) {
+	if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::dark_knight_rapier) && (iValue >= 7) && (iValue < 0)) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 1, 0, 0, 0);
 		return;
 	}
@@ -51720,16 +51743,16 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 
 		case 1:
 			switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
-				case 703: // SangAhFlameberge
-				case 709: // DarkKnightFlameberge
-				case 718: // DarkKnightGreatSword
-				case 727: // DarkKnightFlamebergW
-				case 736: // SangAhGiantSword
-				case 737: // DarkKnightGiantSword
-				case 745: // BlackKnightTemple
-				case 2000://BlackKnightHammer
-				case 2001://BlackKnightBHammer
-				case 2002://BlackKnightBarHammer
+				case ItemId::sang_ah_flameberge: // SangAhFlameberge
+				case ItemId::dark_knight_flameberge: // DarkKnightFlameberge
+				case ItemId::dark_knight_great_sword: // DarkKnightGreatSword
+				case ItemId::dark_knight_flameberg_w: // DarkKnightFlamebergW
+				case ItemId::sang_ah_giant_sword: // SangAhGiantSword
+				case ItemId::dark_knight_giant_sword: // DarkKnightGiantSword
+				case ItemId::black_knight_temple: // BlackKnightTemple
+				case ItemId::black_knight_hammer://BlackKnightHammer
+				case ItemId::black_knight_b_hammer://BlackKnightBHammer
+				case ItemId::black_knight_bar_hammer://BlackKnightBarHammer
 					if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) {
 						SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, 0);
 						return;
@@ -51749,7 +51772,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 					}
 					m_pClientList[iClientH]->m_iGizonItemUpgradeLeft -= sItemUpgrade;
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMUPGRADELEFT, m_pClientList[iClientH]->m_iGizonItemUpgradeLeft, 0, 0, 0);
-					if ((iValue == 0) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 703)) { // SangAhFlameberge
+					if ((iValue == 0) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::sang_ah_flameberge)) { // SangAhFlameberge
 						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
 						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
 						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
@@ -51757,7 +51780,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 736) == false) { // SangAhGiantSword
+						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::sang_ah_giant_sword) == false) { // SangAhGiantSword
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
 							return;
 						}
@@ -51780,7 +51803,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 						break;
-					} else if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 709) || (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 727))) { // DarkKnightFlameberge DarkKnightFlamebergW
+					} else if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::dark_knight_flameberge) || (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::dark_knight_flameberg_w))) { // DarkKnightFlameberge DarkKnightFlamebergW
 						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
 						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
 						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
@@ -51788,7 +51811,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 737) == false) { // DarkKnightGiantSword
+						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::dark_knight_giant_sword) == false) { // DarkKnightGiantSword
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
 							return;
 						}
@@ -51812,7 +51835,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 						break;
-					} else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 737)) { // DarkKnightGiantSword
+					} else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::dark_knight_giant_sword)) { // DarkKnightGiantSword
 						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
 						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
 						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
@@ -51820,7 +51843,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 745) == false) { // BlackKnightTemple
+						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_knight_temple) == false) { // BlackKnightTemple
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
 							return;
 						}
@@ -51843,7 +51866,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
-					} else if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 745)) { // BlackKnightTemple
+					} else if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_temple)) { // BlackKnightTemple
 						iValue += 2;
 						if (iValue > 15) iValue = 15;
 						if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;
@@ -51862,7 +51885,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 					}//50Cent - New DKHammer Upgrade
-					else if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2000))) { // BlackKnightHammer
+					else if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_hammer))) { // BlackKnightHammer
 						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
 						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
 						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
@@ -51870,7 +51893,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 2001) == false) { // BlackKnightBHammer
+						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_knight_b_hammer) == false) { // BlackKnightBHammer
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
 							return;
 						}
@@ -51894,7 +51917,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 						break;
-					} else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2001)) { // BlackKnightBHammer
+					} else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_b_hammer)) { // BlackKnightBHammer
 						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
 						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
 						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
@@ -51902,7 +51925,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 2002) == false) { // BlackKnightBarHammer
+						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_knight_bar_hammer) == false) { // BlackKnightBarHammer
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
 							return;
 						}
@@ -51925,7 +51948,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
-					} else if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 2002)) { // BlackKnightBarHammer
+					} else if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_bar_hammer)) { // BlackKnightBarHammer
 						iValue += 2;
 						if (iValue > 15) iValue = 15;
 						if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;
@@ -51954,7 +51977,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 					}
 					break;
 
-				case 717: // DarkKnightRapier
+				case ItemId::dark_knight_rapier: // DarkKnightRapier
 					if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) {
 						SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, 0);
 						return;
@@ -51993,12 +52016,13 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 					for (i = 0; i < DEF_MAXITEMS; i++)
 						if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 							switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-								case 656: iSoX++;
+								case ItemId::stone_of_xelima: iSoX++;
 									iSoxH = i;
 									break;
-								case 657: iSoM++;
+								case ItemId::stone_of_merien: iSoM++;
 									iSomH = i;
 									break;
+								default: break;
 							}
 						}
 					if (iSoX > 0) {
@@ -52048,12 +52072,13 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 			for (i = 0; i < DEF_MAXITEMS; i++)
 				if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 					switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-						case 656: iSoX++;
+						case ItemId::stone_of_xelima: iSoX++;
 							iSoxH = i;
 							break;
-						case 657: iSoM++;
+						case ItemId::stone_of_merien: iSoM++;
 							iSomH = i;
 							break;
+						default: break;
 					}
 				}
 			if (iSoX > 0) {
@@ -52098,7 +52123,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 				}
 			}
 			switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
-				case 623:
+				case ItemId::gm_shield:
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, 0);
 					return;
 				default:
@@ -52108,12 +52133,13 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 			for (i = 0; i < DEF_MAXITEMS; i++)
 				if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 					switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-						case 656: iSoX++;
+						case ItemId::stone_of_xelima: iSoX++;
 							iSoxH = i;
 							break;
-						case 657: iSoM++;
+						case ItemId::stone_of_merien: iSoM++;
 							iSomH = i;
 							break;
+						default:break;
 					}
 				}
 			if (iSoM > 0) {
@@ -52153,28 +52179,28 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 		case 6:
 		case 15:
 			switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
-				case 621: // MerienPlateMailM
-				case 622: // MerienPlateMailW
-				case 700: // SangAhHauberk
-				case 701: // SangAhFullHel
-				case 702: // SangAhLeggings
-				case 704: // SangAhPlateMail
-				case 706: // DarkKnightHauberk
-				case 707: // DarkKnightFullHelm
-				case 708: // DarkKnightLeggings
-				case 710: // DarkKnightPlateMail
-				case 711: // DarkMageHauberk
-				case 712: // DarkMageChainMail
-				case 713: // DarkMageLeggings
-				case 716: // DarkMageLedderArmor
-				case 719: // DarkMageScaleMail
-				case 724: // DarkKnightHauberkW
-				case 725: // DarkKnightFullHelmW
-				case 726: // DarkKnightLeggingsW
-				case 728: // DarkKnightPlateMailW
-				case 729: // DarkMageHauberkW
-				case 730: // DarkMageChainMailW
-				case 731: // DarkMageLeggingsW
+				case ItemId::merien_plate_mail_m: // MerienPlateMailM
+				case ItemId::merien_plate_mail_w: // MerienPlateMailW
+				case ItemId::sang_ah_hauberk: // SangAhHauberk
+				case ItemId::sang_ah_full_hel: // SangAhFullHel
+				case ItemId::sang_ah_leggings: // SangAhLeggings
+				case ItemId::sang_ah_plate_mail: // SangAhPlateMail
+				case ItemId::dark_knight_hauberk: // DarkKnightHauberk
+				case ItemId::dark_knight_full_helm: // DarkKnightFullHelm
+				case ItemId::dark_knight_leggings: // DarkKnightLeggings
+				case ItemId::dark_knight_plate_mail: // DarkKnightPlateMail
+				case ItemId::dark_mage_hauberk: // DarkMageHauberk
+				case ItemId::dark_mage_chain_mail: // DarkMageChainMail
+				case ItemId::dark_mage_leggings: // DarkMageLeggings
+				case ItemId::dark_mage_ledder_armor: // DarkMageLedderArmor
+				case ItemId::dark_mage_scale_mail: // DarkMageScaleMail
+				case ItemId::dark_knight_hauberk_w: // DarkKnightHauberkW
+				case ItemId::dark_knight_full_helm_w: // DarkKnightFullHelmW
+				case ItemId::dark_knight_leggings_w: // DarkKnightLeggingsW
+				case ItemId::dark_knight_plate_mail_w: // DarkKnightPlateMailW
+				case ItemId::dark_mage_hauberk_w: // DarkMageHauberkW
+				case ItemId::dark_mage_chain_mail_w: // DarkMageChainMailW
+				case ItemId::dark_mage_leggings_w: // DarkMageLeggingsW
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, 0);
 					return;
 
@@ -52190,12 +52216,13 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 					for (i = 0; i < DEF_MAXITEMS; i++)
 						if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 							switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-								case 656: iSoX++;
+								case ItemId::stone_of_xelima: iSoX++;
 									iSoxH = i;
 									break;
-								case 657: iSoM++;
+								case ItemId::stone_of_merien: iSoM++;
 									iSomH = i;
 									break;
+								default: break;
 							}
 						}
 					if (iSoM > 0) {
@@ -52235,11 +52262,11 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 
 		case 8:
 			switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
-				case 291: // MagicWand(MS30-LLF) 
-				case 714: // DarkMageMagicStaff 
-				case 732: // DarkMageMagicStaffW 
-				case 738: // DarkMageMagicWand
-				case 746: // BlackMageTemple
+				case ItemId::magic_wand_m_s30_llf: // MagicWand(MS30-LLF) 
+				case ItemId::dark_mage_magic_staff: // DarkMageMagicStaff 
+				case ItemId::dark_mage_magic_staff_w: // DarkMageMagicStaffW 
+				case ItemId::dark_mage_magic_wand: // DarkMageMagicWand
+				case ItemId::black_mage_temple: // BlackMageTemple
 					/*if ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 != m_pClientList[iClientH]->m_sCharIDnum1) ||
 						(m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 != m_pClientList[iClientH]->m_sCharIDnum2) ||
 						(m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 != m_pClientList[iClientH]->m_sCharIDnum3)) {
@@ -52263,7 +52290,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
 						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
 					}
-					if ((iValue >= 4) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 714) || (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 732))) {
+					if ((iValue >= 4) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::dark_mage_magic_staff) || (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::dark_mage_magic_staff_w))) {
 						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
 						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
 						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
@@ -52271,7 +52298,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 738) == false) { // DarkMageMagicWand
+						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::dark_mage_magic_wand) == false) { // DarkMageMagicWand
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
 							return;
 						}
@@ -52294,7 +52321,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 						break;
 					}
-					if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 738)) {
+					if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::dark_mage_magic_wand)) {
 						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
 						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
 						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
@@ -52302,7 +52329,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new class CItem;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
 						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], 746) == false) { // BlackMageTemple 
+						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_mage_temple) == false) { // BlackMageTemple 
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
 							return;
 						}
@@ -52325,7 +52352,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 						break;
 					}
-					if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == 746)) {
+					if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_mage_temple)) {
 						iValue += 2;
 						if (iValue > 15) iValue = 15;
 						if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;
@@ -52362,12 +52389,13 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 					for (i = 0; i < DEF_MAXITEMS; i++)
 						if (m_pClientList[iClientH]->m_pItemList[i] != 0) {
 							switch (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum) {
-								case 656: iSoX++;
+								case ItemId::stone_of_xelima: iSoX++;
 									iSoxH = i;
 									break; // Â½ÂºÃ…Ã¦ Â¿Ã€ÂºÃª Ã?Â¦Â¸Â®Â¸Â¶
-								case 657: iSoM++;
+								case ItemId::stone_of_merien: iSoM++;
 									iSomH = i;
 									break; // Â½ÂºÃ…Ã¦ Â¿Ã€ÂºÃª Â¸ÃžÂ¸Â®Â¿Â£
+								default: break;
 							}
 						}
 					// Â½ÂºÃ…Ã¦ Â¿Ã€ÂºÃª Ã?Â¦Â¸Â®Â¸Â¶Â°Â¡ Ã€Ã–Â´Ã™.
@@ -52408,143 +52436,141 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 	}
 }
 
-int CGame::HeroItemChecker(int iItemID, short sEnemyKill, char cContribution, char cSide) {
+ItemId CGame::HeroItemChecker(ItemId iItemID, short sEnemyKill, char cContribution, char cSide) {
 
 	switch (iItemID) {
 
-		case 400: // AresdenHeroCape
+		case ItemId::aresden_hero_cape: // AresdenHeroCape
 			if (sEnemyKill != 0) sEnemyKill = 300;
 			if (cContribution != 0) cContribution = 0;
 			if (cSide != 0) cSide = 1;
 			break;
 
-		case 401: // ElvineHeroCape
+		case ItemId::elvine_hero_cape: // ElvineHeroCape
 			if (sEnemyKill != 0) sEnemyKill = 300;
 			if (cContribution != 0) cContribution = 0;
 			if (cSide != 0) cSide = 2;
 			break;
 
 			// eHeroHelm
-		case 403: // aHeroHelm(M)
-		case 404: // aHeroHelm(W)
+		case ItemId::a_hero_helm_m: // aHeroHelm(M)
+		case ItemId::a_hero_helm_w: // aHeroHelm(W)
 			if (sEnemyKill != 0) sEnemyKill = 150;
 			if (cContribution != 0) cContribution = 0;
 			if (cSide != 0) cSide = 1;
 			break;
-		case 405: // aHeroHelm(M)
-		case 406: // aHeroHelm(W)
+		case ItemId::e_hero_helm_m: // aHeroHelm(M)
+		case ItemId::e_hero_helm_w: // aHeroHelm(W)
 			if (sEnemyKill != 0) sEnemyKill = 150;
 			if (cContribution != 0) cContribution = 20;
 			if (cSide != 0) cSide = 2;
 			break;
 
 			// eHeroCap
-		case 407: // aHeroCap(M)
-		case 408: // aHeroCap(W)
+		case ItemId::a_hero_cap_m: // aHeroCap(M)
+		case ItemId::a_hero_cap_w: // aHeroCap(W)
 			if (sEnemyKill != 0) sEnemyKill = 100;
 			if (cContribution != 0) cContribution = 20;
 			if (cSide != 0) cSide = 1;
 			break;
-		case 409: // aHeroCap(M)
-		case 410: // aHeroCap(W)
+		case ItemId::e_hero_cap_m: // aHeroCap(M)
+		case ItemId::e_hero_cap_w: // aHeroCap(W)
 			if (sEnemyKill != 0) sEnemyKill = 100;
 			if (cContribution != 0) cContribution = 20;
 			if (cSide != 0) cSide = 2;
 			break;
 
 			// eHeroArmor
-		case 411: // eHeroArmor(M)
-		case 412: // eHeroArmor(W)
+		case ItemId::a_hero_armor_m: // eHeroArmor(M)
+		case ItemId::a_hero_armor_w: // eHeroArmor(W)
 			if (sEnemyKill != 0) sEnemyKill = 300;
 			if (cContribution != 0) cContribution = 30;
 			if (cSide != 0) cSide = 1;
 			break;
-		case 413: // eHeroArmor(M)
-		case 414: // eHeroArmor(W)
+		case ItemId::e_hero_armor_m: // eHeroArmor(M)
+		case ItemId::e_hero_armor_w: // eHeroArmor(W)
 			if (sEnemyKill != 0) sEnemyKill = 300;
 			if (cContribution != 0) cContribution = 30;
 			if (cSide != 0) cSide = 2;
 			break;
 
 			// aHeroRobe
-		case 415: // aHeroRobe(M)
-		case 416: // aHeroRobe(W)
+		case ItemId::a_hero_robe_m: // aHeroRobe(M)
+		case ItemId::a_hero_robe_w: // aHeroRobe(W)
 			if (sEnemyKill != 0) sEnemyKill = 200;
 			if (cContribution != 0) cContribution = 20;
 			if (cSide != 0) cSide = 1;
 			break;
-		case 417: // aHeroRobe(M)
-		case 418: // aHeroRobe(W)
+		case ItemId::e_hero_robe_m: // aHeroRobe(M)
+		case ItemId::e_hero_robe_w: // aHeroRobe(W)
 			if (sEnemyKill != 0) sEnemyKill = 200;
 			if (cContribution != 0) cContribution = 20;
 			if (cSide != 0) cSide = 2;
 			break;
 
 			// aHeroHauberk
-		case 419: // aHeroHauberk(M)
-		case 420: // aHeroHauberk(W)
+		case ItemId::a_hero_hauberk_m: // aHeroHauberk(M)
+		case ItemId::a_hero_hauberk_w: // aHeroHauberk(W)
 			if (sEnemyKill != 0) sEnemyKill = 100;
 			if (cContribution != 0) cContribution = 10;
 			if (cSide != 0) cSide = 1;
 			break;
-		case 421: // eHeroHauberk(M)
-		case 422: // eHeroHauberk(W)
+		case ItemId::e_hero_hauberk_m: // eHeroHauberk(M)
+		case ItemId::e_hero_hauberk_w: // eHeroHauberk(W)
 			if (sEnemyKill != 0) sEnemyKill = 100;
 			if (cContribution != 0) cContribution = 10;
 			if (cSide != 0) cSide = 2;
 			break;
 
 			// aHeroLeggings
-		case 423: // aHeroLeggings(M)
-		case 424: // aHeroLeggings(W)
+		case ItemId::a_hero_leggings_m: // aHeroLeggings(M)
+		case ItemId::a_hero_leggings_w: // aHeroLeggings(W)
 			if (sEnemyKill != 0) sEnemyKill = 150;
 			if (cContribution != 0) cContribution = 15;
 			if (cSide != 0) cSide = 1;
 			break;
-		case 425: // eHeroLeggings(M)
-		case 426: // eHeroLeggings(W)
+		case ItemId::e_hero_leggings_m: // eHeroLeggings(M)
+		case ItemId::e_hero_leggings_w: // eHeroLeggings(W)
 			if (sEnemyKill != 0) sEnemyKill = 150;
 			if (cContribution != 0) cContribution = 15;
 			if (cSide != 0) cSide = 2;
 			break;
 
-		case 427: // AresdenHeroCape+1
+		case ItemId::aresden_hero_cape_plus_1: // AresdenHeroCape+1
 			if (cSide != 0) cSide = 1;
 			break;
 
-		case 428: // ElvineHeroCape+1
+		case ItemId::elvine_hero_cape_plus_1: // ElvineHeroCape+1
 			if (cSide != 0) cSide = 2;
 			break;
 
 		default:
-			return 0;
+			return ItemId::none;
 	}
 	return iItemID;
 
 }
 
 int CGame::iUpgradeHeroCapeRequirements(int iClientH, int iItemIndex) {
-	int iAfterItemID, iRequiredEnemyKills, iRequiredContribution, iStoneNumber, i;
-	int iBeforeItemID;
-
-	iAfterItemID = 0;
+	int iRequiredEnemyKills, iRequiredContribution, i;
+	ItemId iAfterItemID = ItemId::none;
 	iRequiredEnemyKills = 10000;
 	iRequiredContribution = 10000;
-	iStoneNumber = 0;
+	ItemId iStoneNumber = ItemId::none;
 	i = 0;
-	iBeforeItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;
-	if (iBeforeItemID == 400) {
+	ItemId iBeforeItemID = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum;
+	if (iBeforeItemID == ItemId::aresden_hero_cape) {
 		_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) m_pClientList[iClientH]->m_pItemList[iItemIndex], false);
-		iAfterItemID = 427;
+		iAfterItemID = ItemId::aresden_hero_cape_plus_1;
 		iRequiredEnemyKills = 30;
 		iRequiredContribution = 50;
-		iStoneNumber = 657;
-	} else if (iBeforeItemID == 401) {
+		iStoneNumber = ItemId::stone_of_merien;
+	} else if (iBeforeItemID == ItemId::elvine_hero_cape) {
 		_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) m_pClientList[iClientH]->m_pItemList[iItemIndex], false);
-		iAfterItemID = 428;
+		iAfterItemID = ItemId::elvine_hero_cape_plus_1;
 		iRequiredEnemyKills = 30;
 		iRequiredContribution = 50;
-		iStoneNumber = 657;
+		iStoneNumber = ItemId::stone_of_merien;
 	} else {
 		return -1;
 	}
@@ -52553,7 +52579,7 @@ int CGame::iUpgradeHeroCapeRequirements(int iClientH, int iItemIndex) {
 	for (i = 0; i < DEF_MAXITEMS; i++) {
 		if ((m_pClientList[iClientH]->m_pItemList[i] != 0) && (m_pClientList[iClientH]->m_pItemList[i]->m_sIDnum == iStoneNumber)) break;
 	}
-	if ((i == 50) || (iStoneNumber == 0)) return 0;
+	if ((i == DEF_MAXITEMS) || (iStoneNumber == ItemId::none)) return 0;
 	if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], iAfterItemID) == false) return -1;
 	m_pClientList[iClientH]->m_iEnemyKillCount -= iRequiredEnemyKills;
 	m_pClientList[iClientH]->m_iContribution -= iRequiredContribution;
@@ -52866,58 +52892,63 @@ char CGame::_cCheckHeroItemEquipped(int iClientH) {
 	short sHeroLeggings, sHeroHauberk, sHeroArmor, sHeroHelm;
 
 	if (m_pClientList[iClientH] == 0) return 0;
-
-	sHeroHelm = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD];
-	sHeroArmor = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY];
-	sHeroHauberk = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS];
-	sHeroLeggings = m_pClientList[iClientH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS];
+	auto &client = *m_pClientList[iClientH];
+	auto &equipStatus = client.m_sItemEquipmentStatus;
+	sHeroHelm = equipStatus[DEF_EQUIPPOS_HEAD];
+	sHeroArmor = equipStatus[DEF_EQUIPPOS_BODY];
+	sHeroHauberk = equipStatus[DEF_EQUIPPOS_ARMS];
+	sHeroLeggings = equipStatus[DEF_EQUIPPOS_PANTS];
 
 	if ((sHeroHelm < 0) || (sHeroLeggings < 0) || (sHeroArmor < 0) || (sHeroHauberk < 0)) return 0;
 
-	if (m_pClientList[iClientH]->m_pItemList[sHeroHelm] == 0) return 0;
-	if (m_pClientList[iClientH]->m_pItemList[sHeroLeggings] == 0) return 0;
-	if (m_pClientList[iClientH]->m_pItemList[sHeroArmor] == 0) return 0;
-	if (m_pClientList[iClientH]->m_pItemList[sHeroHauberk] == 0) return 0;
+	auto &itemList = client.m_pItemList;
+	if (itemList[sHeroHelm] == 0) return 0;
+	if (itemList[sHeroLeggings] == 0) return 0;
+	if (itemList[sHeroArmor] == 0) return 0;
+	if (itemList[sHeroHauberk] == 0) return 0;
+	const auto helmId = itemList[sHeroHelm]->m_sIDnum;
+	const auto armorId = itemList[sHeroArmor]->m_sIDnum;
+	const auto hauberkId = itemList[sHeroHauberk]->m_sIDnum;
+	const auto leggingsId = itemList[sHeroLeggings]->m_sIDnum;
+	if ((helmId == ItemId::a_hero_helm_m) &&
+			  (armorId == ItemId::a_hero_armor_m) &&
+			  (hauberkId == ItemId::a_hero_hauberk_m) &&
+			  (leggingsId == ItemId::a_hero_leggings_m)) return 1;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 403) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 411) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 419) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 423)) return 1;
+	if ((helmId == ItemId::a_hero_cap_m) &&
+			  (armorId == ItemId::a_hero_robe_m) &&
+			  (hauberkId == ItemId::a_hero_hauberk_m) &&
+			  (leggingsId == ItemId::a_hero_leggings_m)) return 2;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 407) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 415) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 419) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 423)) return 2;
+	if ((helmId == ItemId::a_hero_helm_w) &&
+			  (armorId == ItemId::a_hero_armor_w) &&
+			  (hauberkId == ItemId::a_hero_hauberk_w) &&
+			  (leggingsId == ItemId::a_hero_leggings_w)) return 1;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 404) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 412) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 420) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 424)) return 1;
+	if ((helmId == ItemId::a_hero_cap_w) &&
+			  (armorId == ItemId::a_hero_robe_w) &&
+			  (hauberkId == ItemId::a_hero_hauberk_w) &&
+			  (leggingsId == ItemId::a_hero_leggings_w)) return 2;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 408) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 416) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 420) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 424)) return 2;
+	if ((helmId == ItemId::e_hero_helm_m) &&
+			  (armorId == ItemId::e_hero_armor_m) &&
+			  (hauberkId == ItemId::e_hero_hauberk_m) &&
+			  (leggingsId == ItemId::e_hero_leggings_m)) return 1;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 405) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 413) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 421) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 425)) return 1;
+	if ((helmId == ItemId::e_hero_cap_m) &&
+			  (armorId == ItemId::e_hero_robe_m) &&
+			  (hauberkId == ItemId::e_hero_hauberk_m) &&
+			  (leggingsId == ItemId::e_hero_leggings_m)) return 2;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 409) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 417) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 421) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 425)) return 2;
+	if ((helmId == ItemId::e_hero_helm_w) &&
+			  (armorId == ItemId::e_hero_armor_w) &&
+			  (hauberkId == ItemId::e_hero_hauberk_w) &&
+			  (leggingsId == ItemId::e_hero_leggings_w)) return 1;
 
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 406) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 414) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 422) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 426)) return 1;
-
-	if ((m_pClientList[iClientH]->m_pItemList[sHeroHelm]->m_sIDnum == 410) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroArmor]->m_sIDnum == 418) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroHauberk]->m_sIDnum == 422) &&
-			  (m_pClientList[iClientH]->m_pItemList[sHeroLeggings]->m_sIDnum == 426)) return 2;
+	if ((helmId == ItemId::e_hero_cap_w) &&
+			  (armorId == ItemId::e_hero_robe_w) &&
+			  (hauberkId == ItemId::e_hero_hauberk_w) &&
+			  (leggingsId == ItemId::e_hero_leggings_w)) return 2;
 
 	return 0;
 }
@@ -53035,55 +53066,54 @@ bool CGame::bPlantSeedBag(int iMapIndex, int dX, int dY, int iItemEffectValue1, 
 
 void CGame::_CheckFarmingAction(short sAttackerH, short sTargetH, bool bType) {
 	char cCropType;
-	int iItemID;
 	class CItem * pItem;
 
-	iItemID = 0;
+	ItemId iItemID = ItemId::none;
 	cCropType = 0;
 
 	cCropType = m_pNpcList[sTargetH]->m_cCropType;
 	switch (cCropType) {
 		case 1: GetExp(sAttackerH, iDice(3, 10));
-			iItemID = 820;
+			iItemID = ItemId::water_melon;
 			break; // WaterMelon
 		case 2: GetExp(sAttackerH, iDice(3, 10));
-			iItemID = 821;
+			iItemID = ItemId::pumpkin;
 			break; // Pumpkin
 		case 3: GetExp(sAttackerH, iDice(4, 10));
-			iItemID = 822;
+			iItemID = ItemId::garlic;
 			break; // Garlic
 		case 4: GetExp(sAttackerH, iDice(4, 10));
-			iItemID = 823;
+			iItemID = ItemId::barley;
 			break; // Barley
 		case 5: GetExp(sAttackerH, iDice(5, 10));
-			iItemID = 824;
+			iItemID = ItemId::carrot;
 			break; // Carrot
 		case 6: GetExp(sAttackerH, iDice(5, 10));
-			iItemID = 825;
+			iItemID = ItemId::radish;
 			break; // Radish
 		case 7: GetExp(sAttackerH, iDice(6, 10));
-			iItemID = 826;
+			iItemID = ItemId::corn;
 			break; // Corn
 		case 8: GetExp(sAttackerH, iDice(6, 10));
-			iItemID = 827;
+			iItemID = ItemId::chinese_bellflower;
 			break; // ChineseBellflower
 		case 9: GetExp(sAttackerH, iDice(7, 10));
-			iItemID = 828;
+			iItemID = ItemId::melone;
 			break; // Melone
 		case 10: GetExp(sAttackerH, iDice(7, 10));
-			iItemID = 829;
+			iItemID = ItemId::tommato;
 			break; // Tommato
 		case 11: GetExp(sAttackerH, iDice(8, 10));
-			iItemID = 830;
+			iItemID = ItemId::grapes;
 			break; // Grapes
 		case 12: GetExp(sAttackerH, iDice(8, 10));
-			iItemID = 831;
+			iItemID = ItemId::blue_grapes;
 			break; // BlueGrapes
 		case 13: GetExp(sAttackerH, iDice(9, 10));
-			iItemID = 832;
+			iItemID = ItemId::mushroom;
 			break; // Mushroom
 		default: GetExp(sAttackerH, iDice(10, 10));
-			iItemID = 721;
+			iItemID = ItemId::ginseng;
 			break; // Ginseng
 
 	}
@@ -53119,15 +53149,15 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 					if ((31 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4)) || (32 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4))) {
 						sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
 						if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 761) { // BattleHammer
+							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::battle_hammer) { // BattleHammer
 								iDownValue = 10;
 								break;
 							}
-							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 762) { // GiantBattleHammer
+							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::giant_battle_hammer) { // GiantBattleHammer
 								iDownValue = 10;
 								break;
 							}
-							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 843) { // BarbarianHammer
+							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::barbarian_hammer) { // BarbarianHammer
 								iDownValue = 10;
 								break;
 							}
@@ -53160,54 +53190,61 @@ void CGame::CalculateEnduranceDecrement(short sTargetH, short sAttackerH, char c
 		ReleaseItemHandler(sTargetH, iArmorType, true);
 		return;
 	}
-		if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != 0) {
-			if (cTargetType == DEF_OWNERTYPE_PLAYER) {
-				sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
-				if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-					if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 617) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 618) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 619) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 873) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 874) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 75) || (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 76)) {
-						m_pClientList[sAttackerH]->m_sUsingWeaponSkill = 6;
-						return;
-					}
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != 0) {
+		if (cTargetType == DEF_OWNERTYPE_PLAYER) {
+			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::composite_bow) ||
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::dark_elf_bow) || 
+						  //(m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::619) || 
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::fire_bow) || 
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::direction_bow) || 
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::short_bow) || 
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::long_bow)) {
+					m_pClientList[sAttackerH]->m_sUsingWeaponSkill = 6;
+					return;
 				}
 			}
 		}
+	}
 
-		if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != 0) {
-			if (cTargetType == DEF_OWNERTYPE_PLAYER) {
-				if ((m_pClientList[sAttackerH]->m_sUsingWeaponSkill == 14) && (iHammerChance == 100)) {
-					if (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan < 2000) {
-						iHammerChance = iDice(6, (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan - m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan));
-					} else {
-						iHammerChance = iDice(4, (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan - m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan));
-					}
+	if (cAttackerType == DEF_OWNERTYPE_PLAYER && m_pClientList[sAttackerH] != 0) {
+		if (cTargetType == DEF_OWNERTYPE_PLAYER) {
+			if ((m_pClientList[sAttackerH]->m_sUsingWeaponSkill == 14) && (iHammerChance == 100)) {
+				if (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan < 2000) {
+					iHammerChance = iDice(6, (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan - m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan));
+				} else {
+					iHammerChance = iDice(4, (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wMaxLifeSpan - m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan));
+				}
 
-					if ((31 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4)) || (32 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4))) {
-						sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
-						if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 761) { // BattleHammer
-								iHammerChance = ((iHammerChance * 10) / 5);
-							}
-							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 762) { // GiantBattleHammer
-								iHammerChance = ((iHammerChance * 10) / 4);
-							}
-							if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 843) { // GiantBattleHammer
-								iHammerChance = ((iHammerChance * 10) / 5);
-							}
+				if ((31 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4)) || (32 == ((m_pClientList[sAttackerH]->m_sAppr2 & 0x0FF0) >> 4))) {
+					sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
+					if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
+						if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::battle_hammer) { // BattleHammer
+							iHammerChance = ((iHammerChance * 10) / 5);
+						}
+						if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::giant_battle_hammer) { // GiantBattleHammer
+							iHammerChance = ((iHammerChance * 10) / 4);
+						}
+						if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::barbarian_hammer) { // GiantBattleHammer
+							iHammerChance = ((iHammerChance * 10) / 5);
 						}
 					}
-					if ((m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_sIDnum == 622) || (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_sIDnum == 621)) {
-						iHammerChance = 0;
-					}
-					if (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan < iHammerChance) {
-						wsprintf(G_cTxt, "(iHammerChance (%d), target armor endurance (%d)!", iHammerChance, m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan);
-						PutLogList(G_cTxt);
-						ReleaseItemHandler(sTargetH, iArmorType, true);
-						SendNotifyMsg(0, sTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_cEquipPos, iArmorType, 0, 0);
-						return;
-					}
+				}
+				if ((m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_sIDnum == ItemId::merien_plate_mail_w) ||
+						  (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_sIDnum == ItemId::merien_plate_mail_m)) {
+					iHammerChance = 0;
+				}
+				if (m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan < iHammerChance) {
+					wsprintf(G_cTxt, "(iHammerChance (%d), target armor endurance (%d)!", iHammerChance, m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_wCurLifeSpan);
+					PutLogList(G_cTxt);
+					ReleaseItemHandler(sTargetH, iArmorType, true);
+					SendNotifyMsg(0, sTargetH, DEF_NOTIFY_ITEMRELEASED, m_pClientList[sTargetH]->m_pItemList[iArmorType]->m_cEquipPos, iArmorType, 0, 0);
+					return;
 				}
 			}
 		}
+	}
 }
 
 int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttackerH, char cAttackerType, int tdX, int tdY, int iAttackMode, bool bNearAttack, bool bIsDash, bool bArrowUse) {
@@ -53346,9 +53383,9 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 
 			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND];
 			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 851) || // KlonessEsterk
-						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 863) || // KlonessWand(MS.20)
-						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 864)) { // KlonessWand(MS.10)
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_esterk) || // KlonessEsterk
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_wand_ms20) || // KlonessWand(MS.20)
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_wand_ms10)) { // KlonessWand(MS.10)
 					if (m_pClientList[sAttackerH]->m_iRating > 0) {
 						iRepDamage = m_pClientList[sAttackerH]->m_iRating / 100;
 						if (iRepDamage < 5) iRepDamage = 5;
@@ -53365,8 +53402,8 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 						}
 					}
 				}
-				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 861) || // BerserkWand(MS.20)
-						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 862)) { // BerserkWand(MS.10)
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::berserk_wand_ms20) || // BerserkWand(MS.20)
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::berserk_wand_ms10)) { // BerserkWand(MS.10)
 					iAP_SM += 1;
 					iAP_L += 1;
 				}
@@ -53374,24 +53411,24 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 
 			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND];
 			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 847) &&
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::dark_executor) &&
 						  (m_cDayOrNight == 2)) {
 					iAP_SM += 4;
 					iAP_L += 4;
 				}
-				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 848) &&
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::lighting_blade) &&
 						  (m_cDayOrNight == 1)) {
 					iAP_SM += 4;
 					iAP_L += 4;
 				}
 
 				// +++ Damage a demons con demon slayer...
-				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 616) && (m_pNpcList[sTargetH]->m_sType == 31)) {
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::demon_slayer) && (m_pNpcList[sTargetH]->m_sType == 31)) {
 					iAP_L += 5;
 				}
 
-				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 849) || // KlonessBlade
-						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 850)) { // KlonessAxe
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_blade) || // KlonessBlade
+						  (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_axe)) { // KlonessAxe
 					if (m_pClientList[sAttackerH]->m_iRating > 0) {
 						iRepDamage = m_pClientList[sAttackerH]->m_iRating / 100;
 						if (iRepDamage < 5) iRepDamage = 5;
@@ -53412,7 +53449,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 
 			sItemIndex = m_pClientList[sAttackerH]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK];
 			if ((sItemIndex != -1) && (m_pClientList[sAttackerH]->m_pItemList[sItemIndex] != 0)) {
-				if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == 859) { // NecklaceOfKloness
+				if (m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::necklace_of_kloness) { // NecklaceOfKloness
 					if (cTargetType == DEF_OWNERTYPE_PLAYER) {
 						if (m_pClientList[sTargetH] == 0) return 0;
 						iRepDamage = (abs(m_pClientList[sTargetH]->m_iRating) / 20);
@@ -54544,7 +54581,7 @@ CAE_SKIPDAMAGEMOVE2:
 
 			if ((sWeaponIndex != -1) && (bArrowUse != true)) {
 				if ((m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex] != 0) &&
-						  (m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex]->m_sIDnum != 231)) {
+						  (m_pClientList[sAttackerH]->m_pItemList[sWeaponIndex]->m_sIDnum != ItemId::pick_axe)) {
 					if (bKilled == false)
 						CalculateSSN_ItemIndex(sAttackerH, sWeaponIndex, 1);
 					else {
@@ -55007,7 +55044,7 @@ void CGame::NpcBehavior_Dead(int iNpcH) {
 
 } // _bDecodeNpcItemConfigFileContents()*/
 
-bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
+bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 	int iResult;
 	// NPCë¥¼ ì‚­ì œí• ë•Œ íŠ¹ìˆ˜ ì•„ì?´í…œì?„ ë°œìƒ?ì‹œí‚¬ ê²ƒì?¸ì§€ì?˜ ì—¬ë¶€ë¥¼ ê³„ì‚°í•œë‹¤.
 
@@ -55016,23 +55053,23 @@ bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
 			iResult = iDice(1, 20000);
 			if ((iResult >= 1) && (iResult <= 4999)) {
 				if (iDice(1, 2) == 1)
-					iItemID = 259; // Green Ball 651
-				else iItemID = 20; // Rep Potion 965
-			} else if ((iResult > 5000) && (iResult <= 10000)) iItemID = 651; // MagicWand(M.Shield)
-			else if ((iResult > 10000) && (iResult <= 13000)) iItemID = 965; // Excaliber
-			else if ((iResult > 13000) && (iResult <= 15000)) iItemID = 335; // EmeraldRing
-			else if ((iResult > 15000) && (iResult <= 17500)) iItemID = 300; // MagicNecklace(RM10)
-			else if ((iResult > 17500) && (iResult <= 18750)) iItemID = 311; // MagicNecklace(DF+10)
-			else if ((iResult > 18750) && (iResult <= 19000)) iItemID = 305; // MagicNecklace(DM+1)
-			else if ((iResult > 19000) && (iResult <= 19700)) iItemID = 634; // RingofWizard
-			else if ((iResult > 19700) && (iResult <= 19844)) iItemID = 635; // RingofMage
-			else if ((iResult > 19844) && (iResult <= 19922)) iItemID = 643; // KnecklaceOfIceEle	
-			else if ((iResult > 19922) && (iResult <= 19961)) iItemID = 866; // ResurWandMS10
-			else if ((iResult > 19961) && (iResult <= 19981)) iItemID = 858; // NecklaceOfMerien
-			else if ((iResult > 19981) && (iResult <= 19991)) iItemID = 620; // MerienShield	
-			else if ((iResult > 19991) && (iResult <= 19996)) iItemID = 644; // KnecklaceOfAirEle	
-			else if ((iResult > 19996) && (iResult <= 19999)) iItemID = 614; // SwordofIceElemental	
-			else if ((iResult > 19999) && (iResult <= 20000)) iItemID = 636; // RingofGrandMage
+					iItemID = ItemId::magic_wand_mshield; // Green Ball 651
+				else iItemID = ItemId::excaliber; // Rep Potion 965
+			} else if ((iResult > 5000) && (iResult <= 10000)) iItemID = ItemId::green_ball; // MagicWand(M.Shield)
+			else if ((iResult > 10000) && (iResult <= 13000)) iItemID = ItemId::rep_potion; // Excaliber
+			else if ((iResult > 13000) && (iResult <= 15000)) iItemID = ItemId::emerald_ring; // EmeraldRing
+			else if ((iResult > 15000) && (iResult <= 17500)) iItemID = ItemId::magic_necklace_rm10; // MagicNecklace(RM10)
+			else if ((iResult > 17500) && (iResult <= 18750)) iItemID = ItemId::magic_necklace_df10; // MagicNecklace(DF+10)
+			else if ((iResult > 18750) && (iResult <= 19000)) iItemID = ItemId::magic_necklace_dm1; // MagicNecklace(DM+1)
+			else if ((iResult > 19000) && (iResult <= 19700)) iItemID = ItemId::ringof_wizard; // RingofWizard
+			else if ((iResult > 19700) && (iResult <= 19844)) iItemID = ItemId::ringof_mage; // RingofMage
+			else if ((iResult > 19844) && (iResult <= 19922)) iItemID = ItemId::knecklace_of_ice_ele; // KnecklaceOfIceEle	
+			else if ((iResult > 19922) && (iResult <= 19961)) iItemID = ItemId::resur_wand_ms10; // ResurWandMS10
+			else if ((iResult > 19961) && (iResult <= 19981)) iItemID = ItemId::necklace_of_merien; // NecklaceOfMerien
+			else if ((iResult > 19981) && (iResult <= 19991)) iItemID = ItemId::merien_shield; // MerienShield	
+			else if ((iResult > 19991) && (iResult <= 19996)) iItemID = ItemId::knecklace_of_air_ele; // KnecklaceOfAirEle	
+			else if ((iResult > 19996) && (iResult <= 19999)) iItemID = ItemId::sword_of_ice_elemental; // SwordofIceElemental	
+			else if ((iResult > 19999) && (iResult <= 20000)) iItemID = ItemId::ringof_grand_mage; // RingofGrandMage
 			return true;
 
 
@@ -55041,22 +55078,22 @@ bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
 			iResult = iDice(1, 10000);
 			if ((iResult >= 1) && (iResult <= 4999)) {
 				if (iDice(1, 2) == 1)
-					iItemID = 614; // Red Ball 652
-				else iItemID = 985; // Rep Potion 965
-			} else if ((iResult > 5000) && (iResult <= 7499)) iItemID = 965; // IceElementalRapier	
-			else if ((iResult > 7500) && (iResult <= 8749)) iItemID = 652; // SwordofIceElemental
-			else if ((iResult > 8750) && (iResult <= 9374)) iItemID = 633; // RingofDemonpower
-			else if ((iResult > 9375) && (iResult <= 9687)) iItemID = 492; // BloodRapier		
-			else if ((iResult > 9688) && (iResult <= 9843)) iItemID = 490; // BloodSword		
-			else if ((iResult > 9844) && (iResult <= 9921)) iItemID = 491; // BloodAxe		
-			else if ((iResult > 9922) && (iResult <= 9960)) iItemID = 291; // MagicWand(MS30-LLF)	
-			else if ((iResult > 9961) && (iResult <= 9980)) iItemID = 630; // RingoftheXelima	
-			else if ((iResult > 9981) && (iResult <= 9990)) iItemID = 612; // XelimaRapier	
-			else if ((iResult > 9991) && (iResult <= 9996)) iItemID = 610; // XelimaBlade	
-			else if ((iResult > 9996) && (iResult <= 9998)) iItemID = 611; // XelimaAxe	
-			else if ((iResult > 9999) && (iResult <= 10000)) iItemID = 631; // RingoftheAbaddon
-			else if ((iResult > 9999) && (iResult <= 10000)) iItemID = 849; // "KlonessBlade"		2%
-			else if ((iResult > 9999) && (iResult <= 10000)) iItemID = 864; // "KlonessWandMS20"		2%
+					iItemID = ItemId::sword_of_ice_elemental; // Red Ball 652
+				else iItemID = ItemId::ice_elemental_rapier; // Rep Potion 965
+			} else if ((iResult > 5000) && (iResult <= 7499)) iItemID = ItemId::rep_potion; // IceElementalRapier	
+			else if ((iResult > 7500) && (iResult <= 8749)) iItemID = ItemId::red_ball; // SwordofIceElemental
+			else if ((iResult > 8750) && (iResult <= 9374)) iItemID = ItemId::ringof_demonpower; // RingofDemonpower
+			else if ((iResult > 9375) && (iResult <= 9687)) iItemID = ItemId::blood_rapier; // BloodRapier		
+			else if ((iResult > 9688) && (iResult <= 9843)) iItemID = ItemId::blood_sword; // BloodSword		
+			else if ((iResult > 9844) && (iResult <= 9921)) iItemID = ItemId::blood_axe; // BloodAxe		
+			else if ((iResult > 9922) && (iResult <= 9960)) iItemID = ItemId::magic_wand_m_s30_llf; // MagicWand(MS30-LLF)	
+			else if ((iResult > 9961) && (iResult <= 9980)) iItemID = ItemId::ringofthe_xelima; // RingoftheXelima	
+			else if ((iResult > 9981) && (iResult <= 9990)) iItemID = ItemId::xelima_rapier; // XelimaRapier	
+			else if ((iResult > 9991) && (iResult <= 9996)) iItemID = ItemId::xelima_blade; // XelimaBlade	
+			else if ((iResult > 9996) && (iResult <= 9998)) iItemID = ItemId::xelima_axe; // XelimaAxe	
+			else if ((iResult > 9999) && (iResult <= 10000)) iItemID = ItemId::ringofthe_abaddon; // RingoftheAbaddon
+			else if ((iResult > 9999) && (iResult <= 10000)) iItemID = ItemId::kloness_blade; // "KlonessBlade"		2%
+			else if ((iResult > 9999) && (iResult <= 10000)) iItemID = ItemId::kloness_wand_ms10; // "KlonessWandMS20"		2%
 
 			return true;
 
@@ -55127,19 +55164,19 @@ bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
 		case 28: // Troll
 		case 57: // Giant-Frog
 			switch (iDice(1, 7)) {
-				case 1: iItemID = 334;
+				case 1: iItemID = ItemId::lucky_gold_ring;
 					break; // LuckyGoldRing
-				case 2: iItemID = 336;
+				case 2: iItemID = ItemId::sapphire_ring;
 					break; // SapphireRing
-				case 3: if (iDice(1, 15) == 3) iItemID = 335;
+				case 3: if (iDice(1, 15) == 3) iItemID = ItemId::emerald_ring;
 					break; // EmeraldRing
-				case 4: iItemID = 337;
+				case 4: iItemID = ItemId::ruby_ring;
 					break; // RubyRing
-				case 5: iItemID = 333;
+				case 5: iItemID = ItemId::platinum_ring;
 					break; // PlatinumRing
-				case 6: if (iDice(1, 15) == 3) iItemID = 634;
+				case 6: if (iDice(1, 15) == 3) iItemID = ItemId::ringof_wizard;
 					break; // RingofWizard
-				case 7: if (iDice(1, 25) == 3) iItemID = 635;
+				case 7: if (iDice(1, 25) == 3) iItemID = ItemId::ringof_mage;
 					break; // RingofMage
 			}
 			break;
@@ -55148,19 +55185,19 @@ bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
 		case 27: // Hellhound
 		case 29: // Orge
 			switch (iDice(1, 7)) {
-				case 1: iItemID = 311;
+				case 1: iItemID = ItemId::magic_necklace_df10;
 					break; // MagicNecklace(DF+10)
-				case 2: if (iDice(1, 20) == 13) iItemID = 308;
+				case 2: if (iDice(1, 20) == 13) iItemID = ItemId::magic_necklace_ms10;
 					break; // MagicNecklace(MS10)
-				case 3: if (iDice(1, 10) == 13) iItemID = 305;
+				case 3: if (iDice(1, 10) == 13) iItemID = ItemId::magic_necklace_dm1;
 					break; // MagicNecklace(DM+1)
-				case 4: iItemID = 300;
+				case 4: iItemID = ItemId::magic_necklace_rm10;
 					break; // MagicNecklace(RM10)
-				case 5: if (iDice(1, 30) == 13) iItemID = 632;
+				case 5: if (iDice(1, 30) == 13) iItemID = ItemId::ringof_ogrepower;
 					break; // RingofOgrepower
-				case 6: if (iDice(1, 30) == 13) iItemID = 637;
+				case 6: if (iDice(1, 30) == 13) iItemID = ItemId::knecklace_of_light_pro;
 					break; // KnecklaceOfLightPro
-				case 7: if (iDice(1, 30) == 13) iItemID = 638;
+				case 7: if (iDice(1, 30) == 13) iItemID = ItemId::knecklace_of_fire_pro;
 					break; // KnecklaceOfFirePro
 			}
 			break;
@@ -55168,56 +55205,56 @@ bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
 		case 18: // Zombie
 		case 22: // Amphis
 			switch (iDice(1, 4)) {
-				case 1: if (iDice(1, 75) == 13) iItemID = 613;
+				case 1: if (iDice(1, 75) == 13) iItemID = ItemId::sword_of_medusa;
 					break; // SwordofMedusa
-				case 2: if (iDice(1, 20) == 13) iItemID = 639;
+				case 2: if (iDice(1, 20) == 13) iItemID = ItemId::knecklace_of_poison_pro;
 					break; // KnecklaceOfPoisonPro
-				case 3: if (iDice(1, 40) == 13) iItemID = 641;
+				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::knecklace_of_medusa;
 					break; // KnecklaceOfMedusa
-				case 4: if (iDice(1, 30) == 13) iItemID = 640;
+				case 4: if (iDice(1, 30) == 13) iItemID = ItemId::knecklace_of_sufferent;
 					break; // KnecklaceOfSufferent
 			}
 			break;
 
 		case 12: // Stone-Golem
 			switch (iDice(1, 5)) {
-				case 1: if (iDice(1, 40) == 13) iItemID = 620;
+				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
 					break; // MerienShield
-				case 2: if (iDice(1, 40) == 13) iItemID = 621;
+				case 2: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_m;
 					break; // MerienPlateMail(M)
-				case 3: if (iDice(1, 40) == 13) iItemID = 622;
+				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_w;
 					break; // MerienPlateMail(W)
-				case 4: if (iDice(1, 20) == 11) iItemID = 644;
+				case 4: if (iDice(1, 20) == 11) iItemID = ItemId::knecklace_of_air_ele;
 					break; // KnecklaceOfAirEle
-				case 5: if (iDice(1, 20) == 11) iItemID = 647;
+				case 5: if (iDice(1, 20) == 11) iItemID = ItemId::necklace_of_stone_golem;
 					break; // KnecklaceOfStoneGolem
 			}
 			break;
 
 		case 23: // Clay-Golem
 			switch (iDice(1, 4)) {
-				case 1: if (iDice(1, 40) == 13) iItemID = 620;
+				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
 					break; // MerienShield	
-				case 2: if (iDice(1, 40) == 13) iItemID = 621;
+				case 2: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_m;
 					break; // MerienPlateMail(M)
-				case 3: if (iDice(1, 40) == 13) iItemID = 622;
+				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_w;
 					break; // MerienPlateMail(W)
-				case 4: if (iDice(1, 20) == 11) iItemID = 644;
+				case 4: if (iDice(1, 20) == 11) iItemID = ItemId::knecklace_of_air_ele;
 					break; // KnecklaceOfAirEle
 			}
 			break;
 
 		case 32: // Unicorn
 			switch (iDice(1, 4)) {
-				case 1: if (iDice(1, 40) == 13) iItemID = 620;
+				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
 					break; // MerienShield	
-				case 2: if (iDice(1, 40) == 13) iItemID = 621;
+				case 2: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_m;
 					break; // MerienPlateMail(M)
-				case 3: if (iDice(1, 40) == 13) iItemID = 622;
+				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_w;
 					break; // MerienPlateMail(W)
-				case 4: if (iDice(1, 20) == 11) iItemID = 644;
+				case 4: if (iDice(1, 20) == 11) iItemID = ItemId::knecklace_of_air_ele;
 					break; // KnecklaceOfAirEle
-				case 5: if (iDice(1, 20) == 11) iItemID = 848;
+				case 5: if (iDice(1, 20) == 11) iItemID = ItemId::lighting_blade;
 					break; // Lighting Blade
 			}
 			break;
@@ -55225,117 +55262,117 @@ bool CGame::bGetItemNameWhenDeleteNpc(int & iItemID, short sNpcType) {
 		case 33: // WereWolf
 		case 48: // Stalker
 			switch (iDice(1, 2)) {
-				case 1: if (iDice(1, 30) == 3) iItemID = 290;
+				case 1: if (iDice(1, 30) == 3) iItemID = ItemId::flameberge_plus_3_llf;
 					break; // Flameberge+3(LLF)
-				case 2: iItemID = 292;
+				case 2: iItemID = ItemId::golden_axe_llf;
 					break; // GoldenAxe(LLF)
 			}
 			break;
 
 		case 30: // Liche
 			switch (iDice(1, 8)) {
-				case 1: if (iDice(1, 10) == 3) iItemID = 380;
+				case 1: if (iDice(1, 10) == 3) iItemID = ItemId::ice_storm_manual;
 					break; // IceStormManual
-				case 2: if (iDice(1, 10) == 3) iItemID = 259;
+				case 2: if (iDice(1, 10) == 3) iItemID = ItemId::magic_wand_mshield;
 					break; // MagicWand(M.Shield)
-				case 3: if (iDice(1, 30) == 3) iItemID = 291;
+				case 3: if (iDice(1, 30) == 3) iItemID = ItemId::magic_wand_m_s30_llf;
 					break; // MagicWand(MS30-LLF)
-				case 4: if (iDice(1, 10) == 3) iItemID = 614;
+				case 4: if (iDice(1, 10) == 3) iItemID = ItemId::sword_of_ice_elemental;
 					break; // SwordofIceElemental	
-				case 5: if (iDice(1, 10) == 3) iItemID = 642;
+				case 5: if (iDice(1, 10) == 3) iItemID = ItemId::knecklace_of_ice_pro;
 					break; // KnecklaceOfIcePro
-				case 6: if (iDice(1, 15) == 3) iItemID = 643;
+				case 6: if (iDice(1, 15) == 3) iItemID = ItemId::knecklace_of_ice_ele;
 					break; // KnecklaceOfIceEle	
-				case 7: if (iDice(1, 30) == 3) iItemID = 636;
+				case 7: if (iDice(1, 30) == 3) iItemID = ItemId::ringof_grand_mage;
 					break; // RingofGrandMage
-				case 8: if (iDice(1, 30) == 3) iItemID = 734;
+				case 8: if (iDice(1, 30) == 3) iItemID = ItemId::ring_of_arcmage;
 					break; // RingOfArcmage
 			}
 			break;
 
 		case 31: // Demon 
 			switch (iDice(1, 8)) {
-				case 1: if (iDice(1, 30) == 3) iItemID = 382;
+				case 1: if (iDice(1, 30) == 3) iItemID = ItemId::bloody_shock_w_manual;
 					break; // BloodyShockW.Manual
-				case 2: if (iDice(1, 10) == 3) iItemID = 491;
+				case 2: if (iDice(1, 10) == 3) iItemID = ItemId::blood_axe;
 					break; // BloodAxe
-				case 3: if (iDice(1, 10) == 3) iItemID = 490;
+				case 3: if (iDice(1, 10) == 3) iItemID = ItemId::blood_sword;
 					break; // BloodSword
-				case 4: if (iDice(1, 10) == 3) iItemID = 492;
+				case 4: if (iDice(1, 10) == 3) iItemID = ItemId::blood_rapier;
 					break; // BloodRapier
-				case 5: if (iDice(1, 10) == 3) iItemID = 381;
+				case 5: if (iDice(1, 10) == 3) iItemID = ItemId::mass_fire_strike_manual;
 					break; // MassFireStrikeManual
-				case 6: if (iDice(1, 30) == 3) iItemID = 633;
+				case 6: if (iDice(1, 30) == 3) iItemID = ItemId::ringof_demonpower;
 					break; // RingofDemonpower
-				case 7: if (iDice(1, 10) == 3) iItemID = 645;
+				case 7: if (iDice(1, 10) == 3) iItemID = ItemId::knecklace_of_efreet;
 					break; // KnecklaceOfEfreet
-				case 8: if (iDice(1, 20) == 3) iItemID = 616;
+				case 8: if (iDice(1, 20) == 3) iItemID = ItemId::demon_slayer;
 					break; // DemonSlayer
 			}
 			break;
 
 		case 52: // Gagoyle
 			switch (iDice(1, 11)) {
-				case 1: if (iDice(1, 30) == 3) iItemID = 382;
+				case 1: if (iDice(1, 30) == 3) iItemID = ItemId::bloody_shock_w_manual;
 					break; // BloodyShockW.Manual	
-				case 2: if (iDice(1, 20) == 3) iItemID = 610;
+				case 2: if (iDice(1, 20) == 3) iItemID = ItemId::xelima_blade;
 					break; // XelimaBlade	
-				case 3: if (iDice(1, 20) == 3) iItemID = 611;
+				case 3: if (iDice(1, 20) == 3) iItemID = ItemId::xelima_axe;
 					break; // XelimaAxe	
-				case 4: if (iDice(1, 20) == 3) iItemID = 612;
+				case 4: if (iDice(1, 20) == 3) iItemID = ItemId::xelima_rapier;
 					break; // XelimaRapier
-				case 5: if (iDice(1, 10) == 3) iItemID = 381;
+				case 5: if (iDice(1, 10) == 3) iItemID = ItemId::mass_fire_strike_manual;
 					break; // MassFireStrikeManual
-				case 6: if (iDice(1, 30) == 3) iItemID = 633;
+				case 6: if (iDice(1, 30) == 3) iItemID = ItemId::ringof_demonpower;
 					break; // RingofDemonpower
-				case 7: if (iDice(1, 10) == 3) iItemID = 645;
+				case 7: if (iDice(1, 10) == 3) iItemID = ItemId::knecklace_of_efreet;
 					break; // KnecklaceOfEfreet
-				case 8: if (iDice(1, 40) == 3) iItemID = 630;
+				case 8: if (iDice(1, 40) == 3) iItemID = ItemId::ringofthe_xelima;
 					break; // RingoftheXelima	
-				case 9: if (iDice(1, 50) == 3) iItemID = 631;
+				case 9: if (iDice(1, 50) == 3) iItemID = ItemId::ringofthe_abaddon;
 					break; // RingoftheAbaddon
-				case 10: if (iDice(1, 20) == 3) iItemID = 735;
+				case 10: if (iDice(1, 20) == 3) iItemID = ItemId::ring_of_dragonpower;
 					break; // RingOfDragonpower
-				case 11: if (iDice(1, 40) == 3) iItemID = 20;
+				case 11: if (iDice(1, 40) == 3) iItemID = ItemId::excaliber;
 					break; // Excaliber
-				case 12: if (iDice(1, 60) == 3) iItemID = 846;
+				case 12: if (iDice(1, 60) == 3) iItemID = ItemId::the_devastator;
 					break; // The_Devastator
 			}
 			break;
 
 		case 53: // Beholder
-			if (iDice(1, 20) == 11) iItemID = 646;
+			if (iDice(1, 20) == 11) iItemID = ItemId::necklace_of_beholder;
 			break; // KnecklaceOfBeholder	
 			break;
 
 		case 54: // Dark-Elf
-			if (iDice(1, 20) == 11) iItemID = 618;
+			if (iDice(1, 20) == 11) iItemID = ItemId::dark_elf_bow;
 			break; // DarkElfBow
 			break;
 
 		case 63: // Frost
-			if (iDice(1, 40) == 11) iItemID = 845;
+			if (iDice(1, 40) == 11) iItemID = ItemId::storm_bringer;
 			break; // StormBringer	
 			break;
 
 		case 79: // Nizie
-			if (iDice(1, 20) == 11) iItemID = 845;
+			if (iDice(1, 20) == 11) iItemID = ItemId::storm_bringer;
 			break; // StormBringer	
 			break;
 
 		case 70: // Barlog
-			if (iDice(1, 40) == 11) iItemID = 846;
+			if (iDice(1, 40) == 11) iItemID = ItemId::the_devastator;
 			break; // The_Devastator
 			break;
 
 		case 71: // Centaurus
-			if (iDice(1, 20) == 11) iItemID = 848;
+			if (iDice(1, 20) == 11) iItemID = ItemId::lighting_blade;
 			break; // Lighting Blade
 			break;
 
 	}
 
-	if (iItemID == 0)
+	if (iItemID == ItemId::none)
 		return false;
 	else return true;
 }
@@ -56857,7 +56894,8 @@ void CGame::ReqCreateCraftingHandler(int iClientH, char *pData) {
 	char * cp, cI[6], cCraftingName[21], cData[120];
 	int iRet, i, j, iEraseReq, iRiskLevel, iDifficulty, iNeededContrib = 0;
 	short * sp, sTemp;
-	short sItemIndex[6], sItemPurity[6], sItemNumber[6], sItemArray[12];
+	short sItemIndex[6], sItemPurity[6], sItemNumber[6];
+	CPortion::E sItemArray[6];
 	bool bDup, bFlag, bNeedLog;
 	class CItem * pItem;
 
@@ -56965,10 +57003,10 @@ RCPH_LOOPBREAK:
 	j = 0;
 	for (i = 0; i < 6; i++) {
 		if (sItemIndex[i] != -1)
-			sItemArray[j] = m_pClientList[iClientH]->m_pItemList[sItemIndex[i]]->m_sIDnum;
-		else sItemArray[j] = sItemIndex[i];
-		sItemArray[j + 1] = sItemNumber[i];
-		j += 2;
+			sItemArray[j].id_ = m_pClientList[iClientH]->m_pItemList[sItemIndex[i]]->m_sIDnum;
+		else sItemArray[j].id_ = ItemId::none;
+		sItemArray[j].num_ = sItemNumber[i];
+		++j;
 	}
 
 	// Search Crafting you wanna build
@@ -56976,7 +57014,7 @@ RCPH_LOOPBREAK:
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++)
 		if (m_pCraftingConfigList[i] != 0) {
 			bFlag = false;
-			for (j = 0; j < 12; j++) {
+			for (j = 0; j < 6; j++) {
 				if (m_pCraftingConfigList[i]->m_sArray[j] != sItemArray[j]) bFlag = true; // one item mismatch
 			}
 			if (bFlag == false) // good Crafting receipe
@@ -57189,16 +57227,18 @@ RCPH_LOOPBREAK:
 void CGame::GetDkSet(int iClientH) {
 
 	class CItem * pItem;
-	int dkM[] = {706, 707, 708, 709, 710, 714, 915, -1};
-	int dkW[] = {724, 725, 726, 728, 714, 709, 915, -1};
-	int dmM[] = {711, 712, 713, 853, 717, 913, 915, -1};
-	int dmW[] = {729, 730, 731, 853, 717, 914, 915, -1};
-	int weapon, iItemID, i, iEraseReq;
+	ItemId dkM[] = {ItemId::dark_knight_hauberk, ItemId::dark_knight_full_helm, ItemId::dark_knight_leggings, ItemId::dark_knight_flameberge, ItemId::dark_knight_plate_mail, ItemId::dark_mage_magic_staff, ItemId::dark_knight_shield, ItemId::none};
+	ItemId dkW[] = {ItemId::dark_knight_hauberk_w, ItemId::dark_knight_full_helm_w, ItemId::dark_knight_leggings_w, ItemId::dark_knight_plate_mail_w, ItemId::dark_mage_magic_staff, ItemId::dark_knight_flameberge, ItemId::dark_knight_shield, ItemId::none};
+	ItemId dmM[] = {ItemId::dark_mage_hauberk, ItemId::dark_mage_chain_mail, ItemId::dark_mage_leggings, ItemId::esw_manual, ItemId::dark_knight_rapier, ItemId::dark_mage_hat, ItemId::dark_knight_shield, ItemId::none};
+	ItemId dmW[] = {ItemId::dark_mage_hauberk_w, ItemId::dark_mage_chain_mail_w, ItemId::dark_mage_leggings_w, ItemId::esw_manual, ItemId::dark_knight_rapier, ItemId::dark_mage_hat_w, ItemId::dark_knight_shield, ItemId::none};
+	ItemId weapon = ItemId::none;
+	int i, iEraseReq;
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_iLevel < 200) return;
+	ItemId iItemID;
 	for (i = 0; i <= 7; i++) {
 		pItem = new class CItem;
-		iItemID = -1;
+		iItemID = ItemId::none;
 		if (m_pClientList[iClientH]->m_cSex == 1) {
 			if (m_pClientList[iClientH]->m_iStr > 100) {
 				iItemID = dkM[i];
@@ -57215,22 +57255,22 @@ void CGame::GetDkSet(int iClientH) {
 		if (i == 7) {
 			if (m_pClientList[iClientH]->m_iStr > m_pClientList[iClientH]->m_iInt) {
 				if (m_pClientList[iClientH]->m_cSex == 1) {
-					weapon = 709;
-					weapon = 2000;
+					weapon = ItemId::dark_knight_flameberge;
+					weapon = ItemId::black_knight_hammer;
 				} else if (m_pClientList[iClientH]->m_cSex == 2) {
-					weapon = 709;
-					weapon = 2000;
+					weapon = ItemId::dark_knight_flameberge;
+					weapon = ItemId::black_knight_hammer;
 				}
 			} else {
 				if (m_pClientList[iClientH]->m_cSex == 1) {
-					weapon = 714;
+					weapon = ItemId::dark_mage_magic_staff;
 				} else if (m_pClientList[iClientH]->m_cSex == 2) {
-					weapon = 714;
+					weapon = ItemId::dark_mage_magic_staff;
 				}
 			}
 			iItemID = weapon;
 		}
-		if (iItemID != -1) //if any error occures, dont crash character
+		if (iItemID != ItemId::none) //if any error occures, dont crash character
 		{
 			_bInitItemAttr(pItem, iItemID);
 			pItem->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
@@ -58150,69 +58190,69 @@ void CGame::_TradeItem(int iClientH, char *pData, DWORD dwMsgSize) {
 		return;
 	}
 	switch (pItem->m_sIDnum) { //Centuu : Comprueba el ID correspondiente con el nombre del item se?alado.
-		case 952: //Armor Dyes.
-		case 953: //Armor Dyes.
-		case 954: //Armor Dyes.
-		case 955: //Armor Dyes.
-		case 956: //Armor Dyes.
-		case 957: //Armor Dyes.
-		case 958: //Armor Dyes.
-		case 959: //Armor Dyes
-		case 960: //Armor Dyes.
-		case 961: //Armor Dyes.
-		case 962: //Armor Dyes.
-		case 963: //Armor Dyes.
+		case ItemId::armor_dye_indigo: //Armor Dyes.
+		case ItemId::armor_dye_crimson_red: //Armor Dyes.
+		case ItemId::armor_dye_gold: //Armor Dyes.
+		case ItemId::armor_dye_aqua: //Armor Dyes.
+		case ItemId::armor_dye_pink: //Armor Dyes.
+		case ItemId::armor_dye_violet: //Armor Dyes.
+		case ItemId::armor_dye_blue: //Armor Dyes.
+		case ItemId::armor_dye_khaki: //Armor Dyes
+		case ItemId::armor_dye_yellow: //Armor Dyes.
+		case ItemId::armor_dye_red: //Armor Dyes.
+		case ItemId::armor_dye_black: //Armor Dyes.
+		case ItemId::armor_dye_green: //Armor Dyes.
 			if (m_pClientList[iClientH]->m_iBallPoints < 20) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 20;
 			break;
-		case 621: //Merien Plates
-		case 622:
+		case ItemId::merien_plate_mail_m: //Merien Plates
+		case ItemId::merien_plate_mail_w:
 			if (m_pClientList[iClientH]->m_iBallPoints < 850) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 850;
 			break;
-		case 977: //Merien Chains
-		case 978:
-			if (m_pClientList[iClientH]->m_iBallPoints < 820) return;
-			m_pClientList[iClientH]->m_iBallPoints -= 820;
-			break;
-		case 650: //Zem
+//		case ItemId::977: //Merien Chains
+//		case ItemId::978:
+//			if (m_pClientList[iClientH]->m_iBallPoints < 820) return;
+//			m_pClientList[iClientH]->m_iBallPoints -= 820;
+//			break;
+		case ItemId::zemstoneof_sacrifice: //Zem
 			if (m_pClientList[iClientH]->m_iBallPoints < 10) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 10;
 			break;
-		case 847: //Dark Executor.
+		case ItemId::dark_executor: //Dark Executor.
 			if (m_pClientList[iClientH]->m_iBallPoints < 1100) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 1100;
 			break;
-		case 858: //Neck Of Merien
-		case 859: //Neck Of Kloness
-		case 860: //Neck Of Xelima
+		case ItemId::necklace_of_merien: //Neck Of Merien
+		case ItemId::necklace_of_kloness: //Neck Of Kloness
+		case ItemId::necklace_of_xelima: //Neck Of Xelima
 			if (m_pClientList[iClientH]->m_iBallPoints < 700) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 700;
 			break;
-		case 630: //Ring of xelima
-		case 631: //Ring of Abaddon
+		case ItemId::ringofthe_xelima: //Ring of xelima
+		case ItemId::ringofthe_abaddon: //Ring of Abaddon
 			if (m_pClientList[iClientH]->m_iBallPoints < 560) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 560;
-		case 618: //Dark Elf Bow
+		case ItemId::dark_elf_bow: //Dark Elf Bow
 			if (m_pClientList[iClientH]->m_iBallPoints < 750) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 750;
 			break;
-		case 620: //Merien Shield
+		case ItemId::merien_shield: //Merien Shield
 			if (m_pClientList[iClientH]->m_iBallPoints < 850) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 850;
 			break;
 
-		case 979: //Sex Change Potion
+		case ItemId::the_change_potion: //Sex Change Potion
 			if (m_pClientList[iClientH]->m_iBallPoints < 35) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 35;
 			break;
 
-		case 970: //Xelima Esterk
-		case 973: //Xelima B Hammer
-		case 976: //Xelima Bow
-			if (m_pClientList[iClientH]->m_iBallPoints < 500) return;
-			m_pClientList[iClientH]->m_iBallPoints -= 500;
-			break;
+//		case ItemId::970: //Xelima Esterk
+//		case ItemId::973: //Xelima B Hammer
+//		case ItemId::976: //Xelima Bow
+//			if (m_pClientList[iClientH]->m_iBallPoints < 500) return;
+//			m_pClientList[iClientH]->m_iBallPoints -= 500;
+//			break;
 
 
 		default:

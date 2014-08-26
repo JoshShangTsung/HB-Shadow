@@ -446,7 +446,7 @@ bool XSocket::bListen(char * pAddr, int iPort, unsigned int uiMsg) {
 bool XSocket::bAccept(class XSocket * pXSock, unsigned int uiMsg) {
 	SOCKET AcceptedSock;
 	sockaddr Addr;
-	register int iLength;
+	int iLength;
 	DWORD dwOpt;
 
 	if (m_cType != DEF_XSOCK_LISTENSOCK) return false;

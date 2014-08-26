@@ -1,15 +1,15 @@
 #pragma once
-#include <windows.h>
+#include "Item.h"
 
 class CBuildItem {
 public:
 	CBuildItem();
 	char m_cName[21];
-	short m_sItemID;
+	ItemId m_sItemID;
 
 	int m_iSkillLimit;
 
-	int m_iMaterialItemID[6];
+	ItemId m_iMaterialItemID[6];
 	int m_iMaterialItemCount[6];
 	int m_iMaterialItemValue[6];
 	int m_iIndex[6];

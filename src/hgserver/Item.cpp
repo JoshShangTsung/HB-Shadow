@@ -31,7 +31,7 @@ CItem::CItem() {
 	m_dwAttribute = 0;
 
 	m_cCategory = 0;
-	m_sIDnum = 0;
+	m_sIDnum = ItemId::none;
 
 	m_bIsForSale = false;
 }
