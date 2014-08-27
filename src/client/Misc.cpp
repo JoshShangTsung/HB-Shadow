@@ -1,3 +1,5 @@
+#include <ios>
+
 #include "Misc.h"
 #include "GlobalDef.h"
 
@@ -226,7 +228,35 @@ bool CMisc::bDecode(char cKey, char *pStr) {
 bool CMisc::bCheckValidName(char *pStr) {
 	const std::size_t iLen = strlen(pStr);
 	for (std::size_t i = 0; i < iLen; i++) {
-		if(pStr[i] < 'A' || (pStr[i] > 'Z' && pStr[i] < 'a') || pStr[i] > 'z') return false;
+		const auto c = pStr[i];
+		if(std::isalpha(c)) {
+		} else {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool CMisc::bCheckValidAccount(char *pStr) {
+	const std::size_t iLen = strlen(pStr);
+	for (std::size_t i = 0; i < iLen; i++) {
+		const auto c = pStr[i];
+		if(std::isalnum(c)) {
+		} else {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool CMisc::bCheckValidPassword(char *pStr) {
+	const std::size_t iLen = strlen(pStr);
+	for (std::size_t i = 0; i < iLen; i++) {
+		const auto c = pStr[i];
+		if(std::isprint(c)) {
+		} else {
+			return false;
+		}
 	}
 	return true;
 }

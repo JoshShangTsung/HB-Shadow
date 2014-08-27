@@ -15,6 +15,8 @@ public:
 	int _iGetFileCheckSum(char * pFn);
 	bool _iConvertFileXor(const char *pFn, const char *pDestFn, char cKey);
 	bool bCheckValidName(char *pStr);
+	bool bCheckValidAccount(char *pStr);
+	bool bCheckValidPassword(char *pStr);
 	bool bCheckIMEString(char *str);
 	bool bDecode(char cKey, char * pStr);
 	bool bEncode(char cKey, char * pStr);

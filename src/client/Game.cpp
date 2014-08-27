@@ -7499,13 +7499,13 @@ void CGame::PutString_SprNum(int iX, int iY, const char * pStr, short sR, short 
 	m_Misc.ColorTransfer(m_DDraw.m_cPixelFormat, RGB(sR, sG, sB), &wR, &wG, &wB);
 	iXpos = iX;
 	for (iCnt = 0; iCnt < strlen(cTmpStr); iCnt++) {
-		if ((cTmpStr[iCnt] >= 0x30) && (cTmpStr[iCnt] <= 0x39)) {
-			m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSprite(iXpos + 2, iY, cTmpStr[iCnt] - 0x30 + 6, dwTime);
-			m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSprite(iXpos + 1, iY + 1, cTmpStr[iCnt] - 0x30 + 6, dwTime);
+		if ((cTmpStr[iCnt] >= '0') && (cTmpStr[iCnt] <= '9')) {
+			m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSprite(iXpos + 2, iY, cTmpStr[iCnt] - '0' + 6, dwTime);
+			m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSprite(iXpos + 1, iY + 1, cTmpStr[iCnt] - '0' + 6, dwTime);
 			if ((sR == 0) && (sG == 0) && (sB == 0))
-				m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSprite(iXpos, iY, cTmpStr[iCnt] - 0x30 + 6, dwTime);
-			else m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSpriteRGB(iXpos, iY, cTmpStr[iCnt] - 0x30 + 6, wR, wG, wB, dwTime);
-			iXpos += __cSpace2[cTmpStr[iCnt] - 0x30];
+				m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSprite(iXpos, iY, cTmpStr[iCnt] - '0' + 6, dwTime);
+			else m_pSprite[DEF_SPRID_INTERFACE_ADDINTERFACE]->PutTransSpriteRGB(iXpos, iY, cTmpStr[iCnt] - '0' + 6, wR, wG, wB, dwTime);
+			iXpos += __cSpace2[cTmpStr[iCnt] - '0'];
 		}
 	}
 }
@@ -24298,12 +24298,12 @@ void CGame::UpdateScreen_OnCreateNewAccount() {
 		ShowReceivedString();
 
 	if (m_cCurFocus != 1) {
-		if (m_Misc.bCheckValidName(cName) != false)
+		if (m_Misc.bCheckValidAccount(cName) != false)
 			PutString2(427, 84, cName, 100, 200, 100);
 		else PutString2(427, 84, cName, 200, 100, 100);
 	}
 	if (m_cCurFocus != 2) {
-		if (m_Misc.bCheckValidName(cPassword) != false)
+		if (m_Misc.bCheckValidPassword(cPassword) != false)
 			PutString(427, 106, cPassword, RGB(100, 200, 100), true, 1);
 		else PutString(427, 106, cPassword, RGB(200, 100, 100), true, 1);
 	}
@@ -24340,8 +24340,8 @@ void CGame::UpdateScreen_OnCreateNewAccount() {
 	//if (m_Misc.bCheckValidName(cTempQuiz) == false)		iFlag = 12;
 	if (strlen(cAnswer) == 0) iFlag = 11;
 	if (strlen(cTempQuiz) == 0) iFlag = 10;
-	if (m_Misc.bCheckValidName(cPassword) == false) iFlag = 7;
-	if (m_Misc.bCheckValidName(cName) == false) iFlag = 6;
+	if (m_Misc.bCheckValidPassword(cPassword) == false) iFlag = 7;
+	if (m_Misc.bCheckValidAccount(cName) == false) iFlag = 6;
 	if (m_Misc.bIsValidEmail(m_cEmailAddr) == false) iFlag = 5;
 	if (strlen(cConfirm) == 0) iFlag = 3;
 	if (strlen(cPassword) == 0) iFlag = 2;
@@ -28216,7 +28216,7 @@ void CGame::UpdateScreen_OnLogResMsg() {
 
 		case 'I': //
 			PutString_SprFont(172 + 68, 165, "Not Enough Point!", 7, 0, 0);
-			PutAlignedString(198, 453, 210, "Buy more!;
+			PutAlignedString(198, 453, 210, "Buy more!");
 
 			break;
 
@@ -28955,7 +28955,7 @@ void CGame::UpdateScreen_OnChangePassword() {
 
 			case 5: // Connect
 				if ((m_Misc.bCheckValidString(cPassword) == false) || (strlen(cPassword) == 0) ||
-						  (m_Misc.bCheckValidName(cNewPassword) == false) || (m_Misc.bCheckValidName(cNewPassConfirm) == false) ||
+						  (m_Misc.bCheckValidPassword(cNewPassword) == false) || (m_Misc.bCheckValidPassword(cNewPassConfirm) == false) ||
 						  (strlen(cNewPassword) == 0) || (memcmp(cNewPassword, cNewPassConfirm, 10) != 0)) break;
 
 				ZeroMemory(m_cAccountName, sizeof (m_cAccountName));
@@ -29039,13 +29039,13 @@ void CGame::UpdateScreen_OnChangePassword() {
 	}
 
 	if (m_cCurFocus != 3) {
-		if ((m_Misc.bCheckValidName(cNewPassword) != false))
+		if ((m_Misc.bCheckValidPassword(cNewPassword) != false))
 			PutString(314, 203, cNewPassword, RGB(25, 35, 25), true, 3);
 		else PutString(314, 203, cNewPassword, RGB(55, 18, 13), true, 3);
 	}
 
 	if (m_cCurFocus != 4) {
-		if ((m_Misc.bCheckValidName(cNewPassConfirm) != false))
+		if ((m_Misc.bCheckValidPassword(cNewPassConfirm) != false))
 			PutString(314, 227, cNewPassConfirm, RGB(25, 35, 25), true, 3);
 		else PutString(314, 227, cNewPassConfirm, RGB(55, 18, 13), true, 3);
 	}
@@ -29087,7 +29087,7 @@ void CGame::UpdateScreen_OnChangePassword() {
 
 			case 5:
 				if ((m_Misc.bCheckValidString(cPassword) == false) || (strlen(cPassword) == 0) ||
-						  (m_Misc.bCheckValidName(cNewPassword) == false) || (m_Misc.bCheckValidName(cNewPassConfirm) == false) ||
+						  (m_Misc.bCheckValidPassword(cNewPassword) == false) || (m_Misc.bCheckValidPassword(cNewPassConfirm) == false) ||
 						  (strlen(cNewPassword) == 0) || (memcmp(cNewPassword, cNewPassConfirm, 10) != 0)) break;
 
 				EndInputString();
@@ -40556,11 +40556,11 @@ void CGame::_Draw_OnLogin(char *pAccount, char *pPassword, int msX, int msY, int
 	else if (iFrame > 20) DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_LOGIN, 39, 121, 2, true);
 
 	if (m_cCurFocus != 1) {
-		if (m_Misc.bCheckValidName(pAccount) != false)
+		if (m_Misc.bCheckValidAccount(pAccount) != false)
 			PutString2(180, 162, pAccount, 200, 200, 200);
 		else PutString2(180, 162, pAccount, 200, 100, 100);
 	}
-	if ((m_Misc.bCheckValidName(pAccount) == false) || (strlen(pAccount) == 0)) bFlag = false;
+	if ((m_Misc.bCheckValidAccount(pAccount) == false) || (strlen(pAccount) == 0)) bFlag = false;
 
 	if (m_cCurFocus != 2) {
 		if ((m_Misc.bCheckValidString(pPassword) != false))
