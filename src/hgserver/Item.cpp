@@ -1,7 +1,7 @@
 #include "Item.h"
-
+#include <cstring>
 CItem::CItem() {
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 	m_sSprite = 0;
 	m_sSpriteFrame = 0;
 

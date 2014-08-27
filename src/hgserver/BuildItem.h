@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include "Item.h"
 
 class CBuildItem {
@@ -17,5 +18,5 @@ public:
 	int m_iMaxValue;
 	int m_iAverageValue;
 	int m_iMaxSkill;
-	WORD m_wAttribute;
+	uint16_t m_wAttribute;
 };

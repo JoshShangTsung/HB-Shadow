@@ -1,10 +1,13 @@
 #include "Map.h"
+#include <cstring>
 
 extern void PutLogFileList(char * cStr);
 
 CMap::CMap(class CGame * pGame)
 : m_bIsSnowEnabled(false) {
-	int i, ix, iy;
+	int i;
+	int ix;
+	int iy;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
 		m_pTeleportLoc[i] = 0;
@@ -135,7 +138,7 @@ CMap::CMap(class CGame * pGame)
 		m_stStrikePoint[i].dY = 0;
 		m_stStrikePoint[i].iHP = 0;
 		m_stStrikePoint[i].iMapIndex = -1;
-		ZeroMemory(m_stStrikePoint[i].cRelatedMapName, sizeof (m_stStrikePoint[i].cRelatedMapName));
+		std::memset(m_stStrikePoint[i].cRelatedMapName, 0, sizeof(m_stStrikePoint[i].cRelatedMapName));
 	}
 	m_iTotalStrikePoints = 0;
 	m_bIsDisabled = false;
@@ -182,7 +185,8 @@ char _tmp_cMoveDirY[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 
 bool CMap::bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner) {
 	class CTile * pTile;
-	short dX, dY;
+	short dX;
+	short dY;
 
 	if ((cDir <= 0) || (cDir > 8)) return 0;
 	dX = _tmp_cMoveDirX[cDir] + sX;
@@ -328,7 +332,9 @@ char _tmp_cEmptyAreaX[] = {0, 1, 1, 0, -1, -1, -1, 0, 1, 2, 2, 2, 2, 1, 0, -1, -
 char _tmp_cEmptyAreaY[] = {0, 0, 1, 1, 1, 0, -1, -1, -1, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2};
 
 void CMap::ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea) {
-	short sX, sY, sAreaSquared;
+	short sX;
+	short sY;
+	short sAreaSquared;
 	class CTile * pTile;
 	register int i;
 
@@ -432,10 +438,10 @@ bool CMap::bIsValidLoc(short sX, short sY) {
 
 bool CMap::bInit(char * pName) {
 	int i;
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 	strcpy(m_cName, pName);
 
-	ZeroMemory(m_cLocationName, sizeof (m_cLocationName));
+	std::memset(m_cLocationName, 0, sizeof(m_cLocationName));
 
 	if (_bDecodeMapDataFileContents() == false)
 		return false;
@@ -457,7 +463,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 	class CTile * pTile;
 	short * sp;
 
-	ZeroMemory(cMapFileName, sizeof (cMapFileName));
+	std::memset(cMapFileName, 0, sizeof(cMapFileName));
 	strcat(cMapFileName, "mapdata\\");
 	strcat(cMapFileName, m_cName);
 	strcat(cMapFileName, ".amd");
@@ -465,7 +471,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 	hFile = CreateFile(cMapFileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
 	if (hFile == INVALID_HANDLE_VALUE) return false;
 
-	ZeroMemory(cHeader, sizeof (cHeader));
+	std::memset(cHeader, 0, sizeof(cHeader));
 	ReadFile(hFile, (char *) cHeader, 256, &nRead, 0);
 
 	for (i = 0; i < 256; i++)
@@ -552,7 +558,7 @@ bool CMap::bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int *
 	return false;
 }
 
-void CMap::SetDynamicObject(WORD wID, short sType, short sX, short sY, DWORD dwRegisterTime) {
+void CMap::SetDynamicObject(uint16_t wID, short sType, short sX, short sY, uint32_t dwRegisterTime) {
 	class CTile * pTile;
 
 
@@ -565,7 +571,7 @@ void CMap::SetDynamicObject(WORD wID, short sType, short sX, short sY, DWORD dwR
 	pTile->m_dwDynamicObjectRegisterTime = dwRegisterTime;
 }
 
-bool CMap::bGetDynamicObject(short sX, short sY, short *pType, DWORD *pRegisterTime, int * pIndex) {
+bool CMap::bGetDynamicObject(short sX, short sY, short *pType, uint32_t *pRegisterTime, int * pIndex) {
 	class CTile * pTile;
 
 
@@ -665,7 +671,8 @@ int CMap::iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI) {
 }
 
 void CMap::ClearSectorInfo() {
-	int ix, iy;
+	int ix;
+	int iy;
 
 	for (ix = 0; ix < DEF_MAXSECTORS; ix++)
 		for (iy = 0; iy < DEF_MAXSECTORS; iy++) {
@@ -678,7 +685,8 @@ void CMap::ClearSectorInfo() {
 }
 
 void CMap::ClearTempSectorInfo() {
-	int ix, iy;
+	int ix;
+	int iy;
 
 	for (ix = 0; ix < DEF_MAXSECTORS; ix++)
 		for (iy = 0; iy < DEF_MAXSECTORS; iy++) {
@@ -691,7 +699,9 @@ void CMap::ClearTempSectorInfo() {
 }
 
 void CMap::_SetupNoAttackArea() {
-	int i, ix, iy;
+	int i;
+	int ix;
+	int iy;
 	class CTile * pTile;
 
 	for (i = 0; i < DEF_MAXNMR; i++) {

@@ -1,5 +1,5 @@
 #include "StrTok.h"
-extern void PutLogFileList(char * cStr);
+#include <cstring>
 
 CStrTok::CStrTok(char * pData, const char * pSeps) {
 	m_pData = pData;
@@ -14,7 +14,7 @@ char * CStrTok::pGet() {
 	char cNextData;
 	bool bFlag;
 
-	ZeroMemory(m_cToken, sizeof (m_cToken));
+	std::memset(m_cToken, 0, sizeof(m_cToken));
 
 	while (m_iCurLoc < m_iDataLength) {
 

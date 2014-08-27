@@ -11,7 +11,8 @@ public:
 	};
 	E m_sArray[6];
 
-	int m_iSkillLimit, m_iDifficulty;
+	int m_iSkillLimit;
+	int m_iDifficulty;
 
 };
 

@@ -34,12 +34,15 @@ public:
 	int iDmgShowon;
 
 	bool bCreateNewParty();
-	DWORD m_dwAFKCheckTime;
+	uint32_t m_dwAFKCheckTime;
 
 	// Hack Checkers
-	DWORD m_dwMagicFreqTime, m_dwMoveFreqTime, m_dwAttackFreqTime;
-	bool m_bIsMoveBlocked, m_bMagicItem;
-	DWORD dwClientTime;
+	uint32_t m_dwMagicFreqTime;
+	uint32_t m_dwMoveFreqTime;
+	uint32_t m_dwAttackFreqTime;
+	bool m_bIsMoveBlocked;
+	bool m_bMagicItem;
+	uint32_t dwClientTime;
 	bool m_bMagicConfirm;
 	int m_iSpellCount;
 	bool m_bMagicPauseTime;
@@ -58,7 +61,8 @@ public:
 
 	char m_cMapName[11];
 	char m_cMapIndex;
-	short m_sX, m_sY;
+	short m_sX;
+	short m_sY;
 
 	char m_cGuildName[21];
 	char m_cLocation[11];
@@ -75,9 +79,19 @@ public:
 	int m_iApprColor;
 	int m_iStatus;
 
-	DWORD m_dwTime, m_dwHPTime, m_dwMPTime, m_dwSPTime, m_dwAutoSaveTime, m_dwHungerTime, m_dwWarmEffectTime;
+	uint32_t m_dwTime;
+	uint32_t m_dwHPTime;
+	uint32_t m_dwMPTime;
+	uint32_t m_dwSPTime;
+	uint32_t m_dwAutoSaveTime;
+	uint32_t m_dwHungerTime;
+	uint32_t m_dwWarmEffectTime;
 
-	char m_cSex, m_cSkin, m_cHairStyle, m_cHairColor, m_cUnderwear;
+	char m_cSex;
+	char m_cSkin;
+	char m_cHairStyle;
+	char m_cHairColor;
+	char m_cUnderwear;
 
 	int m_iAngelicStr;
 	int m_iAngelicInt;
@@ -102,16 +116,29 @@ public:
 	int m_iDamageAbsorption_Shield;
 
 	int m_iLevel;
-	int m_iStr, m_iInt, m_iVit, m_iDex, m_iMag, m_iCharisma;
-	//char m_cLU_Str, m_cLU_Int, m_cLU_Vit, m_cLU_Dex, m_cLU_Mag, m_cLU_Char;
+	int m_iStr;
+	int m_iInt;
+	int m_iVit;
+	int m_iDex;
+	int m_iMag;
+	int m_iCharisma;
+	//char m_cLU_Str;
+	char m_cLU_Int;
+	char m_cLU_Vit;
+	char m_cLU_Dex;
+	char m_cLU_Mag;
+	char m_cLU_Char;
 	int m_iLuck;
 	int m_iLU_Pool;
 	char m_cAura;
 	int m_iGizonItemUpgradeLeft;
 
-	int m_iAddTransMana, m_iAddChargeCritical;
+	int m_iAddTransMana;
+	int m_iAddChargeCritical;
 
-	int m_iEnemyKillCount, m_iPKCount, m_iRewardGold;
+	int m_iEnemyKillCount;
+	int m_iPKCount;
+	int m_iRewardGold;
 	int m_iCurWeightLoad;
 
 	char m_cSide;
@@ -147,16 +174,20 @@ public:
 
 	int m_iHungerStatus;
 
-	DWORD m_dwWarBeginTime;
+	uint32_t m_dwWarBeginTime;
 	bool m_bIsWarLocation;
 
 	bool m_bIsPoisoned;
 	int m_iPoisonLevel;
-	DWORD m_dwPoisonTime;
+	uint32_t m_dwPoisonTime;
 
-	int m_iPenaltyBlockYear, m_iPenaltyBlockMonth, m_iPenaltyBlockDay;
+	int m_iPenaltyBlockYear;
+	int m_iPenaltyBlockMonth;
+	int m_iPenaltyBlockDay;
 
-	int m_iFightzoneNumber, m_iReserveTime, m_iFightZoneTicketNumber;
+	int m_iFightzoneNumber;
+	int m_iReserveTime;
+	int m_iFightZoneTicketNumber;
 
 	class XSocket * m_pXSock;
 
@@ -171,12 +202,12 @@ public:
 	bool m_bIsOnServerChange;
 
 	int m_iExpStock;
-	DWORD m_dwExpStockTime;
+	uint32_t m_dwExpStockTime;
 
 	int m_iAutoExpAmount;
-	DWORD m_dwAutoExpTime;
+	uint32_t m_dwAutoExpTime;
 
-	DWORD m_dwRecentAttackTime;
+	uint32_t m_dwRecentAttackTime;
 
 	int m_iAllocatedFish;
 	int m_iFishChance;
@@ -201,7 +232,9 @@ public:
 
 	int m_iMagicDamageSaveItemIndex;
 
-	short m_sCharIDnum1, m_sCharIDnum2, m_sCharIDnum3;
+	short m_sCharIDnum1;
+	short m_sCharIDnum2;
+	short m_sCharIDnum3;
 
 	int m_iAbuseCount;
 
@@ -218,133 +251,147 @@ public:
 	bool m_bIsExchangeConfirm; // Has the user hit confirm? 
 	int iExchangeCount; //Keeps track of items which are on list
 
-	int m_iQuest; 
-	int m_iQuestID; 
-	int m_iAskedQuest; 
-	int m_iCurQuestCount; 
+	int m_iQuest;
+	int m_iQuestID;
+	int m_iAskedQuest;
+	int m_iCurQuestCount;
 
-	int m_iQuestRewardType; 
-	int m_iQuestRewardAmount; 
+	int m_iQuestRewardType;
+	int m_iQuestRewardAmount;
 
-	int m_iContribution; 
+	int m_iContribution;
 
-	bool m_bQuestMatchFlag_Loc; 
-	bool m_bIsQuestCompleted; 
+	bool m_bQuestMatchFlag_Loc;
+	bool m_bIsQuestCompleted;
 
 	int m_iCustomItemValue_Attack;
 	int m_iCustomItemValue_Defense;
 
-	int m_iMinAP_SM; 
+	int m_iMinAP_SM;
 	int m_iMinAP_L;
 
-	int m_iMaxAP_SM; 
+	int m_iMaxAP_SM;
 	int m_iMaxAP_L;
 
-	bool m_bIsNeutral; 
-	bool m_bIsObserverMode; 
+	bool m_bIsNeutral;
+	bool m_bIsObserverMode;
 
-	int m_iSpecialEventID; 
+	int m_iSpecialEventID;
 
-	int m_iSpecialWeaponEffectType; 
-	int m_iSpecialWeaponEffectValue; 
-	
-	
-	
+	int m_iSpecialWeaponEffectType;
+	int m_iSpecialWeaponEffectValue;
 
-	
-	int m_iAddHP, m_iAddSP, m_iAddMP;
-	int m_iAddAR, m_iAddPR, m_iAddDR;
-	int m_iAddMR, m_iAddAbsPD, m_iAddAbsMD;
-	int m_iAddCD, m_iAddExp, m_iAddGold; 
 
-	int m_iAddResistMagic; 
-	int m_iAddPhysicalDamage; 
+
+
+
+	int m_iAddHP;
+	int m_iAddSP;
+	int m_iAddMP;
+	int m_iAddAR;
+	int m_iAddPR;
+	int m_iAddDR;
+	int m_iAddMR;
+	int m_iAddAbsPD;
+	int m_iAddAbsMD;
+	int m_iAddCD;
+	int m_iAddExp;
+	int m_iAddGold;
+
+	int m_iAddResistMagic;
+	int m_iAddPhysicalDamage;
 	int m_iAddMagicalDamage;
 
-	int m_iAddAbsAir; 
+	int m_iAddAbsAir;
 	int m_iAddAbsEarth;
 	int m_iAddAbsFire;
 	int m_iAddAbsWater;
 
 	int m_iLastDamage;
 
-	int m_iMoveMsgRecvCount, m_iAttackMsgRecvCount, m_iRunMsgRecvCount, m_iSkillMsgRecvCount;
-	DWORD m_dwMoveLAT, m_dwRunLAT, m_dwAttackLAT;
+	int m_iMoveMsgRecvCount;
+	int m_iAttackMsgRecvCount;
+	int m_iRunMsgRecvCount;
+	int m_iSkillMsgRecvCount;
+	uint32_t m_dwMoveLAT;
+	uint32_t m_dwRunLAT;
+	uint32_t m_dwAttackLAT;
 
-	int m_iSpecialAbilityTime; 
-	bool m_bIsSpecialAbilityEnabled; 
-	DWORD m_dwSpecialAbilityStartTime; 
-	int m_iSpecialAbilityLastSec; 
+	int m_iSpecialAbilityTime;
+	bool m_bIsSpecialAbilityEnabled;
+	uint32_t m_dwSpecialAbilityStartTime;
+	int m_iSpecialAbilityLastSec;
 
-	int m_iSpecialAbilityType; 
-	
-	
-	
-	
-	int m_iSpecialAbilityEquipPos; 
+	int m_iSpecialAbilityType;
+
+
+
+
+	int m_iSpecialAbilityEquipPos;
 	bool m_bIsAdminCommandEnabled;
-	int m_iAlterItemDropIndex; 
+	int m_iAlterItemDropIndex;
 
-	int m_iWarContribution; 
+	int m_iWarContribution;
 
-	DWORD m_dwSpeedHackCheckTime; 
+	uint32_t m_dwSpeedHackCheckTime;
 	int m_iSpeedHackCheckExp;
-	DWORD m_dwLogoutHackCheck;
+	uint32_t m_dwLogoutHackCheck;
 
-	DWORD m_dwInitCCTimeRcv;
-	DWORD m_dwInitCCTime;
+	uint32_t m_dwInitCCTimeRcv;
+	uint32_t m_dwInitCCTime;
 
-	char m_cLockedMapName[11]; 
-	int m_iLockedMapTime; 
+	char m_cLockedMapName[11];
+	int m_iLockedMapTime;
 
-	int m_iCrusadeDuty; 
-	DWORD m_dwCrusadeGUID; 
-	DWORD m_dwHeldenianGUID;
+	int m_iCrusadeDuty;
+	uint32_t m_dwCrusadeGUID;
+	uint32_t m_dwHeldenianGUID;
 	bool m_bInRecallImpossibleMap;
-
-	
 
 	struct {
 		char cType;
 		char cSide;
-		short sX, sY;
+		short sX;
+		short sY;
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 	int m_iCSIsendPoint;
 
 	char m_cSendingMapName[11];
 	bool m_bIsSendingMapStatus;
 
-	
+
 	int m_iConstructionPoint;
 
 	char m_cConstructMapName[11];
-	int m_iConstructLocX, m_iConstructLocY;
+	int m_iConstructLocX;
+	int m_iConstructLocY;
 
-	
+
 	bool m_bIsPlayerCivil;
 	bool m_bIsAttackModeChange;
 
-	
-	
+
+
 	int m_iPartyID;
 	int m_iPartyStatus;
 	int m_iReqJoinPartyClientH;
 	char m_cReqJoinPartyName[12];
 
-	int m_iPartyRank; 
-	int m_iPartyMemberCount; 
-	int m_iPartyGUID; 
+	int m_iPartyRank;
+	int m_iPartyMemberCount;
+	int m_iPartyGUID;
 
 	struct {
 		int iIndex;
 		char cName[11];
 	} m_stPartyMemberName[DEF_MAXPARTYMEMBERS];
 
-	
-	DWORD m_dwLastActionTime, m_dwLastDamageTime;
+
+	uint32_t m_dwLastActionTime;
+	uint32_t m_dwLastDamageTime;
 	int m_iDeadPenaltyTime;
 
-	
+
 	char m_cWhisperPlayerName[11];
 	bool m_bIsAdminOrderGoto;
 	bool m_bIsInsideWarehouse;
@@ -354,16 +401,18 @@ public:
 	bool m_pIsProcessingAllowed;
 	bool m_bIsClientConnected;
 
-	
+
 	char m_cHeroArmorBonus;
 
-	
+
 	bool m_bIsBeingResurrected;
 
-	DWORD m_dwFightzoneDeadTime;
+	uint32_t m_dwFightzoneDeadTime;
 	char m_cSaveCount;
 	int m_iBallPoints;
 
-	DWORD m_dwDSLAT, m_dwDSLATOld, m_dwDSLATS;
+	uint32_t m_dwDSLAT;
+	uint32_t m_dwDSLATOld;
+	uint32_t m_dwDSLATS;
 	int m_iDSCount;
 };

@@ -2,9 +2,11 @@
 
 #include "Misc.h"
 #include "GlobalDef.h"
+#include <cstring>
 
 char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY) {
-	short absX, absY;
+	short absX;
+	short absY;
 	char cRet = 0;
 
 	absX = sX - dX;
@@ -29,8 +31,15 @@ char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY) {
 }
 
 void CMisc::GetPoint(int x0, int y0, int x1, int y1, int * pX, int * pY, int * pError, int iCount) {
-	int dx, dy, x_inc, y_inc, error, index;
-	int iResultX, iResultY, iCnt = 0;
+	int dx;
+	int dy;
+	int x_inc;
+	int y_inc;
+	int error;
+	int index;
+	int iResultX;
+	int iResultY;
+	int iCnt = 0;
 
 	if ((x0 == x1) && (y0 == y1)) {
 		*pX = x0;
@@ -129,7 +138,9 @@ void CMisc::ReplaceString(char * pStr, char cFrom, char cTo) {
 }
 
 char CMisc::cCalcDirection(short sX, short sY, short dX, short dY) {
-	double dTmp1, dTmp2, dTmp3;
+	double dTmp1;
+	double dTmp2;
+	double dTmp3;
 	// short x,y;
 	// double r;
 	if ((sX == dX) && (sY == dY)) return 1;
@@ -264,12 +275,15 @@ bool CMisc::bCheckValidPassword(char *pStr) {
 int CMisc::_iGetFileCheckSum(char * pFn) {
 	HANDLE hFile;
 	FILE * pFile;
-	DWORD dwFileSize;
+	uint32_t dwFileSize;
 	char * pContents;
-	int iCheckSum, iV1, iV2, iV3;
+	int iCheckSum;
+	int iV1;
+	int iV2;
+	int iV3;
 	UINT i;
 	char cRealFn[512];
-	ZeroMemory(cRealFn, sizeof (cRealFn));
+	std::memset(cRealFn, 0, sizeof(cRealFn));
 	strcpy(cRealFn, pFn);
 	for (i = 0; i < strlen(cRealFn); i++)
 		if (cRealFn[i] != 0) cRealFn[i]++;
@@ -304,7 +318,7 @@ int CMisc::_iGetFileCheckSum(char * pFn) {
 
 bool CMisc::_iConvertFileXor(const char *pFn, const char * pDestFn, char cKey) {
 	HANDLE hFile;
-	DWORD dwFileSize;
+	uint32_t dwFileSize;
 	FILE * pFile;
 	char * pContents;
 	int i;
@@ -365,7 +379,21 @@ int CMisc::iGetTextLengthLoc(HDC hDC, char *pStr, int iLength) {
 }
 
 bool CMisc::bIsValidSSN(char *pStr) {
-	int a, b, c, d, e, f, g, h, i, j, k, l, m, X, Y;
+	int a;
+	int b;
+	int c;
+	int d;
+	int e;
+	int f;
+	int g;
+	int h;
+	int i;
+	int j;
+	int k;
+	int l;
+	int m;
+	int X;
+	int Y;
 	if (strlen(pStr) < 14) return false;
 	a = pStr[0] - 48;
 	b = pStr[1] - 48;
@@ -392,7 +420,7 @@ bool CMisc::bIsValidEmail(char *pStr) {
 	int len = strlen(pStr);
 	if (len < 7) return false;
 	char cEmail[52];
-	ZeroMemory(cEmail, sizeof (cEmail));
+	std::memset(cEmail, 0, sizeof(cEmail));
 	memcpy(cEmail, pStr, len);
 	bool bFlag = false;
 	for (int i = 0; i < len; i++) {

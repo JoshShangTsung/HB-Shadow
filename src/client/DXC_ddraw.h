@@ -53,10 +53,13 @@ public:
 	bool m_bFullMode;
 
 	LPDIRECTDRAW7 m_lpDD4;
-	LPDIRECTDRAWSURFACE7 m_lpFrontB4, m_lpBackB4, m_lpBackB4flip;
+	LPDIRECTDRAWSURFACE7 m_lpFrontB4;
+	LPDIRECTDRAWSURFACE7 m_lpBackB4;
+	LPDIRECTDRAWSURFACE7 m_lpBackB4flip;
 	LPDIRECTDRAWSURFACE7 m_lpPDBGS; // Pre-Draw Background Surface
 	WORD * m_pBackB4Addr;
-	RECT m_rcClipArea, m_rcFlipping;
+	RECT m_rcClipArea;
+	RECT m_rcFlipping;
 	short m_sBackB4Pitch;
 	char m_cPixelFormat;
 	HDC m_hDC;

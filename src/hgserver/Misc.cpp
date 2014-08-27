@@ -1,5 +1,5 @@
 #include "Misc.h"
-
+#include <cstring>
 void CMisc::GetMyCursorPos(short * pX, short * pY) {
 	POINT point;
 
@@ -9,7 +9,8 @@ void CMisc::GetMyCursorPos(short * pX, short * pY) {
 }
 
 char CMisc::cGetNextMoveDir(short sX, short sY, short dX, short dY) {
-	short absX, absY;
+	short absX;
+	short absY;
 	char cRet = 0;
 
 	absX = sX - dX;
@@ -189,7 +190,8 @@ void CMisc::GetDirPoint(char cDir, int * pX, int * pY) {
 }
 
 bool CMisc::bEncode(char cKey, char *pStr) {
-	int i, iLen;
+	int i;
+	int iLen;
 
 	// !!
 	return true;
@@ -203,7 +205,8 @@ bool CMisc::bEncode(char cKey, char *pStr) {
 }
 
 bool CMisc::bDecode(char cKey, char *pStr) {
-	int i, iLen;
+	int i;
+	int iLen;
 
 	// !!
 	return true;
@@ -260,46 +263,46 @@ void CMisc::Temp() {
 	for (i = 1; i <= 444; i++)
 		fread(cTemp, 1, 5240, pSrcFileB);
 
-	ZeroMemory(cTemp, sizeof (cTemp));
+	std::memset(cTemp, 0, sizeof(cTemp));
 	strcpy(cTemp, "MAPSIZEX = 824 MAPSIZEY = 824 TILESIZE = 10");
 
 	fwrite(cTemp, 1, 256, pDestFile);
 
 	for (i = 1; i <= 80; i++) {
-		ZeroMemory(cTemp, sizeof (cTemp));
+		std::memset(cTemp, 0, sizeof(cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileA);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	ZeroMemory(cTemp, sizeof (cTemp));
+	std::memset(cTemp, 0, sizeof(cTemp));
 	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	//148
 	/*
-	ZeroMemory(cTemp, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof(cTemp));
 	for (i = 1; i <= 150; i++) fwrite(cTemp, 1, 824*10, pDestFile);
 	 */
 
 	for (i = 1; i <= 524; i++) {
-		ZeroMemory(cTemp, sizeof (cTemp));
+		std::memset(cTemp, 0, sizeof(cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFile);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	ZeroMemory(cTemp, sizeof (cTemp));
+	std::memset(cTemp, 0, sizeof(cTemp));
 	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	for (i = 1; i <= 80; i++) {
-		ZeroMemory(cTemp, sizeof (cTemp));
+		std::memset(cTemp, 0, sizeof(cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileB);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	ZeroMemory(cTemp, sizeof (cTemp));
+	std::memset(cTemp, 0, sizeof(cTemp));
 	for (i = 1; i <= 2; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 
 	/*
-	ZeroMemory(cTemp, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof(cTemp));
 	for (i = 1; i <= 150; i++) fwrite(cTemp, 1, 824*10, pDestFile);
 	 */
 

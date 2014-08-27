@@ -1,6 +1,6 @@
 #include "ItemName.h"
-
+#include <cstring>
 CItemName::CItemName() {
-	ZeroMemory(m_cOriginName, sizeof (m_cOriginName));
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cOriginName, 0, sizeof(m_cOriginName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 }

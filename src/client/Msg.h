@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <string.h>
 #include <winbase.h>
+#include <cstdint>
 
 class CMsg {
 public:
@@ -14,13 +15,14 @@ public:
 		HeapFree(GetProcessHeap(), HEAP_NO_SERIALIZE, mem);
 	};
 
-	CMsg(char cType, const char * pMsg, DWORD dwTime);
+	CMsg(char cType, const char * pMsg, uint32_t dwTime);
 	virtual ~CMsg();
 
 	char m_cType;
 	char * m_pMsg;
-	short m_sX, m_sY;
-	DWORD m_dwTime;
+	short m_sX;
+	short m_sY;
+	uint32_t m_dwTime;
 
 	int m_iObjectID;
 

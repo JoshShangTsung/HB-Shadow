@@ -22,7 +22,8 @@ void CMouseInterface::AddRect(long sx, long sy, long dx, long dy) {
 }
 
 int CMouseInterface::iGetStatus(int msX, int msY, char cLB, char * pResult) {
-	int i, iRet;
+	int i;
+	int iRet;
 	if (cLB != 0) {
 		for (i = 1; i < DEF_MAXRECTS; i++)
 			if (m_pRect[i] != 0) {

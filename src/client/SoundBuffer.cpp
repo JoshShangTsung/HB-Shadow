@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "dsound.h"
 #include "SoundBuffer.h"
-
+#include <cstring>
 struct Waveheader {
 	BYTE RIFF[4]; // "RIFF"
 	DWORD dwSize; // Size of data to follow
@@ -25,7 +25,7 @@ CSoundBuffer::CSoundBuffer(LPDIRECTSOUND lpDS, DSCAPS DSCaps, char * pWavFileNam
 	m_lpDS = lpDS;
 	m_DSCaps = DSCaps;
 
-	ZeroMemory(m_cWavFileName, sizeof (m_cWavFileName));
+	std::memset(m_cWavFileName, 0, sizeof(m_cWavFileName));
 	strcpy(m_cWavFileName, pWavFileName);
 
 	if (bIsSingleLoad == true) {
@@ -59,7 +59,7 @@ CSoundBuffer::~CSoundBuffer() {
 	}
 }
 
-bool CSoundBuffer::_bCreateSoundBuffer(char cBufferIndex, DWORD dwBufSize, DWORD dwFreq, DWORD dwBitsPerSample, DWORD dwBlkAlign, bool bStereo) {
+bool CSoundBuffer::_bCreateSoundBuffer(char cBufferIndex, uint32_t dwBufSize, uint32_t dwFreq, uint32_t dwBitsPerSample, uint32_t dwBlkAlign, bool bStereo) {
 	PCMWAVEFORMAT pcmwf;
 	DSBUFFERDESC dsbdesc;
 	if (m_lpDSB[cBufferIndex] != 0) return false;
@@ -68,9 +68,9 @@ bool CSoundBuffer::_bCreateSoundBuffer(char cBufferIndex, DWORD dwBufSize, DWORD
 	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
 	pcmwf.wf.nChannels = bStereo ? 2 : 1;
 	pcmwf.wf.nSamplesPerSec = dwFreq;
-	pcmwf.wf.nBlockAlign = (WORD) dwBlkAlign;
+	pcmwf.wf.nBlockAlign = (uint16_t) dwBlkAlign;
 	pcmwf.wf.nAvgBytesPerSec = pcmwf.wf.nSamplesPerSec * pcmwf.wf.nBlockAlign;
-	pcmwf.wBitsPerSample = (WORD) dwBitsPerSample;
+	pcmwf.wBitsPerSample = (uint16_t) dwBitsPerSample;
 
 	memset(&dsbdesc, 0, sizeof (DSBUFFERDESC));
 	dsbdesc.dwSize = sizeof (DSBUFFERDESC);
@@ -86,7 +86,7 @@ bool CSoundBuffer::_bCreateSoundBuffer(char cBufferIndex, DWORD dwBufSize, DWORD
 bool CSoundBuffer::bCreateBuffer_LoadWavFileContents(char cBufferIndex) {
 	FILE * pFile;
 	Waveheader Wavhdr;
-	DWORD dwSize;
+	uint32_t dwSize;
 	bool bStereo;
 
 	if (m_lpDSB[cBufferIndex] != 0) return false;
@@ -116,7 +116,7 @@ bool CSoundBuffer::bCreateBuffer_LoadWavFileContents(char cBufferIndex) {
 	return true;
 }
 
-bool CSoundBuffer::_LoadWavContents(char cBufferIndex, FILE * pFile, DWORD dwSize, DWORD dwPos) {
+bool CSoundBuffer::_LoadWavContents(char cBufferIndex, FILE * pFile, uint32_t dwSize, uint32_t dwPos) {
 	LPVOID pData1;
 	DWORD dwData1Size;
 	LPVOID pData2;

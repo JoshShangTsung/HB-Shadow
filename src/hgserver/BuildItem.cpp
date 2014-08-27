@@ -1,7 +1,7 @@
 #include "BuildItem.h"
-
+#include <cstring>
 CBuildItem::CBuildItem() {
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 	m_sItemID = ItemId::none;
 
 	m_iSkillLimit = 0;

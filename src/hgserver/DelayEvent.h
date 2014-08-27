@@ -15,11 +15,14 @@ public:
 	int m_iEffectType;
 
 	char m_cMapIndex;
-	int m_dX, m_dY;
+	int m_dX;
+	int m_dY;
 
 	int m_iTargetH;
 	char m_cTargetType;
-	int m_iV1, m_iV2, m_iV3;
+	int m_iV1;
+	int m_iV2;
+	int m_iV3;
 
-	DWORD m_dwTriggerTime;
+	uint32_t m_dwTriggerTime;
 };

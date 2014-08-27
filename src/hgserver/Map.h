@@ -64,8 +64,8 @@ public:
 	bool bGetIsMoveAllowedTile(short dX, short dY);
 	void SetNamingValueEmpty(int iValue);
 	int iGetEmptyNamingValue();
-	bool bGetDynamicObject(short sX, short sY, short * pType, DWORD * pRegisterTime, int * pIndex = 0);
-	void SetDynamicObject(WORD wID, short sType, short sX, short sY, DWORD dwRegisterTime);
+	bool bGetDynamicObject(short sX, short sY, short * pType, uint32_t * pRegisterTime, int * pIndex = 0);
+	void SetDynamicObject(uint16_t wID, short sType, short sX, short sY, uint32_t dwRegisterTime);
 	bool bGetIsTeleport(short dX, short dY);
 	bool bSearchTeleportDest(int sX, int sY, char * pMapName, int * pDx, int * pDy, char * pDir);
 	bool bInit(char * pName);
@@ -144,7 +144,7 @@ public:
 	int m_iTotalMineralPoint=0, m_iMaxMineral=0, m_iCurMineral=0;
 
 	char m_cWhetherStatus=0;
-	DWORD m_dwWhetherLastTime=0, m_dwWhetherStartTime=0;
+	uint32_t m_dwWhetherLastTime=0, m_dwWhetherStartTime=0;
 
 	int m_iLevelLimit=0;
 	int m_iUpperLevelLimit=0;

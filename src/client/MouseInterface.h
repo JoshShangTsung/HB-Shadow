@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <time.h>
+#include <cstdint>
 
 #define DEF_MAXRECTS	30
 #define DEF_MIRESULT_NONE		0
@@ -15,5 +16,5 @@ public:
 	virtual ~CMouseInterface();
 	RECT * m_pRect[DEF_MAXRECTS];
 	char m_cPrevPress;
-	DWORD m_dwTime;
+	uint32_t m_dwTime;
 };

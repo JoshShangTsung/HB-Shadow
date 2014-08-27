@@ -19,11 +19,15 @@ public:
 	class CItem * m_pItem[DEF_TILE_PER_ITEMS];
 	char m_cTotalItem;
 
-	WORD m_wDynamicObjectID;
+	uint16_t m_wDynamicObjectID;
 	short m_sDynamicObjectType;
-	DWORD m_dwDynamicObjectRegisterTime;
+	uint32_t m_dwDynamicObjectRegisterTime;
 
-	bool m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
+	bool m_bIsMoveAllowed;
+	bool m_bIsTeleport;
+	bool m_bIsWater;
+	bool m_bIsFarm;
+	bool m_bIsTempMoveAllowed;
 
 	int m_iOccupyStatus;
 	int m_iOccupyFlagIndex;

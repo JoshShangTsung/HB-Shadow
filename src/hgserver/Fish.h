@@ -8,7 +8,8 @@ public:
 	virtual ~CFish();
 
 	char m_cMapIndex;
-	short m_sX, m_sY; 
+	short m_sX;
+	short m_sY; 
 
 	short m_sType; 
 	class CItem * m_pItem; 

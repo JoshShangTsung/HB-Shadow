@@ -1,8 +1,8 @@
 #include "CharInfo.h"
-
+#include <cstring>
 CCharInfo::CCharInfo() {
-	ZeroMemory(m_cName, sizeof (m_cName));
-	ZeroMemory(m_cMapName, sizeof (m_cMapName));
+	std::memset(m_cName, 0, sizeof(m_cName));
+	std::memset(m_cMapName, 0, sizeof(m_cMapName));
 	m_iApprColor = 0;
 	m_iYear = 0;
 	m_iMonth = 0;

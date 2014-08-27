@@ -1,5 +1,5 @@
 #include "Client.h"
-
+#include <cstring>
 CClient::CClient(HWND hWnd) {
 	register int i;
 
@@ -7,15 +7,15 @@ CClient::CClient(HWND hWnd) {
 	m_pXSock = new class XSocket(hWnd, DEF_CLIENTSOCKETBLOCKLIMIT);
 	m_pXSock->bInitBufferSize(DEF_MSGBUFFERSIZE);
 
-	ZeroMemory(m_cProfile, sizeof (m_cProfile));
+	std::memset(m_cProfile, 0, sizeof(m_cProfile));
 	strcpy(m_cProfile, "__________");
 
-	ZeroMemory(m_cCharName, sizeof (m_cCharName));
-	ZeroMemory(m_cAccountName, sizeof (m_cAccountName));
-	ZeroMemory(m_cAccountPassword, sizeof (m_cAccountPassword));
+	std::memset(m_cCharName, 0, sizeof(m_cCharName));
+	std::memset(m_cAccountName, 0, sizeof(m_cAccountName));
+	std::memset(m_cAccountPassword, 0, sizeof(m_cAccountPassword));
 
-	ZeroMemory(m_cGuildName, sizeof (m_cGuildName));
-	ZeroMemory(m_cLocation, sizeof (m_cLocation));
+	std::memset(m_cGuildName, 0, sizeof(m_cGuildName));
+	std::memset(m_cLocation, 0, sizeof(m_cLocation));
 	strcpy(m_cLocation, "NONE");
 	m_iGuildRank = -1;
 	m_iGuildGUID = -1;
@@ -115,7 +115,7 @@ CClient::CClient(HWND hWnd) {
 		m_cMagicEffectStatus[i] = 0;
 
 	m_iWhisperPlayerIndex = -1;
-	ZeroMemory(m_cWhisperPlayerName, sizeof (m_cWhisperPlayerName));
+	std::memset(m_cWhisperPlayerName, 0, sizeof(m_cWhisperPlayerName));
 
 	m_iHungerStatus = 100; 
 
@@ -143,7 +143,7 @@ CClient::CClient(HWND hWnd) {
 	m_iAllocatedFish = 0;
 	m_iFishChance = 0;
 
-	ZeroMemory(m_cIPaddress, sizeof (m_cIPaddress));
+	std::memset(m_cIPaddress, 0, sizeof(m_cIPaddress));
 	m_bIsOnWaitingProcess = false;
 
 	m_iSuperAttackLeft = 0;
@@ -174,7 +174,7 @@ CClient::CClient(HWND hWnd) {
 	m_iPartyID = 0;
 	m_iPartyStatus = 0;
 	m_iReqJoinPartyClientH = 0;
-	ZeroMemory(m_cReqJoinPartyName, sizeof (m_cReqJoinPartyName));
+	std::memset(m_cReqJoinPartyName, 0, sizeof(m_cReqJoinPartyName));
 
 	/*m_iPartyRank = -1;
 	m_iPartyMemberCount = 0;
@@ -182,7 +182,7 @@ CClient::CClient(HWND hWnd) {
 
 	for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
 		m_stPartyMemberName[i].iIndex = 0;
-		ZeroMemory(m_stPartyMemberName[i].cName, sizeof(m_stPartyMemberName[i].cName));
+		std::memset(m_stPartyMemberName[i].cName, 0, sizeof(m_stPartyMemberName[i].cName));
 	}*/
 
 	m_iAbuseCount = 0;
@@ -194,8 +194,8 @@ CClient::CClient(HWND hWnd) {
 	m_iPenaltyBlockYear = m_iPenaltyBlockMonth = m_iPenaltyBlockDay = 0;
 
 	m_iExchangeH = 0;
-	ZeroMemory(m_cExchangeName, sizeof (m_cExchangeName));
-	ZeroMemory(m_cExchangeItemName, sizeof (m_cExchangeItemName));
+	std::memset(m_cExchangeName, 0, sizeof(m_cExchangeName));
+	std::memset(m_cExchangeItemName, 0, sizeof(m_cExchangeItemName));
 
 	for (i = 0; i < 4; i++) {
 		m_cExchangeItemIndex[i] = -1;
@@ -254,7 +254,7 @@ CClient::CClient(HWND hWnd) {
 	m_dwInitCCTimeRcv = 0;
 	m_dwInitCCTime = 0;
 
-	ZeroMemory(m_cLockedMapName, sizeof (m_cLockedMapName));
+	std::memset(m_cLockedMapName, 0, sizeof(m_cLockedMapName));
 	strcpy(m_cLockedMapName, "NONE");
 	m_iLockedMapTime = 0;
 
@@ -272,11 +272,11 @@ CClient::CClient(HWND hWnd) {
 	m_iCSIsendPoint = 0;
 
 	m_bIsSendingMapStatus = false;
-	ZeroMemory(m_cSendingMapName, sizeof (m_cSendingMapName));
+	std::memset(m_cSendingMapName, 0, sizeof(m_cSendingMapName));
 
 	m_iConstructionPoint = 0;
 
-	ZeroMemory(m_cConstructMapName, sizeof (m_cConstructMapName));
+	std::memset(m_cConstructMapName, 0, sizeof(m_cConstructMapName));
 	m_iConstructLocX = m_iConstructLocY = -1;
 
 	m_bIsAdminOrderGoto = false;
@@ -331,7 +331,7 @@ bool CClient::bCreateNewParty() {
 
 	for (i = 0; i < DEF_MAXPARTYMEMBERS; i++) {
 		m_stPartyMemberName[i].iIndex = 0;
-		ZeroMemory(m_stPartyMemberName[i].cName, sizeof (m_stPartyMemberName[i].cName));
+		std::memset(m_stPartyMemberName[i].cName, 0, sizeof(m_stPartyMemberName[i].cName));
 	}
 
 	return true;

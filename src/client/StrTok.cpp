@@ -1,5 +1,5 @@
 #include "StrTok.h"
-
+#include <cstring>
 CStrTok::CStrTok(char * pData, char * pSeps) {
 	m_pData = pData;
 	m_pSeps = pSeps;
@@ -13,7 +13,7 @@ char * CStrTok::pGet() {
 	char cNextData;
 	bool bFlag;
 
-	ZeroMemory(m_cToken, sizeof (m_cToken));
+	std::memset(m_cToken, 0, sizeof(m_cToken));
 
 	while (m_iCurLoc < m_iDataLength) {
 

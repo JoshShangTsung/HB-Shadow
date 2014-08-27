@@ -1,6 +1,6 @@
 #pragma once
 #include "dsound.h"
-
+#include <cstdint>
 #define DEF_MAXSOUNDBUFFERS		2	
 
 class CSoundBuffer {
@@ -10,9 +10,9 @@ public:
 	void SetVolume(LONG Volume);
 	LPDIRECTSOUNDBUFFER GetIdleBuffer();
 	bool Play(bool bLoop = false, long lPan = 0, int iVol = 0);
-	bool _LoadWavContents(char cBufferIndex, FILE* pFile, DWORD dwSize, DWORD dwPos);
+	bool _LoadWavContents(char cBufferIndex, FILE* pFile, uint32_t dwSize, uint32_t dwPos);
 	bool bCreateBuffer_LoadWavFileContents(char cBufferIndex);
-	bool _bCreateSoundBuffer(char cBufferIndex, DWORD dwBufSize, DWORD dwFreq, DWORD dwBitsPerSample, DWORD dwBlkAlign, bool bStereo);
+	bool _bCreateSoundBuffer(char cBufferIndex, uint32_t dwBufSize, uint32_t dwFreq, uint32_t dwBitsPerSample, uint32_t dwBlkAlign, bool bStereo);
 	CSoundBuffer(LPDIRECTSOUND lpDS, DSCAPS DSCaps, char * pWavFileName, bool bIsSingleLoad = false);
 	virtual ~CSoundBuffer();
 
@@ -25,5 +25,5 @@ public:
 
 	bool m_bIsSingleLoad;
 	bool m_bIsLooping;
-	DWORD m_dwTime;
+	uint32_t m_dwTime;
 };

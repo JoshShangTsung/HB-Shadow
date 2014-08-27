@@ -6,7 +6,8 @@ public:
 	char m_cType;
 
 	char m_cMapIndex;
-	int m_sX, m_sY;
+	int m_sX;
+	int m_sY;
 	int m_iDifficulty;
 	short m_sDynamicObjectHandle;
 

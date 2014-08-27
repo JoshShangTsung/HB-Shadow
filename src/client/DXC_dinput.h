@@ -14,5 +14,7 @@ public:
 	DIMOUSESTATE dims;
 	IDirectInput * m_pDI;
 	IDirectInputDevice * m_pMouse;
-	short m_sX, m_sY, m_sZ;
+	short m_sX;
+	short m_sY;
+	short m_sZ;
 };

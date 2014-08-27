@@ -28,7 +28,9 @@ class CMagic {
 public:
 	CMagic();
 	char m_cName[31];
-	int m_sValue1, m_sValue2, m_sValue3;
+	int m_sValue1;
+	int m_sValue2;
+	int m_sValue3;
 	int m_sValue4;
 	bool m_bIsVisible;
 };

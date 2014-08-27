@@ -1,5 +1,5 @@
 #include "Msg.h"
-CMsg::CMsg(char cType, const char * pMsg, DWORD dwTime) {
+CMsg::CMsg(char cType, const char * pMsg, uint32_t dwTime) {
 	m_cType = cType;
 
 	m_pMsg = 0;

@@ -1,11 +1,11 @@
 #include "Teleport.h"
-
+#include <cstring>
 CTeleport::CTeleport() {
 
-	ZeroMemory(m_cTeleportNpcName, sizeof (m_cTeleportNpcName));
-	ZeroMemory(m_cSourceMap, sizeof (m_cSourceMap));
-	ZeroMemory(m_cTargetMap, sizeof (m_cTargetMap));
-	ZeroMemory(m_cTeleportSide, sizeof (m_cTeleportSide));
+	std::memset(m_cTeleportNpcName, 0, sizeof(m_cTeleportNpcName));
+	std::memset(m_cSourceMap, 0, sizeof(m_cSourceMap));
+	std::memset(m_cTargetMap, 0, sizeof(m_cTargetMap));
+	std::memset(m_cTeleportSide, 0, sizeof(m_cTeleportSide));
 
 	m_sDestinationX = -1;
 	m_sDestinationY = -1;

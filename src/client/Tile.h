@@ -1,27 +1,27 @@
 #pragma once
-#include <windows.h>
-#include <mmsystem.h>
+#include <cstdint>
 
 class CTile {
 public:
 	CTile();
 	void Clear();
 
-	DWORD m_dwOwnerTime;
-	DWORD m_dwEffectTime;
-	DWORD m_dwDeadOwnerTime;
-	DWORD m_dwDynamicObjectTime;
+	uint32_t m_dwOwnerTime;
+	uint32_t m_dwEffectTime;
+	uint32_t m_dwDeadOwnerTime;
+	uint32_t m_dwDynamicObjectTime;
 
 	int m_iChatMsg;
 	int m_cItemColor; // v1.4
 	int m_iEffectType;
 	int m_iDeadApprColor; // v1.4
-	int m_iEffectFrame, m_iEffectTotalFrame;
+	int m_iEffectFrame;
+	int m_iEffectTotalFrame;
 	int m_iApprColor; // v1.4
 	int m_iDeadChatMsg;
 
-	WORD m_wDeadObjectID;
-	WORD m_wObjectID;
+	uint16_t m_wDeadObjectID;
+	uint16_t m_wObjectID;
 
 	short m_sOwnerType; // +B2C
 	short m_sAppr1; // +B2E
@@ -52,7 +52,10 @@ public:
 	char m_cDeadDir;
 
 	char m_cDynamicObjectFrame;
-	char m_cDynamicObjectData1, m_cDynamicObjectData2, m_cDynamicObjectData3, m_cDynamicObjectData4;
+	char m_cDynamicObjectData1;
+	char m_cDynamicObjectData2;
+	char m_cDynamicObjectData3;
+	char m_cDynamicObjectData4;
 	char m_cOwnerName[12];
 	char m_cDeadOwnerName[12];
 };

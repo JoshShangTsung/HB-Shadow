@@ -17,15 +17,15 @@ CMyDib::CMyDib(char *szFilename, unsigned long dwFilePointer) {
 	CloseHandle(hFileRead);
 	LPBITMAPINFOHEADER bmpInfoHeader = (LPBITMAPINFOHEADER) m_lpDib;
 	m_bmpInfo = (LPBITMAPINFO) m_lpDib;
-	m_wWidthX = (WORD) (bmpInfoHeader->biWidth);
-	m_wWidthY = (WORD) (bmpInfoHeader->biHeight);
+	m_wWidthX = (uint16_t) (bmpInfoHeader->biWidth);
+	m_wWidthY = (uint16_t) (bmpInfoHeader->biHeight);
 	if (bmpInfoHeader->biClrUsed == 0) {
 		if (bmpInfoHeader->biBitCount == 24) m_wColorNums = 0;
 		else if (bmpInfoHeader->biBitCount == 8) m_wColorNums = 256;
 		else if (bmpInfoHeader->biBitCount == 1) m_wColorNums = 2;
 		else if (bmpInfoHeader->biBitCount == 4) m_wColorNums = 16;
 		else m_wColorNums = 0;
-	} else m_wColorNums = (WORD) (bmpInfoHeader->biClrUsed);
+	} else m_wColorNums = (uint16_t) (bmpInfoHeader->biClrUsed);
 }
 
 CMyDib::~CMyDib() {

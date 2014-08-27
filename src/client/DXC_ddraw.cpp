@@ -40,7 +40,8 @@ DXC_ddraw::~DXC_ddraw() {
 bool DXC_ddraw::bInit(HWND hWnd) {
 	HRESULT ddVal;
 	DDSURFACEDESC2 ddsd;
-	int iS, iD;
+	int iS;
+	int iD;
 
 	SetRect(&m_rcClipArea, 0, 0, 640, 480);
 
@@ -444,7 +445,8 @@ void DXC_ddraw::ClearBackB4() {
 
 void DXC_ddraw::DrawShadowBox(short sX, short sY, short dX, short dY, int iType) {
 	WORD * pDst, wValue;
-	int ix, iy;
+	int ix;
+	int iy;
 
 	pDst = (WORD *) m_pBackB4Addr + sX + ((sY) * m_sBackB4Pitch);
 
@@ -562,7 +564,9 @@ HRESULT DXC_ddraw::InitFlipToGDI(HWND hWnd) {
 }
 
 void DXC_ddraw::ColorTransferRGB(COLORREF fcolor, int * iR, int * iG, int * iB) {
-	WORD wR, wG, wB;
+	WORD wR;
+	WORD wG;
+	WORD wB;
 
 	switch (m_cPixelFormat) {
 		case 1:

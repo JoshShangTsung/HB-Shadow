@@ -124,8 +124,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
-		  LPSTR lpCmdLine, int nCmdShow) {
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR lpCmdLine, int nCmdShow) {
 	srand((unsigned) time(0));
 	G_pGame = new class CGame;
 #ifdef DEF_USING_WIN_IME
@@ -228,9 +227,11 @@ void _StopTimer(MMRESULT timerid) {
 }
 
 void Initialize(char * pCmdLine) {
-	int iX, iY, iSum;
+	int iX;
+	int iY;
+	int iSum;
 	int iErrCode;
-	WORD wVersionRequested;
+	uint16_t wVersionRequested;
 	WSADATA wsaData;
 	wVersionRequested = MAKEWORD(2, 2);
 	iErrCode = WSAStartup(wVersionRequested, &wsaData);

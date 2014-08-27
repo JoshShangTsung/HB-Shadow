@@ -1,5 +1,5 @@
 #include "Sprite.h"
-
+#include <cstring>
 extern char G_cSpriteAlphaDegree;
 
 extern int G_iAddTable31[64][510], G_iAddTable63[64][510];
@@ -18,7 +18,7 @@ CSprite::CSprite(HANDLE hPakFile, DXC_ddraw *pDDraw, const char *cPakFileName, s
 	m_stBrush = 0;
 	m_lpSurface = 0;
 	m_bIsSurfaceEmpty = true;
-	ZeroMemory(m_cPakFileName, sizeof (m_cPakFileName));
+	std::memset(m_cPakFileName, 0, sizeof(m_cPakFileName));
 
 	m_cAlphaDegree = 1;
 	m_bOnCriticalSection = false;
@@ -45,7 +45,7 @@ CSprite::~CSprite() {
 IDirectDrawSurface7 * CSprite::_pMakeSpriteSurface() {
 	IDirectDrawSurface7 * pdds4;
 	HDC hDC;
-	WORD * wp;
+	uint16_t * wp;
 
 	m_bOnCriticalSection = true;
 
@@ -65,7 +65,7 @@ IDirectDrawSurface7 * CSprite::_pMakeSpriteSurface() {
 	if (pdds4->Lock(0, &ddsd, DDLOCK_WAIT, 0) != DD_OK) return 0;
 	pdds4->Unlock(0);
 
-	wp = (WORD *) ddsd.lpSurface;
+	wp = (uint16_t *) ddsd.lpSurface;
 	m_wColorKey = *wp;
 
 	m_bOnCriticalSection = false;
@@ -73,8 +73,15 @@ IDirectDrawSurface7 * CSprite::_pMakeSpriteSurface() {
 	return pdds4;
 }
 
-void CSprite::PutSpriteFast(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+void CSprite::PutSpriteFast(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	RECT rcRect;
 	if (this == 0) return;
 	m_rcBound.top = -1; // Fix by Snoopy.... (Reco at mine)
@@ -154,8 +161,15 @@ void CSprite::PutSpriteFast(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutSpriteFastDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+void CSprite::PutSpriteFastDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	RECT rcRect;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -235,8 +249,15 @@ void CSprite::PutSpriteFastDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, int sY, int 
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutSpriteFastNoColorKey(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+void CSprite::PutSpriteFastNoColorKey(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	RECT rcRect;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -314,8 +335,15 @@ void CSprite::PutSpriteFastNoColorKey(int sX, int sY, int sFrame, DWORD dwTime) 
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutSpriteFastNoColorKeyDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+void CSprite::PutSpriteFastNoColorKeyDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	RECT rcRect;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -395,8 +423,15 @@ void CSprite::PutSpriteFastNoColorKeyDst(LPDIRECTDRAWSURFACE7 lpDstS, int sX, in
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutSpriteFastFrontBuffer(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+void CSprite::PutSpriteFastFrontBuffer(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	RECT rcRect;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -478,8 +513,15 @@ void CSprite::PutSpriteFastFrontBuffer(int sX, int sY, int sFrame, DWORD dwTime)
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutSpriteFastWidth(int sX, int sY, int sFrame, int sWidth, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+void CSprite::PutSpriteFastWidth(int sX, int sY, int sFrame, int sWidth, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	RECT rcRect;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -575,7 +617,7 @@ void CSprite::iRestore() {
 	DDSURFACEDESC2 ddsd;
 	ddsd.dwSize = 124;
 	if (m_lpSurface->Lock(0, &ddsd, DDLOCK_WAIT, 0) != DD_OK) return;
-	m_pSurfaceAddr = (WORD *) ddsd.lpSurface;
+	m_pSurfaceAddr = (uint16_t *) ddsd.lpSurface;
 	m_lpSurface->Unlock(0);
 	CMyDib mydib(m_cPakFileName, m_dwBitmapFileStartLoc);
 	m_lpSurface->GetDC(&hDC);
@@ -583,10 +625,16 @@ void CSprite::iRestore() {
 	m_lpSurface->ReleaseDC(hDC);
 }
 
-void CSprite::PutShadowSprite(int sX, int sY, int sFrame, DWORD dwTime) {
-	short sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutShadowSprite(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -607,9 +655,10 @@ void CSprite::PutShadowSprite(int sX, int sY, int sFrame, DWORD dwTime) {
 		if (_iOpenSprite() == false) return;
 	}
 
-	int iSangX, iSangY;
-	pSrc = (WORD *) m_pSurfaceAddr + sx + sy*m_sPitch;
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr; // + dX + ((dY+szy-1)*m_pDDraw->m_sBackB4Pitch);
+	int iSangX;
+	int iSangY;
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + sy*m_sPitch;
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr; // + dX + ((dY+szy-1)*m_pDDraw->m_sBackB4Pitch);
 
 	switch (m_pDDraw->m_cPixelFormat) {
 		case 1:
@@ -644,10 +693,18 @@ void CSprite::PutShadowSprite(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutShadowSpriteClip(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutShadowSpriteClip(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
 	m_rcBound.top = -1; // Fix by Snoopy.... (Reco at mine)
@@ -702,8 +759,8 @@ void CSprite::PutShadowSpriteClip(int sX, int sY, int sFrame, DWORD dwTime) {
 		if (_iOpenSprite() == false) return;
 	}
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy + szy - 1) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY + szy - 1) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy + szy - 1) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY + szy - 1) * m_pDDraw->m_sBackB4Pitch);
 
 	switch (m_pDDraw->m_cPixelFormat) {
 		case 1:
@@ -734,10 +791,18 @@ void CSprite::PutShadowSpriteClip(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSprite(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSprite(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -807,8 +872,8 @@ void CSprite::PutTransSprite(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -819,7 +884,7 @@ void CSprite::PutTransSprite(int sX, int sY, int sFrame, DWORD dwTime) {
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB100[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG100[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB100[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG100[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -836,7 +901,7 @@ void CSprite::PutTransSprite(int sX, int sY, int sFrame, DWORD dwTime) {
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -851,122 +916,18 @@ void CSprite::PutTransSprite(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSprite_NoColorKey(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
-
-	if (this == 0) return;
-	if (m_stBrush == 0) return;
-	m_rcBound.top = -1; // Fix by Snoopy.... (Reco at mine)
-	if ((m_iTotalFrame - 1 < sFrame) || (sFrame < 0)) return;
-	m_bOnCriticalSection = true;
-
-	sx = m_stBrush[sFrame].sx;
-	sy = m_stBrush[sFrame].sy;
-	szx = m_stBrush[sFrame].szx;
-	szy = m_stBrush[sFrame].szy;
-	pvx = m_stBrush[sFrame].pvx;
-	pvy = m_stBrush[sFrame].pvy;
-
-	dX = sX + pvx;
-	dY = sY + pvy;
-
-	if (dX < m_pDDraw->m_rcClipArea.left) {
-		sx = sx + (m_pDDraw->m_rcClipArea.left - dX);
-		szx = szx - (m_pDDraw->m_rcClipArea.left - dX);
-		if (szx < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-		dX = (short) m_pDDraw->m_rcClipArea.left;
-	} else if (dX + szx > m_pDDraw->m_rcClipArea.right) {
-		szx = szx - ((dX + szx) - (short) m_pDDraw->m_rcClipArea.right);
-		if (szx < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-	}
-
-	if (dY < m_pDDraw->m_rcClipArea.top) {
-		sy = sy + (m_pDDraw->m_rcClipArea.top - dY);
-		szy = szy - (m_pDDraw->m_rcClipArea.top - dY);
-		if (szy < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-		dY = (short) m_pDDraw->m_rcClipArea.top;
-	} else if (dY + szy > m_pDDraw->m_rcClipArea.bottom) {
-		szy = szy - ((dY + szy) - (short) m_pDDraw->m_rcClipArea.bottom);
-		if (szy < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-	}
-
-	m_dwRefTime = dwTime;
-
-	if (m_bIsSurfaceEmpty == true) {
-		if (_iOpenSprite() == false) return;
-	} else {
-		if (m_bAlphaEffect && (m_cAlphaDegree != G_cSpriteAlphaDegree)) {
-			if (G_cSpriteAlphaDegree == 2) {
-				_SetAlphaDegree();
-			} else {
-				_iCloseSprite();
-				if (_iOpenSprite() == false) return;
-			}
-		}
-	}
-
-	//SetRect(&m_rcBound, dX, dY, dX + szx, dY + szy);
-	m_rcBound.left = dX;
-	m_rcBound.top = dY;
-	m_rcBound.right = dX + szx;
-	m_rcBound.bottom = dY + szy;
-
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
-
-	if ((szx == 0) || (szy == 0)) return;
-
-	switch (m_pDDraw->m_cPixelFormat) {
-		case 1:
-			iy = 0;
-			do {
-				ix = 0;
-				do {
-					pDst[ix] = (WORD) ((G_lTransRB100[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG100[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					ix++;
-				} while (ix < szx);
-				pSrc += m_sPitch;
-				pDst += m_pDDraw->m_sBackB4Pitch;
-				iy++;
-			} while (iy < szy);
-			break;
-
-		case 2:
-			iy = 0;
-			do {
-				ix = 0;
-				do {
-					pDst[ix] = (WORD) ((G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					ix++;
-				} while (ix < szx);
-				pSrc += m_sPitch;
-				pDst += m_pDDraw->m_sBackB4Pitch;
-				iy++;
-			} while (iy < szy);
-			break;
-	}
-
-	m_bOnCriticalSection = false;
-}
-
-void CSprite::PutTransSprite70(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSprite_NoColorKey(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -1037,8 +998,8 @@ void CSprite::PutTransSprite70(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -1048,10 +1009,7 @@ void CSprite::PutTransSprite70(int sX, int sY, int sFrame, DWORD dwTime) {
 			do {
 				ix = 0;
 				do {
-					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB70[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG70[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					}
-
+					pDst[ix] = (uint16_t) ((G_lTransRB100[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG100[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1065,10 +1023,7 @@ void CSprite::PutTransSprite70(int sX, int sY, int sFrame, DWORD dwTime) {
 			do {
 				ix = 0;
 				do {
-					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB70[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG70[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					}
-
+					pDst[ix] = (uint16_t) ((G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1081,10 +1036,18 @@ void CSprite::PutTransSprite70(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSprite70_NoColorKey(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSprite70(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -1155,8 +1118,8 @@ void CSprite::PutTransSprite70_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -1166,7 +1129,10 @@ void CSprite::PutTransSprite70_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 			do {
 				ix = 0;
 				do {
-					pDst[ix] = (WORD) ((G_lTransRB70[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG70[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					if (pSrc[ix] != m_wColorKey) {
+						pDst[ix] = (uint16_t) ((G_lTransRB70[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG70[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					}
+
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1180,7 +1146,10 @@ void CSprite::PutTransSprite70_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 			do {
 				ix = 0;
 				do {
-					pDst[ix] = (WORD) ((G_lTransRB70[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG70[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					if (pSrc[ix] != m_wColorKey) {
+						pDst[ix] = (uint16_t) ((G_lTransRB70[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG70[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					}
+
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1193,10 +1162,18 @@ void CSprite::PutTransSprite70_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSprite50(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSprite70_NoColorKey(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -1267,8 +1244,8 @@ void CSprite::PutTransSprite50(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -1278,10 +1255,7 @@ void CSprite::PutTransSprite50(int sX, int sY, int sFrame, DWORD dwTime) {
 			do {
 				ix = 0;
 				do {
-					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB50[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG50[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					}
-
+					pDst[ix] = (uint16_t) ((G_lTransRB70[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG70[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1295,10 +1269,7 @@ void CSprite::PutTransSprite50(int sX, int sY, int sFrame, DWORD dwTime) {
 			do {
 				ix = 0;
 				do {
-					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB50[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG50[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					}
-
+					pDst[ix] = (uint16_t) ((G_lTransRB70[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG70[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB70[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1311,121 +1282,18 @@ void CSprite::PutTransSprite50(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSprite50_NoColorKey(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
-
-	if (this == 0) return;
-	if (m_stBrush == 0) return;
-	m_rcBound.top = -1; // Fix by Snoopy.... (Reco at mine)
-	if ((m_iTotalFrame - 1 < sFrame) || (sFrame < 0)) return;
-	m_bOnCriticalSection = true;
-
-	sx = m_stBrush[sFrame].sx;
-	sy = m_stBrush[sFrame].sy;
-	szx = m_stBrush[sFrame].szx;
-	szy = m_stBrush[sFrame].szy;
-	pvx = m_stBrush[sFrame].pvx;
-	pvy = m_stBrush[sFrame].pvy;
-
-	dX = sX + pvx;
-	dY = sY + pvy;
-
-	if (dX < m_pDDraw->m_rcClipArea.left) {
-		sx = sx + (m_pDDraw->m_rcClipArea.left - dX);
-		szx = szx - (m_pDDraw->m_rcClipArea.left - dX);
-		if (szx < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-		dX = (short) m_pDDraw->m_rcClipArea.left;
-	} else if (dX + szx > m_pDDraw->m_rcClipArea.right) {
-		szx = szx - ((dX + szx) - (short) m_pDDraw->m_rcClipArea.right);
-		if (szx < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-	}
-
-	if (dY < m_pDDraw->m_rcClipArea.top) {
-		sy = sy + (m_pDDraw->m_rcClipArea.top - dY);
-		szy = szy - (m_pDDraw->m_rcClipArea.top - dY);
-		if (szy < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-		dY = (short) m_pDDraw->m_rcClipArea.top;
-	} else if (dY + szy > m_pDDraw->m_rcClipArea.bottom) {
-		szy = szy - ((dY + szy) - (short) m_pDDraw->m_rcClipArea.bottom);
-		if (szy < 0) {
-			m_rcBound.top = -1;
-			return;
-		}
-	}
-
-	m_dwRefTime = dwTime;
-
-	if (m_bIsSurfaceEmpty == true) {
-		if (_iOpenSprite() == false) return;
-	} else {
-		if (m_bAlphaEffect && (m_cAlphaDegree != G_cSpriteAlphaDegree)) {
-			if (G_cSpriteAlphaDegree == 2) {
-				_SetAlphaDegree();
-			} else {
-				_iCloseSprite();
-				if (_iOpenSprite() == false) return;
-			}
-		}
-	}
-
-	m_rcBound.left = dX;
-	m_rcBound.top = dY;
-	m_rcBound.right = dX + szx;
-	m_rcBound.bottom = dY + szy;
-
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
-
-	if ((szx == 0) || (szy == 0)) return;
-
-	switch (m_pDDraw->m_cPixelFormat) {
-		case 1:
-			iy = 0;
-			do {
-				ix = 0;
-				do {
-					pDst[ix] = (WORD) ((G_lTransRB50[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG50[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					ix++;
-				} while (ix < szx);
-				pSrc += m_sPitch;
-				pDst += m_pDDraw->m_sBackB4Pitch;
-				iy++;
-			} while (iy < szy);
-			break;
-
-		case 2:
-			iy = 0;
-			do {
-				ix = 0;
-				do {
-					pDst[ix] = (WORD) ((G_lTransRB50[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG50[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
-					ix++;
-				} while (ix < szx);
-				pSrc += m_sPitch;
-				pDst += m_pDDraw->m_sBackB4Pitch;
-				iy++;
-			} while (iy < szy);
-			break;
-	}
-
-	m_bOnCriticalSection = false;
-}
-
-void CSprite::PutTransSprite25(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSprite50(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -1496,8 +1364,8 @@ void CSprite::PutTransSprite25(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -1508,7 +1376,7 @@ void CSprite::PutTransSprite25(int sX, int sY, int sFrame, DWORD dwTime) {
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB25[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG25[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB50[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG50[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -1525,7 +1393,7 @@ void CSprite::PutTransSprite25(int sX, int sY, int sFrame, DWORD dwTime) {
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB25[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG25[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB50[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG50[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -1540,10 +1408,18 @@ void CSprite::PutTransSprite25(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSprite25_NoColorKey(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSprite50_NoColorKey(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -1613,8 +1489,8 @@ void CSprite::PutTransSprite25_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -1624,7 +1500,7 @@ void CSprite::PutTransSprite25_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 			do {
 				ix = 0;
 				do {
-					pDst[ix] = (WORD) ((G_lTransRB25[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG25[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					pDst[ix] = (uint16_t) ((G_lTransRB50[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG50[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1638,7 +1514,7 @@ void CSprite::PutTransSprite25_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 			do {
 				ix = 0;
 				do {
-					pDst[ix] = (WORD) ((G_lTransRB25[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG25[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					pDst[ix] = (uint16_t) ((G_lTransRB50[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG50[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB50[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -1651,10 +1527,263 @@ void CSprite::PutTransSprite25_NoColorKey(int sX, int sY, int sFrame, DWORD dwTi
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSprite2(int sX, int sY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSprite25(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
+
+	if (this == 0) return;
+	if (m_stBrush == 0) return;
+	m_rcBound.top = -1; // Fix by Snoopy.... (Reco at mine)
+	if ((m_iTotalFrame - 1 < sFrame) || (sFrame < 0)) return;
+	m_bOnCriticalSection = true;
+
+	sx = m_stBrush[sFrame].sx;
+	sy = m_stBrush[sFrame].sy;
+	szx = m_stBrush[sFrame].szx;
+	szy = m_stBrush[sFrame].szy;
+	pvx = m_stBrush[sFrame].pvx;
+	pvy = m_stBrush[sFrame].pvy;
+
+	dX = sX + pvx;
+	dY = sY + pvy;
+
+	if (dX < m_pDDraw->m_rcClipArea.left) {
+		sx = sx + (m_pDDraw->m_rcClipArea.left - dX);
+		szx = szx - (m_pDDraw->m_rcClipArea.left - dX);
+		if (szx < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+		dX = (short) m_pDDraw->m_rcClipArea.left;
+	} else if (dX + szx > m_pDDraw->m_rcClipArea.right) {
+		szx = szx - ((dX + szx) - (short) m_pDDraw->m_rcClipArea.right);
+		if (szx < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+	}
+
+	if (dY < m_pDDraw->m_rcClipArea.top) {
+		sy = sy + (m_pDDraw->m_rcClipArea.top - dY);
+		szy = szy - (m_pDDraw->m_rcClipArea.top - dY);
+		if (szy < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+		dY = (short) m_pDDraw->m_rcClipArea.top;
+	} else if (dY + szy > m_pDDraw->m_rcClipArea.bottom) {
+		szy = szy - ((dY + szy) - (short) m_pDDraw->m_rcClipArea.bottom);
+		if (szy < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+	}
+
+	m_dwRefTime = dwTime;
+
+	if (m_bIsSurfaceEmpty == true) {
+		if (_iOpenSprite() == false) return;
+	} else {
+		if (m_bAlphaEffect && (m_cAlphaDegree != G_cSpriteAlphaDegree)) {
+			if (G_cSpriteAlphaDegree == 2) {
+				_SetAlphaDegree();
+			} else {
+				_iCloseSprite();
+				if (_iOpenSprite() == false) return;
+			}
+		}
+	}
+
+	//SetRect(&m_rcBound, dX, dY, dX + szx, dY + szy);
+	m_rcBound.left = dX;
+	m_rcBound.top = dY;
+	m_rcBound.right = dX + szx;
+	m_rcBound.bottom = dY + szy;
+
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+
+	if ((szx == 0) || (szy == 0)) return;
+
+	switch (m_pDDraw->m_cPixelFormat) {
+		case 1:
+			iy = 0;
+			do {
+				ix = 0;
+				do {
+					if (pSrc[ix] != m_wColorKey) {
+						pDst[ix] = (uint16_t) ((G_lTransRB25[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG25[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					}
+
+					ix++;
+				} while (ix < szx);
+				pSrc += m_sPitch;
+				pDst += m_pDDraw->m_sBackB4Pitch;
+				iy++;
+			} while (iy < szy);
+			break;
+
+		case 2:
+			iy = 0;
+			do {
+				ix = 0;
+				do {
+					if (pSrc[ix] != m_wColorKey) {
+						pDst[ix] = (uint16_t) ((G_lTransRB25[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG25[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					}
+
+					ix++;
+				} while (ix < szx);
+				pSrc += m_sPitch;
+				pDst += m_pDDraw->m_sBackB4Pitch;
+				iy++;
+			} while (iy < szy);
+			break;
+	}
+
+	m_bOnCriticalSection = false;
+}
+
+void CSprite::PutTransSprite25_NoColorKey(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
+
+	if (this == 0) return;
+	if (m_stBrush == 0) return;
+	m_rcBound.top = -1; // Fix by Snoopy.... (Reco at mine)
+	if ((m_iTotalFrame - 1 < sFrame) || (sFrame < 0)) return;
+	m_bOnCriticalSection = true;
+
+	sx = m_stBrush[sFrame].sx;
+	sy = m_stBrush[sFrame].sy;
+	szx = m_stBrush[sFrame].szx;
+	szy = m_stBrush[sFrame].szy;
+	pvx = m_stBrush[sFrame].pvx;
+	pvy = m_stBrush[sFrame].pvy;
+
+	dX = sX + pvx;
+	dY = sY + pvy;
+
+	if (dX < m_pDDraw->m_rcClipArea.left) {
+		sx = sx + (m_pDDraw->m_rcClipArea.left - dX);
+		szx = szx - (m_pDDraw->m_rcClipArea.left - dX);
+		if (szx < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+		dX = (short) m_pDDraw->m_rcClipArea.left;
+	} else if (dX + szx > m_pDDraw->m_rcClipArea.right) {
+		szx = szx - ((dX + szx) - (short) m_pDDraw->m_rcClipArea.right);
+		if (szx < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+	}
+
+	if (dY < m_pDDraw->m_rcClipArea.top) {
+		sy = sy + (m_pDDraw->m_rcClipArea.top - dY);
+		szy = szy - (m_pDDraw->m_rcClipArea.top - dY);
+		if (szy < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+		dY = (short) m_pDDraw->m_rcClipArea.top;
+	} else if (dY + szy > m_pDDraw->m_rcClipArea.bottom) {
+		szy = szy - ((dY + szy) - (short) m_pDDraw->m_rcClipArea.bottom);
+		if (szy < 0) {
+			m_rcBound.top = -1;
+			return;
+		}
+	}
+
+	m_dwRefTime = dwTime;
+
+	if (m_bIsSurfaceEmpty == true) {
+		if (_iOpenSprite() == false) return;
+	} else {
+		if (m_bAlphaEffect && (m_cAlphaDegree != G_cSpriteAlphaDegree)) {
+			if (G_cSpriteAlphaDegree == 2) {
+				_SetAlphaDegree();
+			} else {
+				_iCloseSprite();
+				if (_iOpenSprite() == false) return;
+			}
+		}
+	}
+
+	m_rcBound.left = dX;
+	m_rcBound.top = dY;
+	m_rcBound.right = dX + szx;
+	m_rcBound.bottom = dY + szy;
+
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+
+	if ((szx == 0) || (szy == 0)) return;
+
+	switch (m_pDDraw->m_cPixelFormat) {
+		case 1:
+			iy = 0;
+			do {
+				ix = 0;
+				do {
+					pDst[ix] = (uint16_t) ((G_lTransRB25[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG25[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					ix++;
+				} while (ix < szx);
+				pSrc += m_sPitch;
+				pDst += m_pDDraw->m_sBackB4Pitch;
+				iy++;
+			} while (iy < szy);
+			break;
+
+		case 2:
+			iy = 0;
+			do {
+				ix = 0;
+				do {
+					pDst[ix] = (uint16_t) ((G_lTransRB25[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG25[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB25[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+					ix++;
+				} while (ix < szx);
+				pSrc += m_sPitch;
+				pDst += m_pDDraw->m_sBackB4Pitch;
+				iy++;
+			} while (iy < szy);
+			break;
+	}
+
+	m_bOnCriticalSection = false;
+}
+
+void CSprite::PutTransSprite2(int sX, int sY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -1716,8 +1845,8 @@ void CSprite::PutTransSprite2(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -1728,7 +1857,7 @@ void CSprite::PutTransSprite2(int sX, int sY, int sFrame, DWORD dwTime) {
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB2[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG2[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB2[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG2[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -1745,7 +1874,7 @@ void CSprite::PutTransSprite2(int sX, int sY, int sFrame, DWORD dwTime) {
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB2[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG2[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB2[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG2[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -1760,10 +1889,18 @@ void CSprite::PutTransSprite2(int sX, int sY, int sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutShiftTransSprite2(int sX, int sY, int shX, int shY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutShiftTransSprite2(int sX, int sY, int shX, int shY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -1828,8 +1965,8 @@ void CSprite::PutShiftTransSprite2(int sX, int sY, int shX, int shY, int sFrame,
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -1840,7 +1977,7 @@ void CSprite::PutShiftTransSprite2(int sX, int sY, int shX, int shY, int sFrame,
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB2[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG2[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB2[(pDst[ix]&0xF800) >> 11][(pSrc[ix]&0xF800) >> 11] << 11) | (G_lTransG2[(pDst[ix]&0x7E0) >> 5][(pSrc[ix]&0x7E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -1857,7 +1994,7 @@ void CSprite::PutShiftTransSprite2(int sX, int sY, int shX, int shY, int sFrame,
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_lTransRB2[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG2[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_lTransRB2[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] << 10) | (G_lTransG2[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] << 5) | G_lTransRB2[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -1872,10 +2009,18 @@ void CSprite::PutShiftTransSprite2(int sX, int sY, int shX, int shY, int sFrame,
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutFadeSprite(short sX, short sY, short sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutFadeSprite(short sX, short sY, short sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 	//int dX,dY,sx,sy,szx,szy,pvx,pvy,sTmp;
 
 	if (this == 0) return;
@@ -1943,8 +2088,8 @@ void CSprite::PutFadeSprite(short sX, short sY, short sFrame, DWORD dwTime) {
 
 	SetRect(&m_rcBound, dX, dY, dX + szx, dY + szy);
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	switch (m_pDDraw->m_cPixelFormat) {
 		case 1:
@@ -1975,10 +2120,18 @@ void CSprite::PutFadeSprite(short sX, short sY, short sFrame, DWORD dwTime) {
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutFadeSpriteDst(WORD * pDstAddr, short sPitch, short sX, short sY, short sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc, * pDst;
+void CSprite::PutFadeSpriteDst(uint16_t * pDstAddr, short sPitch, short sX, short sY, short sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc, * pDst;
 	//int           iRet, dX,dY,sx,sy,szx,szy,pvx,pvy,sTmp;
 
 	if (this == 0) return;
@@ -2046,8 +2199,8 @@ void CSprite::PutFadeSpriteDst(WORD * pDstAddr, short sPitch, short sX, short sY
 
 	SetRect(&m_rcBound, dX, dY, dX + szx, dY + szy);
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) pDstAddr + dX + ((dY) * sPitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) pDstAddr + dX + ((dY) * sPitch);
 
 	switch (m_pDDraw->m_cPixelFormat) {
 		case 1:
@@ -2087,7 +2240,7 @@ bool CSprite::_iOpenSprite() {
 	DDSURFACEDESC2 ddsd;
 	ddsd.dwSize = 124;
 	if (m_lpSurface->Lock(0, &ddsd, DDLOCK_WAIT, 0) != DD_OK) return false;
-	m_pSurfaceAddr = (WORD *) ddsd.lpSurface;
+	m_pSurfaceAddr = (uint16_t *) ddsd.lpSurface;
 	m_sPitch = (short) ddsd.lPitch >> 1;
 	m_lpSurface->Unlock(0);
 	_SetAlphaDegree();
@@ -2105,10 +2258,21 @@ void CSprite::_iCloseSprite() {
 	m_cAlphaDegree = 1;
 }
 
-void CSprite::PutSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy, iRedPlus255, iGreenPlus255, iBluePlus255;
-	WORD * pSrc, * pDst;
+void CSprite::PutSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	int iRedPlus255;
+	int iGreenPlus255;
+	int iBluePlus255;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -2179,8 +2343,8 @@ void CSprite::PutSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	iRedPlus255 = sRed + 255;
 	iGreenPlus255 = sGreen + 255;
@@ -2193,7 +2357,7 @@ void CSprite::PutSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_iAddTable31[(pSrc[ix]&0xF800) >> 11][iRedPlus255] << 11) | (G_iAddTable63[(pSrc[ix]&0x7E0) >> 5][iGreenPlus255] << 5) | G_iAddTable31[(pSrc[ix]&0x1F)][iBluePlus255]);
+						pDst[ix] = (uint16_t) ((G_iAddTable31[(pSrc[ix]&0xF800) >> 11][iRedPlus255] << 11) | (G_iAddTable63[(pSrc[ix]&0x7E0) >> 5][iGreenPlus255] << 5) | G_iAddTable31[(pSrc[ix]&0x1F)][iBluePlus255]);
 					}
 
 					ix++;
@@ -2210,7 +2374,7 @@ void CSprite::PutSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_iAddTable31[(pSrc[ix]&0x7C00) >> 10][iRedPlus255] << 10) | (G_iAddTable31[(pSrc[ix]&0x3E0) >> 5][iGreenPlus255] << 5) | G_iAddTable31[(pSrc[ix]&0x1F)][iBluePlus255]);
+						pDst[ix] = (uint16_t) ((G_iAddTable31[(pSrc[ix]&0x7C00) >> 10][iRedPlus255] << 10) | (G_iAddTable31[(pSrc[ix]&0x3E0) >> 5][iGreenPlus255] << 5) | G_iAddTable31[(pSrc[ix]&0x1F)][iBluePlus255]);
 					}
 
 					ix++;
@@ -2225,10 +2389,21 @@ void CSprite::PutSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	short ix, iy, iRedPlus255, iGreenPlus255, iBluePlus255;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	short ix;
+	short iy;
+	short iRedPlus255;
+	short iGreenPlus255;
+	short iBluePlus255;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -2301,8 +2476,8 @@ void CSprite::PutTransSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	iRedPlus255 = sRed + 255;
 	iGreenPlus255 = sGreen + 255;
@@ -2315,7 +2490,7 @@ void CSprite::PutTransSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0xF800) >> 11][((pSrc[ix]&0xF800) >> 11)] + iRedPlus255][(pDst[ix]&0xF800) >> 11] << 11) | (G_iAddTransTable63[G_lTransG100[(pDst[ix]&0x7E0) >> 5][((pSrc[ix]&0x7E0) >> 5)] + iGreenPlus255][(pDst[ix]&0x7E0) >> 5] << 5) | G_iAddTransTable31[m_pDDraw->m_lTransRB100[(pDst[ix]&0x1F)][((pSrc[ix]&0x1F))] + iBluePlus255][(pDst[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0xF800) >> 11][((pSrc[ix]&0xF800) >> 11)] + iRedPlus255][(pDst[ix]&0xF800) >> 11] << 11) | (G_iAddTransTable63[G_lTransG100[(pDst[ix]&0x7E0) >> 5][((pSrc[ix]&0x7E0) >> 5)] + iGreenPlus255][(pDst[ix]&0x7E0) >> 5] << 5) | G_iAddTransTable31[m_pDDraw->m_lTransRB100[(pDst[ix]&0x1F)][((pSrc[ix]&0x1F))] + iBluePlus255][(pDst[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -2332,7 +2507,7 @@ void CSprite::PutTransSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen
 				ix = 0;
 				do {
 					if (pSrc[ix] != m_wColorKey) {
-						pDst[ix] = (WORD) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] + iRedPlus255][(pDst[ix]&0x7C00) >> 10] << 10) | (G_iAddTransTable31[G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] + iGreenPlus255][(pDst[ix]&0x3E0) >> 5] << 5) | G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)] + iBluePlus255][(pDst[ix]&0x1F)]);
+						pDst[ix] = (uint16_t) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] + iRedPlus255][(pDst[ix]&0x7C00) >> 10] << 10) | (G_iAddTransTable31[G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] + iGreenPlus255][(pDst[ix]&0x3E0) >> 5] << 5) | G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)] + iBluePlus255][(pDst[ix]&0x1F)]);
 					}
 
 					ix++;
@@ -2347,10 +2522,21 @@ void CSprite::PutTransSpriteRGB(int sX, int sY, int sFrame, int sRed, int sGreen
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutTransSpriteRGB_NoColorKey(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	short ix, iy, iRedPlus255, iGreenPlus255, iBluePlus255;
-	WORD * pSrc, * pDst;
+void CSprite::PutTransSpriteRGB_NoColorKey(int sX, int sY, int sFrame, int sRed, int sGreen, int sBlue, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	short ix;
+	short iy;
+	short iRedPlus255;
+	short iGreenPlus255;
+	short iBluePlus255;
+	uint16_t * pSrc, * pDst;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -2421,8 +2607,8 @@ void CSprite::PutTransSpriteRGB_NoColorKey(int sX, int sY, int sFrame, int sRed,
 	m_rcBound.right = dX + szx;
 	m_rcBound.bottom = dY + szy;
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -2436,7 +2622,7 @@ void CSprite::PutTransSpriteRGB_NoColorKey(int sX, int sY, int sFrame, int sRed,
 			do {
 				ix = 0;
 				do {
-					pDst[ix] = (WORD) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0xF800) >> 11][((pSrc[ix]&0xF800) >> 11)] + iRedPlus255][(pDst[ix]&0xF800) >> 11] << 11) | (G_iAddTransTable63[G_lTransG100[(pDst[ix]&0x7E0) >> 5][((pSrc[ix]&0x7E0) >> 5)] + iGreenPlus255][(pDst[ix]&0x7E0) >> 5] << 5) | G_iAddTransTable31[m_pDDraw->m_lTransRB100[(pDst[ix]&0x1F)][((pSrc[ix]&0x1F))] + iBluePlus255][(pDst[ix]&0x1F)]);
+					pDst[ix] = (uint16_t) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0xF800) >> 11][((pSrc[ix]&0xF800) >> 11)] + iRedPlus255][(pDst[ix]&0xF800) >> 11] << 11) | (G_iAddTransTable63[G_lTransG100[(pDst[ix]&0x7E0) >> 5][((pSrc[ix]&0x7E0) >> 5)] + iGreenPlus255][(pDst[ix]&0x7E0) >> 5] << 5) | G_iAddTransTable31[m_pDDraw->m_lTransRB100[(pDst[ix]&0x1F)][((pSrc[ix]&0x1F))] + iBluePlus255][(pDst[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -2450,7 +2636,7 @@ void CSprite::PutTransSpriteRGB_NoColorKey(int sX, int sY, int sFrame, int sRed,
 			do {
 				ix = 0;
 				do {
-					pDst[ix] = (WORD) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] + iRedPlus255][(pDst[ix]&0x7C00) >> 10] << 10) | (G_iAddTransTable31[G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] + iGreenPlus255][(pDst[ix]&0x3E0) >> 5] << 5) | G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)] + iBluePlus255][(pDst[ix]&0x1F)]);
+					pDst[ix] = (uint16_t) ((G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x7C00) >> 10][(pSrc[ix]&0x7C00) >> 10] + iRedPlus255][(pDst[ix]&0x7C00) >> 10] << 10) | (G_iAddTransTable31[G_lTransG100[(pDst[ix]&0x3E0) >> 5][(pSrc[ix]&0x3E0) >> 5] + iGreenPlus255][(pDst[ix]&0x3E0) >> 5] << 5) | G_iAddTransTable31[G_lTransRB100[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F)] + iBluePlus255][(pDst[ix]&0x1F)]);
 					ix++;
 				} while (ix < szx);
 				pSrc += m_sPitch;
@@ -2464,7 +2650,14 @@ void CSprite::PutTransSpriteRGB_NoColorKey(int sX, int sY, int sFrame, int sRed,
 }
 
 void CSprite::_GetSpriteRect(int sX, int sY, int sFrame) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
 	if ((m_iTotalFrame - 1 < sFrame) || (sFrame < 0)) return;
@@ -2523,8 +2716,13 @@ void CSprite::_GetSpriteRect(int sX, int sY, int sFrame) {
 }
 
 void CSprite::_SetAlphaDegree() {
-	WORD * pSrc, wR, wG, wB, wTemp, ix, iy;
-	int iR, iG, iB, sRed, sGreen, sBlue;
+	uint16_t * pSrc, wR, wG, wB, wTemp, ix, iy;
+	int iR;
+	int iG;
+	int iB;
+	int sRed;
+	int sGreen;
+	int sBlue;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -2544,7 +2742,7 @@ void CSprite::_SetAlphaDegree() {
 				break;
 		}
 
-		pSrc = (WORD *) m_pSurfaceAddr;
+		pSrc = (uint16_t *) m_pSurfaceAddr;
 
 		switch (m_pDDraw->m_cPixelFormat) {
 			case 1:
@@ -2552,9 +2750,9 @@ void CSprite::_SetAlphaDegree() {
 					for (ix = 0; ix < m_wBitmapSizeX; ix++) {
 						if (pSrc == 0) return;
 						if (pSrc[ix] != m_wColorKey) {
-							wR = (WORD) (pSrc[ix]&0xF800) >> 11;
-							wG = (WORD) (pSrc[ix]&0x7E0) >> 5;
-							wB = (WORD) (pSrc[ix]&0x1F);
+							wR = (uint16_t) (pSrc[ix]&0xF800) >> 11;
+							wG = (uint16_t) (pSrc[ix]&0x7E0) >> 5;
+							wB = (uint16_t) (pSrc[ix]&0x1F);
 							iR = (int) wR + sRed;
 							iG = (int) wG + sGreen;
 							iB = (int) wB + sBlue;
@@ -2566,10 +2764,10 @@ void CSprite::_SetAlphaDegree() {
 							if (iB < 0) iB = 0;
 							else if (iB > 31) iB = 31;
 
-							wTemp = (WORD) ((iR << 11) | (iG << 5) | iB);
+							wTemp = (uint16_t) ((iR << 11) | (iG << 5) | iB);
 							if (wTemp != m_wColorKey)
 								pSrc[ix] = wTemp;
-							else pSrc[ix] = (WORD) ((iR << 11) | (iG << 5) | (iB + 1));
+							else pSrc[ix] = (uint16_t) ((iR << 11) | (iG << 5) | (iB + 1));
 						}
 					}
 					pSrc += m_sPitch;
@@ -2581,9 +2779,9 @@ void CSprite::_SetAlphaDegree() {
 					for (ix = 0; ix < m_wBitmapSizeX; ix++) {
 						if (pSrc == 0) return;
 						if (pSrc[ix] != m_wColorKey) {
-							wR = (WORD) (pSrc[ix]&0x7C00) >> 10;
-							wG = (WORD) (pSrc[ix]&0x3E0) >> 5;
-							wB = (WORD) (pSrc[ix]&0x1F);
+							wR = (uint16_t) (pSrc[ix]&0x7C00) >> 10;
+							wG = (uint16_t) (pSrc[ix]&0x3E0) >> 5;
+							wB = (uint16_t) (pSrc[ix]&0x1F);
 							iR = (int) wR + sRed;
 							iG = (int) wG + sGreen;
 							iB = (int) wB + sBlue;
@@ -2593,10 +2791,10 @@ void CSprite::_SetAlphaDegree() {
 							else if (iG > 31) iG = 31;
 							if (iB < 0) iB = 0;
 							else if (iB > 31) iB = 31;
-							wTemp = (WORD) ((iR << 10) | (iG << 5) | iB);
+							wTemp = (uint16_t) ((iR << 10) | (iG << 5) | iB);
 							if (wTemp != m_wColorKey)
 								pSrc[ix] = wTemp;
-							else pSrc[ix] = (WORD) ((iR << 10) | (iG << 5) | (iB + 1));
+							else pSrc[ix] = (uint16_t) ((iR << 10) | (iG << 5) | (iB + 1));
 						}
 					}
 					pSrc += m_sPitch;
@@ -2609,10 +2807,19 @@ void CSprite::_SetAlphaDegree() {
 }
 
 bool CSprite::_bCheckCollison(int sX, int sY, short sFrame, int msX, int msY) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
-	int ix, iy;
-	WORD * pSrc;
-	int tX, tY;
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
+	int ix;
+	int iy;
+	uint16_t * pSrc;
+	int tX;
+	int tY;
 
 	if (this == 0) return false;
 	if (m_stBrush == 0) return false;
@@ -2677,7 +2884,7 @@ bool CSprite::_bCheckCollison(int sX, int sY, short sFrame, int msX, int msY) {
 
 	SetRect(&m_rcBound, dX, dY, dX + szx, dY + szy);
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
 	tX = dX;
 	tY = dY;
 
@@ -2698,8 +2905,15 @@ bool CSprite::_bCheckCollison(int sX, int sY, short sFrame, int msX, int msY) {
 	return false;
 }
 
-void CSprite::PutShiftSpriteFast(int sX, int sY, int shX, int shY, int sFrame, DWORD dwTime) {
-	short dX, dY, sx, sy, szx, szy, pvx, pvy;
+void CSprite::PutShiftSpriteFast(int sX, int sY, int shX, int shY, int sFrame, uint32_t dwTime) {
+	short dX;
+	short dY;
+	short sx;
+	short sy;
+	short szx;
+	short szy;
+	short pvx;
+	short pvy;
 	RECT rcRect;
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -2784,11 +2998,21 @@ void CSprite::PutShiftSpriteFast(int sX, int sY, int shX, int shY, int sFrame, D
 	m_bOnCriticalSection = false;
 }
 
-void CSprite::PutRevTransSprite(int sX, int sY, int sFrame, DWORD dwTime, int alphaDepth) {
-	int ix, iy;
-	int iR, iG, iB;
-	WORD * pSrc, * pDst;
-	int dX, dY, sx, sy, szx, szy, pvx, pvy; //,sTmp;
+void CSprite::PutRevTransSprite(int sX, int sY, int sFrame, uint32_t dwTime, int alphaDepth) {
+	int ix;
+	int iy;
+	int iR;
+	int iG;
+	int iB;
+	uint16_t * pSrc, * pDst;
+	int dX;
+	int dY;
+	int sx;
+	int sy;
+	int szx;
+	int szy;
+	int pvx;
+	int pvy; //,sTmp;
 
 	if (this == 0) return;
 	if (m_stBrush == 0) return;
@@ -2855,8 +3079,8 @@ void CSprite::PutRevTransSprite(int sX, int sY, int sFrame, DWORD dwTime, int al
 
 	SetRect(&m_rcBound, dX, dY, dX + szx, dY + szy);
 
-	pSrc = (WORD *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
-	pDst = (WORD *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
+	pSrc = (uint16_t *) m_pSurfaceAddr + sx + ((sy) * m_sPitch);
+	pDst = (uint16_t *) m_pDDraw->m_pBackB4Addr + dX + ((dY) * m_pDDraw->m_sBackB4Pitch);
 
 	if ((szx == 0) || (szy == 0)) return;
 
@@ -2870,7 +3094,7 @@ void CSprite::PutRevTransSprite(int sX, int sY, int sFrame, DWORD dwTime, int al
 						iR = (int) m_pDDraw->m_lFadeRB[((pDst[ix]&0xF800) >> 11)][((pSrc[ix]&0xF800) >> 11) + alphaDepth];
 						iG = (int) m_pDDraw->m_lFadeG[(pDst[ix]&0x7E0) >> 5][((pSrc[ix]&0x7E0) >> 5) + alphaDepth + alphaDepth];
 						iB = (int) m_pDDraw->m_lFadeRB[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F) + alphaDepth];
-						pDst[ix] = (WORD) ((iR << 11) | (iG << 5) | iB);
+						pDst[ix] = (uint16_t) ((iR << 11) | (iG << 5) | iB);
 					}
 
 					ix++;
@@ -2890,7 +3114,7 @@ void CSprite::PutRevTransSprite(int sX, int sY, int sFrame, DWORD dwTime, int al
 						iR = (int) m_pDDraw->m_lFadeRB[(pDst[ix]&0x7C00) >> 10][((pSrc[ix]&0x7C00) >> 10) + alphaDepth];
 						iG = (int) m_pDDraw->m_lFadeG[(pDst[ix]&0x3E0) >> 5][((pSrc[ix]&0x3E0) >> 5) + alphaDepth];
 						iB = (int) m_pDDraw->m_lFadeRB[(pDst[ix]&0x1F)][(pSrc[ix]&0x1F) + alphaDepth];
-						pDst[ix] = (WORD) ((iR << 10) | (iG << 5) | iB);
+						pDst[ix] = (uint16_t) ((iR << 10) | (iG << 5) | iB);
 					}
 
 					ix++;

@@ -9,6 +9,7 @@
 #include "Game.h"
 #include "UserMessages.h"
 #include "resource.h"
+#include <cstring>
 
 void PutAdminLogFileList(const char * cStr);
 void PutHackLogFileList(const char * cStr);
@@ -232,7 +233,7 @@ void PutLogList(const char * cMsg) {
 	char cTemp[120 * 50];
 
 	G_cMsgUpdated = true;
-	ZeroMemory(cTemp, sizeof (cTemp));
+	std::memset(cTemp, 0, sizeof(cTemp));
 	memcpy((cTemp + 120), G_cMsgList, 120 * 49);
 	memcpy(cTemp, cMsg, strlen(cMsg));
 	memcpy(G_cMsgList, cTemp, 120 * 50);
@@ -314,7 +315,7 @@ void PutLogFileList(const char * cStr) {
 	// pFile = fopen("Events.log", "at");
 	pFile = fopen("GameLogs\\Events.log", "at");
 	if (pFile == 0) return;
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
 	strcat(cBuffer, cStr);
@@ -331,7 +332,7 @@ void PutAdminLogFileList(const char * cStr) {
 	pFile = fopen("GameLogs\\AdminEvents.log", "at");
 	if (pFile == 0) return;
 
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
@@ -350,7 +351,7 @@ void PutHackLogFileList(const char * cStr) {
 	pFile = fopen("GameLogs\\HackEvents.log", "at");
 	if (pFile == 0) return;
 
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
@@ -369,7 +370,7 @@ void PutPvPLogFileList(const char * cStr) {
 	pFile = fopen("GameLogs\\PvPEvents.log", "at");
 	if (pFile == 0) return;
 
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
@@ -388,7 +389,7 @@ void PutXSocketLogFileList(const char * cStr) {
 	pFile = fopen("GameLogs\\XSocket.log", "at");
 	if (pFile == 0) return;
 
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
@@ -407,7 +408,7 @@ void PutItemLogFileList(const char * cStr) {
 	pFile = fopen("GameLogs\\ItemEvents.log", "at");
 	if (pFile == 0) return;
 
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
@@ -426,7 +427,7 @@ void PutLogEventFileList(const char * cStr) {
 	pFile = fopen("GameLogs\\LogEvents.log", "at");
 	if (pFile == 0) return;
 
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 
 	GetLocalTime(&SysTime);
 	wsprintf(cBuffer, "(%4d:%2d:%2d:%2d:%2d) - ", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);

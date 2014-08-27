@@ -1,4 +1,5 @@
 #include "GameMonitor.h"
+#include <cstring>
 
 CGameMonitor::CGameMonitor() {
 	int i;
@@ -21,7 +22,7 @@ int CGameMonitor::iReadBadWordFileList(const char *pFn) {
 	class CStrTok * pStrTok;
 	HANDLE hFile;
 	FILE * pFile;
-	DWORD dwFileSize;
+	uint32_t dwFileSize;
 
 	hFile = CreateFile(pFn, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
 	dwFileSize = GetFileSize(hFile, 0);
@@ -51,7 +52,7 @@ int CGameMonitor::iReadBadWordFileList(const char *pFn) {
 bool CGameMonitor::bCheckBadWord(char *pWord) {
 	int i;
 	char cBuffer[500];
-	ZeroMemory(cBuffer, sizeof (cBuffer));
+	std::memset(cBuffer, 0, sizeof(cBuffer));
 	strcpy(cBuffer, pWord);
 	i = 0;
 	while ((m_pWordList[i] != 0) && (strlen(m_pWordList[i]->m_pMsg) != 0)) {

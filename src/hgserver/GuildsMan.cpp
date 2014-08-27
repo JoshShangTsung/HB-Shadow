@@ -1,5 +1,5 @@
 #include "GuildsMan.h"
-
+#include <cstring>
 CGuildsMan::CGuildsMan() {
-	ZeroMemory(m_cName, sizeof (m_cName));
+	std::memset(m_cName, 0, sizeof(m_cName));
 }

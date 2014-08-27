@@ -1,5 +1,5 @@
 #pragma once
-#include <windows.h>
+#include <cstdint>
 
 
 #define DEF_MAXITEMEQUIPPOS		15
@@ -723,12 +723,17 @@ public:
 	char m_cItemType;
 	char m_cEquipPos;
 	short m_sItemEffectType;
-	short m_sItemEffectValue1, m_sItemEffectValue2, m_sItemEffectValue3;
-	short m_sItemEffectValue4, m_sItemEffectValue5, m_sItemEffectValue6;
-	WORD m_wMaxLifeSpan;
+	short m_sItemEffectValue1;
+	short m_sItemEffectValue2;
+	short m_sItemEffectValue3;
+	short m_sItemEffectValue4;
+	short m_sItemEffectValue5;
+	short m_sItemEffectValue6;
+	uint16_t m_wMaxLifeSpan;
 	short m_sSpecialEffect;
 
-	short m_sSpecialEffectValue1, m_sSpecialEffectValue2;
+	short m_sSpecialEffectValue1;
+	short m_sSpecialEffectValue2;
 
 	short m_sSprite;
 	short m_sSpriteFrame;
@@ -736,8 +741,8 @@ public:
 	char m_cApprValue;
 	char m_cSpeed;
 
-	DWORD m_wPrice;
-	WORD m_wWeight;
+	uint32_t m_wPrice;
+	uint16_t m_wWeight;
 	short m_sLevelLimit;
 	char m_cGenderLimit;
 
@@ -746,14 +751,18 @@ public:
 	char m_cCategory;
 	bool m_bIsForSale;
 
-	DWORD m_dwCount;
+	uint32_t m_dwCount;
 	short m_sTouchEffectType;
-	short m_sTouchEffectValue1, m_sTouchEffectValue2, m_sTouchEffectValue3;
+	short m_sTouchEffectValue1;
+	short m_sTouchEffectValue2;
+	short m_sTouchEffectValue3;
 	char m_cItemColor;
-	short m_sItemSpecEffectValue1, m_sItemSpecEffectValue2, m_sItemSpecEffectValue3;
-	WORD m_wCurLifeSpan;
-	DWORD m_dwAttribute;
-	void RequestBallItem(int iClientH, char *pData, DWORD dwMsgSize);
+	short m_sItemSpecEffectValue1;
+	short m_sItemSpecEffectValue2;
+	short m_sItemSpecEffectValue3;
+	uint16_t m_wCurLifeSpan;
+	uint32_t m_dwAttribute;
+	void RequestBallItem(int iClientH, char *pData, uint32_t dwMsgSize);
 	bool bReadBallSystemConfigFile(char * cFn);
 };
 
