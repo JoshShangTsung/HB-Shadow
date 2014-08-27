@@ -332,7 +332,7 @@ int XSocket::_iSendUnsentData() {
 
 int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 	WORD * wp;
-	int i, iRet;
+	int iRet;
 
 	//m_pSndBuffer = cData;
 	if (dwSize > m_dwBufferSize) return DEF_XSOCKEVENT_MSGSIZETOOLARGE;
@@ -346,7 +346,7 @@ int XSocket::iSendMsg(char * cData, DWORD dwSize, char cKey) {
 
 	memcpy((char *) (m_pSndBuffer + 3), cData, dwSize);
 	if (cKey != 0) {//Encryption
-		for (i = 0; i < dwSize; i++) {
+		for (WORD i = 0; i < dwSize; i++) {
 			m_pSndBuffer[3 + i] += (i ^ cKey);
 			m_pSndBuffer[3 + i] = m_pSndBuffer[3 + i] ^ (cKey ^ (dwSize - i));
 		}
@@ -443,7 +443,6 @@ SOCKET XSocket::iGetSocket() {
 char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey) {
 	WORD * wp;
 	DWORD dwSize;
-	register int i;
 	char cKey;
 
 	cKey = m_pRcvBuffer[0];
@@ -456,7 +455,7 @@ char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey) {
 	if (dwSize > DEF_MSGBUFFERSIZE) dwSize = DEF_MSGBUFFERSIZE;
 
 	if (cKey != 0) {//Encryption
-		for (i = 0; i < dwSize; i++) {
+		for (WORD i = 0; i < dwSize; i++) {
 			m_pRcvBuffer[3 + i] = m_pRcvBuffer[3 + i] ^ (cKey ^ (dwSize - i));
 			m_pRcvBuffer[3 + i] -= (i ^ cKey);
 		}

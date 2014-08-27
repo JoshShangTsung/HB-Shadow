@@ -59,7 +59,6 @@ public:
 	int iRegisterOccupyFlag(int dX, int dY, int iSide, int iEKNum, int iDOI);
 	ItemId iCheckItem(short sX, short sY);
 	void SetTempMoveAllowedFlag(int dX, int dY, bool bFlag);
-	int iAnalyze(char cType, int *pX, int *pY, int * pV1, int *pV2, int * pV3);
 	bool bGetIsWater(short dX, short dY);
 	void GetDeadOwner(short * pOwner, char * pOwnerClass, short sX, short sY);
 	bool bGetIsMoveAllowedTile(short dX, short dY);
@@ -112,7 +111,7 @@ public:
 		char cType=0; // 1:RANDOMAREA   2:RANDOMWAYPOINT
 
 		char cWaypoint[10]{}; // RANDOMWAYPOINT
-		RECT rcRect{}; // RANDOMAREA
+		RECT rcRect{0,0,0,0}; // RANDOMAREA
 
 		int iTotalActiveMob=0;
 		int iMobType=0;

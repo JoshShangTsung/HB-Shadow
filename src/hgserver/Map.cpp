@@ -306,7 +306,7 @@ bool CMap::bGetIsTeleport(short dX, short dY) {
 	return true;
 }
 
-void CMap::ClearOwner(int iDebugCode, short sOwnerH, char cOwnerType, short sX, short sY) {
+void CMap::ClearOwner(int /*iDebugCode*/, short sOwnerH, char cOwnerType, short sX, short sY) {
 	class CTile * pTile;
 
 	if ((sX < 0) || (sX >= m_sSizeX) || (sY < 0) || (sY >= m_sSizeY)) return;
@@ -449,7 +449,7 @@ bool CMap::bInit(char * pName) {
 bool CMap::_bDecodeMapDataFileContents() {
 	HANDLE hFile;
 	char cMapFileName[256], cHeader[260], cTemp[100];
-	DWORD dwFileSize, nRead;
+	DWORD nRead;
 	register int i, ix, iy;
 	char * token, cReadMode;
 	char seps[] = "= \t\n";
@@ -464,7 +464,6 @@ bool CMap::_bDecodeMapDataFileContents() {
 
 	hFile = CreateFile(cMapFileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
 	if (hFile == INVALID_HANDLE_VALUE) return false;
-	dwFileSize = GetFileSize(hFile, 0);
 
 	ZeroMemory(cHeader, sizeof (cHeader));
 	ReadFile(hFile, (char *) cHeader, 256, &nRead, 0);
@@ -639,14 +638,6 @@ bool CMap::bGetIsFarm(short tX, short tY) {
 	if (pTile->m_bIsFarm == false) return false;
 
 	return true;
-}
-
-int CMap::iAnalyze(char cType, int * pX, int * pY, int * pV1, int * pV2, int * pV3) {
-	switch (cType) {
-		case 1:
-			break;
-	}
-	return 0;
 }
 
 void CMap::SetTempMoveAllowedFlag(int dX, int dY, bool bFlag) {

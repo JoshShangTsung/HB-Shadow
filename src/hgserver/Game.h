@@ -214,7 +214,7 @@ public:
 	void RequestHeldenianTeleport(int iClientH, char * pData, DWORD dwMsgSize);
 	void RequestNpcSpeakTeleport(int iClientH, char * pData, DWORD dwMsgSize);
 	bool bCheckHeldenianMap(int sAttackerH, int iMapIndex, char cType);
-	bool bReadHeldenianGUIDFile(char * cFn);
+	bool bReadHeldenianGUIDFile(const char * cFn);
 	void RemoveEventNpc(int iNpcH);
 
 	bool _bCheckCharacterData(int iClientH);
@@ -230,7 +230,7 @@ public:
 	void _CheckFarmingAction(short sAttackerH, short sTargetH, bool bType);
 
 	void GreenBall_Weather(int iClientH, char * pData, DWORD dwMsgSize);
-	bool bReadScheduleConfigFile(char *pFn);
+	bool bReadScheduleConfigFile(const char *pFn);
 
 	// KLKS clean tiles
 	void AdminOrder_CleanMap(int iClientH, char * pData, DWORD dwMsgSize);
@@ -247,7 +247,7 @@ public:
 	// Crusade
 	void ManualEndCrusadeMode(int iWinnerSide); // 2.17 (x) 2.14 ( )
 	void CrusadeWarStarter();
-	bool bReadCrusadeGUIDFile(char * cFn);
+	bool bReadCrusadeGUIDFile(const char * cFn);
 	void _CreateCrusadeGUID(DWORD dwCrusadeGUID, int iWinnerSide);
 	void GlobalStartCrusadeMode();
 
@@ -257,7 +257,7 @@ public:
 	void LocalStartApocalypseMode(DWORD dwApocalypseGUID);
 	void LocalEndApocalypseMode();
 	void _CreateApocalypseGUID(DWORD dwApocalypseGUID);
-	bool bReadApocalypseGUIDFile(char * cFn);
+	bool bReadApocalypseGUIDFile(const char * cFn);
 	void SendThunder(int iClient, short sX, short sY, short sV3, short sV4);
 	void DoAbaddonThunderDamageHandler(char cMapIndex);
 
@@ -267,7 +267,7 @@ public:
 	void _SendMapStatus(int iClientH);
 	void MapStatusHandler(int iClientH, int iMode, char * pMapName);
 	void SelectCrusadeDutyHandler(int iClientH, int iDuty);
-	void RequestSummonWarUnitHandler(int iClientH, int dX, int dY, char cType, char cNum, char cMode);
+	void RequestSummonWarUnitHandler(int iClientH, int dX, int dY, short cType, char cNum, char cMode);
 	void RequestGuildTeleportHandler(int iClientH);
 	void RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int iGuildGUID, const char * pMapName);
 	void MeteorStrikeHandler(int iMapIndex);
@@ -285,7 +285,7 @@ public:
 	void GSM_SetGuildConstructLoc(int iGuildGUID, int dX, int dY, char * pMapName);
 	void GSM_ConstructionPoint(int iGuildGUID, int iPoint);
 	void CheckCommanderConstructionPoint(int iClientH);
-	bool bReadCrusadeStructureConfigFile(char * cFn);
+	bool bReadCrusadeStructureConfigFile(const char * cFn);
 	void SaveOccupyFlagData();
 	void LocalEndCrusadeMode(int iWinnerSide);
 	void LocalStartCrusadeMode(DWORD dwGuildGUID);

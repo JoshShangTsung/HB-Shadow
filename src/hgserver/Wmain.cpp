@@ -107,9 +107,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		  LPSTR lpCmdLine, int nCmdShow) {
-	sprintf(szAppClass, "GameServer%d", hInstance);
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
+		  LPSTR /*lpCmdLine*/, int nCmdShow) {
+	sprintf(szAppClass, "GameServer%d", (int) hInstance);
 	if (!InitApplication(hInstance)) return (false);
 	if (!InitInstance(hInstance, nCmdShow)) return (false);
 
@@ -170,8 +170,7 @@ bool InitInstance(HINSTANCE hInstance, int nCmdShow) {
 }
 
 int EventLoop() {
-	static unsigned short _usCnt = 0;
-	register MSG msg;
+	MSG msg;
 
 	while (1) {
 		if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
@@ -273,14 +272,14 @@ void OnPaint() {
 	EndPaint(G_hWnd, &ps);
 }
 
-void OnKeyUp(WPARAM wParam, LPARAM lParam) {
+void OnKeyUp(WPARAM /*wParam*/, LPARAM /*lParam*/) {
 }
 
 void OnAccept() {
 	G_pGame->bAccept(G_pListenSock);
 }
 
-void CALLBACK _TimerFunc(UINT wID, UINT wUser, DWORD dwUSer, DWORD dw1, DWORD dw2) {
+void CALLBACK _TimerFunc(UINT wID, UINT /*User*/, DWORD /*dwUSer*/, DWORD /*dw1*/, DWORD /*dw2*/) {
 	PostMessage(G_hWnd, WM_USER_TIMERSIGNAL, wID, 0);
 }
 
