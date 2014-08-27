@@ -4,19 +4,18 @@
 
 class CBuildItem {
 public:
-	CBuildItem();
-	char m_cName[21];
-	ItemId m_sItemID;
+	char m_cName[21]{};
+	ItemId m_sItemID = ItemId::none;
 
-	int m_iSkillLimit;
+	int m_iSkillLimit = 0;
 
-	ItemId m_iMaterialItemID[6];
-	int m_iMaterialItemCount[6];
-	int m_iMaterialItemValue[6];
-	int m_iIndex[6];
+	ItemId m_iMaterialItemID[6]{ItemId::none,ItemId::none,ItemId::none,ItemId::none,ItemId::none,ItemId::none};
+	int m_iMaterialItemCount[6]{};
+	int m_iMaterialItemValue[6]{};
+	int m_iIndex[6]{-1, -1, -1, -1, -1, -1};
 
-	int m_iMaxValue;
-	int m_iAverageValue;
-	int m_iMaxSkill;
-	uint16_t m_wAttribute;
+	int m_iMaxValue = 0;
+	int m_iAverageValue = 0;
+	int m_iMaxSkill = 0;
+	uint16_t m_wAttribute = 0;
 };

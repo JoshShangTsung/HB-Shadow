@@ -24,395 +24,387 @@
 
 class CClient {
 public:
-
-	char m_cWarType;
-	char m_cVar;
-	int m_iRecentWalkTime;
-	int m_iRecentRunTime;
-	short m_sV1;
-	char m_cHeroArmourBonus;
-	int iDmgShowon;
-
+	CClient(HWND hWnd);
+	virtual ~CClient();
 	bool bCreateNewParty();
-	uint32_t m_dwAFKCheckTime;
+
+	char m_cWarType = 0;
+	char m_cVar = 0;
+	int m_iRecentWalkTime = 0;
+	int m_iRecentRunTime = 0;
+	short m_sV1 = 0;
+	char m_cHeroArmourBonus = 0;
+	int iDmgShowon = 0;
+
+	uint32_t m_dwAFKCheckTime = 0;
 
 	// Hack Checkers
-	uint32_t m_dwMagicFreqTime;
-	uint32_t m_dwMoveFreqTime;
-	uint32_t m_dwAttackFreqTime;
-	bool m_bIsMoveBlocked;
-	bool m_bMagicItem;
-	uint32_t dwClientTime;
-	bool m_bMagicConfirm;
-	int m_iSpellCount;
-	bool m_bMagicPauseTime;
+	uint32_t m_dwMagicFreqTime = 0;
+	uint32_t m_dwMoveFreqTime = 0;
+	uint32_t m_dwAttackFreqTime = 0;
+	bool m_bIsMoveBlocked = false;
+	bool m_bMagicItem = false;
+	uint32_t dwClientTime = 0;
+	bool m_bMagicConfirm = false;
+	int m_iSpellCount = 0;
+	bool m_bMagicPauseTime = false;
 	//int m_iUninteruptibleCheck;
 	//char m_cConnectionCheck;
 
-	CClient(HWND hWnd);
-	virtual ~CClient();
+	char m_cCharName[11]{};
+	char m_cAccountName[11]{};
+	char m_cAccountPassword[11]{};
 
-	char m_cCharName[11];
-	char m_cAccountName[11];
-	char m_cAccountPassword[11];
-
-	bool m_bIsInitComplete;
-	bool m_bIsMsgSendAvailable;
+	bool m_bIsInitComplete = false;
+	bool m_bIsMsgSendAvailable = false;
 
 	char m_cMapName[11];
-	char m_cMapIndex;
-	short m_sX;
-	short m_sY;
+	char m_cMapIndex = -1;
+	short m_sX = -1;
+	short m_sY = -1;
 
-	char m_cGuildName[21];
-	char m_cLocation[11];
-	int m_iGuildRank;
-	int m_iGuildGUID;
+	char m_cGuildName[21]{};
+	char m_cLocation[11]{};
+	int m_iGuildRank = -1;
+	int m_iGuildGUID = -1;
 
-	char m_cDir;
-	short m_sType;
-	short m_sOriginalType;
-	short m_sAppr1;
-	short m_sAppr2;
-	short m_sAppr3;
-	short m_sAppr4;
-	int m_iApprColor;
-	int m_iStatus;
+	char m_cDir = 5;
+	short m_sType = 0;
+	short m_sOriginalType = 0;
+	short m_sAppr1 = 0;
+	short m_sAppr2 = 0;
+	short m_sAppr3 = 0;
+	short m_sAppr4 = 0;
+	int m_iApprColor = 0;
+	int m_iStatus = 0;
 
-	uint32_t m_dwTime;
-	uint32_t m_dwHPTime;
-	uint32_t m_dwMPTime;
-	uint32_t m_dwSPTime;
-	uint32_t m_dwAutoSaveTime;
-	uint32_t m_dwHungerTime;
-	uint32_t m_dwWarmEffectTime;
+	uint32_t m_dwTime = 0;
+	uint32_t m_dwHPTime = 0;
+	uint32_t m_dwMPTime = 0;
+	uint32_t m_dwSPTime = 0;
+	uint32_t m_dwAutoSaveTime = 0;
+	uint32_t m_dwHungerTime = 0;
+	uint32_t m_dwWarmEffectTime = 0;
 
-	char m_cSex;
-	char m_cSkin;
-	char m_cHairStyle;
-	char m_cHairColor;
-	char m_cUnderwear;
+	char m_cSex = 0;
+	char m_cSkin = 0;
+	char m_cHairStyle = 0;
+	char m_cHairColor = 0;
+	char m_cUnderwear = 0;
 
-	int m_iAngelicStr;
-	int m_iAngelicInt;
-	int m_iAngelicDex;
-	int m_iAngelicMag;
+	int m_iAngelicStr = 0;
+	int m_iAngelicInt = 0;
+	int m_iAngelicDex = 0;
+	int m_iAngelicMag = 0;
 
-	int m_iHP; // Hit Point
-	int m_iHPstock;
-	int m_iMP;
-	int m_iSP;
-	int m_iExp;
-	int m_iNextLevelExp;
-	bool m_bIsKilled;
+	int m_iHP = 0; // Hit Point
+	int m_iHPstock = 0;
+	int m_iMP = 0;
+	int m_iSP = 0;
+	int m_iExp = 0;
+	int m_iNextLevelExp = 0;
+	bool m_bIsKilled = false;
 
-	int m_iDefenseRatio; // Defense Ratio
-	int m_iHitRatio; // Hit Ratio
+	int m_iDefenseRatio = 0;
+	int m_iHitRatio = 0;
 
 	//int  m_iHitRatio_ItemEffect_SM;
 	//int  m_iHitRatio_ItemEffect_L;
 
-	int m_iDamageAbsorption_Armor[DEF_MAXITEMEQUIPPOS];
-	int m_iDamageAbsorption_Shield;
+	int m_iDamageAbsorption_Armor[DEF_MAXITEMEQUIPPOS]{};
+	int m_iDamageAbsorption_Shield = 0;
 
-	int m_iLevel;
-	int m_iStr;
-	int m_iInt;
-	int m_iVit;
-	int m_iDex;
-	int m_iMag;
-	int m_iCharisma;
+	int m_iLevel = 0;
+	int m_iStr = 0;
+	int m_iInt = 0;
+	int m_iVit = 0;
+	int m_iDex = 0;
+	int m_iMag = 0;
+	int m_iCharisma = 0;
 	//char m_cLU_Str;
-	char m_cLU_Int;
-	char m_cLU_Vit;
-	char m_cLU_Dex;
-	char m_cLU_Mag;
-	char m_cLU_Char;
-	int m_iLuck;
-	int m_iLU_Pool;
-	char m_cAura;
-	int m_iGizonItemUpgradeLeft;
+	char m_cLU_Int = 0;
+	char m_cLU_Vit = 0;
+	char m_cLU_Dex = 0;
+	char m_cLU_Mag = 0;
+	char m_cLU_Char = 0;
+	int m_iLuck = 0;
+	int m_iLU_Pool = 0;
+	char m_cAura = 0;
+	int m_iGizonItemUpgradeLeft = 0;
 
-	int m_iAddTransMana;
-	int m_iAddChargeCritical;
+	int m_iAddTransMana = 0;
+	int m_iAddChargeCritical = 0;
 
-	int m_iEnemyKillCount;
-	int m_iPKCount;
-	int m_iRewardGold;
-	int m_iCurWeightLoad;
+	int m_iEnemyKillCount = 0;
+	int m_iPKCount = 0;
+	int m_iRewardGold = 0;
+	int m_iCurWeightLoad = 0;
 
-	char m_cSide;
+	char m_cSide = 0;
 
-	bool m_bInhibition;
+	bool m_bInhibition = false;
 
-	char m_cAttackDiceThrow_SM;
-	char m_cAttackDiceRange_SM;
-	char m_cAttackDiceThrow_L;
-	char m_cAttackDiceRange_L;
-	char m_cAttackBonus_SM;
-	char m_cAttackBonus_L;
+	char m_cAttackDiceThrow_SM = 0;
+	char m_cAttackDiceRange_SM = 0;
+	char m_cAttackDiceThrow_L = 0;
+	char m_cAttackDiceRange_L = 0;
+	char m_cAttackBonus_SM = 0;
+	char m_cAttackBonus_L = 0;
 
-	class CItem * m_pItemList[DEF_MAXITEMS];
-	POINT m_ItemPosList[DEF_MAXITEMS];
-	class CItem * m_pItemInBankList[DEF_MAXBANKITEMS];
+	class CItem * m_pItemList[DEF_MAXITEMS]{};
+	POINT m_ItemPosList[DEF_MAXITEMS]{};
+	class CItem * m_pItemInBankList[DEF_MAXBANKITEMS]{};
 
-	bool m_bIsItemEquipped[DEF_MAXITEMS];
-	short m_sItemEquipmentStatus[DEF_MAXITEMEQUIPPOS];
-	char m_cArrowIndex;
+	bool m_bIsItemEquipped[DEF_MAXITEMS]{};
+	short m_sItemEquipmentStatus[DEF_MAXITEMEQUIPPOS]{};
+	char m_cArrowIndex = -1;
 
-	char m_cMagicMastery[DEF_MAXMAGICTYPE];
-	unsigned char m_cSkillMastery[DEF_MAXSKILLTYPE];
+	char m_cMagicMastery[DEF_MAXMAGICTYPE]{};
+	unsigned char m_cSkillMastery[DEF_MAXSKILLTYPE]{};
 
-	int m_iSkillSSN[DEF_MAXSKILLTYPE];
-	bool m_bSkillUsingStatus[DEF_MAXSKILLTYPE];
-	int m_iSkillUsingTimeID[DEF_MAXSKILLTYPE];
+	int m_iSkillSSN[DEF_MAXSKILLTYPE]{};
+	bool m_bSkillUsingStatus[DEF_MAXSKILLTYPE]{};
+	int m_iSkillUsingTimeID[DEF_MAXSKILLTYPE]{};
 
-	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS];
+	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS]{};
 
-	int m_iWhisperPlayerIndex;
-	char m_cProfile[256];
+	int m_iWhisperPlayerIndex = -1;
+	char m_cProfile[256]{};
 
-	int m_iHungerStatus;
+	int m_iHungerStatus = 100;
 
-	uint32_t m_dwWarBeginTime;
-	bool m_bIsWarLocation;
+	uint32_t m_dwWarBeginTime = 0;
+	bool m_bIsWarLocation = false;
 
-	bool m_bIsPoisoned;
-	int m_iPoisonLevel;
-	uint32_t m_dwPoisonTime;
+	bool m_bIsPoisoned = false;
+	int m_iPoisonLevel = 0;
+	uint32_t m_dwPoisonTime = 0;
 
-	int m_iPenaltyBlockYear;
-	int m_iPenaltyBlockMonth;
-	int m_iPenaltyBlockDay;
+	int m_iPenaltyBlockYear = 0;
+	int m_iPenaltyBlockMonth = 0;
+	int m_iPenaltyBlockDay = 0;
 
-	int m_iFightzoneNumber;
-	int m_iReserveTime;
-	int m_iFightZoneTicketNumber;
+	int m_iFightzoneNumber = 0;
+	int m_iReserveTime = 0;
+	int m_iFightZoneTicketNumber = 0;
 
-	class XSocket * m_pXSock;
+	class XSocket * m_pXSock = nullptr;
 
-	int m_iAdminUserLevel;
-	int m_iRating;
+	int m_iAdminUserLevel = 0;
+	int m_iRating = 0;
 
-	int m_iTimeLeft_ShutUp;
-	int m_iTimeLeft_Rating;
-	int m_iTimeLeft_ForceRecall;
-	int m_iTimeLeft_FirmStaminar;
+	int m_iTimeLeft_ShutUp = 0;
+	int m_iTimeLeft_Rating = 0;
+	int m_iTimeLeft_ForceRecall = 0;
+	int m_iTimeLeft_FirmStaminar = 0;
 
-	bool m_bIsOnServerChange;
+	bool m_bIsOnServerChange = false;
 
-	int m_iExpStock;
-	uint32_t m_dwExpStockTime;
+	int m_iExpStock = 0;
+	uint32_t m_dwExpStockTime = 0;
 
-	int m_iAutoExpAmount;
-	uint32_t m_dwAutoExpTime;
+	int m_iAutoExpAmount = 0;
+	uint32_t m_dwAutoExpTime = 0;
 
-	uint32_t m_dwRecentAttackTime;
+	uint32_t m_dwRecentAttackTime = 0;
 
-	int m_iAllocatedFish;
-	int m_iFishChance;
+	int m_iAllocatedFish = 0;
+	int m_iFishChance = 0;
 
-	char m_cIPaddress[21];
-	bool m_bIsSafeAttackMode;
+	char m_cIPaddress[21]{};
+	bool m_bIsSafeAttackMode = false;
 
-	bool m_bIsOnWaitingProcess;
+	bool m_bIsOnWaitingProcess = false;
 
-	int m_iSuperAttackLeft;
-	int m_iSuperAttackCount;
+	int m_iSuperAttackLeft = 0;
+	int m_iSuperAttackCount = 0;
 
-	short m_sUsingWeaponSkill;
+	short m_sUsingWeaponSkill = 5;
 
-	int m_iManaSaveRatio;
+	int m_iManaSaveRatio = 0;
 
-	bool m_bIsLuckyEffect;
-	int m_iSideEffect_MaxHPdown;
+	bool m_bIsLuckyEffect = false;
+	int m_iSideEffect_MaxHPdown = 0;
 
-	int m_iComboAttackCount;
-	int m_iDownSkillIndex;
+	int m_iComboAttackCount = 0;
+	int m_iDownSkillIndex = -1;
 
-	int m_iMagicDamageSaveItemIndex;
+	int m_iMagicDamageSaveItemIndex = -1;
 
-	short m_sCharIDnum1;
-	short m_sCharIDnum2;
-	short m_sCharIDnum3;
+	short m_sCharIDnum1 = 0;
+	short m_sCharIDnum2 = 0;
+	short m_sCharIDnum3 = 0;
 
-	int m_iAbuseCount;
+	int m_iAbuseCount = 0;
 
-	bool m_bIsBWMonitor;
+	bool m_bIsBWMonitor = false;
 
-	bool m_bIsExchangeMode; // Is In Exchange Mode? 
-	int m_iExchangeH; // Client ID to Exchanging with 
-	char m_cExchangeName[11]; // Name of Client to Exchanging with 
-	char m_cExchangeItemName[4][21]; // Name of Item to exchange 
+	bool m_bIsExchangeMode = false; // Is In Exchange Mode? 
+	int m_iExchangeH = 0; // Client ID to Exchanging with 
+	char m_cExchangeName[11]{}; // Name of Client to Exchanging with 
+	char m_cExchangeItemName[4][21]{}; // Name of Item to exchange 
 
-	char m_cExchangeItemIndex[4]; // ItemID to Exchange
-	int m_iExchangeItemAmount[4]; // Ammount to exchange with
+	char m_cExchangeItemIndex[4]{}; // ItemID to Exchange
+	int m_iExchangeItemAmount[4]{}; // Ammount to exchange with
 
-	bool m_bIsExchangeConfirm; // Has the user hit confirm? 
-	int iExchangeCount; //Keeps track of items which are on list
+	bool m_bIsExchangeConfirm = false; // Has the user hit confirm? 
+	int iExchangeCount = 0; //Keeps track of items which are on list
 
-	int m_iQuest;
-	int m_iQuestID;
-	int m_iAskedQuest;
-	int m_iCurQuestCount;
+	int m_iQuest = 0;
+	int m_iQuestID = 0;
+	int m_iAskedQuest = 0;
+	int m_iCurQuestCount = 0;
 
-	int m_iQuestRewardType;
-	int m_iQuestRewardAmount;
+	int m_iQuestRewardType = 0;
+	int m_iQuestRewardAmount = 0;
 
-	int m_iContribution;
+	int m_iContribution = 0;
 
-	bool m_bQuestMatchFlag_Loc;
-	bool m_bIsQuestCompleted;
+	bool m_bQuestMatchFlag_Loc = false;
+	bool m_bIsQuestCompleted = false;
 
-	int m_iCustomItemValue_Attack;
-	int m_iCustomItemValue_Defense;
+	int m_iCustomItemValue_Attack = 0;
+	int m_iCustomItemValue_Defense = 0;
 
-	int m_iMinAP_SM;
-	int m_iMinAP_L;
+	int m_iMinAP_SM = 0;
+	int m_iMinAP_L = 0;
 
-	int m_iMaxAP_SM;
-	int m_iMaxAP_L;
+	int m_iMaxAP_SM = 0;
+	int m_iMaxAP_L = 0;
 
-	bool m_bIsNeutral;
-	bool m_bIsObserverMode;
+	bool m_bIsNeutral = false;
+	bool m_bIsObserverMode = false;
 
-	int m_iSpecialEventID;
+	int m_iSpecialEventID = 200081;
 
-	int m_iSpecialWeaponEffectType;
-	int m_iSpecialWeaponEffectValue;
+	int m_iSpecialWeaponEffectType = 0;
+	int m_iSpecialWeaponEffectValue = 0;
 
+	int m_iAddHP = 0;
+	int m_iAddSP = 0;
+	int m_iAddMP = 0;
+	int m_iAddAR = 0;
+	int m_iAddPR = 0;
+	int m_iAddDR = 0;
+	int m_iAddMR = 0;
+	int m_iAddAbsPD = 0;
+	int m_iAddAbsMD = 0;
+	int m_iAddCD = 0;
+	int m_iAddExp = 0;
+	int m_iAddGold = 0;
 
+	int m_iAddResistMagic = 0;
+	int m_iAddPhysicalDamage = 0;
+	int m_iAddMagicalDamage = 0;
 
+	int m_iAddAbsAir = 0;
+	int m_iAddAbsEarth = 0;
+	int m_iAddAbsFire = 0;
+	int m_iAddAbsWater = 0;
 
+	int m_iLastDamage = 0;
 
-	int m_iAddHP;
-	int m_iAddSP;
-	int m_iAddMP;
-	int m_iAddAR;
-	int m_iAddPR;
-	int m_iAddDR;
-	int m_iAddMR;
-	int m_iAddAbsPD;
-	int m_iAddAbsMD;
-	int m_iAddCD;
-	int m_iAddExp;
-	int m_iAddGold;
+	int m_iMoveMsgRecvCount = 0;
+	int m_iAttackMsgRecvCount = 0;
+	int m_iRunMsgRecvCount = 0;
+	int m_iSkillMsgRecvCount = 0;
+	uint32_t m_dwMoveLAT = 0;
+	uint32_t m_dwRunLAT = 0;
+	uint32_t m_dwAttackLAT = 0;
 
-	int m_iAddResistMagic;
-	int m_iAddPhysicalDamage;
-	int m_iAddMagicalDamage;
+	int m_iSpecialAbilityTime = DEF_SPECABLTYTIMESEC;
+	bool m_bIsSpecialAbilityEnabled = false;
+	uint32_t m_dwSpecialAbilityStartTime = 0;
+	int m_iSpecialAbilityLastSec = 0;
 
-	int m_iAddAbsAir;
-	int m_iAddAbsEarth;
-	int m_iAddAbsFire;
-	int m_iAddAbsWater;
+	int m_iSpecialAbilityType = 0;
 
-	int m_iLastDamage;
+	int m_iSpecialAbilityEquipPos = 0;
+	bool m_bIsAdminCommandEnabled = false;
+	int m_iAlterItemDropIndex = -1;
 
-	int m_iMoveMsgRecvCount;
-	int m_iAttackMsgRecvCount;
-	int m_iRunMsgRecvCount;
-	int m_iSkillMsgRecvCount;
-	uint32_t m_dwMoveLAT;
-	uint32_t m_dwRunLAT;
-	uint32_t m_dwAttackLAT;
+	int m_iWarContribution = 0;
 
-	int m_iSpecialAbilityTime;
-	bool m_bIsSpecialAbilityEnabled;
-	uint32_t m_dwSpecialAbilityStartTime;
-	int m_iSpecialAbilityLastSec;
+	uint32_t m_dwSpeedHackCheckTime = 0;
+	int m_iSpeedHackCheckExp = 0;
+	uint32_t m_dwLogoutHackCheck = 0;
 
-	int m_iSpecialAbilityType;
+	uint32_t m_dwInitCCTimeRcv = 0;
+	uint32_t m_dwInitCCTime = 0;
 
+	char m_cLockedMapName[11]{};
+	int m_iLockedMapTime = 0;
 
-
-
-	int m_iSpecialAbilityEquipPos;
-	bool m_bIsAdminCommandEnabled;
-	int m_iAlterItemDropIndex;
-
-	int m_iWarContribution;
-
-	uint32_t m_dwSpeedHackCheckTime;
-	int m_iSpeedHackCheckExp;
-	uint32_t m_dwLogoutHackCheck;
-
-	uint32_t m_dwInitCCTimeRcv;
-	uint32_t m_dwInitCCTime;
-
-	char m_cLockedMapName[11];
-	int m_iLockedMapTime;
-
-	int m_iCrusadeDuty;
-	uint32_t m_dwCrusadeGUID;
-	uint32_t m_dwHeldenianGUID;
-	bool m_bInRecallImpossibleMap;
+	int m_iCrusadeDuty = 0;
+	uint32_t m_dwCrusadeGUID = 0;
+	uint32_t m_dwHeldenianGUID = 0;
+	bool m_bInRecallImpossibleMap = false;
 
 	struct {
-		char cType;
-		char cSide;
-		short sX;
-		short sY;
-	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
-	int m_iCSIsendPoint;
+		char cType = 0;
+		char cSide = 0;
+		short sX = 0;
+		short sY = 0;
+	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES]{};
+	int m_iCSIsendPoint = 0;
 
-	char m_cSendingMapName[11];
-	bool m_bIsSendingMapStatus;
-
-
-	int m_iConstructionPoint;
-
-	char m_cConstructMapName[11];
-	int m_iConstructLocX;
-	int m_iConstructLocY;
+	char m_cSendingMapName[11]{};
+	bool m_bIsSendingMapStatus = false;
 
 
-	bool m_bIsPlayerCivil;
-	bool m_bIsAttackModeChange;
+	int m_iConstructionPoint = 0;
+
+	char m_cConstructMapName[11]{};
+	int m_iConstructLocX = -1;
+	int m_iConstructLocY = -1;
+
+
+	bool m_bIsPlayerCivil = false;
+	bool m_bIsAttackModeChange = false;
 
 
 
-	int m_iPartyID;
-	int m_iPartyStatus;
-	int m_iReqJoinPartyClientH;
-	char m_cReqJoinPartyName[12];
+	int m_iPartyID = 0;
+	int m_iPartyStatus = 0;
+	int m_iReqJoinPartyClientH = 0;
+	char m_cReqJoinPartyName[12] {};
 
-	int m_iPartyRank;
-	int m_iPartyMemberCount;
-	int m_iPartyGUID;
+	int m_iPartyRank = 0;
+	int m_iPartyMemberCount = 0;
+	int m_iPartyGUID = 0;
 
 	struct {
-		int iIndex;
-		char cName[11];
-	} m_stPartyMemberName[DEF_MAXPARTYMEMBERS];
+		int iIndex = 0;
+		char cName[11] {};
+	} m_stPartyMemberName[DEF_MAXPARTYMEMBERS]{};
 
 
-	uint32_t m_dwLastActionTime;
-	uint32_t m_dwLastDamageTime;
-	int m_iDeadPenaltyTime;
+	uint32_t m_dwLastActionTime = 0;
+	uint32_t m_dwLastDamageTime = 0;
+	int m_iDeadPenaltyTime = 0;
 
 
-	char m_cWhisperPlayerName[11];
-	bool m_bIsAdminOrderGoto;
-	bool m_bIsInsideWarehouse;
-	bool m_bIsInsideWizardTower;
-	bool m_bIsInsideOwnTown;
-	bool m_bIsOwnLocation;
-	bool m_pIsProcessingAllowed;
-	bool m_bIsClientConnected;
+	char m_cWhisperPlayerName[11]{};
+	bool m_bIsAdminOrderGoto = false;
+	bool m_bIsInsideWarehouse = false;
+	bool m_bIsInsideWizardTower = false;
+	bool m_bIsInsideOwnTown = false;
+	bool m_bIsOwnLocation = false;
+	bool m_pIsProcessingAllowed = false;
+	bool m_bIsClientConnected = false;
 
 
-	char m_cHeroArmorBonus;
+	char m_cHeroArmorBonus = 0;
 
 
-	bool m_bIsBeingResurrected;
+	bool m_bIsBeingResurrected = false;
 
-	uint32_t m_dwFightzoneDeadTime;
-	char m_cSaveCount;
-	int m_iBallPoints;
+	uint32_t m_dwFightzoneDeadTime = 0;
+	char m_cSaveCount = 0;
+	int m_iBallPoints = 0;
 
-	uint32_t m_dwDSLAT;
-	uint32_t m_dwDSLATOld;
-	uint32_t m_dwDSLATS;
-	int m_iDSCount;
+	uint32_t m_dwDSLAT = 0;
+	uint32_t m_dwDSLATOld = 0;
+	uint32_t m_dwDSLATS = 0;
+	int m_iDSCount = 0;
 };
