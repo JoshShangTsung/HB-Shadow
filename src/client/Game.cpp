@@ -7030,9 +7030,7 @@ void CGame::DrawEffects() {
 }
 
 void CGame::bItemDrop_IconPannel(short msX, short msY) {
-	short sX, sY, sItemIndex;
-	sX = m_stDialogBoxInfo[30].sX;
-	sY = m_stDialogBoxInfo[30].sY;
+	short sItemIndex;
 
 	sItemIndex = m_stMCursor.sSelectedObjectID;
 	if (m_bIsItemDisabled[sItemIndex] == true) return;
@@ -9055,14 +9053,12 @@ bool CGame::DrawObject_OnAttackMove(int indexX, int indexY, int sX, int sY, bool
 bool CGame::DrawObject_OnMagic(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY) {
 	int iBodyIndex, iUndiesIndex, iHairIndex, iArmArmorIndex, iBodyArmorIndex, iPantsIndex, iBootsIndex, iR, iG, iB, iHelmIndex, iMantleIndex;
 	bool bInv = false;
-	int iWeaponColor, iShieldColor, iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
+	int iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
 	int iSkirtDraw = 0;
 
 	if (_tmp_sOwnerType == 35 || _tmp_sOwnerType == 73 || _tmp_sOwnerType == 66) bInv = true; //Energy-Ball,Wyvern
 
 	if (m_cDetailLevel == 0) {
-		iWeaponColor = 0;
-		iShieldColor = 0;
 		iArmorColor = 0;
 		iMantleColor = 0;
 		iArmColor = 0;
@@ -9070,8 +9066,8 @@ bool CGame::DrawObject_OnMagic(int indexX, int indexY, int sX, int sY, bool bTra
 		iBootsColor = 0;
 		iHelmColor = 0;
 	} else {
-		iWeaponColor = (_tmp_iApprColor & 0xF0000000) >> 28;
-		iShieldColor = (_tmp_iApprColor & 0x0F000000) >> 24;
+		//iWeaponColor = (_tmp_iApprColor & 0xF0000000) >> 28;
+		//iShieldColor = (_tmp_iApprColor & 0x0F000000) >> 24;
 		iArmorColor = (_tmp_iApprColor & 0x00F00000) >> 20;
 		iMantleColor = (_tmp_iApprColor & 0x000F0000) >> 16;
 		iArmColor = (_tmp_iApprColor & 0x0000F000) >> 12;
@@ -9310,14 +9306,12 @@ bool CGame::DrawObject_OnMagic(int indexX, int indexY, int sX, int sY, bool bTra
 bool CGame::DrawObject_OnGetItem(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY) {
 	int iBodyIndex, iUndiesIndex, iHairIndex, iArmArmorIndex, iBodyArmorIndex, iPantsIndex, iBootsIndex, iR, iG, iB, iHelmIndex, iMantleIndex;
 	bool bInv = false;
-	int iWeaponColor, iShieldColor, iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
+	int iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
 	int iSkirtDraw = 0;
 
 	if (_tmp_sOwnerType == 35 || _tmp_sOwnerType == 73 || _tmp_sOwnerType == 66) bInv = true; //Energy-Ball,Wyvern
 
 	if (m_cDetailLevel == 0) {
-		iWeaponColor = 0;
-		iShieldColor = 0;
 		iArmorColor = 0;
 		iMantleColor = 0;
 		iArmColor = 0;
@@ -9325,8 +9319,6 @@ bool CGame::DrawObject_OnGetItem(int indexX, int indexY, int sX, int sY, bool bT
 		iBootsColor = 0;
 		iHelmColor = 0;
 	} else {
-		iWeaponColor = (_tmp_iApprColor & 0xF0000000) >> 28;
-		iShieldColor = (_tmp_iApprColor & 0x0F000000) >> 24;
 		iArmorColor = (_tmp_iApprColor & 0x00F00000) >> 20;
 		iMantleColor = (_tmp_iApprColor & 0x000F0000) >> 16;
 		iArmColor = (_tmp_iApprColor & 0x0000F000) >> 12;
@@ -10396,13 +10388,11 @@ bool CGame::DrawObject_OnDamage(int indexX, int indexY, int sX, int sY, bool bTr
 
 bool CGame::DrawObject_OnDying(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY) {
 	int iBodyIndex, iUndiesIndex, iHairIndex, iArmArmorIndex, iBodyArmorIndex, iPantsIndex, iBootsIndex, iR, iG, iB, iHelmIndex, iMantleIndex;
-	int iWeaponColor, iShieldColor, iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
+	int iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
 	int iSkirtDraw = 0;
 	char cFrame;
 
 	if (m_cDetailLevel == 0) {
-		iWeaponColor = 0;
-		iShieldColor = 0;
 		iArmorColor = 0;
 		iMantleColor = 0;
 		iArmColor = 0;
@@ -10410,8 +10400,6 @@ bool CGame::DrawObject_OnDying(int indexX, int indexY, int sX, int sY, bool bTra
 		iBootsColor = 0;
 		iHelmColor = 0;
 	} else {
-		iWeaponColor = (_tmp_iApprColor & 0xF0000000) >> 28;
-		iShieldColor = (_tmp_iApprColor & 0x0F000000) >> 24;
 		iArmorColor = (_tmp_iApprColor & 0x00F00000) >> 20;
 		iMantleColor = (_tmp_iApprColor & 0x000F0000) >> 16;
 		iArmColor = (_tmp_iApprColor & 0x0000F000) >> 12;
@@ -10770,14 +10758,12 @@ bool CGame::DrawObject_OnDying(int indexX, int indexY, int sX, int sY, bool bTra
 
 bool CGame::DrawObject_OnDead(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY) {
 	int iBodyIndex, iUndiesIndex, iHairIndex, iArmArmorIndex, iBodyArmorIndex, iPantsIndex, iBootsIndex, iR, iG, iB, iFrame, iMantleIndex, iHelmIndex;
-	int iWeaponColor, iShieldColor, iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
+	int iArmorColor, iMantleColor, iArmColor, iPantsColor, iBootsColor, iHelmColor;
 	int iSkirtDraw = 0;
 
 	if (_tmp_sOwnerType == 66) return false;
 
 	if (m_cDetailLevel == 0) {
-		iWeaponColor = 0;
-		iShieldColor = 0;
 		iArmorColor = 0;
 		iMantleColor = 0;
 		iArmColor = 0;
@@ -10785,8 +10771,6 @@ bool CGame::DrawObject_OnDead(int indexX, int indexY, int sX, int sY, bool bTran
 		iBootsColor = 0;
 		iHelmColor = 0;
 	} else {
-		iWeaponColor = (_tmp_iApprColor & 0xF0000000) >> 28;
-		iShieldColor = (_tmp_iApprColor & 0x0F000000) >> 24;
 		iArmorColor = (_tmp_iApprColor & 0x00F00000) >> 20;
 		iMantleColor = (_tmp_iApprColor & 0x000F0000) >> 16;
 		iArmColor = (_tmp_iApprColor & 0x0000F000) >> 12;
@@ -11759,7 +11743,7 @@ bool CGame::DrawObject_OnMove(int indexX, int indexY, int sX, int sY, bool bTran
 }
 
 bool CGame::DrawObject_OnDamageMove(int indexX, int indexY, int sX, int sY, bool bTrans, DWORD dwTime, int msX, int msY) {
-	int cFrame, cDir;
+	int cFrame;
 	int dx, dy;
 	int iBodyIndex, iHairIndex, iUndiesIndex, iArmArmorIndex, iBodyArmorIndex, iPantsIndex, iBootsIndex, iHelmIndex, iR, iG, iB;
 	int iWeaponIndex, iShieldIndex, iMantleIndex;
@@ -11797,7 +11781,6 @@ bool CGame::DrawObject_OnDamageMove(int indexX, int indexY, int sX, int sY, bool
 		else if (_iGetFOE(_tmp_iStatus) == 1) bInv = true;
 		else return false;
 	}
-	cDir = _tmp_cDir;
 	switch (_tmp_cDir) {
 		case 1: _tmp_cDir = 5;
 			break;
@@ -13512,7 +13495,6 @@ void CGame::OnLogSocketEvent(WPARAM wParam, LPARAM lParam) {
 
 void CGame::LogResponseHandler(char * pData) {
 	WORD * wp, wResponse;
-	WORD wServerUpperVersion, wServerLowerVersion;
 	DWORD * dwp;
 	char * cp, cCharName[12];
 	int * ip, i;
@@ -13615,13 +13597,22 @@ void CGame::LogResponseHandler(char * pData) {
 			break;
 
 		case DEF_LOGRESMSGTYPE_CONFIRM:
+		{
 			cp = (pData + DEF_INDEX2_MSGTYPE + 2);
+
+#ifndef _DEBUG
 			wp = (WORD *) cp;
-			wServerUpperVersion = *wp;
+			WORD wServerUpperVersion = *wp;
 			cp += 2;
 			wp = (WORD *) cp;
-			wServerLowerVersion = *wp;
+			WORD wServerLowerVersion = *wp;
 			cp += 2;
+			if ((wServerUpperVersion != DEF_UPPERVERSION) || (wServerLowerVersion != DEF_LOWERVERSION)) {
+				ChangeGameMode(DEF_GAMEMODE_ONVERSIONNOTMATCH);
+			}
+#else
+			cp += 4;
+#endif
 			//		m_iAccountStatus = (int)*cp;
 			cp++;
 			wp = (WORD *) cp;
@@ -13732,12 +13723,8 @@ void CGame::LogResponseHandler(char * pData) {
 			cp += 4;
 			ChangeGameMode(DEF_GAMEMODE_ONSELECTCHARACTER);
 			ClearContents_OnSelectCharacter();
-
-#ifndef _DEBUG
-			if ((wServerUpperVersion != DEF_UPPERVERSION) || (wServerLowerVersion != DEF_LOWERVERSION))
-				ChangeGameMode(DEF_GAMEMODE_ONVERSIONNOTMATCH);
-#endif
-			break;
+		}
+		break;
 
 		case DEF_LOGRESMSGTYPE_REJECT:
 			cp = (pData + DEF_INDEX2_MSGTYPE + 2);
@@ -15826,13 +15813,10 @@ bool CGame::DrawObject_OnRun(int indexX, int indexY, int sX, int sY, bool bTrans
 void CGame::GetPlayerTurn() {
 	char cDir;
 	short sX, sY, sCnt1, sCnt2;
-	int iError;
-
 	sX = m_sPlayerX;
 	sY = m_sPlayerY;
 	sCnt1 = 0;
 	m_cPlayerTurn = 0;
-	iError = 0;
 	while (1) {
 		cDir = cGetNextMoveDir(sX, sY, m_sCommX, m_sCommY);
 		if (cDir == 0) break;
@@ -15866,7 +15850,6 @@ void CGame::GetPlayerTurn() {
 	sY = m_sPlayerY;
 	sCnt2 = 0;
 	m_cPlayerTurn = 1;
-	iError = 0;
 	while (1) {
 		cDir = cGetNextMoveDir(sX, sY, m_sCommX, m_sCommY);
 		if (cDir == 0) break;
@@ -16385,7 +16368,7 @@ void CGame::DrawDialogBox_GuideMap(short msX, short msY, char cLB) {
 	}
 
 	if (cLB != 0) return;
-	if (msX >= sX && msX < sX + szY && msY >= sY && msY < sY + szY) {
+	if (msX >= sX && msX < sX + szX && msY >= sY && msY < sY + szY) {
 		if (sY > 213) shY = sY - 17;
 		else shY = sY + szY + 4;
 		if (m_bZoomMap) PutString(sX, shY, DEF_MSG_GUIDEMAP_MIN, RGB(200, 200, 120)); //"(-)
@@ -17223,9 +17206,6 @@ int CGame::iGetTopDialogBoxIndex() {
 }
 
 void CGame::DlgBoxClick_IconPannel(short msX, short msY) {
-	short sX, sY;
-	sX = m_stDialogBoxInfo[30].sX;
-	sY = m_stDialogBoxInfo[30].sY;
 	// CLEROTH - LU
 	/*	if ((msX > 322)	&& (msX < 355) && (434 < msY) && (475 > msY))
 		{	if (m_iLU_Point <= 0) return;
@@ -18727,13 +18707,10 @@ void CGame::DrawDialogBox_Slates(short msX, short msY, short /*msZ*/, char /*cLB
 }
 
 void CGame::DlgBoxClick_Slates(short msX, short msY) {
-	int iAdjX, iAdjY;
 	short sX, sY;
 
 	sX = m_stDialogBoxInfo[40].sX;
 	sY = m_stDialogBoxInfo[40].sY;
-	iAdjX = 5;
-	iAdjY = 8;
 	switch (m_stDialogBoxInfo[40].cMode) {
 			// Slates DialogBox - Diuuude
 		case 1:
@@ -19695,7 +19672,7 @@ void CGame::ClearContents_OnSelectCharacter() {
 
 void CGame::UpdateScreen_OnSelectCharacter() {
 	short sX, sY, msX, msY, msZ;
-	char cLB, cRB, cTotalChar;
+	char cLB, cRB;
 	char cMIresult;
 	static class CMouseInterface * pMI;
 	DWORD dwTime;
@@ -19706,7 +19683,6 @@ void CGame::UpdateScreen_OnSelectCharacter() {
 	dwTime = timeGetTime();
 	sX = 0;
 	sY = 0;
-	cTotalChar = 0;
 
 	if (m_cGameModeCount == 0) {
 		G_cSpriteAlphaDegree = 1;
@@ -20775,7 +20751,7 @@ bool CGame::_bCheckItemByType(char cType) {
 void CGame::DynamicObjectHandler(char * pData) {
 	WORD * wp;
 	char * cp;
-	short * sp, sX, sY, sV1, sV2, sV3;
+	short * sp, sX, sY, sV1, sV2;
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE);
 	wp = (WORD *) cp;
@@ -20798,7 +20774,7 @@ void CGame::DynamicObjectHandler(char * pData) {
 	cp += 2;
 
 	sp = (short *) cp;
-	sV3 = *sp;
+	//sV3 = *sp;
 	cp += 2;
 
 	switch (*wp) {
@@ -20861,8 +20837,7 @@ void CGame::DlgBoxClick_15AgeMsg(short msX, short msY) { // Snoopy: removed feed
 		DisableDialogBox(5);
 }
 
-void CGame::DlgBoxClick_WarningMsg(short msX, short msY)
-{
+void CGame::DlgBoxClick_WarningMsg(short msX, short msY) {
 	short sX, sY;
 	sX = m_stDialogBoxInfo[6].sX;
 	sY = m_stDialogBoxInfo[6].sY;
@@ -22905,7 +22880,7 @@ void CGame::NotifyMsg_TimeChange(char * pData) {
 
 void CGame::NotifyMsg_RepairItemPrice(char * pData) {
 	char * cp, cName[21];
-	DWORD * dwp, wV1, wV2, wV3, wV4;
+	DWORD * dwp, wV1, wV2, wV3;
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	dwp = (DWORD *) cp;
 	wV1 = *dwp;
@@ -22917,7 +22892,7 @@ void CGame::NotifyMsg_RepairItemPrice(char * pData) {
 	wV3 = *dwp;
 	cp += 4;
 	dwp = (DWORD *) cp;
-	wV4 = *dwp;
+	//wV4 = *dwp;
 	cp += 4;
 	ZeroMemory(cName, sizeof (cName));
 	memcpy(cName, cp, 20);
@@ -23294,7 +23269,7 @@ void CGame::CreateScreenShot() { //HelShot20060307_173003_Warehouse000.jpg
 }
 
 void CGame::UpdateScreen_OnConnecting() {
-	short sX, sY, msX, msY, msZ;
+	short msX, msY, msZ;
 	char cLB, cRB;
 	DWORD dwTime = timeGetTime();
 	static DWORD dwMTime, dwCTime;
@@ -23349,8 +23324,6 @@ void CGame::UpdateScreen_OnConnecting() {
 			break;
 
 		case '1':
-			sX = 146;
-			sY = 114;
 			_Draw_OnLogin(m_cAccountName, m_cAccountPassword, 0, 0);
 			break;
 
@@ -24612,15 +24585,13 @@ void CGame::UpdateScreen_OnCreateNewAccount() {
 #endif //endif from #ifdef DEF_MAKE_ACCOUNT
 
 void CGame::UpdateScreen_OnLogin() {
-	short msX, msY, msZ, sX, sY;
+	short msX, msY, msZ;
 	char cLB, cRB;
 	char cMIresult;
 	int iMIbuttonNum;
 	static class CMouseInterface * pMI;
 	static char cPassword[12], cPrevFocus;
 	static char cName[12];
-	sX = 146;
-	sY = 114;
 	if (m_cGameModeCount == 0) {
 		EndInputString();
 		pMI = new class CMouseInterface;
@@ -24781,7 +24752,7 @@ void CGame::UpdateScreen_OnLogin() {
 }
 
 void CGame::UpdateScreen_OnSelectServer() {
-	short msX, msY, msZ, sX, sY;
+	short msX, msY, msZ;
 	char cLB, cRB;
 	char cMIresult;
 	int iMIbuttonNum;
@@ -24789,8 +24760,6 @@ void CGame::UpdateScreen_OnSelectServer() {
 	static char cPrevFocus;
 	DWORD dwTime = timeGetTime();
 
-	sX = 146;
-	sY = 114;
 	if (m_cGameModeCount == 0) {
 		EndInputString();
 
@@ -25811,8 +25780,8 @@ void CGame::UpdateScreen_OnSelectCharacter(short sX, short sY, short msX, short 
 			PutAlignedString(98, 357, 335 + 15, UPDATE_SCREEN_ON_SELECT_CHARACTER28); //"
 		}
 	}
-	int iTempMon, iTempDay, iTempHour, iTempMin;
-	iTempMon = iTempDay = iTempHour = iTempMin = 0;
+	int iTempDay, iTempHour, iTempMin;
+	iTempDay = iTempHour = iTempMin = 0;
 
 	if (m_iAccntYear != 0) {
 		iTempMin = (m_iTimeLeftSecAccount / 60);
@@ -25887,7 +25856,7 @@ void CGame::UpdateScreen_OnSelectCharacter(short sX, short sY, short msX, short 
 }
 
 void CGame::UpdateScreen_OnWaitingResponse() {
-	short sX, sY, msX, msY, msZ;
+	short msX, msY, msZ;
 	char cLB, cRB;
 
 	DWORD dwTime = timeGetTime();
@@ -25939,8 +25908,6 @@ void CGame::UpdateScreen_OnWaitingResponse() {
 			_Draw_UpdateScreen_OnCreateNewAccount();
 			break;
 		case '1':
-			sX = 146;
-			sY = 114;
 			_Draw_OnLogin(m_cAccountName, m_cAccountPassword, 0, 0);
 			break;
 		case '2':
@@ -28645,11 +28612,9 @@ void CGame::DlbBoxDoubleClick_GuideMap(short msX, short msY) {
 	if (si != 0) return;
 	if (m_cMapIndex < 0) return;
 
-	short sX, sY, shX, shY, szX, szY;
+	short sX, sY, shX, shY;
 	sX = m_stDialogBoxInfo[9].sX;
 	sY = m_stDialogBoxInfo[9].sY;
-	szX = m_stDialogBoxInfo[9].sSizeX;
-	szY = m_stDialogBoxInfo[9].sSizeY;
 	if (sX < 20) sX = 0;
 	if (sY < 20) sY = 0;
 	if (sX > 640 - 128 - 20) sX = 640 - 128;
@@ -29221,7 +29186,7 @@ void CGame::DlgBoxClick_SysMenu(short msX, short msY) {
 #else
 			m_cLogOutCount = 11;
 #endif
-else {
+		else {
 			m_cLogOutCount = -1;
 			AddEventList(DLGBOX_CLICK_SYSMENU2, 10);
 			DisableDialogBox(19);
@@ -29948,7 +29913,7 @@ void CGame::ClearSkillUsingStatus() {
 void CGame::NpcTalkHandler(char *pData) {
 	char * cp, cRewardName[21], cTargetName[21], cTemp[21], cTxt[250];
 	short * sp, sType, sResponse;
-	int iAmount, iIndex, iContribution, iX, iY, iRange;
+	int iIndex, iContribution, iX, iY, iRange;
 	int iTargetType, iTargetCount, iQuestionType;
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
@@ -29959,7 +29924,7 @@ void CGame::NpcTalkHandler(char *pData) {
 	sResponse = *sp;
 	cp += 2;
 	sp = (short *) cp;
-	iAmount = *sp;
+	//iAmount = *sp;
 	cp += 2;
 	sp = (short *) cp;
 	iContribution = *sp;
@@ -35432,7 +35397,7 @@ void CGame::DrawDialogBox_ShutDownMsg(short msX, short msY) {
 }
 
 void CGame::DrawDialogBox_NpcActionQuery(short msX, short msY) {
-	short sX, sY, szX;
+	short sX, sY;
 
 	char cTxt[120], cTxt2[120], cStr1[64], cStr2[64], cStr3[64];
 
@@ -35442,7 +35407,6 @@ void CGame::DrawDialogBox_NpcActionQuery(short msX, short msY) {
 
 	sX = m_stDialogBoxInfo[20].sX;
 	sY = m_stDialogBoxInfo[20].sY;
-	szX = m_stDialogBoxInfo[20].sSizeX;
 
 	//DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 5); //5
 	//DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME2, sX, sY, 6); //6
@@ -37524,11 +37488,7 @@ void CGame::bItemDrop_Inventory(short msX, short msY) {
 
 	m_pItemList[m_stMCursor.sSelectedObjectID]->m_sX = dX;
 	m_pItemList[m_stMCursor.sSelectedObjectID]->m_sY = dY;
-
-	short sTmpSpr, sTmpSprFrm;
-	sTmpSpr = m_pItemList[m_stMCursor.sSelectedObjectID]->m_sSprite;
-	sTmpSprFrm = m_pItemList[m_stMCursor.sSelectedObjectID]->m_sSpriteFrame;
-
+	
 	char cItemID;
 	if (m_bShiftPressed) {
 		for (int i = 0; i < DEF_MAXITEMS; i++) {
@@ -38895,7 +38855,7 @@ void CGame::NotifyMsg_EventFishMode(char * pData) {
 
 void CGame::NotifyMsg_Exp(char * pData) {
 	DWORD * dwp;
-	int iPrevExp, * ip;
+	int iPrevExp;
 	char * cp, cTxt[120];
 
 	iPrevExp = m_iExp;
@@ -38904,7 +38864,7 @@ void CGame::NotifyMsg_Exp(char * pData) {
 	m_iExp = (int) *dwp;
 	cp += 4;
 
-	ip = (int *) cp;
+	//int* ip = (int *) cp;
 	//	m_iRating = *ip;
 	cp += 4;
 
@@ -39037,13 +38997,11 @@ void CGame::NotifyMsg_HP(char * pData) {
 	DWORD * dwp;
 	int iPrevHP;
 	char cTxt[120];
-	int iPrevMP;
 
 	iPrevHP = m_iHP;
 	dwp = (DWORD *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	m_iHP = (int) *dwp;
 
-	iPrevMP = m_iMP;
 	dwp = (DWORD *) (pData + DEF_INDEX2_MSGTYPE + 6);
 	m_iMP = (int) *dwp;
 
@@ -39174,12 +39132,12 @@ void CGame::NotifyMsg_ItemDepleted_EraseItem(char * pData) {
 
 void CGame::NotifyMsg_ItemLifeSpanEnd(char * pData) {
 	char * cp;
-	short * sp, sEquipPos, sItemIndex;
+	short * sp, sItemIndex;
 	char cTxt[120];
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	sp = (short *) cp;
-	sEquipPos = *sp;
+	//sEquipPos = *sp;
 	cp += 2;
 	sp = (short *) cp;
 	sItemIndex = *sp;
@@ -39204,7 +39162,6 @@ void CGame::NotifyMsg_ItemObtained(char * pData) {
 
 	DWORD dwCount, dwAttribute;
 	char cName[21], cItemType, cEquipPos;
-	bool bIsEquipped;
 	short sSprite, sSpriteFrame, sLevelLimit, sSpecialEV2;
 	char cTxt[120], cGenderLimit, cItemColor;
 	WORD * wp, wWeight, wCurLifeSpan;
@@ -39227,7 +39184,7 @@ void CGame::NotifyMsg_ItemObtained(char * pData) {
 	cEquipPos = *cp;
 	cp++;
 
-	bIsEquipped = (bool) * cp;
+	//bool bIsEquipped = (bool) * cp;
 	cp++;
 
 	sp = (short *) cp;
@@ -39346,7 +39303,6 @@ void CGame::NotifyMsg_ItemPurchased(char * pData) {
 
 	DWORD dwCount;
 	char cName[21], cItemType, cEquipPos, cGenderLimit;
-	bool bIsEquipped;
 	short sSprite, sSpriteFrame, sLevelLimit;
 	WORD wCost, wWeight, wCurLifeSpan;
 	char cTxt[120], cItemColor;
@@ -39369,7 +39325,7 @@ void CGame::NotifyMsg_ItemPurchased(char * pData) {
 	cEquipPos = *cp;
 	cp++;
 
-	bIsEquipped = (bool) * cp;
+	//bool bIsEquipped = (bool) * cp;
 	cp++;
 
 	sp = (short *) cp;
@@ -39461,12 +39417,12 @@ void CGame::NotifyMsg_ItemPurchased(char * pData) {
 
 void CGame::NotifyMsg_ItemReleased(char * pData) {
 	char * cp;
-	short * sp, sEquipPos, sItemIndex;
+	short * sp, sItemIndex;
 	char cTxt[120];
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	sp = (short *) cp;
-	sEquipPos = *sp;
+	//short sEquipPos = *sp;
 	cp += 2;
 	sp = (short *) cp;
 	sItemIndex = *sp;
@@ -39514,7 +39470,6 @@ void CGame::NotifyMsg_ItemToBank(char *pData) {
 	char * cp, cIndex;
 	DWORD * dwp, dwCount, dwAttribute;
 	char cName[21], cItemType, cEquipPos, cGenderLimit, cItemColor;
-	bool bIsEquipped;
 	short * sp, sSprite, sSpriteFrame, sLevelLimit, sItemEffectValue2, sItemSpecEffectValue2, sItemSpecEffectValue3;
 	WORD * wp, wWeight, wCurLifeSpan;
 	char cTxt[120];
@@ -39540,7 +39495,7 @@ void CGame::NotifyMsg_ItemToBank(char *pData) {
 	cEquipPos = *cp;
 	cp++;
 
-	bIsEquipped = (bool) * cp;
+	//bool bIsEquipped = (bool) * cp;
 	cp++;
 
 	sp = (short *) cp;
@@ -39648,10 +39603,8 @@ void CGame::NotifyMsg_Killed(char * pData) {
 void CGame::NotifyMsg_LevelUp(char * pData) {
 	char * cp;
 	int * ip;
-	int i, iPrevLevel;
+	int i;
 	char cTxt[120];
-
-	iPrevLevel = m_iLevel;
 
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 
@@ -39726,9 +39679,7 @@ void CGame::NotifyMsg_LevelUp(char * pData) {
 void CGame::NotifyMsg_SettingSuccess(char * pData) {
 	char * cp;
 	int * ip;
-	int iPrevLevel;
 	char cTxt[120];
-	iPrevLevel = m_iLevel;
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	ip = (int *) cp;
 	m_iLevel = *ip;
@@ -39963,13 +39914,13 @@ void CGame::NotifyMsg_MagicEffectOn(char * pData) {
 }
 
 void CGame::NotifyMsg_MagicStudyFail(char * pData) {
-	char * cp, cMagicNum, cName[31], cFailCode;
+	char * cp, cName[31];
 	char cTxt[120];
 	int * ip, iCost, iReqInt;
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	cFailCode = *cp;
+	//char cFailCode = *cp;
 	cp++;
-	cMagicNum = *cp;
+	//char cMagicNum = *cp;
 	cp++;
 	ZeroMemory(cName, sizeof (cName));
 	memcpy(cName, cp, 30);
@@ -39980,7 +39931,7 @@ void CGame::NotifyMsg_MagicStudyFail(char * pData) {
 	ip = (int *) cp;
 	iReqInt = *ip;
 	cp += 4;
-	/*	// Snoopy: remove special CLEROTH's feature
+		/*// Snoopy: remove special CLEROTH's feature
 		ip = (int *)cp;
 		iReqStr = *ip;
 		cp += 4;
@@ -40045,7 +39996,7 @@ void CGame::NotifyMsg_PKcaptured(char *pData) {
 	char * cp;
 	DWORD * dwp;
 	WORD * wp;
-	int iPKcount, iLevel, iExp, iRewardGold;
+	int iPKcount, iLevel, iExp;
 	char cTxt[120], cName[12];
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	wp = (WORD *) cp;
@@ -40058,7 +40009,7 @@ void CGame::NotifyMsg_PKcaptured(char *pData) {
 	memcpy(cName, cp, 10);
 	cp += 10;
 	dwp = (DWORD *) cp;
-	iRewardGold = *dwp;
+	int iRewardGold = *dwp;
 	cp += 4;
 	dwp = (DWORD *) cp;
 	iExp = *dwp;
@@ -40067,7 +40018,7 @@ void CGame::NotifyMsg_PKcaptured(char *pData) {
 	AddEventList(cTxt, 10);
 	wsprintf(cTxt, EXP_INCREASED, iExp - m_iExp);
 	AddEventList(cTxt, 10);
-	wsprintf(cTxt, NOTIFYMSG_PK_CAPTURED3, iExp - m_iExp);
+	wsprintf(cTxt, NOTIFYMSG_PK_CAPTURED3, iRewardGold);
 	AddEventList(cTxt, 10);
 }
 
@@ -42185,7 +42136,7 @@ void CGame::DrawDialogBox_Help(int msX, int msY) {
 }
 
 void CGame::DrawDialogBox_ItemUpgrade(int msX, int msY) {
-	int i, sX, sY, iValue;
+	int sX, sY, iValue;
 	char cItemColor, cStr1[120], cStr2[120], cStr3[120];
 	DWORD dwTime = timeGetTime();
 
@@ -42242,7 +42193,6 @@ void CGame::DrawDialogBox_ItemUpgrade(int msX, int msY) {
 				if (m_iGizonItemUpgradeLeft < iValue)
 					PutAlignedString(sX + 24, sX + 248, sY + 115, G_cTxt, 195, 25, 25);
 				else PutAlignedString(sX + 24, sX + 248, sY + 115, G_cTxt);
-				i = m_stDialogBoxInfo[34].sV1;
 				cItemColor = m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cItemColor;
 				if ((m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_LHAND)
 						  || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_RHAND)
@@ -42277,7 +42227,6 @@ void CGame::DrawDialogBox_ItemUpgrade(int msX, int msY) {
 			PutAlignedString(sX + 24, sX + 248, sY + 55 + 45 + 282 - 117 - 170, DRAW_DIALOGBOX_ITEMUPGRADE6);
 			if (m_stDialogBoxInfo[34].sV1 != -1) {
 				DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME3, sX, sY, 3);
-				i = m_stDialogBoxInfo[34].sV1;
 				cItemColor = m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cItemColor;
 				if ((m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_LHAND)
 						  || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_RHAND)
@@ -42308,7 +42257,6 @@ void CGame::DrawDialogBox_ItemUpgrade(int msX, int msY) {
 			PutAlignedString(sX + 24, sX + 248, sY + 55 + 45 + 282 - 117 - 170, DRAW_DIALOGBOX_ITEMUPGRADE8); //"has been succeeded."
 			if (m_stDialogBoxInfo[34].sV1 != -1) {
 				DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME3, sX, sY, 3);
-				i = m_stDialogBoxInfo[34].sV1;
 				cItemColor = m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cItemColor;
 				if ((m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_LHAND)
 						  || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_RHAND)
@@ -42342,7 +42290,6 @@ void CGame::DrawDialogBox_ItemUpgrade(int msX, int msY) {
 			}
 			if (m_stDialogBoxInfo[34].sV1 != -1) {
 				DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME3, sX, sY, 3);
-				i = m_stDialogBoxInfo[34].sV1;
 				cItemColor = m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cItemColor;
 				if ((m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_LHAND)
 						  || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_RHAND)
@@ -42418,7 +42365,6 @@ void CGame::DrawDialogBox_ItemUpgrade(int msX, int msY) {
 
 			if (m_stDialogBoxInfo[34].sV1 != -1) {
 				DrawNewDialogBox(DEF_SPRID_INTERFACE_ND_GAME3, sX, sY, 3);
-				i = m_stDialogBoxInfo[34].sV1;
 				cItemColor = m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cItemColor;
 				if ((m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_LHAND)
 						  || (m_pItemList[m_stDialogBoxInfo[34].sV1]->m_cEquipPos == DEF_EQUIPPOS_RHAND)
