@@ -491,7 +491,7 @@ char * XSocket::pGetRcvDataPointer(DWORD * pMsgSize, char * pKey) {
 	*pMsgSize = (*wp) - 3;
 	dwSize = (*wp) - 3;
 
-	// v.14 : m_pSndBuffer +3 dwSize� cKey
+	// v.14 : m_pSndBuffer +3 dwSize cKey
 	if (cKey != 0) {
 		for (i = 0; i < (int) (dwSize); i++) {
 			m_pRcvBuffer[3 + i] = (char) (m_pRcvBuffer[3 + i] ^ (cKey ^ (dwSize - i)));

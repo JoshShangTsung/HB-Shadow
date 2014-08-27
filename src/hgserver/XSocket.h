@@ -21,24 +21,24 @@
 #define DEF_XSOCKSTATUS_READINGHEADER	11
 #define DEF_XSOCKSTATUS_READINGBODY		12
 
-#define DEF_XSOCKEVENT_SOCKETMISMATCH			-121	// ���� �̺�Ʈ�� ������ ���� �ٸ���. (�̷� ��찡?)
-#define DEF_XSOCKEVENT_CONNECTIONESTABLISH		-122	// ������ �̷�� ����.
-#define DEF_XSOCKEVENT_RETRYINGCONNECTION		-123	// ������ �ٽ� �õ��ϴ� ���̴�.
-#define DEF_XSOCKEVENT_ONREAD					-124	// �޽����� �д� ���̴�. 
-#define DEF_XSOCKEVENT_READCOMPLETE				-125	// �ϳ��� �޽����� ������ �����ߴ�.
-#define DEF_XSOCKEVENT_UNKNOWN					-126	// �˼���� �̺�Ʈ�̴�.
-#define DEF_XSOCKEVENT_SOCKETCLOSED				-127	// ������ �����. 
-#define DEF_XSOCKEVENT_BLOCK					-128	// �޽����� �����ٰ� ������ �?�� �����̴�.
-#define DEF_XSOCKEVENT_SOCKETERROR				-129	// ���Ͽ� ������ �߻��ߴ�. �̰�� Ŭ������ �����Ͽ��� �Ѵ�.
-#define DEF_XSOCKEVENT_CRITICALERROR			-130    // ġ������ ������ ���α׷� ��ü�� ����� �Ѵ�.
-#define DEF_XSOCKEVENT_NOTINITIALIZED			-131	// Ŭ������ �ʱ�ȭ ���� ���� ���·� ���ƴ�.
-#define DEF_XSOCKEVENT_MSGSIZETOOLARGE			-132	// �������� �ϴ� �޽����� ����� �ʹ� ũ��.
-#define DEF_XSOCKEVENT_CONFIRMCODENOTMATCH		-133	// Ȯ���ڵ尡 ��ġ���� �ʴ´�. �����Ǿ�� �Ѵ�.
-#define DEF_XSOCKEVENT_QUENEFULL                -134    // ��� ť�� ���� ���.
-#define DEF_XSOCKEVENT_UNSENTDATASENDBLOCK		-135    // ť�� �ִ� �����͸� �����ٰ� �� ����� �ɷȴ�. 
-#define DEF_XSOCKEVENT_UNSENTDATASENDCOMPLETE	-136	// ť�� �ִ� ��� �����͸� ���´�.
+#define DEF_XSOCKEVENT_SOCKETMISMATCH			-121
+#define DEF_XSOCKEVENT_CONNECTIONESTABLISH		-122
+#define DEF_XSOCKEVENT_RETRYINGCONNECTION		-123
+#define DEF_XSOCKEVENT_ONREAD					-124
+#define DEF_XSOCKEVENT_READCOMPLETE				-125
+#define DEF_XSOCKEVENT_UNKNOWN					-126
+#define DEF_XSOCKEVENT_SOCKETCLOSED				-127
+#define DEF_XSOCKEVENT_BLOCK					-128
+#define DEF_XSOCKEVENT_SOCKETERROR				-129
+#define DEF_XSOCKEVENT_CRITICALERROR			-130
+#define DEF_XSOCKEVENT_NOTINITIALIZED			-131
+#define DEF_XSOCKEVENT_MSGSIZETOOLARGE			-132
+#define DEF_XSOCKEVENT_CONFIRMCODENOTMATCH		-133
+#define DEF_XSOCKEVENT_QUENEFULL                -134
+#define DEF_XSOCKEVENT_UNSENTDATASENDBLOCK		-135
+#define DEF_XSOCKEVENT_UNSENTDATASENDCOMPLETE	-136
 
-#define DEF_XSOCKBLOCKLIMIT						300		// �� Ŭ���� ������ ?���̻� ��ϵǸ� ���̻� �����͸� ������ �� ���. 	
+#define DEF_XSOCKBLOCKLIMIT						300	
 
 class XSocket {
 public:

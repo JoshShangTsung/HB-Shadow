@@ -207,14 +207,6 @@ public:
 
 	bool m_bIsBWMonitor;
 
-	//bool  m_bIsExchangeMode;		// ���� ������ ��ȯ ����ΰ�? 
-	//int   m_iExchangeH;				// ��ȯ�� ����� �ε��� 
-	//char  m_cExchangeName[11];		// ��ȯ�� ����� �̸� 
-	//char  m_cExchangeItemName[21];	// ��ȯ�ϰ��� �ϴ� ������ �̸� 
-	//char  m_cExchangeItemIndex;  // ��ȯ�� ������ �ε��� 
-	//int   m_iExchangeItemAmount; // ��ȯ�� ������ ���� 
-	//bool  m_bIsExchangeConfirm;  // ��ȯ Ȯ�� 
-
 	bool m_bIsExchangeMode; // Is In Exchange Mode? 
 	int m_iExchangeH; // Client ID to Exchanging with 
 	char m_cExchangeName[11]; // Name of Client to Exchanging with 

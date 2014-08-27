@@ -4,7 +4,7 @@
 class CStrategicPoint {
 public:
 	CStrategicPoint();
-	int m_iSide; // ���� �������� �Ҽ�: 0�̸� �߸�
-	int m_iValue; // �߿䵵
-	int m_iX, m_iY; // ��ġ 
+	int m_iSide;
+	int m_iValue;
+	int m_iX, m_iY;
 };

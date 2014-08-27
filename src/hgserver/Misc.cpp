@@ -222,7 +222,6 @@ bool CMisc::bCheckValidName(char *pStr) {
 
 	iLen = strlen(pStr);
 	for (i = 0; i < iLen; i++) {
-		// Ư�� ���ڰ� �� �ִ� ��� �ź� 
 		if ((pStr[i] == ',') || (pStr[i] == '=') || (pStr[i] == ' ') ||
 				  (pStr[i] == '\n') || (pStr[i] == '\t') || /*(pStr[i] == '.') ||*/
 				  (pStr[i] == '\\') || (pStr[i] == '/') || (pStr[i] == ':') ||
@@ -232,15 +231,13 @@ bool CMisc::bCheckValidName(char *pStr) {
 		if ((i <= iLen - 2) && ((unsigned char) pStr[i] >= 128)) {
 			if (((unsigned char) pStr[i] == 164) && ((unsigned char) pStr[i + 1] >= 161) &&
 					  ((unsigned char) pStr[i + 1] <= 211)) {
-				// ����	
 
 			} else
 				if (((unsigned char) pStr[i] >= 176) && ((unsigned char) pStr[i] <= 200) &&
 					  ((unsigned char) pStr[i + 1] >= 161) && ((unsigned char) pStr[i + 1] <= 254)) {
-				// ���� 
 
 			} else return false;
-			i++; // !!! �������Ѿ߸� �´�.
+			i++;
 		}
 	}
 
@@ -258,7 +255,6 @@ void CMisc::Temp() {
 	pSrcFileA = fopen("middleland1.amd", "rb");
 	pSrcFileB = fopen("middleland2.amd", "rb");
 
-	// ���� ȭ�� ��ġ �̵�
 	fread(cTemp, 1, 256, pSrcFile);
 	fread(cTemp, 1, 256, pSrcFileA);
 	fread(cTemp, 1, 256, pSrcFileB);
@@ -268,10 +264,8 @@ void CMisc::Temp() {
 	ZeroMemory(cTemp, sizeof (cTemp));
 	strcpy(cTemp, "MAPSIZEX = 824 MAPSIZEY = 824 TILESIZE = 10");
 
-	// �� ���� ��� ����.
 	fwrite(cTemp, 1, 256, pDestFile);
 
-	// �� ���� ���κ�
 	for (i = 1; i <= 80; i++) {
 		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFileA);
@@ -287,14 +281,12 @@ void CMisc::Temp() {
 	for (i = 1; i <= 150; i++) fwrite(cTemp, 1, 824*10, pDestFile);
 	 */
 
-	// �� ���� �߰��κ�
 	for (i = 1; i <= 524; i++) {
 		ZeroMemory(cTemp, sizeof (cTemp));
 		fread((cTemp + 1500), 1, 5240, pSrcFile);
 		fwrite(cTemp, 1, 824 * 10, pDestFile);
 	}
 
-	// �� ���� �޺κ�
 	ZeroMemory(cTemp, sizeof (cTemp));
 	for (i = 1; i <= 68; i++) fwrite(cTemp, 1, 824 * 10, pDestFile);
 

@@ -103,16 +103,16 @@ public:
 	int m_iTotalAliveObject=0;
 	int m_iMaximumObject=0;
 
-	char m_cType=0; // ���� ���. 0�̸� ����. 1�̸� ��������� ���˰� �ƴϴ�.
+	char m_cType=0;
 
-	bool m_bIsFixedDayMode=false; // �׻� �ְ��������: �ǹ� ���� �� 
+	bool m_bIsFixedDayMode=false;
 
 	struct {
 		bool bDefined=false;
 		char cType=0; // 1:RANDOMAREA   2:RANDOMWAYPOINT
 
-		char cWaypoint[10]{}; // RANDOMWAYPOINT ��
-		RECT rcRect{}; // RANDOMAREA�߻��� ��� 
+		char cWaypoint[10]{}; // RANDOMWAYPOINT
+		RECT rcRect{}; // RANDOMAREA
 
 		int iTotalActiveMob=0;
 		int iMobType=0;
@@ -144,11 +144,11 @@ public:
 	POINT m_MineralPointList[DEF_MAXMINERALPOINT]{};
 	int m_iTotalMineralPoint=0, m_iMaxMineral=0, m_iCurMineral=0;
 
-	char m_cWhetherStatus=0; // ��� ����. 0�̸� ����. 1~3 �� 4~6 �� 7~9 ��ǳ 
-	DWORD m_dwWhetherLastTime=0, m_dwWhetherStartTime=0; // ���� ����, ���� �ð� 
+	char m_cWhetherStatus=0;
+	DWORD m_dwWhetherLastTime=0, m_dwWhetherStartTime=0;
 
 	int m_iLevelLimit=0;
-	int m_iUpperLevelLimit=0; // ���� �� ���� 
+	int m_iUpperLevelLimit=0;
 
 	class COccupyFlag * m_pOccupyFlag[DEF_MAXOCCUPYFLAG]{};
 	int m_iTotalOccupyFlags=0;
@@ -182,8 +182,6 @@ public:
 		int m_iDynamicGateX=0;
 		int m_iDynamicGateY=0;
 	} m_stDynamicGateCoords[DEF_MAXDYNAMICGATES];
-
-	// ���� �ʿ����� �÷��̾���� Ȱ�� ������ �ľ��ϴ� ���̺�.
 
 	struct {
 		int iPlayerActivity=0;
@@ -232,13 +230,13 @@ public:
 	} m_stStrikePoint[DEF_MAXSTRIKEPOINTS];
 	int m_iTotalStrikePoints = 0;
 
-	bool m_bIsDisabled = false; // ������� ����� ����� ��� 
+	bool m_bIsDisabled = false;
 	int m_iTotalAgriculture = 0;
 
 	struct {
-		char cType = 0; // �̰� 0�̸� ���ǵ��� �������� �ǹ�.
-		char cSide = 0; // ���̵�
-		short sX = 0, sY = 0; // ��ġ�� ��ġ 
+		char cType = 0;
+		char cSide = 0;
+		short sX = 0, sY = 0;
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 	int m_iTotalCrusadeStructures = 0;
 	bool m_bIsEnergySphereAutoCreation = false;

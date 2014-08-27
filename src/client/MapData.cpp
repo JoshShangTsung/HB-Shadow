@@ -2576,12 +2576,12 @@ int CMapData::iObjectFrameCounter(char * cPlayerName, short sViewPointX, short s
 								if (m_pData[dX][dY].m_cOwnerFrame == 5) {
 									if ((m_pData[dX][dY].m_sAppr2 & 0xF000) != 0) // not Peace mode
 									{
-										if (m_pData[dX][dY].m_sV3 != 1) // autre que corp � corp
+										if (m_pData[dX][dY].m_sV3 != 1) // autre que corp e corp
 										{
 											m_pGame->bAddNewEffect(m_pData[dX][dY].m_sV3, m_sPivotX + dX, m_sPivotY + dY
 													  , m_sPivotX + dX + m_pData[dX][dY].m_sV1, m_sPivotY + dY + m_pData[dX][dY].m_sV2
 													  , 0, m_pData[dX][dY].m_sOwnerType);
-											if (m_pData[dX][dY].m_sV3 >= 20) m_pGame->PlaySound('E', 43, sDist, lPan); // Son "loup�"
+											if (m_pData[dX][dY].m_sV3 >= 20) m_pGame->PlaySound('E', 43, sDist, lPan); // Son "loupe"
 										}
 										if (((m_pData[dX][dY].m_sAppr2 & 0x0FF0) >> 4) == 15) // StormBlade
 										{
@@ -3453,7 +3453,7 @@ int CMapData::iObjectFrameCounter(char * cPlayerName, short sViewPointX, short s
 									}
 									if (m_pData[dX][dY].m_sV1 >= 70) // effet gros sorts autour du caster
 										m_pGame->bAddNewEffect(57, (m_sPivotX + dX)*32, (m_sPivotY + dY)*32, 0, 0, 0, 0);
-									if (m_pData[dX][dY].m_sV1 == 82) // lumi�re si MassMagicMissile autour du caster
+									if (m_pData[dX][dY].m_sV1 == 82) // lumiere si MassMagicMissile autour du caster
 									{
 										m_pGame->bAddNewEffect(244, (m_sPivotX + dX)*32, (m_sPivotY + dY)*32, 0, 0, 0, 0);
 									}

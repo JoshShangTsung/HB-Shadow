@@ -172,7 +172,7 @@ char CMisc::cCalcDirection(short sX, short sY, short dX, short dY) {
 void CMisc::ColorTransfer(char cPixelFormat, COLORREF fcolor, WORD * wR, WORD * wG, WORD * wB) {
 	WORD result = 0x0000;
 	switch (cPixelFormat) {
-		case 1:
+		case 1://555
 			// R
 			result = result | (WORD) ((fcolor & 0x000000f8) << 8);
 			// G
@@ -181,7 +181,7 @@ void CMisc::ColorTransfer(char cPixelFormat, COLORREF fcolor, WORD * wR, WORD * 
 			result = result | (WORD) ((fcolor & 0x00f80000) >> 19);
 			break;
 
-		case 2:
+		case 2://565
 			// R
 			result = result | (WORD) ((fcolor & 0x000000f8) << 7);
 			// G
@@ -224,17 +224,9 @@ bool CMisc::bDecode(char cKey, char *pStr) {
 }
 
 bool CMisc::bCheckValidName(char *pStr) {
-	int i, iLen;
-	iLen = strlen(pStr);
-	for (i = 0; i < iLen; i++) {
-		if (pStr[i] < 0) return false;
-		if ((pStr[i] == ',') || (pStr[i] == '=') || (pStr[i] == ' ') || (pStr[i] == '\n') ||
-				  (pStr[i] == '\t') || (pStr[i] == '.') || (pStr[i] == '\\') || (pStr[i] == '/') ||
-				  (pStr[i] == ':') || (pStr[i] == '*') || (pStr[i] == '?') || (pStr[i] == '<') ||
-				  (pStr[i] == '>') || (pStr[i] == '|') || (pStr[i] == '"') || (pStr[i] == '`') ||
-				  (pStr[i] == ';') || (pStr[i] == '=') || (pStr[i] == '@') || (pStr[i] == '[') ||
-				  (pStr[i] == ']') || (pStr[i] == '^') || (pStr[i] == '_') || (pStr[i] == '\'')) return false;
-		if ((pStr[i] < '0') || (pStr[i] > 'z')) return false;
+	const std::size_t iLen = strlen(pStr);
+	for (std::size_t i = 0; i < iLen; i++) {
+		if(pStr[i] < 'A' || (pStr[i] > 'Z' && pStr[i] < 'a') || pStr[i] > 'z') return false;
 	}
 	return true;
 }

@@ -199,7 +199,6 @@ void Initialize() {
 		return;
 	}
 
-	// ���� ����� Ÿ�̸� 
 	G_mmTimer = _StartTimer(300);
 
 	G_pListenSock = new class XSocket(G_hWnd, DEF_SERVERSOCKETBLOCKLIMIT);

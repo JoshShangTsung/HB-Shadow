@@ -13,7 +13,7 @@ public:
 	char m_cOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC
 	short m_sOwner;
 
-	char m_cDeadOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC �׾��ִ� �÷��̾�� �̰��� 
+	char m_cDeadOwnerClass; // DEF_OT_PLAYER / DEF_OT_NPC
 	short m_sDeadOwner;
 
 	class CItem * m_pItem[DEF_TILE_PER_ITEMS];
@@ -25,12 +25,11 @@ public:
 
 	bool m_bIsMoveAllowed, m_bIsTeleport, m_bIsWater, m_bIsFarm, m_bIsTempMoveAllowed;
 
-	// ������ ǥ�ÿ� 
-	int m_iOccupyStatus; // Aresden�̸� -������, Elvine�̸� +�� �������. �� ���� �� ������ ���⼺ 
-	int m_iOccupyFlagIndex; // �� Ÿ�� ���� �� �ִ� ���ɱ���� �ε��� 
+	int m_iOccupyStatus;
+	int m_iOccupyFlagIndex;
 
 	// Crusade
-	int m_iAttribute; // Ÿ���� ���� ��Ʈ: ù��° ��Ʈ(���� ��ȣ) �ι�° ��Ʈ(���� ��� ��ȣ) ����° ��Ʈ(��������)
+	int m_iAttribute;
 
 
 };
