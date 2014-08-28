@@ -21,6 +21,24 @@ enum class ItemEquipPos {
 	fullbody = 13
 };
 
+enum class ItemType {
+	notused = -1,
+	none = 0,
+	equip = 1,
+	apply = 2,
+	use_deplete = 3,
+	install = 4,
+	consume = 5,
+	arrow = 6,
+	eat = 7,
+	use_skill = 8,
+	use_perm = 9,
+	use_skill_enabledialogbox = 10,
+	use_deplete_dest = 11,
+	material = 12
+};
+
+/*
 #define DEF_ITEMTYPE_NOTUSED	-1
 #define DEF_ITEMTYPE_NONE		 0
 #define DEF_ITEMTYPE_EQUIP		 1
@@ -35,7 +53,7 @@ enum class ItemEquipPos {
 #define DEF_ITEMTYPE_USE_SKILL_ENABLEDIALOGBOX	10
 #define DEF_ITEMTYPE_USE_DEPLETE_DEST			11
 #define DEF_ITEMTYPE_MATERIAL					12
-
+*/
 
 #define DEF_ITEMEFFECTTYPE_NONE				0
 #define DEF_ITEMEFFECTTYPE_ATTACK			1		
@@ -721,7 +739,7 @@ public:
 	char m_cName[21]{};
 
 	ItemId m_sIDnum = ItemId::none;
-	char m_cItemType;
+	ItemType m_cItemType;
 	ItemEquipPos m_cEquipPos;
 	short m_sItemEffectType;
 	short m_sItemEffectValue1 = 0;
