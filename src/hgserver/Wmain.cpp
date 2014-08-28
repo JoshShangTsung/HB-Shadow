@@ -213,8 +213,8 @@ void Initialize() {
 }
 
 void OnDestroy() {
-	if (G_pListenSock != 0) delete G_pListenSock;
-	if (G_pLogSock != 0) delete G_pLogSock;
+	delete G_pListenSock;
+	delete G_pLogSock;
 
 	if (G_pGame != 0) {
 		G_pGame->Quit();

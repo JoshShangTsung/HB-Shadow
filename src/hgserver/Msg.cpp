@@ -3,7 +3,7 @@
 
 
 CMsg::~CMsg() {
-	if (m_pData != 0) delete m_pData;
+	delete m_pData;
 }
 
 bool CMsg::bPut(char cFrom, char * pData, uint32_t dwSize, int iIndex, char cKey) {

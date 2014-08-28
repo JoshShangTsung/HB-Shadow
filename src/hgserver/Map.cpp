@@ -161,13 +161,13 @@ CMap::~CMap() {
 		delete []m_pTile;
 
 	for (i = 0; i < DEF_MAXTELEPORTLOC; i++)
-		if (m_pTeleportLoc[i] != 0) delete m_pTeleportLoc[i];
+		delete m_pTeleportLoc[i];
 
 	for (i = 0; i < DEF_MAXOCCUPYFLAG; i++)
-		if (m_pOccupyFlag[i] != 0) delete m_pOccupyFlag[i];
+		delete m_pOccupyFlag[i];
 
 	for (i = 0; i < DEF_MAXSTRATEGICPOINTS; i++)
-		if (m_pStrategicPointList[i] != 0) delete m_pStrategicPointList[i];
+		delete m_pStrategicPointList[i];
 }
 
 void CMap::SetOwner(short sOwner, char cOwnerClass, short sX, short sY) {
@@ -538,7 +538,7 @@ bool CMap::_bDecodeMapDataFileContents() {
 
 	CloseHandle(hFile);
 
-	if (pStrTok != 0) delete pStrTok;
+	delete pStrTok;
 	return true;
 }
 

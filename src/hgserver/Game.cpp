@@ -284,41 +284,41 @@ bool CGame::bInit() {
 	PutLogList("(!) INITIALIZING GAME SERVER...");
 	for (i = 0; i < DEF_MAXCLIENTS + 1; i++)
 		m_iClientShortCut[i] = 0;
-	if (m_pMainLogSock != 0) delete m_pMainLogSock;
+	delete m_pMainLogSock;
 	for (i = 0; i < DEF_MAXSUBLOGSOCK; i++)
-		if (m_pSubLogSock[i] != 0) delete m_pSubLogSock[i];
+		delete m_pSubLogSock[i];
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
-		if (m_pClientList[i] != 0) delete m_pClientList[i];
+		delete m_pClientList[i];
 	for (i = 0; i < DEF_MAXNPCS; i++)
-		if (m_pNpcList[i] != 0) delete m_pNpcList[i];
+		delete m_pNpcList[i];
 	for (i = 0; i < DEF_MAXMAPS; i++)
-		if (m_pMapList[i] != 0) delete m_pMapList[i];
+		delete m_pMapList[i];
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
-		if (m_pItemConfigList[i] != 0) delete m_pItemConfigList[i];
+		delete m_pItemConfigList[i];
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
-		if (m_pNpcConfigList[i] != 0) delete m_pNpcConfigList[i];
+		delete m_pNpcConfigList[i];
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
-		if (m_pMagicConfigList[i] != 0) delete m_pMagicConfigList[i];
+		delete m_pMagicConfigList[i];
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++)
-		if (m_pSkillConfigList[i] != 0) delete m_pSkillConfigList[i];
+		delete m_pSkillConfigList[i];
 	for (i = 0; i < DEF_MAXQUESTTYPE; i++)
-		if (m_pQuestConfigList[i] != 0) delete m_pQuestConfigList[i];
+		delete m_pQuestConfigList[i];
 	for (i = 0; i < DEF_MAXDYNAMICOBJECTS; i++)
-		if (m_pDynamicObjectList[i] != 0) delete m_pDynamicObjectList[i];
+		delete m_pDynamicObjectList[i];
 	for (i = 0; i < DEF_MAXDELAYEVENTS; i++)
-		if (m_pDelayEventList[i] != 0) delete m_pDelayEventList[i];
+		delete m_pDelayEventList[i];
 	for (i = 0; i < DEF_MAXNOTIFYMSGS; i++)
-		if (m_pNoticeMsgList[i] != 0) delete m_pNoticeMsgList[i];
+		delete m_pNoticeMsgList[i];
 	for (i = 0; i < DEF_MAXFISHS; i++)
-		if (m_pFish[i] != 0) delete m_pFish[i];
+		delete m_pFish[i];
 	for (i = 0; i < DEF_MAXMINERALS; i++)
-		if (m_pMineral[i] != 0) delete m_pMineral[i];
+		delete m_pMineral[i];
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++) {
-		if (m_pPortionConfigList[i] != 0) delete m_pPortionConfigList[i];
-		if (m_pCraftingConfigList[i] != 0) delete m_pCraftingConfigList[i]; // Crafting
+		delete m_pPortionConfigList[i];
+		delete m_pCraftingConfigList[i]; // Crafting
 	}
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
-		if (m_pBuildItemList[i] != 0) delete m_pBuildItemList[i];
+		delete m_pBuildItemList[i];
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
 		m_iNpcConstructionPoint[i] = 0;
 	for (i = 0; i < DEF_MAXSCHEDULE; i++) {
@@ -1194,7 +1194,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
 			DeleteClient(iClientH, true, true);
-			if (pBuffer != 0) delete pBuffer;
+			delete pBuffer;
 			return;
 	}
 	dwp = (uint32_t *) (pBuffer + DEF_INDEX4_MSGID);
@@ -1226,7 +1226,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 			wsprintf(G_cTxt, "RequestInitDataHandler error: Client(%s) Item(%d)", m_pClientList[iClientH]->m_cCharName, i);
 			PutLogFileList(G_cTxt);
 			DeleteClient(iClientH, false, true);
-			if (pBuffer != 0) delete pBuffer;
+			delete pBuffer;
 			return;
 		}
 		memcpy(cp, m_pClientList[iClientH]->m_pItemList[i]->m_cName, 20);
@@ -1280,7 +1280,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 			wsprintf(G_cTxt, "RequestInitDataHandler error: Client(%s) Bank-Item(%d)", m_pClientList[iClientH]->m_cCharName, i);
 			PutLogFileList(G_cTxt);
 			DeleteClient(iClientH, false, true);
-			if (pBuffer != 0) delete pBuffer;
+			delete pBuffer;
 			return;
 		}
 		memcpy(cp, m_pClientList[iClientH]->m_pItemInBankList[i]->m_cName, 20);
@@ -1336,7 +1336,7 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
 			DeleteClient(iClientH, true, true);
-			if (pBuffer != 0) delete pBuffer;
+			delete pBuffer;
 			return;
 	}
 	dwp = (uint32_t *) (pBuffer + DEF_INDEX4_MSGID);
@@ -1425,10 +1425,10 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
 			DeleteClient(iClientH, true, true);
-			if (pBuffer != 0) delete pBuffer;
+			delete pBuffer;
 			return;
 	}
-	if (pBuffer != 0) delete pBuffer;
+	delete pBuffer;
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
 	if ((memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) &&
 			  (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0)
@@ -16244,10 +16244,10 @@ RTH_NEXTSTEP:
 		case DEF_XSOCKEVENT_CRITICALERROR:
 		case DEF_XSOCKEVENT_SOCKETCLOSED:
 			DeleteClient(iClientH, true, true);
-			if (pBuffer != 0) delete pBuffer;
+			delete pBuffer;
 			return;
 	}
-	if (pBuffer != 0) delete pBuffer;
+	delete pBuffer;
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
 	if ((memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) &&
 			  (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, "elvine", 6) == 0) &&
@@ -18725,44 +18725,44 @@ void CGame::Quit() {
 	int i;
 	G_bIsThread = false;
 	Sleep(300);
-	if (m_pMainLogSock != 0) delete m_pMainLogSock;
+	delete m_pMainLogSock;
 	for (i = 0; i < DEF_MAXSUBLOGSOCK; i++)
-		if (m_pSubLogSock[i] != 0) delete m_pSubLogSock[i];
+		delete m_pSubLogSock[i];
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
-		if (m_pClientList[i] != 0) delete m_pClientList[i];
+		delete m_pClientList[i];
 	for (i = 0; i < DEF_MAXNPCS; i++)
-		if (m_pNpcList[i] != 0) delete m_pNpcList[i];
+		delete m_pNpcList[i];
 	for (i = 0; i < DEF_MAXMAPS; i++)
-		if (m_pMapList[i] != 0) delete m_pMapList[i];
+		delete m_pMapList[i];
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
-		if (m_pItemConfigList[i] != 0) delete m_pItemConfigList[i];
+		delete m_pItemConfigList[i];
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
-		if (m_pNpcConfigList[i] != 0) delete m_pNpcConfigList[i];
+		delete m_pNpcConfigList[i];
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
-		if (m_pMagicConfigList[i] != 0) delete m_pMagicConfigList[i];
+		delete m_pMagicConfigList[i];
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++)
-		if (m_pSkillConfigList[i] != 0) delete m_pSkillConfigList[i];
+		delete m_pSkillConfigList[i];
 	for (i = 0; i < DEF_MAXQUESTTYPE; i++)
-		if (m_pQuestConfigList[i] != 0) delete m_pQuestConfigList[i];
+		delete m_pQuestConfigList[i];
 	for (i = 0; i < DEF_MAXDYNAMICOBJECTS; i++)
-		if (m_pDynamicObjectList[i] != 0) delete m_pDynamicObjectList[i];
+		delete m_pDynamicObjectList[i];
 	for (i = 0; i < DEF_MAXDELAYEVENTS; i++)
-		if (m_pDelayEventList[i] != 0) delete m_pDelayEventList[i];
+		delete m_pDelayEventList[i];
 	for (i = 0; i < DEF_MAXNOTIFYMSGS; i++)
-		if (m_pNoticeMsgList[i] != 0) delete m_pNoticeMsgList[i];
+		delete m_pNoticeMsgList[i];
 	for (i = 0; i < DEF_MAXFISHS; i++)
-		if (m_pFish[i] != 0) delete m_pFish[i];
+		delete m_pFish[i];
 	for (i = 0; i < DEF_MAXMINERALS; i++)
-		if (m_pMineral[i] != 0) delete m_pMineral[i];
+		delete m_pMineral[i];
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++) {
-		if (m_pPortionConfigList[i] != 0) delete m_pPortionConfigList[i];
-		if (m_pCraftingConfigList[i] != 0) delete m_pCraftingConfigList[i]; // Crafting
+		delete m_pPortionConfigList[i];
+		delete m_pCraftingConfigList[i]; // Crafting
 	}
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
-		if (m_pBuildItemList[i] != 0) delete m_pBuildItemList[i];
+		delete m_pBuildItemList[i];
 	for (i = 0; i < DEF_MAXDUPITEMID; i++)
-		if (m_pDupItemIDList[i] != 0) delete m_pDupItemIDList[i];
-	if (m_pNoticementData != 0) delete m_pNoticementData;
+		delete m_pDupItemIDList[i];
+	delete m_pNoticementData;
 }
 
 int CGame::iGetLevelExp(int iLevel) {
@@ -25566,7 +25566,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 		default:
 			break;
 	}
-	if (m_pGold != 0) delete m_pGold;
+	delete m_pGold;
 }
 
 void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char * /*pString*/) {
@@ -29764,7 +29764,7 @@ void CGame::CheckFireBluring(char cMapIndex, int sX, int sY) {
 			ItemId iItemNum = m_pMapList[cMapIndex]->iCheckItem(ix, iy);
 			if (iItemNum == ItemId::coal) {
 				pItem = m_pMapList[cMapIndex]->pGetItem(ix, iy, &sSpr, &sSprFrame, &cItemColor);
-				if (pItem != 0) delete pItem;
+				delete pItem;
 				iAddDynamicObjectList(0, 0, DEF_DYNAMICOBJECT_FIRE, cMapIndex, ix, iy, 6000);
 				SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_SETITEM, cMapIndex,
 						  ix, iy, sSpr, sSprFrame, cItemColor);

@@ -11,5 +11,5 @@ CMsg::CMsg(char cType, const char * pMsg, uint32_t dwTime) {
 }
 
 CMsg::~CMsg() {
-	if (m_pMsg != 0) delete m_pMsg;
+	delete m_pMsg;
 }

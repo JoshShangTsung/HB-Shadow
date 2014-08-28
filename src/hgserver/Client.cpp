@@ -22,7 +22,7 @@ CClient::CClient(HWND hWnd) {
 }
 
 CClient::~CClient() {
-	if (m_pXSock != 0) delete m_pXSock;
+	delete m_pXSock;
 	for (int i = 0; i < DEF_MAXITEMS; i++) {
 		if (m_pItemList[i] != 0) {
 			delete m_pItemList[i];

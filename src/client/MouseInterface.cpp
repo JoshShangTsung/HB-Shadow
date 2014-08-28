@@ -9,7 +9,7 @@ CMouseInterface::CMouseInterface() {
 
 CMouseInterface::~CMouseInterface() {
 	for (int i = 1; i < DEF_MAXRECTS; i++)
-		if (m_pRect[i] != 0) delete m_pRect[i];
+		delete m_pRect[i];
 }
 
 void CMouseInterface::AddRect(long sx, long sy, long dx, long dy) {

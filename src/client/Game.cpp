@@ -744,83 +744,83 @@ void CGame::Quit() {
 	ChangeGameMode(DEF_GAMEMODE_NULL);
 
 	for (i = 0; i < DEF_MAXSPRITES; i++)
-		if (m_pSprite[i] != 0) delete m_pSprite[i];
+		delete m_pSprite[i];
 	for (i = 0; i < DEF_MAXTILES; i++)
-		if (m_pTileSpr[i] != 0) delete m_pTileSpr[i];
+		delete m_pTileSpr[i];
 	for (i = 0; i < DEF_MAXEFFECTSPR; i++)
-		if (m_pEffectSpr[i] != 0) delete m_pEffectSpr[i];
+		delete m_pEffectSpr[i];
 
 	for (i = 0; i < DEF_MAXSOUNDEFFECTS; i++) {
-		if (m_pCSound[i] != 0) delete m_pCSound[i];
-		if (m_pMSound[i] != 0) delete m_pMSound[i];
-		if (m_pESound[i] != 0) delete m_pESound[i];
+		delete m_pCSound[i];
+		delete m_pMSound[i];
+		delete m_pESound[i];
 	}
 
-	if (m_pBGM != 0) delete m_pBGM;
+	delete m_pBGM;
 
 	for (i = 0; i < 4; i++)
-		if (m_pCharList[i] != 0) delete m_pCharList[i];
+		delete m_pCharList[i];
 
 	for (i = 0; i < DEF_MAXITEMS; i++)
-		if (m_pItemList[i] != 0) delete m_pItemList[i];
+		delete m_pItemList[i];
 
 	for (i = 0; i < DEF_MAXBANKITEMS; i++)
-		if (m_pBankList[i] != 0) delete m_pBankList[i];
+		delete m_pBankList[i];
 
 	for (i = 0; i < DEF_MAXEFFECTS; i++)
-		if (m_pEffectList[i] != 0) delete m_pEffectList[i];
+		delete m_pEffectList[i];
 
 	for (i = 0; i < DEF_MAXCHATMSGS; i++)
-		if (m_pChatMsgList[i] != 0) delete m_pChatMsgList[i];
+		delete m_pChatMsgList[i];
 
 	for (i = 0; i < DEF_MAXCHATSCROLLMSGS; i++)
-		if (m_pChatScrollList[i] != 0) delete m_pChatScrollList[i];
+		delete m_pChatScrollList[i];
 
 	for (i = 0; i < DEF_MAXWHISPERMSG; i++)
-		if (m_pWhisperMsg[i] != 0) delete m_pWhisperMsg[i];
+		delete m_pWhisperMsg[i];
 
 	for (i = 0; i < DEF_MAXMENUITEMS; i++)
-		if (m_pItemForSaleList[i] != 0) delete m_pItemForSaleList[i];
+		delete m_pItemForSaleList[i];
 
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
-		if (m_pMagicCfgList[i] != 0) delete m_pMagicCfgList[i];
+		delete m_pMagicCfgList[i];
 
 	for (i = 0; i < DEF_MAXSKILLTYPE; i++)
-		if (m_pSkillCfgList[i] != 0) delete m_pSkillCfgList[i];
+		delete m_pSkillCfgList[i];
 
 	for (i = 0; i < DEF_TEXTDLGMAXLINES; i++) {
-		if (m_pMsgTextList[i] != 0) delete m_pMsgTextList[i];
-		if (m_pMsgTextList2[i] != 0) delete m_pMsgTextList2[i];
-		if (m_pAgreeMsgTextList[i] != 0) delete m_pAgreeMsgTextList[i];
+		delete m_pMsgTextList[i];
+		delete m_pMsgTextList2[i];
+		delete m_pAgreeMsgTextList[i];
 	}
 
-	if (m_pExID != 0) delete m_pExID;
+	delete m_pExID;
 
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
-		if (m_pBuildItemList[i] != 0) delete m_pBuildItemList[i];
+		delete m_pBuildItemList[i];
 
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
-		if (m_pDispBuildItemList[i] != 0) delete m_pDispBuildItemList[i];
+		delete m_pDispBuildItemList[i];
 
 	// Crafting:
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
-		if (m_pCraftItemList[i] != 0) delete m_pCraftItemList[i];
+		delete m_pCraftItemList[i];
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
-		if (m_pDispCraftItemList[i] != 0) delete m_pDispCraftItemList[i];
+		delete m_pDispCraftItemList[i];
 
 
 	for (i = 0; i < DEF_MAXGAMEMSGS; i++)
-		if (m_pGameMsgList[i] != 0) delete m_pGameMsgList[i];
+		delete m_pGameMsgList[i];
 
 	for (i = 0; i < DEF_MAXITEMNAMES; i++)
-		if (m_pItemNameList[i] != 0) delete m_pItemNameList[i];
+		delete m_pItemNameList[i];
 
 	delete m_pMapData;
 
-	if (m_pGSock != 0) delete m_pGSock;
-	if (m_pLSock != 0) delete m_pLSock;
-	if (G_pCalcSocket != 0) delete G_pCalcSocket;
-	if (m_pCGameMonitor != 0) delete m_pCGameMonitor;
+	delete m_pGSock;
+	delete m_pLSock;
+	delete G_pCalcSocket;
+	delete m_pCGameMonitor;
 }
 
 void CGame::UpdateScreen() {
@@ -4301,22 +4301,22 @@ void CGame::InitGameSettings() {
 		m_cDialogBoxOrder[i] = 0;
 
 	for (i = 0; i < DEF_MAXEFFECTS; i++) {
-		if (m_pEffectList[i] != 0) delete m_pEffectList[i];
+		delete m_pEffectList[i];
 		m_pEffectList[i] = 0;
 	}
 
 	for (i = 0; i < DEF_MAXCHATMSGS; i++) {
-		if (m_pChatMsgList[i] != 0) delete m_pChatMsgList[i];
+		delete m_pChatMsgList[i];
 		m_pChatMsgList[i] = 0;
 	}
 
 	for (i = 0; i < DEF_MAXCHATSCROLLMSGS; i++) {
-		if (m_pChatScrollList[i] != 0) delete m_pChatScrollList[i];
+		delete m_pChatScrollList[i];
 		m_pChatScrollList[i] = 0;
 	}
 
 	for (i = 0; i < DEF_MAXWHISPERMSG; i++) {
-		if (m_pWhisperMsg[i] != 0) delete m_pWhisperMsg[i];
+		delete m_pWhisperMsg[i];
 		m_pWhisperMsg[i] = 0;
 	}
 
@@ -4340,7 +4340,7 @@ void CGame::InitGameSettings() {
 	}
 
 	for (i = 0; i < DEF_MAXMENUITEMS; i++) {
-		if (m_pItemForSaleList[i] != 0) delete m_pItemForSaleList[i];
+		delete m_pItemForSaleList[i];
 		m_pItemForSaleList[i] = 0;
 	}
 
@@ -14125,7 +14125,7 @@ void CGame::LogResponseHandler(char * pData) {
 			cp++;
 
 			for (i = 0; i < 4; i++)
-				if (m_pCharList[i] != 0) delete m_pCharList[i];
+				delete m_pCharList[i];
 			//
 			for (i = 0; i < m_iTotalChar; i++) {
 				m_pCharList[i] = new class CCharInfo;
@@ -30393,18 +30393,18 @@ bool CGame::bCheckLocalChatCommand(const char * pMsg) {
 				strcpy(cName, token);
 				if (memcmp(m_cPlayerName, cName, 10) == 0) {
 					AddEventList(BCHECK_LOCAL_CHAT_COMMAND2, 10);
-					if (pStrTok != 0) delete pStrTok;
+					delete pStrTok;
 					return true;
 				}
-				if (m_pExID != 0) delete m_pExID;
+				delete m_pExID;
 				wsprintf(cTxt, BCHECK_LOCAL_CHAT_COMMAND3, token);
 				AddEventList(cTxt, 10);
 				m_pExID = new class CMsg(0, token, 0);
-				if (pStrTok != 0) delete pStrTok;
+				delete pStrTok;
 				return true;
 			} else AddEventList(BCHECK_LOCAL_CHAT_COMMAND5, 10);
 		}
-		if (pStrTok != 0) delete pStrTok;
+		delete pStrTok;
 		return true;
 	} else if (memcmp(cBuff, "/toon", 5) == 0) {
 		pStrTok = new class CStrTok(cBuff, seps);
@@ -30421,16 +30421,16 @@ bool CGame::bCheckLocalChatCommand(const char * pMsg) {
 						AddEventList(cTxt, 10);
 						delete m_pExID;
 						m_pExID = 0;
-						if (pStrTok != 0) delete pStrTok;
+						delete pStrTok;
 						return true;
 					}
 				}
 			} else AddEventList(BCHECK_LOCAL_CHAT_COMMAND5, 10);
 		}
-		if (pStrTok != 0) delete pStrTok;
+		delete pStrTok;
 		return true;
 	}
-	if (pStrTok != 0) delete pStrTok;
+	delete pStrTok;
 	return false;
 }
 
@@ -41450,7 +41450,7 @@ void CGame::InitDataResponseHandler(char * pData) {
 	m_dwRestartCountTime = 0;
 
 	for (i = 0; i < DEF_MAXEFFECTS; i++) {
-		if (m_pEffectList[i] != 0) delete m_pEffectList[i];
+		delete m_pEffectList[i];
 		m_pEffectList[i] = 0;
 	}
 
@@ -41469,7 +41469,7 @@ void CGame::InitDataResponseHandler(char * pData) {
 	}
 
 	for (i = 0; i < DEF_MAXCHATMSGS; i++) {
-		if (m_pChatMsgList[i] != 0) delete m_pChatMsgList[i];
+		delete m_pChatMsgList[i];
 		m_pChatMsgList[i] = 0;
 	}
 

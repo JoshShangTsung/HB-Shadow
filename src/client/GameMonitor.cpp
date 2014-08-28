@@ -12,7 +12,7 @@ CGameMonitor::~CGameMonitor() {
 	int i;
 
 	for (i = 0; i < DEF_MAXBADWORD; i++)
-		if (m_pWordList[i] != 0) delete m_pWordList[i];
+		delete m_pWordList[i];
 }
 
 int CGameMonitor::iReadBadWordFileList(const char *pFn) {
