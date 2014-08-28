@@ -1,4 +1,7 @@
 #include "Misc.h"
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <cstring>
 void CMisc::GetMyCursorPos(short * pX, short * pY) {
 	POINT point;

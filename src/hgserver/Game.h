@@ -37,7 +37,6 @@
 #include "BuildItem.h"
 #include "TeleportLoc.h"
 #include "GlobalDef.h"
-#include "TempNpcItem.h"
 
 #define DEF_MAXADMINS				50
 #define DEF_MAXMAPS					100
@@ -727,7 +726,7 @@ public:
 	CGame(HWND hWnd);
 	virtual ~CGame();
 
-	char m_cServerName[11];
+	char m_cServerName[11]{};
 	char m_cGameServerAddr[16];
 	char m_cGameServerAddrInternal[16];
 	char m_cGameServerAddrExternal[16];
@@ -745,48 +744,47 @@ public:
 	bool _bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t dwSize);
 	bool _bRegisterMap(char * pName);
 
-	class CClient * m_pClientList[DEF_MAXCLIENTS];
-	class CNpc * m_pNpcList[DEF_MAXNPCS];
-	class CMap * m_pMapList[DEF_MAXMAPS];
-	class CNpcItem * m_pTempNpcItem[DEF_MAXNPCITEMS];
-	class CDynamicObject * m_pDynamicObjectList[DEF_MAXDYNAMICOBJECTS];
-	class CDelayEvent * m_pDelayEventList[DEF_MAXDELAYEVENTS];
+	class CClient * m_pClientList[DEF_MAXCLIENTS]{};
+	class CNpc * m_pNpcList[DEF_MAXNPCS]{};
+	class CMap * m_pMapList[DEF_MAXMAPS]{};
+	class CDynamicObject * m_pDynamicObjectList[DEF_MAXDYNAMICOBJECTS]{};
+	class CDelayEvent * m_pDelayEventList[DEF_MAXDELAYEVENTS]{};
 	class CBallSystem * m_pBallItemConfigList[DEF_MAXBALLITEMS];
 
-	class CMsg * m_pMsgQuene[DEF_MSGQUENESIZE];
-	int m_iQueneHead;
-	int m_iQueneTail;
-	int m_iTotalMaps;
-	class XSocket * m_pMainLogSock;
+	class CMsg * m_pMsgQuene[DEF_MSGQUENESIZE]{};
+	int m_iQueneHead = 0;
+	int m_iQueneTail = 0;
+	int m_iTotalMaps = 0;
+	class XSocket * m_pMainLogSock = nullptr;
 	class CMisc m_Misc;
-	bool m_bIsGameStarted;
-	bool m_bIsLogSockAvailable;
-	bool m_bIsItemAvailable;
-	bool m_bIsBuildItemAvailable;
-	bool m_bIsNpcAvailable;
-	bool m_bIsMagicAvailable;
-	bool m_bIsSkillAvailable;
-	bool m_bIsPortionAvailable;
-	bool m_bIsQuestAvailable;
+	bool m_bIsGameStarted = false;
+	bool m_bIsLogSockAvailable = false;
+	bool m_bIsItemAvailable = false;
+	bool m_bIsBuildItemAvailable = false;
+	bool m_bIsNpcAvailable = false;
+	bool m_bIsMagicAvailable = false;
+	bool m_bIsSkillAvailable = false;
+	bool m_bIsPortionAvailable = false;
+	bool m_bIsQuestAvailable = false;
 	bool m_bIsTeleportAvailable;
-	class CItem * m_pItemConfigList[DEF_MAXITEMTYPES];
-	class CNpc * m_pNpcConfigList[DEF_MAXNPCTYPES];
-	class CMagic * m_pMagicConfigList[DEF_MAXMAGICTYPE];
-	class CSkill * m_pSkillConfigList[DEF_MAXSKILLTYPE];
-	class CQuest * m_pQuestConfigList[DEF_MAXQUESTTYPE];
+	class CItem * m_pItemConfigList[DEF_MAXITEMTYPES]{};
+	class CNpc * m_pNpcConfigList[DEF_MAXNPCTYPES]{};
+	class CMagic * m_pMagicConfigList[DEF_MAXMAGICTYPE]{};
+	class CSkill * m_pSkillConfigList[DEF_MAXSKILLTYPE]{};
+	class CQuest * m_pQuestConfigList[DEF_MAXQUESTTYPE]{};
 
-	class CPortion * m_pCraftingConfigList[DEF_MAXPORTIONTYPES];
+	class CPortion * m_pCraftingConfigList[DEF_MAXPORTIONTYPES]{};
 
 	char m_pMsgBuffer[DEF_MSGBUFFERSIZE + 1];
 
-	HWND m_hWnd;
-	int m_iTotalClients;
-	int m_iMaxClients;
+	HWND m_hWnd = 0;
+	int m_iTotalClients = 0;
+	int m_iMaxClients = 0;
 	int m_iTotalBots;
 	int m_iMaxBots;
 	int m_iTotalGameServerBots;
 	int m_iTotalGameServerMaxBots;
-	SYSTEMTIME m_MaxUserSysTime;
+	SYSTEMTIME m_MaxUserSysTime{0,0,0,0,0,0,0,0};
 
 	bool m_bF1pressed;
 	bool m_bF4pressed;
@@ -816,7 +814,7 @@ public:
 	char m_cDayOrNight;
 	int m_iSkillSSNpoint[102];
 
-	class CMsg * m_pNoticeMsgList[DEF_MAXNOTIFYMSGS];
+	class CMsg * m_pNoticeMsgList[DEF_MAXNOTIFYMSGS]{};
 	int m_iTotalNoticeMsg;
 	int m_iPrevSendNoticeMsg;
 	uint32_t m_dwNoticeTime;
@@ -826,22 +824,22 @@ public:
 
 	int m_iLevelExpTable[3500]; //New 22/10/04
 
-	class CFish * m_pFish[DEF_MAXFISHS];
-	class CPortion * m_pPortionConfigList[DEF_MAXPORTIONTYPES];
+	class CFish * m_pFish[DEF_MAXFISHS]{};
+	class CPortion * m_pPortionConfigList[DEF_MAXPORTIONTYPES]{};
 
-	bool m_bIsServerShutdowned;
-	char m_cShutDownCode;
-	class CMineral * m_pMineral[DEF_MAXMINERALS];
+	bool m_bIsServerShutdowned = false;
+	char m_cShutDownCode = 0;
+	class CMineral * m_pMineral[DEF_MAXMINERALS]{};
 
-	int m_iMiddlelandMapIndex; 
+	int m_iMiddlelandMapIndex = -1; 
 	int m_iAresdenMapIndex;
 	int m_iElvineMapIndex;
 	int m_iBTFieldMapIndex;
 	int m_iGodHMapIndex;
-	int m_iAresdenOccupyTiles;
-	int m_iElvineOccupyTiles;
-	int m_iCurMsgs;
-	int m_iMaxMsgs;
+	int m_iAresdenOccupyTiles = 0;
+	int m_iElvineOccupyTiles = 0;
+	int m_iCurMsgs = 0;
+	int m_iMaxMsgs = 0;
 
 	uint32_t m_dwCanFightzoneReserveTime;
 
@@ -849,24 +847,24 @@ public:
 	int m_iFightzoneNoForceRecall;
 
 	struct {
-		__int64 iFunds;
-		__int64 iCrimes;
-		__int64 iWins;
+		__int64 iFunds = 0;
+		__int64 iCrimes = 0;
+		__int64 iWins = 0;
 
-	} m_stCityStatus[3];
+	} m_stCityStatus[3]{};
 
 	int m_iStrategicStatus;
 
-	class XSocket * m_pSubLogSock[DEF_MAXSUBLOGSOCK];
+	class XSocket * m_pSubLogSock[DEF_MAXSUBLOGSOCK]{};
 	int m_iSubLogSockInitIndex;
-	bool m_bIsSubLogSockAvailable[DEF_MAXSUBLOGSOCK];
+	bool m_bIsSubLogSockAvailable[DEF_MAXSUBLOGSOCK]{};
 	int m_iCurSubLogSockIndex;
 	int m_iSubLogSockFailCount;
 	int m_iSubLogSockActiveCount;
-	int m_iAutoRebootingCount;
+	int m_iAutoRebootingCount = 0;
 
-	class CBuildItem * m_pBuildItemList[DEF_MAXBUILDITEMS];
-	class CItem * m_pDupItemIDList[DEF_MAXDUPITEMID];
+	class CBuildItem * m_pBuildItemList[DEF_MAXBUILDITEMS]{};
+	class CItem * m_pDupItemIDList[DEF_MAXDUPITEMID]{};
 
 	char * m_pNoticementData;
 	uint32_t m_dwNoticementDataSize;
@@ -947,12 +945,12 @@ public:
 	uint32_t m_dwCrusadeGUID;
 	short m_sLastCrusadeDate;
 	int m_iCrusadeWinnerSide;
-	int m_iPlayerMaxLevel;
+	int m_iPlayerMaxLevel = DEF_PLAYERMAXLEVEL;
 
 	struct {
-		int iTotalMembers;
-		int iIndex[9];
-	} m_stPartyInfo[DEF_MAXCLIENTS];
+		int iTotalMembers =0;
+		int iIndex[9] {};
+	} m_stPartyInfo[DEF_MAXCLIENTS]{};
 
 	// Daryl - Admin level adjustments
 	int m_iAdminLevelWho;
@@ -1000,7 +998,7 @@ public:
 	int m_iAdminLevelCleanMap;
 
 	// 09/26/2004
-	short m_sSlateSuccessRate;
+	short m_sSlateSuccessRate = 0;
 
 	// 17/05/2004
 	short m_sForceRecallTime;
@@ -1015,18 +1013,18 @@ public:
 	int m_iFinalShutdownCount;
 
 	// New 06/07/2004
-	bool m_bEnemyKillMode;
-	int m_iEnemyKillAdjust;
-	bool m_bAdminSecurity;
+	bool m_bEnemyKillMode = false;
+	int m_iEnemyKillAdjust = 1;
+	bool m_bAdminSecurity = true;
 
 	// Configurable Raid Time 
-	short m_sRaidTimeMonday;
-	short m_sRaidTimeTuesday;
-	short m_sRaidTimeWednesday;
-	short m_sRaidTimeThursday;
-	short m_sRaidTimeFriday;
-	short m_sRaidTimeSaturday;
-	short m_sRaidTimeSunday;
+	short m_sRaidTimeMonday = 0;
+	short m_sRaidTimeTuesday = 0;
+	short m_sRaidTimeWednesday = 0;
+	short m_sRaidTimeThursday = 0;
+	short m_sRaidTimeFriday = 0;
+	short m_sRaidTimeSaturday = 0;
+	short m_sRaidTimeSunday = 0;
 
 	bool m_bManualTime;
 	int m_iSummonGuildCost;
@@ -1037,7 +1035,7 @@ public:
 	//char	m_cHeldenianType;
 
 	// Slate exploit
-	int m_sCharPointLimit;
+	int m_sCharPointLimit = 0;
 
 	// Limit Checks
 	short m_sCharStatLimit;
@@ -1061,7 +1059,7 @@ public:
 	uint32_t m_dwHeldenianStartMinute;
 	int m_dwHeldenianStartTime;
 	int m_dwHeldenianFinishTime;
-	bool m_bReceivedItemList;
+	bool m_bReceivedItemList = false;
 	bool m_bHeldenianInitiated;
 	bool m_bHeldenianRunning;
 	// HBX 3.00 Heldenian Source

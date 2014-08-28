@@ -11,18 +11,18 @@
 
 class CDelayEvent {
 public:
-	int m_iDelayType;
-	int m_iEffectType;
+	int m_iDelayType = 0;
+	int m_iEffectType = 0;
 
-	char m_cMapIndex;
-	int m_dX;
-	int m_dY;
+	char m_cMapIndex = 0;
+	int m_dX = 0;
+	int m_dY = 0;
 
-	int m_iTargetH;
-	char m_cTargetType;
-	int m_iV1;
-	int m_iV2;
-	int m_iV3;
+	int m_iTargetH = 0;
+	char m_cTargetType = 0;
+	int m_iV1 = 0;
+	int m_iV2 = 0;
+	int m_iV3 = 0;
 
-	uint32_t m_dwTriggerTime;
+	uint32_t m_dwTriggerTime = 0;
 };

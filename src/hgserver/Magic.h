@@ -40,28 +40,26 @@
 
 class CMagic {
 public:
-	CMagic();
+	char m_cName[31]{};
 
-	char m_cName[31];
+	short m_sType = 0;
+	uint32_t m_dwDelayTime = 0;
+	uint32_t m_dwLastTime = 0;
+	short m_sValue1 = 0;
+	short m_sValue2 = 0;
+	short m_sValue3 = 0;
+	short m_sValue4 = 0;
+	short m_sValue5 = 0;
+	short m_sValue6 = 0;
+	short m_sValue7 = 0;
+	short m_sValue8 = 0;
+	short m_sValue9 = 0;
+	short m_sValue10 = 0;
+	short m_sValue11 = 0;
+	short m_sValue12 = 0;
+	short m_sIntLimit = 0;
+	int m_iGoldCost = 0;
 
-	short m_sType;
-	uint32_t m_dwDelayTime;
-	uint32_t m_dwLastTime;
-	short m_sValue1;
-	short m_sValue2;
-	short m_sValue3;
-	short m_sValue4;
-	short m_sValue5;
-	short m_sValue6;
-	short m_sValue7;
-	short m_sValue8;
-	short m_sValue9;
-	short m_sValue10;
-	short m_sValue11;
-	short m_sValue12;
-	short m_sIntLimit;
-	int m_iGoldCost;
-
-	char m_cCategory;
-	int m_iAttribute;
+	char m_cCategory = 0;
+	int m_iAttribute = 0;
 };

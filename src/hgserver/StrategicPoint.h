@@ -1,11 +1,9 @@
 #pragma once
-#include <windows.h>
 
 class CStrategicPoint {
 public:
-	CStrategicPoint();
-	int m_iSide;
-	int m_iValue;
-	int m_iX;
-	int m_iY;
+	int m_iSide = 0;
+	int m_iValue = 0;
+	int m_iX = 0;
+	int m_iY = 0;
 };

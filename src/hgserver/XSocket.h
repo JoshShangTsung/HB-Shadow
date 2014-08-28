@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <memory.h>
 #include <malloc.h>
-#include "DebugDialog.h"
 #include <iostream>
 #include <string>
 
@@ -54,8 +53,8 @@ public:
 	XSocket(HWND hWnd, int iBlockLimit);
 	virtual ~XSocket();
 
-	int m_WSAErr;
-	bool m_bIsAvailable;
+	int m_WSAErr = 0;
+	bool m_bIsAvailable = false;
 
 private:
 	void _CloseConn();
@@ -66,27 +65,27 @@ private:
 	int _iSend_ForInternalUse(char * cData, int iSize);
 	int _iOnRead();
 
-	char m_cType;
-	char * m_pRcvBuffer;
-	char * m_pSndBuffer;
-	uint32_t m_dwBufferSize;
+	char m_cType = 0;
+	char * m_pRcvBuffer = nullptr;
+	char * m_pSndBuffer = nullptr;
+	uint32_t m_dwBufferSize = 0;
 
-	SOCKET m_Sock;
-	char m_cStatus;
-	uint32_t m_dwReadSize;
-	uint32_t m_dwTotalReadSize;
-	char m_pAddr[30];
-	int m_iPortNum;
+	SOCKET m_Sock = INVALID_SOCKET;
+	char m_cStatus = DEF_XSOCKSTATUS_READINGHEADER;
+	uint32_t m_dwReadSize = 3;
+	uint32_t m_dwTotalReadSize = 0;
+	char m_pAddr[30]{};
+	int m_iPortNum = 0;
 
-	char * m_pUnsentDataList[DEF_XSOCKBLOCKLIMIT];
-	int m_iUnsentDataSize[DEF_XSOCKBLOCKLIMIT];
-	short m_sHead;
-	short m_sTail;
+	char * m_pUnsentDataList[DEF_XSOCKBLOCKLIMIT]{};
+	int m_iUnsentDataSize[DEF_XSOCKBLOCKLIMIT]{};
+	short m_sHead = 0;
+	short m_sTail = 0;
 
-	unsigned int m_uiMsg;
-	HWND m_hWnd;
+	unsigned int m_uiMsg = 0;
+	HWND m_hWnd = 0;
 
-	int m_iBlockLimit;
+	int m_iBlockLimit = 0;
 };
 
 

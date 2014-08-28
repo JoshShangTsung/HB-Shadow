@@ -5,17 +5,17 @@
 class CFish {
 public:
 	CFish(char cMapIndex, short sX, short sY, short sType, class CItem * pItem, int iDifficulty);
-	virtual ~CFish();
+	~CFish();
 
-	char m_cMapIndex;
-	short m_sX;
-	short m_sY; 
+	char m_cMapIndex =0;
+	short m_sX = 0;
+	short m_sY = 0; 
 
-	short m_sType; 
-	class CItem * m_pItem; 
+	short m_sType = 0; 
+	class CItem * m_pItem = nullptr; 
 
-	short m_sDynamicObjectHandle;
+	short m_sDynamicObjectHandle = 0;
 
-	short m_sEngagingCount; 
-	int m_iDifficulty; 
+	short m_sEngagingCount = 0; 
+	int m_iDifficulty = 0; 
 };

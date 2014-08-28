@@ -715,28 +715,26 @@ enum class ItemId {
 
 class CItem {
 public:
-	CItem();
+	char m_cName[21]{};
 
-	char m_cName[21];
-
-	ItemId m_sIDnum;
+	ItemId m_sIDnum = ItemId::none;
 	char m_cItemType;
 	char m_cEquipPos;
 	short m_sItemEffectType;
-	short m_sItemEffectValue1;
-	short m_sItemEffectValue2;
-	short m_sItemEffectValue3;
-	short m_sItemEffectValue4;
-	short m_sItemEffectValue5;
-	short m_sItemEffectValue6;
+	short m_sItemEffectValue1 = 0;
+	short m_sItemEffectValue2 = 0;
+	short m_sItemEffectValue3 = 0;
+	short m_sItemEffectValue4 = 0;
+	short m_sItemEffectValue5 = 0;
+	short m_sItemEffectValue6 = 0;
 	uint16_t m_wMaxLifeSpan;
 	short m_sSpecialEffect;
 
-	short m_sSpecialEffectValue1;
-	short m_sSpecialEffectValue2;
+	short m_sSpecialEffectValue1 = 0;
+	short m_sSpecialEffectValue2 = 0;
 
-	short m_sSprite;
-	short m_sSpriteFrame;
+	short m_sSprite = 0;
+	short m_sSpriteFrame = 0;
 
 	char m_cApprValue;
 	char m_cSpeed;
@@ -748,20 +746,20 @@ public:
 
 	short m_sRelatedSkill;
 
-	char m_cCategory;
-	bool m_bIsForSale;
+	char m_cCategory = 0;
+	bool m_bIsForSale = false;
 
-	uint32_t m_dwCount;
-	short m_sTouchEffectType;
-	short m_sTouchEffectValue1;
-	short m_sTouchEffectValue2;
-	short m_sTouchEffectValue3;
-	char m_cItemColor;
-	short m_sItemSpecEffectValue1;
-	short m_sItemSpecEffectValue2;
-	short m_sItemSpecEffectValue3;
-	uint16_t m_wCurLifeSpan;
-	uint32_t m_dwAttribute;
+	uint32_t m_dwCount = 1;
+	short m_sTouchEffectType = 0;
+	short m_sTouchEffectValue1 = 0;
+	short m_sTouchEffectValue2 = 0;
+	short m_sTouchEffectValue3 = 0;
+	char m_cItemColor = 0;
+	short m_sItemSpecEffectValue1 = 0;
+	short m_sItemSpecEffectValue2 = 0;
+	short m_sItemSpecEffectValue3 = 0;
+	uint16_t m_wCurLifeSpan = 0;
+	uint32_t m_dwAttribute = 0;
 	void RequestBallItem(int iClientH, char *pData, uint32_t dwMsgSize);
 	bool bReadBallSystemConfigFile(char * cFn);
 };

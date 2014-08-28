@@ -1,9 +1,6 @@
 #include "Msg.h"
 #include <cstring>
-CMsg::CMsg() {
-	m_pData = 0;
-	m_dwSize = 0;
-}
+
 
 CMsg::~CMsg() {
 	if (m_pData != 0) delete m_pData;

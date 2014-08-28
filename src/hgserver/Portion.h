@@ -3,16 +3,15 @@
 
 class CPortion {
 public:
-	CPortion();
-	char m_cName[21];
+	char m_cName[21]{};
 	struct E {
-		ItemId id_;
-		short num_;
+		ItemId id_ = ItemId::none;
+		short num_ = -1;
 	};
-	E m_sArray[6];
+	E m_sArray[6]{};
 
-	int m_iSkillLimit;
-	int m_iDifficulty;
+	int m_iSkillLimit = 0;
+	int m_iDifficulty = 0;
 
 };
 

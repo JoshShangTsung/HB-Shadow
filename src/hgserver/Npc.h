@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include "Magic.h"
+#include <cstring>
 
 #define DEF_MAXWAYPOINTS			10
 
@@ -21,107 +22,113 @@
 
 class CNpc {
 public:
-	CNpc(const char * pName5);
 
-	char m_pMagicConfigList[100];
+	CNpc(const char * pName5) {
+		std::memcpy(m_cName, pName5, 5);
 
-	char m_cNpcName[21];
+		for (int i = 0; i < DEF_MAXWAYPOINTS; i++)
+			m_iWayPointIndex[i] = -1;
+	}
+
+	char m_pMagicConfigList[100]{};
+
+	char m_cNpcName[21]{};
 
 	char m_sAreaSize = 0;
 
-	char m_cName[6];
-	char m_cMapIndex;
-	short m_sX;
-	short m_sY;
-	short m_dX;
-	short m_dY;
-	short m_vX;
-	short m_vY;
-	int m_tmp_iError;
-	RECT m_rcRandomArea; // MOVETYPE_RANDOMAREA
+	char m_cName[6]{};
+	char m_cMapIndex = 0;
+	short m_sX = 0;
+	short m_sY = 0;
+	short m_dX = 0;
+	short m_dY = 0;
+	short m_vX = 0;
+	short m_vY = 0;
+	int m_tmp_iError = 0;
+	RECT m_rcRandomArea{0, 0, 0, 0}; // MOVETYPE_RANDOMAREA
 
-	char m_cDir;
-	char m_cAction;
-	char m_cTurn;
+	char m_cDir = 0;
+	char m_cAction = 0;
+	char m_cTurn = 0;
 
-	short m_sType;
-	short m_sOriginalType;
-	short m_sAppr2;
-	int m_iStatus;
+	short m_sType = 0;
+	short m_sOriginalType = 0;
+	short m_sAppr2 = 0;
+	int m_iStatus = 0;
 
-	uint32_t m_dwTime;
-	uint32_t m_dwActionTime;
-	uint32_t m_dwHPupTime;
-	uint32_t m_dwMPupTime;
-	uint32_t m_dwDeadTime;
-	uint32_t m_dwRegenTime;
+	uint32_t m_dwTime = 0;
+	uint32_t m_dwActionTime = 0;
+	uint32_t m_dwHPupTime = 0;
+	uint32_t m_dwMPupTime = 0;
+	uint32_t m_dwDeadTime = 0;
+	uint32_t m_dwRegenTime = 0;
 
-	int m_iHP; // Hit Point 
-	int m_iExp; // ExpDice
+	int m_iHP = 0; // Hit Point 
+	int m_iExp = 0; // ExpDice
 
-	int m_iHitDice;
-	int m_iDefenseRatio; // Defense Ratio
-	int m_iHitRatio; // HitRatio
-	int m_iMagicHitRatio; // Ratio
-	int m_iMinBravery;
-	int m_iExpDiceMin;
-	int m_iExpDiceMax;
-	int m_iGoldDiceMin;
-	int m_iGoldDiceMax;
+	int m_iHitDice = 0;
+	int m_iDefenseRatio = 0; // Defense Ratio
+	int m_iHitRatio = 0; // HitRatio
+	int m_iMagicHitRatio = 0; // Ratio
+	int m_iMinBravery = 0;
+	int m_iExpDiceMin = 0;
+	int m_iExpDiceMax = 0;
+	int m_iGoldDiceMin = 0;
+	int m_iGoldDiceMax = 0;
 
-	char m_cSide;
-	char m_cActionLimit;
+	char m_cSide = 0;
+	char m_cActionLimit = 0;
 
-	char m_cSize; // 0: Small-Medium 1: Large
-	char m_cAttackDiceThrow;
-	char m_cAttackDiceRange;
-	char m_cAttackBonus;
-	char m_cBravery;
-	char m_cResistMagic;
-	char m_cMagicLevel;
-	char m_cDayOfWeekLimit;
-	char m_cChatMsgPresence;
-	int m_iMana; // MagicLevel*30
-	int m_iMaxMana;
+	char m_cSize = 0; // 0: Small-Medium 1: Large
+	char m_cAttackDiceThrow = 0;
+	char m_cAttackDiceRange = 0;
+	char m_cAttackBonus = 0;
+	char m_cBravery = 0;
+	char m_cResistMagic = 0;
+	char m_cMagicLevel = 0;
+	char m_cDayOfWeekLimit = 0;
+	char m_cChatMsgPresence = 0;
+	int m_iMana = 0; // MagicLevel*30
+	int m_iMaxMana = 0;
 
-	char m_cMoveType;
-	char m_cBehavior;
-	short m_sBehaviorTurnCount;
-	char m_cTargetSearchRange;
+	char m_cMoveType = 0;
+	char m_cBehavior = 0;
+	short m_sBehaviorTurnCount = 0;
+	char m_cTargetSearchRange = 0;
 
-	int m_iFollowOwnerIndex;
-	char m_cFollowOwnerType;
-	bool m_bIsSummoned;
-	uint32_t m_dwSummonedTime;
+	int m_iFollowOwnerIndex = 0;
+	char m_cFollowOwnerType = 0;
+	bool m_bIsSummoned = false;
+	uint32_t m_dwSummonedTime = 0;
 
-	int m_iTargetIndex;
-	char m_cTargetType;
-	char m_cCurWaypoint;
-	char m_cTotalWaypoint;
+	int m_iTargetIndex = 0;
+	char m_cTargetType = 0;
+	char m_cCurWaypoint = 0;
+	char m_cTotalWaypoint = 0;
 
-	int m_iSpotMobIndex; // spot-mob-generator
-	int m_iWayPointIndex[DEF_MAXWAYPOINTS + 1];
-	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS];
+	int m_iSpotMobIndex = 0; // spot-mob-generator
+	int m_iWayPointIndex[DEF_MAXWAYPOINTS + 1]{};
+	char m_cMagicEffectStatus[DEF_MAXMAGICEFFECTS]{};
 
-	bool m_bIsPermAttackMode; 
-	int m_iNoDieRemainExp;
-	int m_iAttackStrategy;
-	int m_iAILevel;
+	bool m_bIsPermAttackMode = false;
+	int m_iNoDieRemainExp = 0;
+	int m_iAttackStrategy = 0;
+	int m_iAILevel = 0;
 
-	int m_iAttackRange;
-	int m_iAttackCount;
-	bool m_bIsKilled;
-	bool m_bIsUnsummoned;
+	int m_iAttackRange = 1;
+	int m_iAttackCount = 0;
+	bool m_bIsKilled = false;
+	bool m_bIsUnsummoned = false;
 
-	int m_iLastDamage;
-	int m_iSummonControlMode; // 0?? Free, 1 Hold 2 Tgt 
-	char m_cAttribute;
-	int m_iAbsDamage;
+	int m_iLastDamage = 0;
+	int m_iSummonControlMode = 0; // 0?? Free, 1 Hold 2 Tgt 
+	char m_cAttribute = 0;
+	int m_iAbsDamage = 0;
 
-	int m_iItemRatio;
-	int m_iAssignedItem;
+	int m_iItemRatio = 0;
+	int m_iAssignedItem = 0;
 
-	char m_cSpecialAbility;
+	char m_cSpecialAbility = 0;
 
 	/*
 	case 0: break;
@@ -135,17 +142,17 @@ public:
 	case 8:  "Hi-Explosive" 
 	 */
 
-	int m_iBuildCount; 
-	int m_iManaStock; 
-	bool m_bIsMaster;
-	int m_iGuildGUID;
+	int m_iBuildCount = 0;
+	int m_iManaStock = 0;
+	bool m_bIsMaster = false;
+	int m_iGuildGUID = 0;
 
-	char m_cCropType;
-	char m_cCropSkill;
+	char m_cCropType = 0;
+	char m_cCropSkill = 0;
 
-	int m_iV1;
-	char m_cArea;
+	int m_iV1 = 0;
+	char m_cArea = 0;
 
-	int m_iNpcItemType;
-	int m_iNpcItemMax;
+	int m_iNpcItemType = 0;
+	int m_iNpcItemMax = 0;
 };

@@ -1,6 +1,5 @@
 #include "Game.h"
 #include <cstring>
-CDebugWindow *DbgWnd;
 extern void PutLogList(const char * cMsg);
 extern char G_cTxt[512];
 extern char G_cData50000[50000];
@@ -115,19 +114,7 @@ extern void ThreadProc(void *ch);
 CGame::CGame(HWND hWnd) {
 	int i;
 	int x;
-	m_bIsGameStarted = false;
 	m_hWnd = hWnd;
-	m_pMainLogSock = 0;
-	m_bIsLogSockAvailable = false;
-	m_bIsItemAvailable = false;
-	m_bIsBuildItemAvailable = false;
-	m_bIsNpcAvailable = false;
-	m_bIsMagicAvailable = false;
-	m_bIsSkillAvailable = false;
-	m_bIsQuestAvailable = false;
-	m_bIsPortionAvailable = false;
-	std::memset(m_cServerName, 0, sizeof(m_cServerName));
-	m_iPlayerMaxLevel = DEF_PLAYERMAXLEVEL;
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
 		m_pClientList[i] = 0;
 	for (i = 0; i < DEF_MAXMAPS; i++)
@@ -206,16 +193,10 @@ CGame::CGame(HWND hWnd) {
 	m_sRaidTimeSunday = 0;
 	m_sCharPointLimit = 0;
 	m_sSlateSuccessRate = 0;
-	//Show Debug Window
-	//DbgWnd = new CDebugWindow();
-	//DbgWnd->Startup();
-	//DbgWnd->AddEventMsg("CGame Startup");
 	m_bReceivedItemList = false;
 }
 
 CGame::~CGame() {
-	//DbgWnd->Shutdown();
-	//delete DbgWnd;
 }
 
 bool CGame::bAccept(XSocket * pXSock) {

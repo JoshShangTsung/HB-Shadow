@@ -3,49 +3,23 @@
 #include "winmain.h"
 
 XSocket::XSocket(HWND hWnd, int iBlockLimit) {
-	register int i;
-
-	m_cType = 0;
-	m_pRcvBuffer = 0;
-	m_pSndBuffer = 0;
-	m_Sock = INVALID_SOCKET;
-	m_dwBufferSize = 0;
-
-	m_cStatus = DEF_XSOCKSTATUS_READINGHEADER;
-	m_dwReadSize = 3;
-	m_dwTotalReadSize = 0;
-
-	for (i = 0; i < DEF_XSOCKBLOCKLIMIT; i++) {
-		m_iUnsentDataSize[i] = 0;
-		m_pUnsentDataList[i] = 0;
-	}
-
-	m_sHead = 0;
-	m_sTail = 0;
-
-	m_WSAErr = 0;
-
 	m_hWnd = hWnd;
-	m_bIsAvailable = false;
-
 	m_iBlockLimit = iBlockLimit;
 }
 
 XSocket::~XSocket() {
-	register int i;
+	delete m_pRcvBuffer;
+	delete m_pSndBuffer;
 
-	if (m_pRcvBuffer != 0) delete m_pRcvBuffer;
-	if (m_pSndBuffer != 0) delete m_pSndBuffer;
-
-	for (i = 0; i < DEF_XSOCKBLOCKLIMIT; i++)
-		if (m_pUnsentDataList[i] != 0) delete m_pUnsentDataList[i];
+	for (int i = 0; i < DEF_XSOCKBLOCKLIMIT; i++)
+		delete m_pUnsentDataList[i];
 
 	_CloseConn();
 }
 
 bool XSocket::bInitBufferSize(uint32_t dwBufferSize) {
-	if (m_pRcvBuffer != 0) delete m_pRcvBuffer;
-	if (m_pSndBuffer != 0) delete m_pSndBuffer;
+	delete m_pRcvBuffer;
+	delete m_pSndBuffer;
 
 	m_pRcvBuffer = new char[dwBufferSize + 8];
 	if (m_pRcvBuffer == 0) return false;

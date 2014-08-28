@@ -45,7 +45,8 @@
 
 class CMap {
 public:
-
+	CMap(class CGame * pGame);
+	virtual ~CMap();
 	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);
 	bool bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner);
 	bool bGetIsFarm(short tX, short tY);
@@ -82,14 +83,13 @@ public:
 	bool bAddCropsTotalSum();
 	void SetBigOwner(short sOwner, char cOwnerClass, short sX, short sY, char cArea);
 
-	CMap(class CGame * pGame);
-	virtual ~CMap();
-
 	class CTile * m_pTile=0;
 	class CGame * m_pGame=0;
 	char m_cName[11]{};
 	char m_cLocationName[11]{};
-	short m_sSizeX=0, m_sSizeY=0, m_sTileDataSize=0;
+	short m_sSizeX=0;
+	short m_sSizeY=0;
+	short m_sTileDataSize=0;
 	class CTeleportLoc * m_pTeleportLoc[DEF_MAXTELEPORTLOC]{};
 
 	//short m_sInitialPointX, m_sInitialPointY;
@@ -106,7 +106,7 @@ public:
 
 	bool m_bIsFixedDayMode=false;
 
-	struct {
+	struct SpotMobGenerator {
 		bool bDefined=false;
 		char cType=0; // 1:RANDOMAREA   2:RANDOMWAYPOINT
 
@@ -118,7 +118,8 @@ public:
 		int iMaxMobs=0;
 		int iCurMobs=0;
 
-	} m_stSpotMobGenerator[DEF_MAXSPOTMOBGENERATOR]{};
+	};
+	SpotMobGenerator m_stSpotMobGenerator[DEF_MAXSPOTMOBGENERATOR]{};
 
 	POINT m_WaypointList[DEF_MAXWAYPOINTCFG]{};
 	RECT m_rcMobGenAvoidRect[DEF_MAXMGAR]{};
@@ -157,39 +158,48 @@ public:
 
 	bool m_bIsFightZone=false;
 
-	struct {
+	struct EnergySphereCreation {
 		char cType=0;
-		int sX=0, sY=0;
+		int sX=0;
+		int sY=0;
 
-	} m_stEnergySphereCreationList[DEF_MAXENERGYSPHERES];
+	};
+	EnergySphereCreation m_stEnergySphereCreationList[DEF_MAXENERGYSPHERES];
 
 	int m_iTotalEnergySphereCreationPoint=0;
 
-	struct {
+	struct EnergySphereGoal {
 		char cResult=0;
-		int aresdenX=0, aresdenY=0, elvineX=0, elvineY=0;
-	} m_stEnergySphereGoalList[DEF_MAXENERGYSPHERES];
+		int aresdenX=0;
+		int aresdenY=0;
+		int elvineX=0;
+		int elvineY=0;
+	};
+	EnergySphereGoal m_stEnergySphereGoalList[DEF_MAXENERGYSPHERES];
 
 	int m_iTotalEnergySphereGoalPoint=0;
 
 	bool m_bIsEnergySphereGoalEnabled=0;
 	int m_iCurEnergySphereGoalPointIndex=0;
 
-	struct {
+	struct DynamicGateCoords {
 		bool m_bIsGateMap=0;
 		char m_cDynamicGateMap[11]{};
 		int m_iDynamicGateX=0;
 		int m_iDynamicGateY=0;
-	} m_stDynamicGateCoords[DEF_MAXDYNAMICGATES];
+	};
+	DynamicGateCoords m_stDynamicGateCoords[DEF_MAXDYNAMICGATES];
 
-	struct {
+	struct SectorInfo {
 		int iPlayerActivity=0;
 		int iNeutralActivity=0;
 		int iAresdenActivity=0;
 		int iElvineActivity=0;
 		int iMonsterActivity=0;
 
-	} m_stSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS], m_stTempSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS];
+	};
+	SectorInfo m_stSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS];
+	SectorInfo m_stTempSectorInfo[DEF_MAXSECTORS][DEF_MAXSECTORS];
 	short sMobEventAmount=0;
 	int m_iTotalItemEvents=0;
 
@@ -218,10 +228,12 @@ public:
 	int m_iMaxNx = 0, m_iMaxNy = 0, m_iMaxAx= 0, m_iMaxAy=0, m_iMaxEx=0, m_iMaxEy=0, m_iMaxMx=0, m_iMaxMy=0, m_iMaxPx=0, m_iMaxPy=0;
 
 	struct {
-		char cRelatedMapName[11] = "";
+		char cRelatedMapName[11]{};
 		int iMapIndex = 0;
-		int dX = 0, dY = 0;
-		int iHP = 0, iInitHP = 0;
+		int dX = 0;
+		int dY = 0;
+		int iHP = 0;
+		int iInitHP = 0;
 
 		int iEffectX[5] = {};
 		int iEffectY[5] = {};
@@ -235,7 +247,8 @@ public:
 	struct {
 		char cType = 0;
 		char cSide = 0;
-		short sX = 0, sY = 0;
+		short sX = 0;
+		short sY = 0;
 	} m_stCrusadeStructureInfo[DEF_MAXCRUSADESTRUCTURES];
 	int m_iTotalCrusadeStructures = 0;
 	bool m_bIsEnergySphereAutoCreation = false;

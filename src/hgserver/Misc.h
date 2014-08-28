@@ -1,9 +1,5 @@
 #pragma once
 
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 class CMisc {
 public:
 	void Temp();
