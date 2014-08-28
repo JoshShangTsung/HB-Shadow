@@ -742,6 +742,23 @@ enum class ItemId {
 	sotg_manual = 3043,
 };
 
+enum class ItemSpecialEffect {
+	none = 0,
+	// Offensive
+	xelima = 1, // hits for target hp/2 at least
+	ice_elemental = 2, // Freeze on hit
+	medusa = 3, // Hold object on hit
+	oneshot = 4, // hits for target hp
+	blood = 5, // leeches
+	demonslaying = 7, // +3D2 against demons
+	// Defensive
+	merien_plate = 50, // Breaks attacker weapon
+	_51 = 51, // 0 damage taken on equip pos
+	merien_shield = 52, // 0 damage taken. no down durability on hammered
+	gm_shield = 53,
+	_54 = 54
+};
+
 class CItem {
 public:
 	char m_cName[21]{};
