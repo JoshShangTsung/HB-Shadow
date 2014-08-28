@@ -38,23 +38,43 @@ enum class ItemType {
 	material = 12
 };
 
+enum class ItemEffectType {
+	none = 0,
+	attack = 1,
+	defense = 2,
+	attack_arrow = 3,
+	hp = 4,
+	mp = 5,
+	sp = 6,
+	hpstock = 7,
+	get = 8,
+	studyskill = 9,
+	showlocation = 10,
+	magic = 11,
+	changeattr = 12,
+	attack_manasave = 13,
+	addeffect = 14,
+	magicdamagesave = 15,
+	occupyflag = 16,
+	dye = 17,
+	studymagic = 18,
+	attack_maxhpdown = 19,
+	attack_defense = 20,
+	material_attr = 21,
+	firmstaminar = 22,
+	lottery = 23,
+	attack_specablty = 24,
+	defense_specablty = 25,
+	alteritemdrop = 26,
+	constructionkit = 27,
+	warm = 28,
+	farming = 30,
+	slates = 31,
+	armordye = 32,
+	addballpoints = 33,
+	repplus = 34,
+};
 /*
-#define DEF_ITEMTYPE_NOTUSED	-1
-#define DEF_ITEMTYPE_NONE		 0
-#define DEF_ITEMTYPE_EQUIP		 1
-#define DEF_ITEMTYPE_APPLY		 2
-#define DEF_ITEMTYPE_USE_DEPLETE 3       
-#define DEF_ITEMTYPE_INSTALL	 4
-#define DEF_ITEMTYPE_CONSUME	 5
-#define DEF_ITEMTYPE_ARROW		 6
-#define DEF_ITEMTYPE_EAT		 7
-#define DEF_ITEMTYPE_USE_SKILL   8
-#define DEF_ITEMTYPE_USE_PERM    9
-#define DEF_ITEMTYPE_USE_SKILL_ENABLEDIALOGBOX	10
-#define DEF_ITEMTYPE_USE_DEPLETE_DEST			11
-#define DEF_ITEMTYPE_MATERIAL					12
-*/
-
 #define DEF_ITEMEFFECTTYPE_NONE				0
 #define DEF_ITEMEFFECTTYPE_ATTACK			1		
 #define DEF_ITEMEFFECTTYPE_DEFENSE			2		
@@ -89,6 +109,8 @@ enum class ItemType {
 #define DEF_ITEMEFFECTTYPE_ARMORDYE			32
 #define DEF_ITEMEFFECTTYPE_ADDBALLPOINTS 33
 #define DEF_ITEMEFFECTTYPE_REPPLUS 34
+*/
+
 #define DEF_ITET_UNIQUE_OWNER				1		
 #define DEF_ITET_ID							2		
 #define DEF_ITET_DATE						3		
@@ -741,7 +763,7 @@ public:
 	ItemId m_sIDnum = ItemId::none;
 	ItemType m_cItemType;
 	ItemEquipPos m_cEquipPos;
-	short m_sItemEffectType;
+	ItemEffectType m_sItemEffectType;
 	short m_sItemEffectValue1 = 0;
 	short m_sItemEffectValue2 = 0;
 	short m_sItemEffectValue3 = 0;
