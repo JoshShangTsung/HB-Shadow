@@ -5,9 +5,6 @@ CClient::CClient(HWND hWnd) {
 	m_pXSock = new class XSocket(hWnd, DEF_CLIENTSOCKETBLOCKLIMIT);
 	m_pXSock->bInitBufferSize(DEF_MSGBUFFERSIZE);
 
-	for (int i = 0; i < DEF_MAXITEMEQUIPPOS; i++)
-		m_sItemEquipmentStatus[i] = -1;
-
 	for (int i = 0; i < DEF_MAXITEMS; i++) {
 		m_ItemPosList[i].x = 40;
 		m_ItemPosList[i].y = 30;

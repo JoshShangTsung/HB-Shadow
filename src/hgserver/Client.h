@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <array>
 #include "XSocket.h"
 #include "Item.h"
 #include "GuildsMan.h"
@@ -109,7 +110,23 @@ public:
 	int m_iDefenseRatio = 0;
 	int m_iHitRatio = 0;
 
-	int m_iDamageAbsorption_Armor[DEF_MAXITEMEQUIPPOS]{};
+	struct DamageAbsortionArmor {
+
+		DamageAbsortionArmor() {
+			clear();
+		}
+
+		int &operator[](ItemEquipPos e) {
+			return status_[(std::size_t) e];
+		}
+
+		void clear() {
+			std::fill(status_.begin(), status_.end(), 0);
+		}
+	private:
+		std::array<int, DEF_MAXITEMEQUIPPOS> status_;
+	};
+	DamageAbsortionArmor m_iDamageAbsorption_Armor;
 	int m_iDamageAbsorption_Shield = 0;
 
 	int m_iLevel = 0;
@@ -148,7 +165,24 @@ public:
 	class CItem * m_pItemInBankList[DEF_MAXBANKITEMS]{};
 
 	bool m_bIsItemEquipped[DEF_MAXITEMS]{};
-	short m_sItemEquipmentStatus[DEF_MAXITEMEQUIPPOS]{};
+
+	struct ItemEquipmentStatus {
+
+		ItemEquipmentStatus() {
+			clear();
+		}
+
+		short &operator[](ItemEquipPos e) {
+			return status_[(std::size_t) e];
+		}
+
+		void clear() {
+			std::fill(status_.begin(), status_.end(), -1);
+		}
+	private:
+		std::array<short, DEF_MAXITEMEQUIPPOS> status_;
+	};
+	ItemEquipmentStatus m_sItemEquipmentStatus;
 	char m_cArrowIndex = -1;
 
 	char m_cMagicMastery[DEF_MAXMAGICTYPE]{};
@@ -311,7 +345,7 @@ public:
 
 	int m_iSpecialAbilityType = 0;
 
-	int m_iSpecialAbilityEquipPos = 0;
+	ItemEquipPos m_iSpecialAbilityEquipPos = ItemEquipPos::none;
 	bool m_bIsAdminCommandEnabled = false;
 	int m_iAlterItemDropIndex = -1;
 
@@ -359,7 +393,7 @@ public:
 	int m_iPartyID = 0;
 	int m_iPartyStatus = 0;
 	int m_iReqJoinPartyClientH = 0;
-	char m_cReqJoinPartyName[12] {};
+	char m_cReqJoinPartyName[12]{};
 
 	int m_iPartyRank = 0;
 	int m_iPartyMemberCount = 0;
@@ -367,7 +401,7 @@ public:
 
 	struct {
 		int iIndex = 0;
-		char cName[11] {};
+		char cName[11]{};
 	} m_stPartyMemberName[DEF_MAXPARTYMEMBERS]{};
 
 

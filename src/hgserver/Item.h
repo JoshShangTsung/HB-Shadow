@@ -3,20 +3,23 @@
 
 
 #define DEF_MAXITEMEQUIPPOS		15
-#define DEF_EQUIPPOS_NONE		0	
-#define DEF_EQUIPPOS_HEAD		1	//66Ah	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_HEAD]
-#define DEF_EQUIPPOS_BODY		2	//66Ch	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_BODY]
-#define DEF_EQUIPPOS_ARMS		3	//66Eh	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_ARMS]
-#define DEF_EQUIPPOS_PANTS		4	//670h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_PANTS]
-#define DEF_EQUIPPOS_LEGGINGS	5	//672h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LEGGINGS]
-#define DEF_EQUIPPOS_NECK		6   //674h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_NECK]
-#define DEF_EQUIPPOS_LHAND		7	//676h  m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_LHAND]
-#define DEF_EQUIPPOS_RHAND		8	//678h	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_RHAND]
-#define DEF_EQUIPPOS_TWOHAND	9	//67Ah	m_pClientList[]->m_sItemEquipmentStatus[DEF_EQUIPPOS_TWOHAND]
-#define DEF_EQUIPPOS_RFINGER	10	//67Ch
-#define DEF_EQUIPPOS_LFINGER	11	//67Eh
-#define DEF_EQUIPPOS_BACK		12  //680h
-#define DEF_EQUIPPOS_RELEASEALL	13	//682h
+
+enum class ItemEquipPos {
+	none = 0,
+	head = 1,
+	body = 2,
+	arms = 3,
+	pants = 4,
+	leggings = 5,
+	neck = 6,
+	lhand = 7,
+	rhand = 8,
+	twohand = 9,
+	rfinger = 10,
+	lfinger = 11,
+	back = 12,
+	fullbody = 13
+};
 
 #define DEF_ITEMTYPE_NOTUSED	-1
 #define DEF_ITEMTYPE_NONE		 0
@@ -719,7 +722,7 @@ public:
 
 	ItemId m_sIDnum = ItemId::none;
 	char m_cItemType;
-	char m_cEquipPos;
+	ItemEquipPos m_cEquipPos;
 	short m_sItemEffectType;
 	short m_sItemEffectValue1 = 0;
 	short m_sItemEffectValue2 = 0;
