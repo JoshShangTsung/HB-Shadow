@@ -6654,14 +6654,14 @@ NEXT_STEP_SNFM1:
 NEXT_STEP_SNFM2:
 	;
 	if ((iIndex == -1) || (iFollowIndex == -1)) return false;
-	m_pNpcList[iIndex]->m_cMoveType = DEF_MOVETYPE_FOLLOW;
+	m_pNpcList[iIndex]->m_cMoveType = NpcMoveType::follow;
 	m_pNpcList[iIndex]->m_cFollowOwnerType = cFollowOwnerType;
 	m_pNpcList[iIndex]->m_iFollowOwnerIndex = iFollowIndex;
 	m_pNpcList[iIndex]->m_cSide = cFollowSide;
 	return true;
 }
 
-int CGame::bCreateNewNpc(const char * pNpcName, char * pName, const char * pMapName, short sClass, char cSA, char cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
+int CGame::bCreateNewNpc(const char * pNpcName, char * pName, const char * pMapName, short sClass, char cSA, NpcMoveType cMoveType, int * poX, int * poY, char * pWaypointList, RECT * pArea, int iSpotMobIndex, char cChangeSide, bool bHideGenMode, bool bIsSummoned, bool bFirmBerserk, bool bIsMaster, int iGuildGUID) {
 	int i;
 	int t;
 	int j;
@@ -6703,8 +6703,8 @@ int CGame::bCreateNewNpc(const char * pNpcName, char * pName, const char * pMapN
 				}
 			}
 			switch (cMoveType) {
-				case DEF_MOVETYPE_GUARD:
-				case DEF_MOVETYPE_RANDOM:
+				case NpcMoveType::guard:
+				case NpcMoveType::random:
 					if ((poX != 0) && (poY != 0) && (*poX != 0) && (*poY != 0)) {
 						sX = *poX;
 						sY = *poY;
@@ -6731,13 +6731,13 @@ GET_VALIDLOC_SUCCESS:
 						;
 					}
 					break;
-				case DEF_MOVETYPE_RANDOMAREA:
+				case NpcMoveType::randomarea:
 					sRange = (short) (pArea->right - pArea->left);
 					sX = (short) ((rand() % sRange) + pArea->left);
 					sRange = (short) (pArea->bottom - pArea->top);
 					sY = (short) ((rand() % sRange) + pArea->top);
 					break;
-				case DEF_MOVETYPE_RANDOMWAYPOINT:
+				case NpcMoveType::randomwaypoint:
 					sX = (short) m_pMapList[iMapIndex]->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].x;
 					sY = (short) m_pMapList[iMapIndex]->m_WaypointList[pWaypointList[iDice(1, 10) - 1]].y;
 					break;
@@ -6779,31 +6779,33 @@ GET_VALIDLOC_SUCCESS:
 				SetRect(&m_pNpcList[i]->m_rcRandomArea, pArea->left, pArea->top, pArea->right, pArea->bottom);
 			}
 			switch (cMoveType) {
-				case DEF_MOVETYPE_GUARD:
+				case NpcMoveType::guard:
 					m_pNpcList[i]->m_dX = m_pNpcList[i]->m_sX;
 					m_pNpcList[i]->m_dY = m_pNpcList[i]->m_sY;
 					break;
-				case DEF_MOVETYPE_SEQWAYPOINT:
+				case NpcMoveType::seqwaypoint:
 					m_pNpcList[i]->m_cCurWaypoint = 1;
 					m_pNpcList[i]->m_dX = (short) m_pMapList[iMapIndex]->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].x;
 					m_pNpcList[i]->m_dY = (short) m_pMapList[iMapIndex]->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].y;
 					break;
-				case DEF_MOVETYPE_RANDOMWAYPOINT:
+				case NpcMoveType::randomwaypoint:
 					m_pNpcList[i]->m_cCurWaypoint = (rand() % (m_pNpcList[i]->m_cTotalWaypoint - 1)) + 1;
 					m_pNpcList[i]->m_dX = (short) m_pMapList[iMapIndex]->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].x;
 					m_pNpcList[i]->m_dY = (short) m_pMapList[iMapIndex]->m_WaypointList[ m_pNpcList[i]->m_iWayPointIndex[ m_pNpcList[i]->m_cCurWaypoint ] ].y;
 					break;
-				case DEF_MOVETYPE_RANDOMAREA:
+				case NpcMoveType::randomarea:
 					m_pNpcList[i]->m_cCurWaypoint = 0;
 					sRange = (short) (m_pNpcList[i]->m_rcRandomArea.right - m_pNpcList[i]->m_rcRandomArea.left);
 					m_pNpcList[i]->m_dX = (short) ((rand() % sRange) + m_pNpcList[i]->m_rcRandomArea.left);
 					sRange = (short) (m_pNpcList[i]->m_rcRandomArea.bottom - m_pNpcList[i]->m_rcRandomArea.top);
 					m_pNpcList[i]->m_dY = (short) ((rand() % sRange) + m_pNpcList[i]->m_rcRandomArea.top);
 					break;
-				case DEF_MOVETYPE_RANDOM:
+				case NpcMoveType::random:
 					m_pNpcList[i]->m_dX = (short) ((rand() % (m_pMapList[iMapIndex]->m_sSizeX - 50)) + 15);
 					m_pNpcList[i]->m_dY = (short) ((rand() % (m_pMapList[iMapIndex]->m_sSizeY - 50)) + 15);
 					break;
+				case NpcMoveType::stop: break;
+				case NpcMoveType::follow: break;
 			}
 			m_pNpcList[i]->m_tmp_iError = 0;
 			m_pNpcList[i]->m_cMoveType = cMoveType;
@@ -6811,7 +6813,7 @@ GET_VALIDLOC_SUCCESS:
 				case 2:
 				case 3:
 				case 5:
-					m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_STOP;
+					m_pNpcList[i]->m_cBehavior = NpcBehavior::stop;
 					switch (m_pNpcList[i]->m_sType) {
 						case NpcType::shop_keeper_w: // ShopKeeper-W
 						case NpcType::gandlf: // Gandlf
@@ -6827,7 +6829,7 @@ GET_VALIDLOC_SUCCESS:
 					}
 					break;
 				default:
-					m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+					m_pNpcList[i]->m_cBehavior = NpcBehavior::move;
 					m_pNpcList[i]->m_cDir = 5;
 					break;
 			}
@@ -6924,7 +6926,7 @@ void CGame::NpcProcess() {
 	dwTime = timeGetTime();
 	for (i = 1; i < DEF_MAXNPCS; i++) {
 		if (m_pNpcList[i] != 0) {
-			if (m_pNpcList[i]->m_cBehavior == DEF_BEHAVIOR_ATTACK) {
+			if (m_pNpcList[i]->m_cBehavior == NpcBehavior::attack) {
 				switch (iDice(1, 7)) {
 					case 1: dwActionTime = m_pNpcList[i]->m_dwActionTime;
 						break;
@@ -6967,19 +6969,19 @@ void CGame::NpcProcess() {
 				}
 			}
 			switch (m_pNpcList[i]->m_cBehavior) {
-				case DEF_BEHAVIOR_DEAD:
+				case NpcBehavior::dead:
 					NpcBehavior_Dead(i);
 					break;
-				case DEF_BEHAVIOR_STOP:
+				case NpcBehavior::stop:
 					NpcBehavior_Stop(i);
 					break;
-				case DEF_BEHAVIOR_MOVE:
+				case NpcBehavior::move:
 					NpcBehavior_Move(i);
 					break;
-				case DEF_BEHAVIOR_ATTACK:
+				case NpcBehavior::attack:
 					NpcBehavior_Attack(i);
 					break;
-				case DEF_BEHAVIOR_FLEE:
+				case NpcBehavior::flee:
 					NpcBehavior_Flee(i);
 					break;
 			}
@@ -8052,7 +8054,7 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 		case 2:
 		case 3:
 		case 5:
-			m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_STOP;
+			m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::stop;
 			m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 			return;
 	}
@@ -8078,14 +8080,14 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 	if (sTarget != 0) {
 		if (m_pNpcList[iNpcH]->m_dwActionTime < 1000) {
 			if (iDice(1, 3) == 3) {
-				m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+				m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::attack;
 				m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 				m_pNpcList[iNpcH]->m_iTargetIndex = sTarget;
 				m_pNpcList[iNpcH]->m_cTargetType = cTargetType;
 				return;
 			}
 		} else {
-			m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+			m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::attack;
 			m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 			m_pNpcList[iNpcH]->m_iTargetIndex = sTarget;
 			m_pNpcList[iNpcH]->m_cTargetType = cTargetType;
@@ -8093,13 +8095,13 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 		}
 	}
 	if ((m_pNpcList[iNpcH]->m_bIsMaster == true) && (iDice(1, 3) == 2)) return;
-	if (m_pNpcList[iNpcH]->m_cMoveType == DEF_MOVETYPE_FOLLOW) {
+	if (m_pNpcList[iNpcH]->m_cMoveType == NpcMoveType::follow) {
 		sX = m_pNpcList[iNpcH]->m_sX;
 		sY = m_pNpcList[iNpcH]->m_sY;
 		switch (m_pNpcList[iNpcH]->m_cFollowOwnerType) {
 			case DEF_OWNERTYPE_PLAYER:
 				if (m_pClientList[m_pNpcList[iNpcH]->m_iFollowOwnerIndex] == 0) {
-					m_pNpcList[iNpcH]->m_cMoveType = DEF_MOVETYPE_RANDOM;
+					m_pNpcList[iNpcH]->m_cMoveType = NpcMoveType::random;
 					return;
 				}
 				dX = m_pClientList[m_pNpcList[iNpcH]->m_iFollowOwnerIndex]->m_sX;
@@ -8107,7 +8109,7 @@ void CGame::NpcBehavior_Move(int iNpcH) {
 				break;
 			case DEF_OWNERTYPE_NPC:
 				if (m_pNpcList[m_pNpcList[iNpcH]->m_iFollowOwnerIndex] == 0) {
-					m_pNpcList[iNpcH]->m_cMoveType = DEF_MOVETYPE_RANDOM;
+					m_pNpcList[iNpcH]->m_cMoveType = NpcMoveType::random;
 					m_pNpcList[iNpcH]->m_iFollowOwnerIndex = 0;
 					//bSerchMaster(iNpcH);
 					return;
@@ -8277,7 +8279,7 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 	if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount > 20) {
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 		if ((m_pNpcList[iNpcH]->m_bIsPermAttackMode == false))
-			m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+			m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::move;
 		return;
 	}
 	sX = m_pNpcList[iNpcH]->m_sX;
@@ -8286,7 +8288,7 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 		case DEF_OWNERTYPE_PLAYER:
 			if (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex] == 0) {
 				m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-				m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+				m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::move;
 				return;
 			}
 			dX = m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
@@ -8295,7 +8297,7 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 		case DEF_OWNERTYPE_NPC:
 			if (m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex] == 0) {
 				m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-				m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+				m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::move;
 				return;
 			}
 			dX = m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_sX;
@@ -8306,14 +8308,14 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 			  (m_pNpcList[iNpcH]->m_bIsPermAttackMode == false) &&
 			  (m_pNpcList[iNpcH]->m_cActionLimit != 5)) {
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-		m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_FLEE;
+		m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::flee;
 		return;
 	}
 	if ((m_pNpcList[iNpcH]->m_iHP <= 2) && (iDice(1, m_pNpcList[iNpcH]->m_cBravery) <= 3) &&
 			  (m_pNpcList[iNpcH]->m_bIsPermAttackMode == false) &&
 			  (m_pNpcList[iNpcH]->m_cActionLimit != 5)) {
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-		m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_FLEE;
+		m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::flee;
 		return;
 	}
 	if ((abs(sX - dX) <= 1) && (abs(sY - dY) <= 1)) {
@@ -8351,12 +8353,12 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 			switch (m_pNpcList[iNpcH]->m_iAttackStrategy) {
 				case DEF_ATTACKAI_EXCHANGEATTACK:
 					m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-					m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_FLEE;
+					m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::flee;
 					break;
 				case DEF_ATTACKAI_TWOBYONEATTACK:
 					if (m_pNpcList[iNpcH]->m_iAttackCount >= 2) {
 						m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-						m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_FLEE;
+						m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::flee;
 					}
 					break;
 			}
@@ -8472,7 +8474,7 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 							if (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] == 2) {
 								if ((abs(sX - dX) > m_pNpcList[iNpcH]->m_iAttackRange) || (abs(sY - dY) > m_pNpcList[iNpcH]->m_iAttackRange)) {
 									m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-									m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+									m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::move;
 									return;
 								} else goto NBA_CHASE;
 							}
@@ -8482,7 +8484,7 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 							if (m_pNpcList[m_pNpcList[iNpcH]->m_iTargetIndex]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] == 2) {
 								if ((abs(sX - dX) > m_pNpcList[iNpcH]->m_iAttackRange) || (abs(sY - dY) > m_pNpcList[iNpcH]->m_iAttackRange)) {
 									m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-									m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+									m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::move;
 									return;
 								} else goto NBA_CHASE;
 							}
@@ -8618,12 +8620,12 @@ NBA_BREAK1:
 				switch (m_pNpcList[iNpcH]->m_iAttackStrategy) {
 					case DEF_ATTACKAI_EXCHANGEATTACK:
 						m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-						m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_FLEE;
+						m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::flee;
 						break;
 					case DEF_ATTACKAI_TWOBYONEATTACK:
 						if (m_pNpcList[iNpcH]->m_iAttackCount >= 2) {
 							m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-							m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_FLEE;
+							m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::flee;
 						}
 						break;
 				}
@@ -8669,13 +8671,13 @@ void CGame::RemoveFromTarget(short sTargetH, char cTargetType, int iCode) {
 					case DEF_MAGICTYPE_INVISIBILITY:
 						if (m_pNpcList[i]->m_cSpecialAbility == 1) {
 						} else {
-							m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+							m_pNpcList[i]->m_cBehavior = NpcBehavior::move;
 							m_pNpcList[i]->m_iTargetIndex = 0;
 							m_pNpcList[i]->m_cTargetType = 0;
 						}
 						break;
 					default:
-						m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+						m_pNpcList[i]->m_cBehavior = NpcBehavior::move;
 						m_pNpcList[i]->m_iTargetIndex = 0;
 						m_pNpcList[i]->m_cTargetType = 0;
 						break;
@@ -8711,7 +8713,7 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 	SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTDYING, sDamage, sAttackerWeapon, 0);
 	m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->ClearOwner(10, iNpcH, DEF_OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
 	m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->SetDeadOwner(iNpcH, DEF_OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
-	m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_DEAD;
+	m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::dead;
 	m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 	m_pNpcList[iNpcH]->m_dwDeadTime = timeGetTime();
 	if (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_cType == DEF_MAPTYPE_NOPENALTY_NOREWARD) return;
@@ -8988,7 +8990,7 @@ void CGame::NpcBehavior_Flee(int iNpcH) {
 		case DEF_ATTACKAI_EXCHANGEATTACK:
 		case DEF_ATTACKAI_TWOBYONEATTACK:
 			if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount >= 2) {
-				m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+				m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::attack;
 				m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 				return;
 			}
@@ -8999,7 +9001,7 @@ void CGame::NpcBehavior_Flee(int iNpcH) {
 	}
 	if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount > 10) {
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
-		m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+		m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::move;
 		m_pNpcList[iNpcH]->m_tmp_iError = 0;
 		if (m_pNpcList[iNpcH]->m_iHP <= 3) {
 			m_pNpcList[iNpcH]->m_iHP += iDice(1, m_pNpcList[iNpcH]->m_iHitDice);
@@ -14899,7 +14901,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							case 14: strcpy(cNpcName, "Bar-Elvine");
 								break;
 						}
-						if (bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypoint, 0, 0, m_pClientList[iClientH]->m_cSide, false, true) == false) {
+						if (bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, NpcMoveType::random, &dX, &dY, cNpcWaypoint, 0, 0, m_pClientList[iClientH]->m_cSide, false, true) == false) {
 							m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
 						} else {
 							std::memset(cName_Master, 0, sizeof(cName_Master));
@@ -16431,10 +16433,10 @@ void CGame::ReleaseFollowMode(short sOwnerH, char cOwnerType) {
 	int i;
 	for (i = 0; i < DEF_MAXNPCS; i++)
 		if ((i != sOwnerH) && (m_pNpcList[i] != 0)) {
-			if ((m_pNpcList[i]->m_cMoveType == DEF_MOVETYPE_FOLLOW) &&
+			if ((m_pNpcList[i]->m_cMoveType == NpcMoveType::follow) &&
 					  (m_pNpcList[i]->m_iFollowOwnerIndex == sOwnerH) &&
 					  (m_pNpcList[i]->m_cFollowOwnerType == cOwnerType)) {
-				m_pNpcList[i]->m_cMoveType = DEF_MOVETYPE_RANDOMWAYPOINT;
+				m_pNpcList[i]->m_cMoveType = NpcMoveType::randomwaypoint;
 			}
 		}
 }
@@ -17116,7 +17118,8 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 	HANDLE hFile;
 	uint32_t dwFileSize;
 	FILE * pFile;
-	char cName[6], cNpcName[21], cNpcMoveType, cNpcWaypointIndex[10], cNamePrefix;
+	char cName[6], cNpcName[21], cNpcWaypointIndex[10], cNamePrefix;
+	NpcMoveType cNpcMoveType;
 	short sIPindex;
 	short dX;
 	short dY;
@@ -17269,7 +17272,7 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 								delete pStrTok;
 								return false;
 							}
-							cNpcMoveType = atoi(token);
+							cNpcMoveType = (NpcMoveType) atoi(token);
 							cReadModeB = 3;
 							break;
 						default:
@@ -21247,7 +21250,7 @@ void CGame::MobGenerator() {
 				if (iDice(1, 100) <= iProbSA) {
 					cSA = _cGetSpecialAbility(iKindSA);
 				}
-				if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, bFirmBerserk, true)) == false) {
+				if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i]->m_cName, (rand() % 3), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, bFirmBerserk, true)) == false) {
 					m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
 				} else {
 				}
@@ -21436,7 +21439,7 @@ void CGame::MobGenerator() {
 					if (iDice(1, 100) <= iProbSA) {
 						cSA = _cGetSpecialAbility(iKindSA);
 					}
-					if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[i]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, bFirmBerserk) == false) {
+					if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[i]->m_cName, (rand() % 3), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, bFirmBerserk) == false) {
 						m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
 					} else {
 						bSetNpcFollowMode(cName_Slave, cName_Master, DEF_OWNERTYPE_NPC);
@@ -21729,14 +21732,14 @@ void CGame::MobGenerator() {
 						}
 						switch (m_pMapList[i]->m_stSpotMobGenerator[j].cType) {
 							case 1:
-								if (bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOMAREA, &pX, &pY, cWaypoint, &m_pMapList[i]->m_stSpotMobGenerator[j].rcRect, j, -1, false, false, bFirmBerserk) == false) {
+								if (bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i]->m_cName, (rand() % 3), cSA, NpcMoveType::randomarea, &pX, &pY, cWaypoint, &m_pMapList[i]->m_stSpotMobGenerator[j].rcRect, j, -1, false, false, bFirmBerserk) == false) {
 									m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
 								} else {
 									m_pMapList[i]->m_stSpotMobGenerator[j].iCurMobs++;
 								}
 								break;
 							case 2:
-								if (bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOMWAYPOINT, 0, 0, m_pMapList[i]->m_stSpotMobGenerator[j].cWaypoint, 0, j, -1, false, false, bFirmBerserk) == false) {
+								if (bCreateNewNpc(cNpcName, cName_Master, m_pMapList[i]->m_cName, (rand() % 3), cSA, NpcMoveType::randomwaypoint, 0, 0, m_pMapList[i]->m_stSpotMobGenerator[j].cWaypoint, 0, j, -1, false, false, bFirmBerserk) == false) {
 									m_pMapList[i]->SetNamingValueEmpty(iNamingValue);
 								} else {
 									m_pMapList[i]->m_stSpotMobGenerator[j].iCurMobs++;
@@ -21758,27 +21761,27 @@ void CGame::CalcNextWayPointDestination(int iNpcH) {
 	int iMapIndex;
 	bool bFlag;
 	switch (m_pNpcList[iNpcH]->m_cMoveType) {
-		case DEF_MOVETYPE_GUARD:
+		case NpcMoveType::guard:
 			break;
-		case DEF_MOVETYPE_SEQWAYPOINT:
+		case NpcMoveType::seqwaypoint:
 			m_pNpcList[iNpcH]->m_cCurWaypoint++;
 			if (m_pNpcList[iNpcH]->m_cCurWaypoint >= m_pNpcList[iNpcH]->m_cTotalWaypoint)
 				m_pNpcList[iNpcH]->m_cCurWaypoint = 1;
 			m_pNpcList[iNpcH]->m_dX = (short) (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_WaypointList[ m_pNpcList[iNpcH]->m_iWayPointIndex[ m_pNpcList[iNpcH]->m_cCurWaypoint ] ].x);
 			m_pNpcList[iNpcH]->m_dY = (short) (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_WaypointList[ m_pNpcList[iNpcH]->m_iWayPointIndex[ m_pNpcList[iNpcH]->m_cCurWaypoint ] ].y);
 			break;
-		case DEF_MOVETYPE_RANDOMWAYPOINT:
+		case NpcMoveType::randomwaypoint:
 			m_pNpcList[iNpcH]->m_cCurWaypoint = (short) ((rand() % (m_pNpcList[iNpcH]->m_cTotalWaypoint - 1)) + 1);
 			m_pNpcList[iNpcH]->m_dX = (short) (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_WaypointList[ m_pNpcList[iNpcH]->m_iWayPointIndex[ m_pNpcList[iNpcH]->m_cCurWaypoint ] ].x);
 			m_pNpcList[iNpcH]->m_dY = (short) (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_WaypointList[ m_pNpcList[iNpcH]->m_iWayPointIndex[ m_pNpcList[iNpcH]->m_cCurWaypoint ] ].y);
 			break;
-		case DEF_MOVETYPE_RANDOMAREA:
+		case NpcMoveType::randomarea:
 			sRange = (short) (m_pNpcList[iNpcH]->m_rcRandomArea.right - m_pNpcList[iNpcH]->m_rcRandomArea.left);
 			m_pNpcList[iNpcH]->m_dX = (short) ((rand() % sRange) + m_pNpcList[iNpcH]->m_rcRandomArea.left);
 			sRange = (short) (m_pNpcList[iNpcH]->m_rcRandomArea.bottom - m_pNpcList[iNpcH]->m_rcRandomArea.top);
 			m_pNpcList[iNpcH]->m_dY = (short) ((rand() % sRange) + m_pNpcList[iNpcH]->m_rcRandomArea.top);
 			break;
-		case DEF_MOVETYPE_RANDOM:
+		case NpcMoveType::random:
 			//m_pNpcList[iNpcH]->m_dX = (rand() % (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_sSizeX - 50)) + 15;
 			//m_pNpcList[iNpcH]->m_dY = (rand() % (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_sSizeY - 50)) + 15;
 			iMapIndex = m_pNpcList[iNpcH]->m_cMapIndex;
@@ -21805,6 +21808,8 @@ CNW_GET_VALIDLOC_SUCCESS:
 			m_pNpcList[iNpcH]->m_dX = sX;
 			m_pNpcList[iNpcH]->m_dY = sY;
 			break;
+		case NpcMoveType::stop: break;
+		case NpcMoveType::follow: break;
 	}
 	m_pNpcList[iNpcH]->m_tmp_iError = 0;
 }
@@ -22415,7 +22420,7 @@ void CGame::NpcBehavior_Stop(int iNpcH) {
 			break;
 	}
 	if ((sTarget != 0)) {
-		m_pNpcList[iNpcH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+		m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::attack;
 		m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 		m_pNpcList[iNpcH]->m_iTargetIndex = sTarget;
 		m_pNpcList[iNpcH]->m_cTargetType = cTargetType;
@@ -23206,7 +23211,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 					if ((cAttackerType == DEF_OWNERTYPE_NPC) &&
 							  (m_pNpcList[sAttackerH]->m_sType == m_pNpcList[sTargetH]->m_sType) &&
 							  (m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide)) return;
-					m_pNpcList[sTargetH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+					m_pNpcList[sTargetH]->m_cBehavior = NpcBehavior::attack;
 					m_pNpcList[sTargetH]->m_sBehaviorTurnCount = 0;
 					m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 					m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
@@ -23596,7 +23601,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 					if ((cAttackerType == DEF_OWNERTYPE_NPC) &&
 							  (m_pNpcList[sAttackerH]->m_sType == m_pNpcList[sTargetH]->m_sType) &&
 							  (m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide)) return;
-					m_pNpcList[sTargetH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+					m_pNpcList[sTargetH]->m_cBehavior = NpcBehavior::attack;
 					m_pNpcList[sTargetH]->m_sBehaviorTurnCount = 0;
 					m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 					m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
@@ -23974,7 +23979,7 @@ EDSD_SKIPDAMAGEMOVE:
 					if ((cAttackerType == DEF_OWNERTYPE_NPC) &&
 							  (m_pNpcList[sAttackerH]->m_sType == m_pNpcList[sTargetH]->m_sType) &&
 							  (m_pNpcList[sAttackerH]->m_cSide == m_pNpcList[sTargetH]->m_cSide)) return;
-					m_pNpcList[sTargetH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+					m_pNpcList[sTargetH]->m_cBehavior = NpcBehavior::attack;
 					m_pNpcList[sTargetH]->m_sBehaviorTurnCount = 0;
 					m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 					m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
@@ -24678,7 +24683,7 @@ int CGame::iGetFollowerNumber(short sOwnerH, char cOwnerType) {
 	int iTotal;
 	iTotal = 0;
 	for (i = 1; i < DEF_MAXNPCS; i++)
-		if ((m_pNpcList[i] != 0) && (m_pNpcList[i]->m_cMoveType == DEF_MOVETYPE_FOLLOW)) {
+		if ((m_pNpcList[i] != 0) && (m_pNpcList[i]->m_cMoveType == NpcMoveType::follow)) {
 			if ((m_pNpcList[i]->m_iFollowOwnerIndex == sOwnerH) && (m_pNpcList[i]->m_cFollowOwnerType == cOwnerType))
 				iTotal++;
 		}
@@ -26984,7 +26989,7 @@ bool CGame::bAnalyzeCriminalAction(int iClientH, short dX, short dY, bool bIsChe
 				cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
 				tX = (int) m_pClientList[iClientH]->m_sX;
 				tY = (int) m_pClientList[iClientH]->m_sY;
-				if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, 0, DEF_MOVETYPE_RANDOM,
+				if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, 0, NpcMoveType::random,
 						  &tX, &tY, cNpcWaypoint, 0, 0, -1, false, true) == false) {
 					m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
 				} else {
@@ -27041,7 +27046,7 @@ NEXT_STEP_SNAM1:
 			if (m_pNpcList[iTargetH] == 0) return;
 			break;
 	}
-	m_pNpcList[iIndex]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+	m_pNpcList[iIndex]->m_cBehavior = NpcBehavior::attack;
 	m_pNpcList[iIndex]->m_sBehaviorTurnCount = 0;
 	m_pNpcList[iIndex]->m_iTargetIndex = iTargetH;
 	m_pNpcList[iIndex]->m_cTargetType = cTargetType;
@@ -27401,7 +27406,7 @@ void CGame::AdminOrder_CallGuard(int iClientH, char * pData, uint32_t dwMsgSize)
 					cName[1] = m_pClientList[i]->m_cMapIndex + 65;
 					tX = (int) m_pClientList[i]->m_sX;
 					tY = (int) m_pClientList[i]->m_sY;
-					if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[i]->m_cMapIndex ]->m_cName, 0, 0, DEF_MOVETYPE_RANDOM,
+					if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[i]->m_cMapIndex ]->m_cName, 0, 0, NpcMoveType::random,
 							  &tX, &tY, cNpcWaypoint, 0, 0, -1, false, true) == false) {
 						m_pMapList[ m_pClientList[i]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
 					} else {
@@ -27574,7 +27579,7 @@ void CGame::AdminOrder_SummonDemon(int iClientH) {
 		tX = (int) m_pClientList[iClientH]->m_sX;
 		tY = (int) m_pClientList[iClientH]->m_sY;
 		if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9),
-				  DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
+				  NpcMoveType::random, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
 			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
 		} else {
 			// Admin Log
@@ -27608,7 +27613,7 @@ void CGame::AdminOrder_SummonDeath(int iClientH) {
 		tX = (int) m_pClientList[iClientH]->m_sX;
 		tY = (int) m_pClientList[iClientH]->m_sY;
 		if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9),
-				  DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
+				  NpcMoveType::random, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
 			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
 		} else {
 			// Admin Log
@@ -28548,8 +28553,8 @@ void CGame::NpcRequestAssistance(int iNpcH) {
 			m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 			if ((sOwnerH != 0) && (m_pNpcList[sOwnerH] != 0) && (cOwnerType == DEF_OWNERTYPE_NPC) &&
 					  (iNpcH != sOwnerH) && (m_pNpcList[sOwnerH]->m_cSide == m_pNpcList[iNpcH]->m_cSide) &&
-					  (m_pNpcList[sOwnerH]->m_bIsPermAttackMode == false) && (m_pNpcList[sOwnerH]->m_cBehavior == DEF_BEHAVIOR_MOVE)) {
-				m_pNpcList[sOwnerH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+					  (m_pNpcList[sOwnerH]->m_bIsPermAttackMode == false) && (m_pNpcList[sOwnerH]->m_cBehavior == NpcBehavior::move)) {
+				m_pNpcList[sOwnerH]->m_cBehavior = NpcBehavior::attack;
 				m_pNpcList[sOwnerH]->m_sBehaviorTurnCount = 0;
 				m_pNpcList[sOwnerH]->m_iTargetIndex = m_pNpcList[iNpcH]->m_iTargetIndex;
 				m_pNpcList[sOwnerH]->m_cTargetType = m_pNpcList[iNpcH]->m_cTargetType;
@@ -30051,7 +30056,7 @@ void CGame::SetSummonMobAction(int iClientH, int iMode, uint32_t dwMsgSize, char
 							  (m_pNpcList[i]->m_cFollowOwnerType == DEF_OWNERTYPE_PLAYER)) {
 						m_pNpcList[i]->m_iSummonControlMode = iMode;
 						m_pNpcList[i]->m_bIsPermAttackMode = false;
-						m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_MOVE;
+						m_pNpcList[i]->m_cBehavior = NpcBehavior::move;
 						m_pNpcList[i]->m_sBehaviorTurnCount = 0;
 						m_pNpcList[i]->m_iTargetIndex = 0;
 					}
@@ -30088,7 +30093,7 @@ SSMA_SKIPSEARCH:
 								  (m_pNpcList[i]->m_iFollowOwnerIndex == iClientH) &&
 								  (m_pNpcList[i]->m_cFollowOwnerType == DEF_OWNERTYPE_PLAYER)) {
 							m_pNpcList[i]->m_iSummonControlMode = iMode;
-							m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+							m_pNpcList[i]->m_cBehavior = NpcBehavior::attack;
 							m_pNpcList[i]->m_sBehaviorTurnCount = 0;
 							m_pNpcList[i]->m_iTargetIndex = iTargetIndex;
 							m_pNpcList[i]->m_cTargetType = DEF_OWNERTYPE_PLAYER;
@@ -33024,7 +33029,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, uint32_t dwMsgSize) {
 		wsprintf(cName_Master, "XX%d", iNamingValue);
 		cName_Master[0] = '_';
 		cName_Master[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-		if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false, true)) == false) {
+		if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false, true)) == false) {
 			m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
 		}
 	}
@@ -33035,7 +33040,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, uint32_t dwMsgSize) {
 			wsprintf(cName_Slave, "XX%d", iNamingValue);
 			cName_Slave[0] = '_';
 			cName_Slave[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-			if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false) == false) {
+			if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false) == false) {
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
 			} else {
 				bSetNpcFollowMode(cName_Slave, cName_Master, DEF_OWNERTYPE_NPC);
@@ -34153,7 +34158,7 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 			wsprintf(cName_Internal, "XX%d", iNamingValue);
 			cName_Internal[0] = '_';
 			cName_Internal[1] = m_iMiddlelandMapIndex + 65;
-			if ((bCreateNewNpc("Energy-Sphere", cName_Internal, m_pMapList[m_iMiddlelandMapIndex]->m_cName, (rand() % 5), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false)) == false) {
+			if ((bCreateNewNpc("Energy-Sphere", cName_Internal, m_pMapList[m_iMiddlelandMapIndex]->m_cName, (rand() % 5), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false)) == false) {
 				m_pMapList[m_iMiddlelandMapIndex]->SetNamingValueEmpty(iNamingValue);
 				return;
 			}
@@ -34184,7 +34189,7 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 			wsprintf(cName_Internal, "XX%d", iNamingValue);
 			cName_Internal[0] = '_';
 			cName_Internal[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-			if ((bCreateNewNpc("Energy-Sphere", cName_Internal, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 5), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false)) == false) {
+			if ((bCreateNewNpc("Energy-Sphere", cName_Internal, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 5), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false)) == false) {
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
 				return;
 			}
@@ -34378,7 +34383,7 @@ bool CGame::__bSetConstructionKit(int /*iMapIndex*/, int dX, int dY, int iType, 
 		std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
 		tX = (int) dX;
 		tY = (int) dY;
-		if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9), DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
+		if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9), NpcMoveType::random, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
 			m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
 		} else {
 			wsprintf(G_cTxt, "Structure(%s) construction begin(%d,%d)!", cNpcName, tX, tY);
@@ -34513,7 +34518,7 @@ void CGame::CreateCrusadeStructures() {
 						}
 						tX = (int) m_stCrusadeStructures[i].dX;
 						tY = (int) m_stCrusadeStructures[i].dY;
-						if (bCreateNewNpc(cNpcName, cName, m_pMapList[z]->m_cName, 0, 0, DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWayPoint, 0, 0, -1, false) == false) {
+						if (bCreateNewNpc(cNpcName, cName, m_pMapList[z]->m_cName, 0, 0, NpcMoveType::random, &tX, &tY, cNpcWayPoint, 0, 0, -1, false) == false) {
 							m_pMapList[z]->SetNamingValueEmpty(iNamingValue);
 						} else {
 							wsprintf(G_cTxt, "(!) Creating Crusade Structure(%s) at %s(%d, %d)", cNpcName, m_stCrusadeStructures[i].cMapName, tX, tY);
@@ -34810,9 +34815,9 @@ RSWU_LOOPBREAK:
 				return;
 			}
 			if (cMode == 0) {
-				bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, DEF_MOVETYPE_FOLLOW, &tX, &tY, cNpcWayPoint, 0, 0, -1, false, false, false, false, m_pClientList[iClientH]->m_iGuildGUID);
+				bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, NpcMoveType::follow, &tX, &tY, cNpcWayPoint, 0, 0, -1, false, false, false, false, m_pClientList[iClientH]->m_iGuildGUID);
 				bSetNpcFollowMode(cName, m_pClientList[iClientH]->m_cCharName, DEF_OWNERTYPE_PLAYER);
-			} else bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, DEF_MOVETYPE_GUARD, &tX, &tY, cNpcWayPoint, 0, 0, -1, false, false, false, false, m_pClientList[iClientH]->m_iGuildGUID);
+			} else bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, NpcMoveType::guard, &tX, &tY, cNpcWayPoint, 0, 0, -1, false, false, false, false, m_pClientList[iClientH]->m_iGuildGUID);
 			if (bRet == false) {
 				m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
 			} else {
@@ -40785,7 +40790,7 @@ void CGame::Command_RedBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize*
 			tX = (int) m_pClientList[iClientH]->m_sX;
 			tY = (int) m_pClientList[iClientH]->m_sY;
 			if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9),
-					  DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
+					  NpcMoveType::random, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
 				m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->SetNamingValueEmpty(iNamingValue);
 			} else {
 				wsprintf(G_cTxt, "(%s) Player: (%s) - RedBall used %s [%s(%d, %d)] ", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cNpcName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, tX, tY);
@@ -40965,7 +40970,7 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 				wsprintf(cName_Master, "XX%d", iNamingValue);
 				cName_Master[0] = '_';
 				cName_Master[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-				if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false, true)) == false) {
+				if ((bMaster = bCreateNewNpc(cNpcName, cName_Master, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false, true)) == false) {
 					m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
 				}
 			}
@@ -40977,7 +40982,7 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 					wsprintf(cName_Slave, "XX%d", iNamingValue);
 					cName_Slave[0] = '_';
 					cName_Slave[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-					if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, DEF_MOVETYPE_RANDOM, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false) == false) {
+					if (bCreateNewNpc(cNpcName, cName_Slave, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, (rand() % 3), cSA, NpcMoveType::random, &pX, &pY, cWaypoint, 0, 0, -1, false, false, false) == false) {
 						m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
 					} else {
 						// Slave
@@ -42930,7 +42935,7 @@ bool CGame::bPlantSeedBag(int iMapIndex, int dX, int dY, int iItemEffectValue1, 
 			std::memset(cNpcWaypointIndex, 0, sizeof(cNpcWaypointIndex));
 			tX = dX;
 			tY = dY;
-			bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, DEF_MOVETYPE_RANDOM, &tX, &tY, cNpcWaypointIndex, 0, 0, 0, false, true);
+			bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, NpcMoveType::random, &tX, &tY, cNpcWaypointIndex, 0, 0, 0, false, true);
 			if (bRet == false) {
 				m_pMapList[iMapIndex]->SetNamingValueEmpty(iNamingValue);
 			} else {
@@ -44098,7 +44103,7 @@ CAE_SKIPDAMAGEMOVE:
 				}
 				break;
 			case DEF_OWNERTYPE_NPC:
-				if (m_pNpcList[sTargetH]->m_cBehavior == DEF_BEHAVIOR_DEAD) return 0;
+				if (m_pNpcList[sTargetH]->m_cBehavior == NpcBehavior::dead) return 0;
 				if (m_pNpcList[sTargetH]->m_bIsKilled == true) return 0;
 				if (m_bIsCrusadeMode == true) {
 					if (cAttackerSide == m_pNpcList[sTargetH]->m_cSide) {
@@ -44193,7 +44198,7 @@ CAE_SKIPDAMAGEMOVE:
 					if ((m_pNpcList[sTargetH]->m_bIsSummoned == true) && (m_pNpcList[sTargetH]->m_iSummonControlMode == 1)) goto CAE_SKIPCOUNTERATTACK;
 					if (m_pNpcList[sTargetH]->m_sType == NpcType::cp) goto CAE_SKIPCOUNTERATTACK;
 					if (iDice(1, 3) == 2) {
-						if (m_pNpcList[sTargetH]->m_cBehavior == DEF_BEHAVIOR_ATTACK) {
+						if (m_pNpcList[sTargetH]->m_cBehavior == NpcBehavior::attack) {
 							tX = tY = 0;
 							switch (m_pNpcList[sTargetH]->m_cTargetType) {
 								case DEF_OWNERTYPE_PLAYER:
@@ -44227,13 +44232,13 @@ CAE_SKIPDAMAGEMOVE:
 							}
 							iDst2 = (m_pNpcList[sTargetH]->m_sX - tX)*(m_pNpcList[sTargetH]->m_sX - tX) + (m_pNpcList[sTargetH]->m_sY - tY)*(m_pNpcList[sTargetH]->m_sY - tY);
 							if (iDst2 <= iDst1) {
-								m_pNpcList[sTargetH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+								m_pNpcList[sTargetH]->m_cBehavior = NpcBehavior::attack;
 								m_pNpcList[sTargetH]->m_sBehaviorTurnCount = 0;
 								m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 								m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
 							}
 						} else {
-							m_pNpcList[sTargetH]->m_cBehavior = DEF_BEHAVIOR_ATTACK;
+							m_pNpcList[sTargetH]->m_cBehavior = NpcBehavior::attack;
 							m_pNpcList[sTargetH]->m_sBehaviorTurnCount = 0;
 							m_pNpcList[sTargetH]->m_iTargetIndex = sAttackerH;
 							m_pNpcList[sTargetH]->m_cTargetType = cAttackerType;
@@ -45645,7 +45650,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = 95;
 								cName[1] = i + 65;
-								bRet = bCreateNewNpc(cTmp, cName, m_pMapList[x]->m_cName, (rand() % 3), 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypointIndex, 0, 0, cSide, false, false, false, true, false);
+								bRet = bCreateNewNpc(cTmp, cName, m_pMapList[x]->m_cName, (rand() % 3), 0, NpcMoveType::random, &dX, &dY, cNpcWaypointIndex, 0, 0, cSide, false, false, false, true, false);
 								if (bRet == false) {
 									m_pMapList[x]->SetNamingValueEmpty(iNamingValue);
 								} else {
@@ -45681,7 +45686,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = 95;
 								cName[1] = i + 65;
-								bRet = bCreateNewNpc(cTmp, cName, m_pMapList[x]->m_cName, (rand() % 3), 0, DEF_MOVETYPE_RANDOM, &dX, &dY, cNpcWaypointIndex, 0, 0, cSide, false, false, false, true, false);
+								bRet = bCreateNewNpc(cTmp, cName, m_pMapList[x]->m_cName, (rand() % 3), 0, NpcMoveType::random, &dX, &dY, cNpcWaypointIndex, 0, 0, cSide, false, false, false, true, false);
 								if (bRet == false) {
 									m_pMapList[x]->SetNamingValueEmpty(iNamingValue);
 								} else {
@@ -46020,7 +46025,7 @@ void CGame::RemoveEventNpc(int iNpcH) {
 		m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->ClearBigOwner(iNpcH, DEF_OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY, m_pNpcList[iNpcH]->m_sAreaSize);
 	}
 	m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->SetDeadOwner(iNpcH, DEF_OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
-	m_pNpcList[iNpcH]->m_cBehavior = 4;
+	m_pNpcList[iNpcH]->m_cBehavior = NpcBehavior::dead;
 	m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 	m_pNpcList[iNpcH]->m_dwDeadTime = timeGetTime();
 }

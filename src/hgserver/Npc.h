@@ -6,19 +6,23 @@
 
 #define DEF_MAXWAYPOINTS			10
 
-#define DEF_MOVETYPE_STOP			0	
-#define DEF_MOVETYPE_SEQWAYPOINT	1		
-#define DEF_MOVETYPE_RANDOMWAYPOINT	2		
-#define DEF_MOVETYPE_FOLLOW			3		
-#define DEF_MOVETYPE_RANDOMAREA		4		
-#define DEF_MOVETYPE_RANDOM			5		
-#define DEF_MOVETYPE_GUARD			6		
+enum class NpcMoveType {
+	stop = 0,
+	seqwaypoint = 1,
+	randomwaypoint = 2,
+	follow = 3,
+	randomarea = 4,
+	random = 5,
+	guard = 6
+};
 
-#define DEF_BEHAVIOR_STOP			0
-#define DEF_BEHAVIOR_MOVE			1
-#define DEF_BEHAVIOR_ATTACK			2
-#define DEF_BEHAVIOR_FLEE			3
-#define DEF_BEHAVIOR_DEAD			4
+enum class NpcBehavior {
+	stop = 0,
+	move = 1,
+	attack = 2,
+	flee = 3,
+	dead = 4
+};
 
 enum class NpcType {
 	none = 0,
@@ -183,8 +187,8 @@ public:
 	int m_iMana = 0; // MagicLevel*30
 	int m_iMaxMana = 0;
 
-	char m_cMoveType = 0;
-	char m_cBehavior = 0;
+	NpcMoveType m_cMoveType = NpcMoveType::stop;
+	NpcBehavior m_cBehavior = NpcBehavior::stop;
 	short m_sBehaviorTurnCount = 0;
 	char m_cTargetSearchRange = 0;
 
