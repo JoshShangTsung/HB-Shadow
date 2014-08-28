@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 
-
 #define DEF_MAXITEMEQUIPPOS		15
 
 enum class ItemEquipPos {
@@ -74,42 +73,29 @@ enum class ItemEffectType {
 	addballpoints = 33,
 	repplus = 34,
 };
-/*
-#define DEF_ITEMEFFECTTYPE_NONE				0
-#define DEF_ITEMEFFECTTYPE_ATTACK			1		
-#define DEF_ITEMEFFECTTYPE_DEFENSE			2		
-#define DEF_ITEMEFFECTTYPE_ATTACK_ARROW		3		
-#define DEF_ITEMEFFECTTYPE_HP   		    4		
-#define DEF_ITEMEFFECTTYPE_MP   		    5		
-#define DEF_ITEMEFFECTTYPE_SP   		    6		
-#define DEF_ITEMEFFECTTYPE_HPSTOCK 		    7		
-#define DEF_ITEMEFFECTTYPE_GET			    8		
-#define DEF_ITEMEFFECTTYPE_STUDYSKILL		9		
-#define DEF_ITEMEFFECTTYPE_SHOWLOCATION		10		
-#define DEF_ITEMEFFECTTYPE_MAGIC			11		
-#define DEF_ITEMEFFECTTYPE_CHANGEATTR		12		
-#define DEF_ITEMEFFECTTYPE_ATTACK_MANASAVE	13		
-#define DEF_ITEMEFFECTTYPE_ADDEFFECT	    14		
-#define DEF_ITEMEFFECTTYPE_MAGICDAMAGESAVE	15		
-#define DEF_ITEMEFFECTTYPE_OCCUPYFLAG		16		
-#define DEF_ITEMEFFECTTYPE_DYE				17		
-#define DEF_ITEMEFFECTTYPE_STUDYMAGIC		18		
-#define DEF_ITEMEFFECTTYPE_ATTACK_MAXHPDOWN	19		
-#define DEF_ITEMEFFECTTYPE_ATTACK_DEFENSE	20		
-#define DEF_ITEMEFFECTTYPE_MATERIAL_ATTR	21		
-#define DEF_ITEMEFFECTTYPE_FIRMSTAMINAR		22		
-#define DEF_ITEMEFFECTTYPE_LOTTERY			23		
-#define DEF_ITEMEFFECTTYPE_ATTACK_SPECABLTY		24	
-#define DEF_ITEMEFFECTTYPE_DEFENSE_SPECABLTY	25	
-#define DEF_ITEMEFFECTTYPE_ALTERITEMDROP		26	
-#define DEF_ITEMEFFECTTYPE_CONSTRUCTIONKIT		27	
-#define DEF_ITEMEFFECTTYPE_WARM				28		
-#define DEF_ITEMEFFECTTYPE_FARMING			30
-#define DEF_ITEMEFFECTTYPE_SLATES			31
-#define DEF_ITEMEFFECTTYPE_ARMORDYE			32
-#define DEF_ITEMEFFECTTYPE_ADDBALLPOINTS 33
-#define DEF_ITEMEFFECTTYPE_REPPLUS 34
-*/
+
+enum class ItemEffect_AddEffectType {
+	add_resist_magic = 1, // +effV2
+	add_mana_save_ratio = 2, // +effV2
+	add_physical_damage = 3, // +effV2
+	add_defense_ratio = 4, // +effV2
+	add_lucky_effect = 5, // effV2?true:false
+	add_magical_damage = 6, // +effV2
+	add_abs_air = 7, // +effV2
+	add_abs_earth = 8, // +effV2
+	add_abs_fire = 9, // +effV2
+	add_abs_water = 10, // +effV2
+	add_pr = 11, // +effV2
+	add_hit_ratio = 12, // +effV2
+	add_hp = 13, // +effV2/5
+	add_ar = 14, // +effV2/5
+	add_abs_md = 15, // +effV2/10
+	add_damage_absortion_armor = 30, // +effV2/10 to armor in head, body, arms, pants
+	add_str = 16, // (item attribute & 0xf0000000) >> 28
+	add_dex = 17,
+	add_int = 18,
+	add_mag = 19,
+};
 
 #define DEF_ITET_UNIQUE_OWNER				1		
 #define DEF_ITET_ID							2		

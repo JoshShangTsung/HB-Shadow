@@ -26685,57 +26685,57 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, bool bNotify) {
 					}
 					break;
 				case ItemEffectType::addeffect:
-					switch (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1) {
-						case 1:
+					switch ((ItemEffect_AddEffectType) m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue1) {
+						case ItemEffect_AddEffectType::add_resist_magic:
 							m_pClientList[iClientH]->m_iAddResistMagic += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 2:
+						case ItemEffect_AddEffectType::add_mana_save_ratio:
 							m_pClientList[iClientH]->m_iManaSaveRatio += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							if (m_pClientList[iClientH]->m_iManaSaveRatio > 80) m_pClientList[iClientH]->m_iManaSaveRatio = 80;
 							break;
-						case 3:
+						case ItemEffect_AddEffectType::add_physical_damage:
 							m_pClientList[iClientH]->m_iAddPhysicalDamage += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 4:
+						case ItemEffect_AddEffectType::add_defense_ratio:
 							m_pClientList[iClientH]->m_iDefenseRatio += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 5:
+						case ItemEffect_AddEffectType::add_lucky_effect:
 							if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2 != 0)
 								m_pClientList[iClientH]->m_bIsLuckyEffect = true;
 							else m_pClientList[iClientH]->m_bIsLuckyEffect = false;
 							break;
-						case 6:
+						case ItemEffect_AddEffectType::add_magical_damage:
 							m_pClientList[iClientH]->m_iAddMagicalDamage += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 7:
+						case ItemEffect_AddEffectType::add_abs_air:
 							m_pClientList[iClientH]->m_iAddAbsAir += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 8:
+						case ItemEffect_AddEffectType::add_abs_earth:
 							m_pClientList[iClientH]->m_iAddAbsEarth += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 9:
+						case ItemEffect_AddEffectType::add_abs_fire:
 							m_pClientList[iClientH]->m_iAddAbsFire += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 10:
+						case ItemEffect_AddEffectType::add_abs_water:
 							m_pClientList[iClientH]->m_iAddAbsWater += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 11:
+						case ItemEffect_AddEffectType::add_pr:
 							m_pClientList[iClientH]->m_iAddPR += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 12: // Adds To Hit Bonus (Xelima Neck)
+						case ItemEffect_AddEffectType::add_hit_ratio: // Adds To Hit Bonus (Xelima Neck)
 							m_pClientList[iClientH]->m_iHitRatio += m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2;
 							break;
-						case 13: // Magin Ruby		Characters Hp recovery rate(% applied) added by the purity formula.
+						case ItemEffect_AddEffectType::add_hp: // Magin Ruby		Characters Hp recovery rate(% applied) added by the purity formula.
 							m_pClientList[iClientH]->m_iAddHP += (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2 / 5);
 							break;
-						case 14: // Magin Diamond	Attack probability(physical&magic) added by the purity formula.
+						case ItemEffect_AddEffectType::add_ar: // Magin Diamond	Attack probability(physical&magic) added by the purity formula.
 							m_pClientList[iClientH]->m_iAddAR += (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2 / 5);
 							break;
-						case 15: // Magin Emerald	Magical damage decreased(% applied) by the purity formula.
+						case ItemEffect_AddEffectType::add_abs_md: // Magin Emerald	Magical damage decreased(% applied) by the purity formula.
 							m_pClientList[iClientH]->m_iAddAbsMD += (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2 / 10);
 							if (m_pClientList[iClientH]->m_iAddAbsMD > 80) m_pClientList[iClientH]->m_iAddAbsMD = 80;
 							break;
-						case 30: // Magin Sapphire	Phisical damage decreased(% applied) by the purity formula.
+						case ItemEffect_AddEffectType::add_damage_absortion_armor: // Magin Sapphire	Phisical damage decreased(% applied) by the purity formula.
 							iTemp = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemSpecEffectValue2 / 10);
 							m_pClientList[iClientH]->m_iDamageAbsorption_Armor[ItemEquipPos::head] += iTemp;
 							m_pClientList[iClientH]->m_iDamageAbsorption_Armor[ItemEquipPos::body] += iTemp;
@@ -26748,25 +26748,25 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, bool bNotify) {
 							Magic Emerald: Completion rate / 10 = Functions rate.(%) ? Maximum 10%.
 							Magic Sapphire: Completion rate / 10 = Functions rate.(%) ? Maximum 10%.*/
 							// ******* Angel Code - Begin ******* //
-						case 16: // Angel STR//AngelicPandent(STR)
+						case ItemEffect_AddEffectType::add_str: // Angel STR//AngelicPandent(STR)
 							iTemp = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
 							m_pClientList[iClientH]->m_iAngelicStr = iTemp;
 							SetAngelFlag(iClientH, DEF_OWNERTYPE_PLAYER, 1, iTemp);
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SETTING_SUCCESS, 0, 0, 0, 0);
 							break;
-						case 17: // Angel DEX //AngelicPandent(DEX)
+						case ItemEffect_AddEffectType::add_dex: // Angel DEX //AngelicPandent(DEX)
 							iTemp = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
 							m_pClientList[iClientH]->m_iAngelicDex = iTemp;
 							SetAngelFlag(iClientH, DEF_OWNERTYPE_PLAYER, 2, iTemp);
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SETTING_SUCCESS, 0, 0, 0, 0);
 							break;
-						case 18: // Angel INT//AngelicPandent(INT)
+						case ItemEffect_AddEffectType::add_int: // Angel INT//AngelicPandent(INT)
 							iTemp = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
 							m_pClientList[iClientH]->m_iAngelicInt = iTemp;
 							SetAngelFlag(iClientH, DEF_OWNERTYPE_PLAYER, 3, iTemp);
 							SendNotifyMsg(0, iClientH, DEF_NOTIFY_SETTING_SUCCESS, 0, 0, 0, 0);
 							break;
-						case 19: // Angel MAG//AngelicPandent(MAG)
+						case ItemEffect_AddEffectType::add_mag: // Angel MAG//AngelicPandent(MAG)
 							iTemp = (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwAttribute & 0xF0000000) >> 28;
 							m_pClientList[iClientH]->m_iAngelicMag = iTemp;
 							SetAngelFlag(iClientH, DEF_OWNERTYPE_PLAYER, 4, iTemp);
@@ -41677,14 +41677,14 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, 0);
 				return; // Pendants are EffectType 14
 			}
-			switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemEffectValue1) {
+			switch ((ItemEffect_AddEffectType) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemEffectValue1) {
 				default: // Other items are not upgradable
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 2, 0, 0, 0);
 					return; // Pendants are EffectType 14
-				case 16: // AngelicPandent(STR)
-				case 17: // AngelicPandent(DEX)
-				case 18: // AngelicPandent(INT)
-				case 19: // AngelicPandent(MAG)
+				case ItemEffect_AddEffectType::add_str: // AngelicPandent(STR)
+				case ItemEffect_AddEffectType::add_dex: // AngelicPandent(DEX)
+				case ItemEffect_AddEffectType::add_int: // AngelicPandent(INT)
+				case ItemEffect_AddEffectType::add_mag: // AngelicPandent(MAG)
 					if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) {
 						SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, 0);
 						return;
