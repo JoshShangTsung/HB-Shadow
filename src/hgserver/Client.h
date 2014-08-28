@@ -108,9 +108,6 @@ public:
 	int m_iDefenseRatio = 0;
 	int m_iHitRatio = 0;
 
-	//int  m_iHitRatio_ItemEffect_SM;
-	//int  m_iHitRatio_ItemEffect_L;
-
 	int m_iDamageAbsorption_Armor[DEF_MAXITEMEQUIPPOS]{};
 	int m_iDamageAbsorption_Shield = 0;
 
@@ -121,12 +118,6 @@ public:
 	int m_iDex = 0;
 	int m_iMag = 0;
 	int m_iCharisma = 0;
-	//char m_cLU_Str;
-	char m_cLU_Int = 0;
-	char m_cLU_Vit = 0;
-	char m_cLU_Dex = 0;
-	char m_cLU_Mag = 0;
-	char m_cLU_Char = 0;
 	int m_iLuck = 0;
 	int m_iLU_Pool = 0;
 	char m_cAura = 0;
