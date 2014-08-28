@@ -9,7 +9,6 @@ extern void PutItemLogFileList(const char * cStr);
 extern void PutLogEventFileList(const char * cStr);
 extern void PutHackLogFileList(const char * cStr);
 extern void PutPvPLogFileList(const char * cStr);
-// extern void PutDebugMsg(char * cStr);	// 2002-09-09 #2
 extern FILE * pLogFile;
 extern HWND G_hWnd;
 int _tmp_iMoveLocX[9][37] = {
@@ -145,7 +144,7 @@ CGame::CGame(HWND hWnd) {
 		m_pMineral[i] = 0;
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++) {
 		m_pPortionConfigList[i] = 0;
-		m_pCraftingConfigList[i] = 0; // Crafting
+		m_pCraftingConfigList[i] = 0;
 	}
 	for (i = 0; i < DEF_MAXSUBLOGSOCK; i++) {
 		m_pSubLogSock[i] = 0;
@@ -315,7 +314,7 @@ bool CGame::bInit() {
 		delete m_pMineral[i];
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++) {
 		delete m_pPortionConfigList[i];
-		delete m_pCraftingConfigList[i]; // Crafting
+		delete m_pCraftingConfigList[i];
 	}
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
 		delete m_pBuildItemList[i];
@@ -345,7 +344,7 @@ bool CGame::bInit() {
 	m_iNpcConstructionPoint[46] = 2000; // TK
 	m_iNpcConstructionPoint[47] = 3000; // BG
 	m_iNpcConstructionPoint[51] = 1500; // Catapult
-	// Majestic Code By Diuuude
+
 	ReadMajesticSettings();
 	m_bIsGameStarted = false;
 	m_pMainLogSock = 0;
@@ -388,7 +387,7 @@ bool CGame::bInit() {
 		m_pMineral[i] = 0;
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++) {
 		m_pPortionConfigList[i] = 0;
-		m_pCraftingConfigList[i] = 0; // Crafting
+		m_pCraftingConfigList[i] = 0;
 	}
 	for (i = 0; i < DEF_MAXSUBLOGSOCK; i++) {
 		m_pSubLogSock[i] = 0;
@@ -411,7 +410,7 @@ bool CGame::bInit() {
 	for (i = 0; i < DEF_MAXGUILDS; i++)
 		m_pGuildTeleportLoc[i].m_iV1 = 0;
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-		m_stMiddleCrusadeStructureInfo[i].cType = 0;
+		m_stMiddleCrusadeStructureInfo[i].cType = NpcType::none;
 		m_stMiddleCrusadeStructureInfo[i].cSide = 0;
 		m_stMiddleCrusadeStructureInfo[i].sX = 0;
 		m_stMiddleCrusadeStructureInfo[i].sY = 0;
@@ -1724,7 +1723,7 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 							iSize += 2;
 							// object type
 							sp = (short *) cp;
-							*sp = m_pNpcList[pTile->m_sOwner]->m_sType;
+							*sp = (short) m_pNpcList[pTile->m_sOwner]->m_sType;
 							cp += 2;
 							iSize += 2;
 							// dir
@@ -1818,7 +1817,7 @@ int CGame::iComposeInitMapData(short sX, short sY, int iClientH, char * pData) {
 							iSize += 2;
 							// object type
 							sp = (short *) cp;
-							*sp = m_pNpcList[pTile->m_sDeadOwner]->m_sType;
+							*sp = (short) m_pNpcList[pTile->m_sDeadOwner]->m_sType;
 							cp += 2;
 							iSize += 2;
 							// dir
@@ -2310,7 +2309,7 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 		*sp = sY;
 		cp_a += 2;
 		sp = (short *) cp_a;
-		*sp = m_pNpcList[sOwnerH]->m_sType;
+		*sp = (short) m_pNpcList[sOwnerH]->m_sType;
 		cp_a += 2;
 		*cp_a = m_pNpcList[sOwnerH]->m_cDir;
 		cp_a++;
@@ -2557,7 +2556,7 @@ int CGame::iComposeMoveMapData(short sX, short sY, int iClientH, char cDir, char
 						cp += 2;
 						iSize += 2;
 						sp = (short *) cp;
-						*sp = m_pNpcList[pTile->m_sOwner]->m_sType;
+						*sp = (short) m_pNpcList[pTile->m_sOwner]->m_sType;
 						cp += 2;
 						iSize += 2;
 						*cp = m_pNpcList[pTile->m_sOwner]->m_cDir;
@@ -2641,7 +2640,7 @@ int CGame::iComposeMoveMapData(short sX, short sY, int iClientH, char cDir, char
 						cp += 2;
 						iSize += 2;
 						sp = (short *) cp;
-						*sp = m_pNpcList[pTile->m_sDeadOwner]->m_sType;
+						*sp = (short) m_pNpcList[pTile->m_sDeadOwner]->m_sType;
 						cp += 2;
 						iSize += 2;
 						*cp = m_pNpcList[pTile->m_sDeadOwner]->m_cDir;
@@ -6814,12 +6813,12 @@ GET_VALIDLOC_SUCCESS:
 				case 5:
 					m_pNpcList[i]->m_cBehavior = DEF_BEHAVIOR_STOP;
 					switch (m_pNpcList[i]->m_sType) {
-						case 15: // ShopKeeper-W
-						case 19: // Gandlf
-						case 20: // Howard
-						case 24: // Tom
-						case 25: // William
-						case 26: // Kennedy
+						case NpcType::shop_keeper_w: // ShopKeeper-W
+						case NpcType::gandlf: // Gandlf
+						case NpcType::howard: // Howard
+						case NpcType::tom: // Tom
+						case NpcType::william: // William
+						case NpcType::kennedy: // Kennedy
 							m_pNpcList[i]->m_cDir = 4 + iDice(1, 3) - 1;
 							break;
 						default:
@@ -6836,30 +6835,30 @@ GET_VALIDLOC_SUCCESS:
 			m_pNpcList[i]->m_iTargetIndex = 0;
 			m_pNpcList[i]->m_cTurn = (rand() % 2);
 			switch (m_pNpcList[i]->m_sType) {
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-				case 6:
+				case NpcType::xb:
+				case NpcType::xw:
+				case NpcType::xy:
+				case NpcType::yb:
+				case NpcType::yw:
+				case NpcType::yy:
 					m_pNpcList[i]->m_sAppr2 = (short) 0xF000;
 					m_pNpcList[i]->m_sAppr2 = m_pNpcList[i]->m_sAppr2 | ((rand() % 13) << 4);
 					m_pNpcList[i]->m_sAppr2 = m_pNpcList[i]->m_sAppr2 | (rand() % 9);
 					break;
-				case 36: // AGT-Aresden/AGT-Elvine
-				case 37: // CGT-Aresden/CGT-Elvine
-				case 38: // MS-Aresden/MS-Elvine
-				case 39: // DT-Aresden/DT-Elvine
+				case NpcType::agt: // AGT-Aresden/AGT-Elvine
+				case NpcType::cgt: // CGT-Aresden/CGT-Elvine
+				case NpcType::ms: // MS-Aresden/MS-Elvine
+				case NpcType::dt: // DT-Aresden/DT-Elvine
 					m_pNpcList[i]->m_sAppr2 = 3;
 					break;
-					//case 64: // Crop
+					//case NpcId::crops: // Crop
 					//	m_pNpcList[i]->m_sAppr2 = 1;
 					//	break;
 					// appr2 = 2 seems to be enemy detection for crusade
-					/*case 91: // gate
+					/*case NpcId::gate: // gate
 						m_pNpcList[i]->m_sAppr2 = 0xF000; // 10 aura no sphere 13 no name movable with magic (crash) test to 29
 						break;*/
-				case 64: // Crop
+				case NpcType::crops: // Crop
 					m_pNpcList[i]->m_sAppr2 = 1; // 1 bud; 2 grown; 3 large
 					break;
 					// case 66: // Wyvern
@@ -6899,16 +6898,17 @@ GET_VALIDLOC_SUCCESS:
 			m_pMapList[iMapIndex]->m_iTotalActiveObject++;
 			m_pMapList[iMapIndex]->m_iTotalAliveObject++;
 			switch (m_pNpcList[i]->m_sType) {
-				case 36: // AGT-Aresden/AGT-Elvine
-				case 37: // CGT-Aresden/CGT-Elvine
-				case 38: // MS-Aresden/MS-Elvine
-				case 39: // DT-Aresden/DT-Elvine
-				case 42: // ManaStone
+				case NpcType::agt: // AGT-Aresden/AGT-Elvine
+				case NpcType::cgt: // CGT-Aresden/CGT-Elvine
+				case NpcType::ms: // MS-Aresden/MS-Elvine
+				case NpcType::dt: // DT-Aresden/DT-Elvine
+				case NpcType::mana_stone: // ManaStone
 					m_pMapList[iMapIndex]->bAddCrusadeStructureInfo(m_pNpcList[i]->m_sType, sX, sY, m_pNpcList[i]->m_cSide);
 					break;
-				case 64:
+				case NpcType::crops:
 					m_pMapList[iMapIndex]->bAddCropsTotalSum();
 					break;
+				default: break;
 			}
 			SendEventToNearClient_TypeA(i, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_CONFIRM, 0, 0, 0);
 			return true;
@@ -6985,7 +6985,7 @@ void CGame::NpcProcess() {
 			}
 			if ((m_pNpcList[i] != 0) && (m_pNpcList[i]->m_iHP != 0) && (m_pNpcList[i]->m_bIsSummoned == true)) {
 				switch (m_pNpcList[i]->m_sType) {
-					case 29:
+					case NpcType::orge:
 						if ((dwTime - m_pNpcList[i]->m_dwSummonedTime) > 1000 * 90)
 							NpcKilledHandler(0, 0, i, 0);
 						break;
@@ -8206,7 +8206,7 @@ void CGame::TargetSearch(int iNpcH, short * pTarget, char * pTargetType) {
 							cTargetSide = m_pNpcList[sOwner]->m_cSide;
 							iPKCount = 0;
 							iInv = m_pNpcList[sOwner]->m_cMagicEffectStatus[ DEF_MAGICTYPE_INVISIBILITY ];
-							if (m_pNpcList[iNpcH]->m_sType == 21) {
+							if (m_pNpcList[iNpcH]->m_sType == NpcType::guard) {
 								if (_iCalcPlayerNum(m_pNpcList[sOwner]->m_cMapIndex, dX, dY, 2) != 0) {
 									sOwner = 0;
 									cOwnerType = 0;
@@ -8322,24 +8322,25 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 		m_pNpcList[iNpcH]->m_cDir = cDir;
 		if (m_pNpcList[iNpcH]->m_cActionLimit == 5) {
 			switch (m_pNpcList[iNpcH]->m_sType) {
-				case 89:
+				case NpcType::agc:
 					SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 					m_pNpcList[iNpcH]->m_iMagicHitRatio = 1000;
 					NpcMagicHandler(iNpcH, dX, dY, 61);
 					break;
-				case 87:
+				case NpcType::ct:
 					SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 					iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 2);
 					break;
-				case 36:
+				case NpcType::agt:
 					SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 2);
 					iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 2, false, false, false);
 					break;
-				case 37: // Cannon Guard Tower:
+				case NpcType::cgt: // Cannon Guard Tower:
 					SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 					m_pNpcList[iNpcH]->m_iMagicHitRatio = 1000;
 					NpcMagicHandler(iNpcH, dX, dY, 61);
 					break;
+				default: break;
 			}
 		} else {
 			SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, m_pNpcList[iNpcH]->m_sX + _tmp_cTmpDirX[cDir], m_pNpcList[iNpcH]->m_sY + _tmp_cTmpDirY[cDir], 1);
@@ -8518,29 +8519,30 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 			m_pNpcList[iNpcH]->m_cDir = cDir;
 			if (m_pNpcList[iNpcH]->m_cActionLimit == 5) {
 				switch (m_pNpcList[iNpcH]->m_sType) {
-					case 36: // Crossbow Guard Tower
+					case NpcType::agt: // Crossbow Guard Tower
 						SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 						iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 2);
 						break;
-					case 37:
+					case NpcType::cgt:
 						SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 						m_pNpcList[iNpcH]->m_iMagicHitRatio = 1000;
 						NpcMagicHandler(iNpcH, dX, dY, 61);
 						break;
+					default: break;
 				}
 			} else {
 				switch (m_pNpcList[iNpcH]->m_sType) {
-					case 51:
+					case NpcType::cp:
 						SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 1);
 						m_pNpcList[iNpcH]->m_iMagicHitRatio = 1000;
 						NpcMagicHandler(iNpcH, dX, dY, 61);
 						break;
-					case 54:
+					case NpcType::dark_elf:
 						SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTATTACK, dX, dY, 2);
 						iCalculateAttackEffect(m_pNpcList[iNpcH]->m_iTargetIndex, m_pNpcList[iNpcH]->m_cTargetType, iNpcH, DEF_OWNERTYPE_NPC, dX, dY, 2);
 						break;
-					case 63: // Frost
-					case 79: // Nizie
+					case NpcType::frost: // Frost
+					case NpcType::nizie: // Nizie
 						switch (m_pNpcList[iNpcH]->m_cTargetType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex] == 0) goto NBA_BREAK1;
@@ -8572,7 +8574,7 @@ void CGame::NpcBehavior_Attack(int iNpcH) {
 								}
 								break;
 						}
-					case 53:
+					case NpcType::beholder:
 						switch (m_pNpcList[iNpcH]->m_cTargetType) {
 							case DEF_OWNERTYPE_PLAYER:
 								if (m_pClientList[m_pNpcList[iNpcH]->m_iTargetIndex] == 0) goto NBA_BREAK1;
@@ -8725,7 +8727,7 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 			dTmp3 = (dTmp1 / 100.0f) * dTmp2;
 			iExp += (int) dTmp3;
 		}
-		if (m_pNpcList[iNpcH]->m_sType == 81) {
+		if (m_pNpcList[iNpcH]->m_sType == NpcType::abaddon) {
 			for (i = 1; i < DEF_MAXCLIENTS; i++) {
 				if (m_pClientList[i] != 0) {
 					SendNotifyMsg(sAttackerH, i, DEF_NOTIFY_ABADDONKILLED, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -8760,72 +8762,74 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 	}
 	if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 		switch (m_pNpcList[iNpcH]->m_sType) {
-			case 32:
+			case NpcType::unicorn:
 				m_pClientList[sAttackerH]->m_iRating -= 0;
 				m_pClientList[sAttackerH]->m_iRating -= 0;
 				if (m_pClientList[sAttackerH]->m_iRating > 10000) m_pClientList[sAttackerH]->m_iRating = 10000;
 				if (m_pClientList[sAttackerH]->m_iRating < -10000) m_pClientList[sAttackerH]->m_iRating = -10000;
 				break;
-			case 33:
+			case NpcType::were_wolf:
 				break;
+			default: break;
 		}
 	}
 	// Crusade
 	iConstructionPoint = 0;
 	switch (m_pNpcList[iNpcH]->m_sType) {
-		case 1: iConstructionPoint = 50;
+		case NpcType::xb: iConstructionPoint = 50;
 			iWarContribution = 100;
 			break;
-		case 2: iConstructionPoint = 50;
+		case NpcType::xw: iConstructionPoint = 50;
 			iWarContribution = 100;
 			break;
-		case 3: iConstructionPoint = 50;
+		case NpcType::xy: iConstructionPoint = 50;
 			iWarContribution = 100;
 			break;
-		case 4: iConstructionPoint = 50;
+		case NpcType::yb: iConstructionPoint = 50;
 			iWarContribution = 100;
 			break;
-		case 5: iConstructionPoint = 50;
+		case NpcType::yw: iConstructionPoint = 50;
 			iWarContribution = 100;
 			break;
-		case 6: iConstructionPoint = 50;
+		case NpcType::yy: iConstructionPoint = 50;
 			iWarContribution = 100;
 			break;
-		case 36: iConstructionPoint = 700;
+		case NpcType::agt: iConstructionPoint = 700;
 			iWarContribution = 4000;
 			break;
-		case 37: iConstructionPoint = 700;
+		case NpcType::cgt: iConstructionPoint = 700;
 			iWarContribution = 4000;
 			break;
-		case 38: iConstructionPoint = 500;
+		case NpcType::ms: iConstructionPoint = 500;
 			iWarContribution = 2000;
 			break;
-		case 39: iConstructionPoint = 500;
+		case NpcType::dt: iConstructionPoint = 500;
 			iWarContribution = 2000;
 			break;
-		case 40: iConstructionPoint = 1500;
+		case NpcType::esg: iConstructionPoint = 1500;
 			iWarContribution = 5000;
 			break;
-		case 41: iConstructionPoint = 5000;
+		case NpcType::gmg: iConstructionPoint = 5000;
 			iWarContribution = 10000;
 			break;
-		case 43: iConstructionPoint = 500;
+		case NpcType::lwb: iConstructionPoint = 500;
 			iWarContribution = 1000;
 			break;
-		case 44: iConstructionPoint = 1000;
+		case NpcType::ghk: iConstructionPoint = 1000;
 			iWarContribution = 2000;
 			break;
-		case 45: iConstructionPoint = 1500;
+		case NpcType::ghkabs: iConstructionPoint = 1500;
 			iWarContribution = 3000;
 			break;
-		case 46: iConstructionPoint = 1000;
+		case NpcType::tk: iConstructionPoint = 1000;
 			iWarContribution = 2000;
 			break;
-		case 47: iConstructionPoint = 1500;
+		case NpcType::bg: iConstructionPoint = 1500;
 			iWarContribution = 3000;
 			break;
-		case 64: m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->bRemoveCropsTotalSum();
+		case NpcType::crops: m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->bRemoveCropsTotalSum();
 			break;
+		default: break;
 	}
 	// Crusade
 	if (iConstructionPoint != 0) {
@@ -8875,30 +8879,31 @@ void CGame::NpcKilledHandler(short sAttackerH, char cAttackerType, int iNpcH, sh
 	// new - heldenian
 	if ((m_bIsHeldenianMode == true) && (cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_cSide != m_pNpcList[iNpcH]->m_cSide)) {
 		switch (m_pNpcList[iNpcH]->m_sType) {
-			case 82: iConstructionPoint = 0;
+			case NpcType::sor: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
-			case 83: iConstructionPoint = 0;
+			case NpcType::atk: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
-			case 84: iConstructionPoint = 0;
+			case NpcType::elf: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
-			case 85: iConstructionPoint = 0;
+			case NpcType::dsk: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
-			case 86: iConstructionPoint = 0;
+			case NpcType::hbt: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
-			case 87: iConstructionPoint = 0;
+			case NpcType::ct: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
-			case 88: iConstructionPoint = 0;
+			case NpcType::bar: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
-			case 89: iConstructionPoint = 0;
+			case NpcType::agc: iConstructionPoint = 0;
 				iWarContribution = 1000;
 				break;
+			default: break;
 		}
 		if (iWarContribution > 0) m_pClientList[sAttackerH]->m_iWarContribution += iWarContribution;
 		if (m_pClientList[sAttackerH]->m_iWarContribution > DEF_MAXWARCONTRIBUTION) m_pClientList[sAttackerH]->m_iWarContribution = DEF_MAXWARCONTRIBUTION;
@@ -8916,7 +8921,7 @@ NKH_GOTOPOINT1:
 		NpcMagicHandler(iNpcH, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY, 61);
 	}
 	if ((m_bIsHeldenianMode == true) && (m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_bIsHeldenianMap == true) && (m_cHeldenianModeType == 1)) {
-		if ((m_pNpcList[iNpcH]->m_sType == 87) || (m_pNpcList[iNpcH]->m_sType == 89)) {
+		if ((m_pNpcList[iNpcH]->m_sType == NpcType::ct) || (m_pNpcList[iNpcH]->m_sType == NpcType::agc)) {
 			if (m_pNpcList[iNpcH]->m_cSide == 1) {
 				m_iHeldenianAresdenLeftTower--;
 				wsprintf(G_cTxt, "Aresden Tower Broken, Left TOWER %d", m_iHeldenianAresdenLeftTower);
@@ -12791,7 +12796,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_sType = atoi(token);
+							m_pNpcConfigList[iNpcConfigListIndex]->m_sType = (NpcType) atoi(token);
 							cReadModeB = 3;
 							break;
 						case 3:
@@ -13796,7 +13801,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 							if (m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_POLYMORPH ] != 0) goto MAGIC_NOEFFECT;
 							m_pNpcList[sOwnerH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_POLYMORPH ] = (char) m_pMagicConfigList[sType]->m_sValue4;
 							m_pNpcList[sOwnerH]->m_sOriginalType = m_pNpcList[sOwnerH]->m_sType;
-							m_pNpcList[sOwnerH]->m_sType = 18;
+							m_pNpcList[sOwnerH]->m_sType = NpcType::zombie;
 							SendEventToNearClient_TypeA(sOwnerH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 							break;
 					}
@@ -15935,7 +15940,7 @@ NMH_NOEFFECT:
 	if (m_pNpcList[iNpcH]->m_iMana < 0)
 		m_pNpcList[iNpcH]->m_iMana = 0;
 	SendEventToNearClient_TypeB(MSGID_EVENT_COMMON, DEF_COMMONTYPE_MAGIC, m_pNpcList[iNpcH]->m_cMapIndex,
-			  m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY, dX, dY, (sType + 100), m_pNpcList[iNpcH]->m_sType);
+			  m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY, dX, dY, (sType + 100), (int) m_pNpcList[iNpcH]->m_sType);
 }
 
 void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char * cMapName, int dX, int dY) {
@@ -18441,7 +18446,7 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 								delete pStrTok;
 								return false;
 							}
-							m_pMapList[iMapIndex]->m_stHeldenianTower[iIndex].sTypeID = atoi(token);
+							m_pMapList[iMapIndex]->m_stHeldenianTower[iIndex].sTypeID = (NpcType) atoi(token);
 							cReadModeB = 2;
 							break;
 						case 2: // side
@@ -21833,11 +21838,11 @@ void CGame::DeleteNpc(int iNpcH) {
 		m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->m_stSpotMobGenerator[m_pNpcList[iNpcH]->m_iSpotMobIndex].iCurMobs--;
 	RemoveFromTarget(iNpcH, DEF_OWNERTYPE_NPC);
 	switch (m_pNpcList[iNpcH]->m_sType) {
-		case 36:
-		case 37:
-		case 38:
-		case 39:
-		case 42:
+		case NpcType::agt:
+		case NpcType::cgt:
+		case NpcType::ms:
+		case NpcType::dt:
+		case NpcType::mana_stone:
 			m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->bRemoveCrusadeStructureInfo(m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
 			for (i = 0; i < DEF_MAXGUILDS; i++)
 				if (m_pGuildTeleportLoc[i].m_iV1 == m_pNpcList[iNpcH]->m_iGuildGUID) {
@@ -21847,19 +21852,20 @@ void CGame::DeleteNpc(int iNpcH) {
 					break;
 				}
 			break;
-		case 64: m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->bRemoveCropsTotalSum();
+		case NpcType::crops: m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->bRemoveCropsTotalSum();
 			break;
+		default: break;
 	}
 	bRemoveFromDelayEventList(iNpcH, DEF_OWNERTYPE_NPC, 0);
 	if ((m_pNpcList[iNpcH]->m_bIsSummoned == false) && (m_pNpcList[iNpcH]->m_bIsUnsummoned == false)) {
 		pItem = new CItem;
 		std::memset(cItemName, 0, sizeof(cItemName));
 		switch (m_pNpcList[iNpcH]->m_sType) {
-			case 10: // Slime
+			case NpcType::slime: // Slime
 				if (iDice(1, 25) == 1) iItemID = ItemId::slime_jelly;
 				break; // SlimeJelly
 				break;
-			case 11: // Skeleton
+			case NpcType::skeleton: // Skeleton
 				switch (iDice(1, 2)) {
 					case 1:if (iDice(1, 20) == 1) iItemID = ItemId::skeleton_bones;
 						break; // SkeletonBones
@@ -21868,7 +21874,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 12: // Stone-Golem
+			case NpcType::stone_golem: // Stone-Golem
 				switch (iDice(1, 2)) {
 					case 1: if (iDice(1, 30) == 1) iItemID = ItemId::stone_golem_piece;
 						break; // StoneGolemPiece
@@ -21877,7 +21883,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 13: // Cyclops
+			case NpcType::cyclops: // Cyclops
 				switch (iDice(1, 6)) {
 					case 1: if (iDice(1, 36) == 1) iItemID = ItemId::cyclops_eye;
 						break; // CyclopsEye
@@ -21894,7 +21900,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 14: // Orc, Orc-Mage
+			case NpcType::orc: // Orc, Orc-Mage
 				switch (iDice(1, 4)) {
 					case 1: if (iDice(1, 11) == 1) iItemID = ItemId::orc_meat;
 						break; // OrcMeat
@@ -21907,7 +21913,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 16: //Giant-Ant
+			case NpcType::giant_ant: //Giant-Ant
 				switch (iDice(1, 3)) {
 					case 1: if (iDice(1, 9) == 1) iItemID = ItemId::ant_leg;
 						break; // AntLeg
@@ -21918,7 +21924,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 17: //Scorpion
+			case NpcType::scorpion: //Scorpion
 				switch (iDice(1, 5)) {
 					case 1: if (iDice(1, 50) == 1) iItemID = ItemId::scorpion_pincers;
 						break; // ScorpionPincers
@@ -21933,11 +21939,11 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 18: //Zombie
+			case NpcType::zombie: //Zombie
 				bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 				break;
-			case 22: //Amphis
+			case NpcType::amphis: //Amphis
 				switch (iDice(1, 5)) {
 					case 1: if (iDice(1, 15) == 1) iItemID = ItemId::snake_meat;
 						break; // SnakeMeat
@@ -21952,7 +21958,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 23: //Clay-Golem
+			case NpcType::clay_golem: //Clay-Golem
 				switch (iDice(1, 2)) {
 					case 1: if (iDice(1, 30) == 1) iItemID = ItemId::lumpof_clay;
 						break; // LumpofClay
@@ -21961,7 +21967,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 27: //Hellbound
+			case NpcType::hellbound: //Hellbound
 				switch (iDice(1, 7)) {
 					case 1: if (iDice(1, 40) == 1) iItemID = ItemId::helbound_heart;
 						break; // HelboundHeart
@@ -21980,7 +21986,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 28: //Troll
+			case NpcType::troll: //Troll
 				switch (iDice(1, 5)) {
 					case 1: if (iDice(1, 35) == 1) iItemID = ItemId::troll_heart;
 						break; // TrollHeart
@@ -21995,7 +22001,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 29: //Orge
+			case NpcType::orge: //Orge
 				switch (iDice(1, 7)) {
 					case 1: if (iDice(1, 20) == 1) iItemID = ItemId::ogre_hair;
 						break; // OgreHair
@@ -22014,11 +22020,11 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 30: //Liche
+			case NpcType::liche: //Liche
 				bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 				break;
-			case 31: //Demon
+			case NpcType::demon: //Demon
 				switch (iDice(1, 5)) {
 					case 1: if (iDice(1, 400) == 123) iItemID = ItemId::demon_heart;
 						break; // DemonHeart
@@ -22033,7 +22039,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 32: //Unicorn
+			case NpcType::unicorn: //Unicorn
 				switch (iDice(1, 5)) {
 					case 1: if (iDice(1, 3000) == 396) iItemID = ItemId::unicorn_heart;
 						break; // UnicornHeart
@@ -22048,7 +22054,7 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 33: //WereWolf
+			case NpcType::were_wolf: //WereWolf
 				switch (iDice(1, 8)) {
 					case 1: if (iDice(1, 30) == 3) iItemID = ItemId::werewolf_tail;
 						break; // WerewolfTail
@@ -22069,26 +22075,26 @@ void CGame::DeleteNpc(int iNpcH) {
 					default: break;
 				}
 				break;
-			case 48: //Stalker
-			case 49: //Hellclaw
-			case 50: //Tigerworm
-			case 52: //Gagoyle
-			case 53: //Beholder
-			case 54: //Dark-Elf
-			case 55: //Rabbit
-			case 56: //Cat
-			case 57: //Giant-Frog
-			case 58: //Mountain-Giant
-			case 59: //Ettin
-			case 60: //Cannibal-Plant
-			case 61: //Rudolph
-			case 62: //DireBoar
-			case 63: //Frost
-			case 65: //Ice
+			case NpcType::stalker: //Stalker
+			case NpcType::hellclaw: //Hellclaw
+			case NpcType::tigerworm: //Tigerworm
+			case NpcType::gagoyle: //Gagoyle
+			case NpcType::beholder: //Beholder
+			case NpcType::dark_elf: //Dark-Elf
+			case NpcType::rabbit: //Rabbit
+			case NpcType::cat: //Cat
+			case NpcType::giant_frog: //Giant-Frog
+			case NpcType::mountain_giant: //Mountain-Giant
+			case NpcType::ettin: //Ettin
+			case NpcType::cannibal_plant: //Cannibal-Plant
+			case NpcType::rudolph: //Rudolph
+			case NpcType::dire_boar: //DireBoar
+			case NpcType::frost: //Frost
+			case NpcType::ice_golem: //Ice
 				bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 				// new 05/10/2004
-			case 66: // Wyvern
+			case NpcType::wyvern: // Wyvern
 				bGetMultipleItemNamesWhenDeleteNpc(m_pNpcList[iNpcH]->m_sType, // NPC Type
 						  50,
 						  5,
@@ -22101,7 +22107,7 @@ void CGame::DeleteNpc(int iNpcH) {
 						  ItemPositions,
 						  &iNumItem);
 				break;
-			case 73: // Fire-Wyvern
+			case NpcType::fire_wyvern: // Fire-Wyvern
 				bGetMultipleItemNamesWhenDeleteNpc(m_pNpcList[iNpcH]->m_sType, // NPC Type
 						  50,
 						  5,
@@ -22114,7 +22120,7 @@ void CGame::DeleteNpc(int iNpcH) {
 						  ItemPositions,
 						  &iNumItem);
 				break;
-			case 81:
+			case NpcType::abaddon:
 				bGetMultipleItemNamesWhenDeleteNpc(m_pNpcList[iNpcH]->m_sType, // NPC Type
 						  50,
 						  12,
@@ -22127,6 +22133,7 @@ void CGame::DeleteNpc(int iNpcH) {
 						  ItemPositions,
 						  &iNumItem);
 				break;
+			default: break;
 		}
 		dwCount = 1;
 		if (iNumItem > 0) {
@@ -22288,7 +22295,7 @@ void CGame::RequestFullObjectData(int iClientH, char *pData) {
 		*sp = sY;
 		cp += 2;
 		sp = (short *) cp;
-		*sp = m_pNpcList[wObjectID]->m_sType;
+		*sp = (short) m_pNpcList[wObjectID]->m_sType;
 		cp += 2;
 		*cp = m_pNpcList[wObjectID]->m_cDir;
 		cp++;
@@ -22370,7 +22377,7 @@ void CGame::NpcBehavior_Stop(int iNpcH) {
 	switch (m_pNpcList[iNpcH]->m_cActionLimit) {
 		case 5:
 			switch (m_pNpcList[iNpcH]->m_sType) {
-				case 38:
+				case NpcType::ms:
 					if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount >= 3) {
 						m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 						bFlag = _bNpcBehavior_ManaCollector(iNpcH);
@@ -22379,7 +22386,7 @@ void CGame::NpcBehavior_Stop(int iNpcH) {
 						}
 					}
 					break;
-				case 39: // Detector
+				case NpcType::dt: // Detector
 					if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount >= 3) {
 						m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 						bFlag = _bNpcBehavior_Detector(iNpcH);
@@ -22388,15 +22395,15 @@ void CGame::NpcBehavior_Stop(int iNpcH) {
 						}
 					}
 					break;
-				case 40: // Energy Shield Generator
+				case NpcType::esg: // Energy Shield Generator
 					break;
-				case 41: // Grand Magic Generator
+				case NpcType::gmg: // Grand Magic Generator
 					if (m_pNpcList[iNpcH]->m_sBehaviorTurnCount >= 3) {
 						m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 						_NpcBehavior_GrandMagicGenerator(iNpcH);
 					}
 					break;
-				case 42:
+				case NpcType::mana_stone:
 					m_pNpcList[iNpcH]->m_sBehaviorTurnCount = 0;
 					m_pNpcList[iNpcH]->m_iV1 += 5;
 					if (m_pNpcList[iNpcH]->m_iV1 >= 5) m_pNpcList[iNpcH]->m_iV1 = 5;
@@ -23157,17 +23164,19 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 			}
 			if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 				switch (m_pNpcList[sTargetH]->m_sType) {
-					case 40:
-					case 41:
+					case NpcType::esg:
+					case NpcType::gmg:
 						if ((m_pClientList[sAttackerH]->m_cSide == 0) || (m_pNpcList[sTargetH]->m_cSide == m_pClientList[sAttackerH]->m_cSide)) return;
 						break;
+					default: break;
 				}
 			}
 			switch (m_pNpcList[sTargetH]->m_sType) {
-				case 67: // McGaffin
-				case 68: // Perry
-				case 69: // Devlin
+				case NpcType::mc_gaffin: // McGaffin
+				case NpcType::perry: // Perry
+				case NpcType::devlin: // Devlin
 					return;
+				default: break;
 			}
 			if (m_pNpcList[sTargetH]->m_iAbsDamage > 0) {
 				dTmp1 = (double) iDamage;
@@ -23185,7 +23194,7 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 			} else {
 				switch (cAttackerType) {
 					case DEF_OWNERTYPE_PLAYER:
-						if ((m_pNpcList[sTargetH]->m_sType != 21) && (m_pNpcList[sTargetH]->m_sType != 55) && (m_pNpcList[sTargetH]->m_sType != 56)
+						if ((m_pNpcList[sTargetH]->m_sType != NpcType::guard) && (m_pNpcList[sTargetH]->m_sType != NpcType::rabbit) && (m_pNpcList[sTargetH]->m_sType != NpcType::cat)
 								  && (m_pNpcList[sTargetH]->m_cSide == cAttackerSide)) return;
 						break;
 					case DEF_OWNERTYPE_NPC:
@@ -23219,8 +23228,8 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 							}
 							if (m_pClientList[sAttackerH]->m_iLevel > 100) {
 								switch (m_pNpcList[sTargetH]->m_sType) {
-									case 55:
-									case 56:
+									case NpcType::rabbit:
+									case NpcType::cat:
 										iExp = 0;
 										break;
 									default: break;
@@ -23241,8 +23250,8 @@ void CGame::Effect_Damage_Spot(short sAttackerH, char cAttackerType, short sTarg
 							}
 							if (m_pClientList[sAttackerH]->m_iLevel > 100) {
 								switch (m_pNpcList[sTargetH]->m_sType) {
-									case 55:
-									case 56:
+									case NpcType::rabbit:
+									case NpcType::cat:
 										iExp = 0;
 										break;
 									default: break;
@@ -23551,10 +23560,11 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 				case 5:
 					if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 						switch (m_pNpcList[sTargetH]->m_sType) {
-							case 40:
-							case 41:
+							case NpcType::esg:
+							case NpcType::gmg:
 								if ((m_pClientList[sAttackerH]->m_cSide == 0) || (m_pNpcList[sTargetH]->m_cSide == m_pClientList[sAttackerH]->m_cSide)) return;
 								break;
+							default: break;
 						}
 					}
 			}
@@ -23574,7 +23584,7 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 			} else {
 				switch (cAttackerType) {
 					case DEF_OWNERTYPE_PLAYER:
-						if ((m_pNpcList[sTargetH]->m_sType != 21) && (m_pNpcList[sTargetH]->m_sType != 55) && (m_pNpcList[sTargetH]->m_sType != 56)
+						if ((m_pNpcList[sTargetH]->m_sType != NpcType::guard) && (m_pNpcList[sTargetH]->m_sType != NpcType::rabbit) && (m_pNpcList[sTargetH]->m_sType != NpcType::cat)
 								  && (m_pNpcList[sTargetH]->m_cSide == cAttackerSide)) return;
 						break;
 					case DEF_OWNERTYPE_NPC:
@@ -23607,8 +23617,8 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 							}
 							if (m_pClientList[sAttackerH]->m_iLevel > 100) {
 								switch (m_pNpcList[sTargetH]->m_sType) {
-									case 55:
-									case 56:
+									case NpcType::rabbit:
+									case NpcType::cat:
 										iExp = 0;
 										break;
 									default: break;
@@ -23629,8 +23639,8 @@ void CGame::Effect_Damage_Spot_Type2(short sAttackerH, char cAttackerType, short
 							}
 							if (m_pClientList[sAttackerH]->m_iLevel > 100) {
 								switch (m_pNpcList[sTargetH]->m_sType) {
-									case 55:
-									case 56:
+									case NpcType::rabbit:
+									case NpcType::cat:
 										iExp = 0;
 										break;
 									default: break;
@@ -23914,18 +23924,20 @@ EDSD_SKIPDAMAGEMOVE:
 			}
 			if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 				switch (m_pNpcList[sTargetH]->m_sType) {
-					case 40:
-					case 41:
+					case NpcType::esg:
+					case NpcType::gmg:
 						if ((m_pClientList[sAttackerH]->m_cSide == 0) || (m_pNpcList[sTargetH]->m_cSide == m_pClientList[sAttackerH]->m_cSide)) return;
 						break;
+					default: break;
 				}
 			}
 			switch (m_pNpcList[sTargetH]->m_sType) {
-				case 67: // McGaffin
-				case 68: // Perry
-				case 69: // Devlin
+				case NpcType::mc_gaffin: // McGaffin
+				case NpcType::perry: // Perry
+				case NpcType::devlin: // Devlin
 					iDamage = 0;
 					break;
+				default: break;
 			}
 			if (m_pNpcList[sTargetH]->m_iAbsDamage > 0) {
 				dTmp1 = (double) iDamage;
@@ -23950,7 +23962,7 @@ EDSD_SKIPDAMAGEMOVE:
 			} else {
 				switch (cAttackerType) {
 					case DEF_OWNERTYPE_PLAYER:
-						if ((m_pNpcList[sTargetH]->m_sType != 21) && (m_pNpcList[sTargetH]->m_sType != 55) && (m_pNpcList[sTargetH]->m_sType != 56)
+						if ((m_pNpcList[sTargetH]->m_sType != NpcType::guard) && (m_pNpcList[sTargetH]->m_sType != NpcType::rabbit) && (m_pNpcList[sTargetH]->m_sType != NpcType::cat)
 								  && (m_pNpcList[sTargetH]->m_cSide == cAttackerSide)) return;
 						break;
 					case DEF_OWNERTYPE_NPC:
@@ -23987,8 +23999,8 @@ EDSD_SKIPDAMAGEMOVE:
 							}
 							if (m_pClientList[sAttackerH]->m_iLevel > 100) {
 								switch (m_pNpcList[sTargetH]->m_sType) {
-									case 55:
-									case 56:
+									case NpcType::rabbit:
+									case NpcType::cat:
 										iExp = 0;
 										break;
 									default: break;
@@ -24010,8 +24022,8 @@ EDSD_SKIPDAMAGEMOVE:
 							}
 							if (m_pClientList[sAttackerH]->m_iLevel > 100) {
 								switch (m_pNpcList[sTargetH]->m_sType) {
-									case 55:
-									case 56:
+									case NpcType::rabbit:
+									case NpcType::cat:
 										iExp = 0;
 										break;
 									default: break;
@@ -24994,13 +25006,14 @@ void CGame::DynamicObjectEffectProcessor() {
 											iDamage = iDice(1, 6);
 										else iDamage = iDice(1, 8);
 										switch (m_pNpcList[sOwnerH]->m_sType) {
-											case 40: // ESG
-											case 41: // GMG
-											case 67: // McGaffin
-											case 68: // Perry
-											case 69: // Devlin
+											case NpcType::esg: // ESG
+											case NpcType::gmg: // GMG
+											case NpcType::mc_gaffin: // McGaffin
+											case NpcType::perry: // Perry
+											case NpcType::devlin: // Devlin
 												iDamage = 0;
 												break;
+											default: break;
 										}
 										switch (m_pNpcList[sOwnerH]->m_cActionLimit) {
 											case 0:
@@ -25063,13 +25076,14 @@ void CGame::DynamicObjectEffectProcessor() {
 										if (m_pNpcList[sOwnerH] == 0) break;
 										iDamage = iDice(3, 3) + 5;
 										switch (m_pNpcList[sOwnerH]->m_sType) {
-											case 40: // ESG
-											case 41: // GMG
-											case 67: // McGaffin
-											case 68: // Perry
-											case 69: // Devlin
+											case NpcType::esg: // ESG
+											case NpcType::gmg: // GMG
+											case NpcType::mc_gaffin: // McGaffin
+											case NpcType::perry: // Perry
+											case NpcType::devlin: // Devlin
 												iDamage = 0;
 												break;
+											default: break;
 										}
 										switch (m_pNpcList[sOwnerH]->m_cActionLimit) {
 											case 0:
@@ -25155,13 +25169,14 @@ void CGame::DynamicObjectEffectProcessor() {
 										if (m_pNpcList[sOwnerH] == 0) break;
 										iDamage = iDice(1, 6);
 										switch (m_pNpcList[sOwnerH]->m_sType) {
-											case 40: // ESG
-											case 41: // GMG
-											case 67: // McGaffin
-											case 68: // Perry
-											case 69: // Devlin
+											case NpcType::esg: // ESG
+											case NpcType::gmg: // GMG
+											case NpcType::mc_gaffin: // McGaffin
+											case NpcType::perry: // Perry
+											case NpcType::devlin: // Devlin
 												iDamage = 0;
 												break;
+											default: break;
 										}
 										switch (m_pNpcList[sOwnerH]->m_cActionLimit) {
 											case 0:
@@ -29703,7 +29718,7 @@ void CGame::NpcTalkHandler(int iClientH, int iWho) {
 	int iX;
 	int iY;
 	int iRange;
-	int iTargetType;
+	NpcType iTargetType;
 	int iTargetCount;
 	iQuestNum = 0;
 	std::memset(cTargetName, 0, sizeof(cTargetName));
@@ -29737,7 +29752,7 @@ void CGame::NpcTalkHandler(int iClientH, int iWho) {
 		m_pClientList[iClientH]->m_iQuestRewardType = iRewardType;
 		m_pClientList[iClientH]->m_iQuestRewardAmount = iRewardAmount;
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_NPCTALK, iQuestType, iResMode, iRewardAmount, cRewardName, iContribution,
-				  iTargetType, iTargetCount, iX, iY, iRange, cTargetName);
+				  (int) iTargetType, iTargetCount, iX, iY, iRange, cTargetName);
 	} else {
 		switch (iQuestNum) {
 			case 0: SendNotifyMsg(0, iClientH, DEF_NOTIFY_NPCTALK, (iWho + 130), 0, 0, 0, 0);
@@ -31078,7 +31093,7 @@ bool CGame::bAddItem(int iClientH, CItem * pItem, char /*cMode*/) {
 	return false;
 }
 
-int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange) {
+int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, NpcType * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange) {
 	int iQuest;
 	int iEraseReq;
 	int iExp;
@@ -31154,7 +31169,7 @@ int CGame::_iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMod
 	return -4;
 }
 
-int CGame::_iTalkToNpcResult_Guard(int iClientH, int * /*pQuestType*/, int * /*pMode*/, int * /*pRewardType*/, int * /*pRewardAmount*/, int * /*pContribution*/, char * /*pTargetName*/, int * /*pTargetType*/, int * /*pTargetCount*/, int * /*pX*/, int * /*pY*/, int * /*pRange*/) {
+int CGame::_iTalkToNpcResult_Guard(int iClientH, int * /*pQuestType*/, int * /*pMode*/, int * /*pRewardType*/, int * /*pRewardAmount*/, int * /*pContribution*/, char * /*pTargetName*/, NpcType * /*pTargetType*/, int * /*pTargetCount*/, int * /*pX*/, int * /*pY*/, int * /*pRange*/) {
 	if (m_pClientList[iClientH] == 0) return 0;
 	if (memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) {
 		if (memcmp(m_pClientList[iClientH]->m_cMapName, "aresden", 7) == 0) {
@@ -31255,7 +31270,7 @@ bool CGame::_bDecodeQuestConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							m_pQuestConfigList[iQuestConfigListIndex]->m_iTargetType = atoi(token);
+							m_pQuestConfigList[iQuestConfigListIndex]->m_iTargetType = (NpcType) atoi(token);
 							cReadModeB = 5;
 							break;
 						case 5:
@@ -31525,7 +31540,7 @@ bool CGame::_bDecodeQuestConfigFileContents(char * pData, uint32_t dwMsgSize) {
 	return true;
 }
 
-int CGame::__iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange) {
+int CGame::__iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, NpcType* pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange) {
 	int i;
 	int iQuestList[DEF_MAXQUESTTYPE], iIndex, iQuest, iReward, iQuestIndex;
 	if (m_pClientList[iClientH] == 0) return -1;
@@ -31598,7 +31613,7 @@ void CGame::_SendQuestContents(int iClientH) {
 	int iIndex;
 	int iQuestType;
 	int iContribution;
-	int iTargetType;
+	NpcType iTargetType;
 	int iTargetCount;
 	int iX;
 	int iY;
@@ -31623,7 +31638,7 @@ void CGame::_SendQuestContents(int iClientH) {
 		memcpy(cTargetName, m_pQuestConfigList[iIndex]->m_cTargetName, 20);
 		iQuestCompleted = (int) m_pClientList[iClientH]->m_bIsQuestCompleted;
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_QUESTCONTENTS, iWho, iQuestType, iContribution, 0,
-				  iTargetType, iTargetCount, iX, iY, iRange, iQuestCompleted, cTargetName);
+				  (int) iTargetType, iTargetCount, iX, iY, iRange, iQuestCompleted, cTargetName);
 	}
 }
 
@@ -32849,7 +32864,7 @@ void CGame::AdminOrder_UnsummonDemon(int iClientH) {
 	}
 	for (i = 1; i < DEF_MAXNPCS; i++)
 		if (m_pNpcList[i] != 0) {
-			if ((m_pNpcList[i]->m_sType == 31) && (m_pNpcList[i]->m_bIsKilled == false))
+			if ((m_pNpcList[i]->m_sType == NpcType::demon) && (m_pNpcList[i]->m_bIsKilled == false))
 				NpcKilledHandler(iClientH, DEF_OWNERTYPE_PLAYER, i, 0);
 		}
 }
@@ -33417,35 +33432,36 @@ void CGame::_TamingHandler(int iClientH, int iSkillNum, char cMapIndex, int dX, 
 						if (m_pNpcList[sOwnerH] == 0) break;
 						iTamingLevel = 10;
 						switch (m_pNpcList[sOwnerH]->m_sType) {
-							case 10:
-							case 16: iTamingLevel = 1;
+							case NpcType::slime:
+							case NpcType::giant_ant: iTamingLevel = 1;
 								break;
-							case 22: iTamingLevel = 2;
+							case NpcType::amphis: iTamingLevel = 2;
 								break;
-							case 17:
-							case 14: iTamingLevel = 3;
+							case NpcType::scorpion:
+							case NpcType::orc: iTamingLevel = 3;
 								break;
-							case 18: iTamingLevel = 4;
+							case NpcType::zombie: iTamingLevel = 4;
 								break;
-							case 11: iTamingLevel = 5;
+							case NpcType::skeleton: iTamingLevel = 5;
 								break;
-							case 23:
-							case 12: iTamingLevel = 6;
+							case NpcType::clay_golem:
+							case NpcType::stone_golem: iTamingLevel = 6;
 								break;
-							case 28: iTamingLevel = 7;
+							case NpcType::troll: iTamingLevel = 7;
 								break;
-							case 13:
-							case 27: iTamingLevel = 8;
+							case NpcType::cyclops:
+							case NpcType::hellbound: iTamingLevel = 8;
 								break;
-							case 29: iTamingLevel = 9;
+							case NpcType::orge: iTamingLevel = 9;
 								break;
-							case 33: iTamingLevel = 9;
+							case NpcType::were_wolf: iTamingLevel = 9;
 								break;
-							case 30: iTamingLevel = 9;
+							case NpcType::liche: iTamingLevel = 9;
 								break;
-							case 31:
-							case 32: iTamingLevel = 10;
+							case NpcType::demon:
+							case NpcType::unicorn: iTamingLevel = 10;
 								break;
+							default: break;
 						}
 						iResult = (iSkillLevel / 10);
 						if (iResult < iTamingLevel) break;
@@ -34777,10 +34793,11 @@ RSWU_LOOPBREAK:
 							m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 							if ((sOwnerH != 0) && (cOwnerType == DEF_OWNERTYPE_NPC)) {
 								switch (m_pNpcList[sOwnerH]->m_sType) {
-									case 36:
-									case 37:
+									case NpcType::agt:
+									case NpcType::cgt:
 										bRet = true;
 										break;
+									default: break;
 								}
 							}
 						}
@@ -34866,7 +34883,7 @@ void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
 			break;
 		case 3:
 			for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = 0;
+				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = NpcType::none;
 				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = 0;
 				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = 0;
 				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = 0;
@@ -34880,7 +34897,7 @@ void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
 						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].cSide;
 						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].sX;
 						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].sY;
-					} else if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].cType == 42) {
+					} else if (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].cType == NpcType::mana_stone) {
 						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].cType;
 						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].cSide;
 						m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stCrusadeStructureInfo[i].sX;
@@ -34896,7 +34913,7 @@ void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
 							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_stMiddleCrusadeStructureInfo[i].cSide;
 							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_stMiddleCrusadeStructureInfo[i].sX;
 							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = m_stMiddleCrusadeStructureInfo[i].sY;
-						} else if (m_stMiddleCrusadeStructureInfo[i].cType == 42) {
+						} else if (m_stMiddleCrusadeStructureInfo[i].cType == NpcType::mana_stone) {
 							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cType = m_stMiddleCrusadeStructureInfo[i].cType;
 							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].cSide = m_stMiddleCrusadeStructureInfo[i].cSide;
 							m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sX = m_stMiddleCrusadeStructureInfo[i].sX;
@@ -34930,8 +34947,8 @@ void CGame::_SendMapStatus(int iClientH) {
 	iDataSize = 0;
 	for (i = 0; i < 100; i++) {
 		if (m_pClientList[iClientH]->m_iCSIsendPoint >= DEF_MAXCRUSADESTRUCTURES) goto SMS_ENDOFDATA;
-		if (m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].cType == 0) goto SMS_ENDOFDATA;
-		*cp = m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].cType;
+		if (m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].cType == NpcType::none) goto SMS_ENDOFDATA;
+		*cp = (char) m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].cType;
 		cp++;
 		sp = (short *) cp;
 		*sp = m_pClientList[iClientH]->m_stCrusadeStructureInfo[m_pClientList[iClientH]->m_iCSIsendPoint].sX;
@@ -34962,15 +34979,16 @@ void CGame::RemoveCrusadeStructures() {
 	for (i = 0; i < DEF_MAXNPCS; i++)
 		if (m_pNpcList[i] != 0) {
 			switch (m_pNpcList[i]->m_sType) {
-				case 36:
-				case 37:
-				case 38:
-				case 39:
-				case 40:
-				case 41:
-				case 42:
+				case NpcType::agt:
+				case NpcType::cgt:
+				case NpcType::ms:
+				case NpcType::dt:
+				case NpcType::esg:
+				case NpcType::gmg:
+				case NpcType::mana_stone:
 					DeleteNpc(i);
 					break;
+				default: break;
 			}
 		}
 }
@@ -35034,7 +35052,7 @@ void CGame::SyncMiddlelandMapInfo() {
 	int i;
 	if (m_iMiddlelandMapIndex != -1) {
 		for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-			m_stMiddleCrusadeStructureInfo[i].cType = 0;
+			m_stMiddleCrusadeStructureInfo[i].cType = NpcType::none;
 			m_stMiddleCrusadeStructureInfo[i].cSide = 0;
 			m_stMiddleCrusadeStructureInfo[i].sX = 0;
 			m_stMiddleCrusadeStructureInfo[i].sY = 0;
@@ -36937,18 +36955,19 @@ void CGame::AdminOrder_UnsummonBoss(int iClientH) {
 	for (int i = 1; i < DEF_MAXNPCS; i++) {
 		if (m_pNpcList[i] != 0 && m_pNpcList[i]->m_bIsSummoned == false) {
 			switch (m_pNpcList[i]->m_sType) {
-				case 31: //Demon
-				case 49: //Hellclaw
-				case 45: //GHKABS
-				case 47: //BG
-				case 50: //Tigerworm
-				case 52: //Gagoyle
-				case 81: //Abaddon
-				case 66: //Wyvern
-				case 73: //Fire-Wyvern
+				case NpcType::demon: //Demon
+				case NpcType::hellclaw: //Hellclaw
+				case NpcType::ghkabs: //GHKABS
+				case NpcType::bg: //BG
+				case NpcType::tigerworm: //Tigerworm
+				case NpcType::gagoyle: //Gagoyle
+				case NpcType::abaddon: //Abaddon
+				case NpcType::wyvern: //Wyvern
+				case NpcType::fire_wyvern: //Fire-Wyvern
 					m_pNpcList[i]->m_bIsUnsummoned = true;
 					NpcKilledHandler(iClientH, DEF_OWNERTYPE_PLAYER, i, 0);
 					break;
+				default: break;
 			}
 		}
 	}
@@ -36963,17 +36982,17 @@ void CGame::AdminOrder_ClearNpc(int iClientH) {
 	for (int i = 1; i < DEF_MAXNPCS; i++) {
 		if (m_pNpcList[i] != 0 && m_pNpcList[i]->m_bIsSummoned == false) {
 			switch (m_pNpcList[i]->m_sType) {
-				case 15:
-				case 19:
-				case 20:
-				case 24:
-				case 25:
-				case 26:
-				case 67:
-				case 68:
-				case 69:
-				case 90:
-				case 91:
+				case NpcType::shop_keeper_w:
+				case NpcType::gandlf:
+				case NpcType::howard:
+				case NpcType::tom:
+				case NpcType::william:
+				case NpcType::kennedy:
+				case NpcType::mc_gaffin:
+				case NpcType::perry:
+				case NpcType::devlin:
+				case NpcType::gail:
+				case NpcType::gate:
 					break;
 				default:
 					m_pNpcList[i]->m_bIsUnsummoned = true;
@@ -36988,7 +37007,7 @@ void CGame::AdminOrder_ClearNpc(int iClientH) {
 void CGame::RemoveCrusadeNpcs(void) {
 	for (int i = 0; i < DEF_MAXNPCS; i++) {
 		if (m_pNpcList[i] != 0) {
-			if ((m_pNpcList[i]->m_sType >= 43 && m_pNpcList[i]->m_sType <= 47) || m_pNpcList[i]->m_sType == 51) {
+			if ((m_pNpcList[i]->m_sType >= NpcType::lwb && m_pNpcList[i]->m_sType <= NpcType::bg) || m_pNpcList[i]->m_sType == NpcType::cp) {
 				NpcKilledHandler(0, 0, i, 0);
 			}
 		}
@@ -38102,7 +38121,7 @@ void CGame::MeteorStrikeHandler(int iMapIndex) {
 			for (ix = dX - 10; ix <= dX + 10; ix++)
 				for (iy = dY - 10; iy <= dY + 10; iy++) {
 					m_pMapList[iMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
-					if ((cOwnerType == DEF_OWNERTYPE_NPC) && (m_pNpcList[sOwnerH] != 0) && (m_pNpcList[sOwnerH]->m_sType == 40)) {
+					if ((cOwnerType == DEF_OWNERTYPE_NPC) && (m_pNpcList[sOwnerH] != 0) && (m_pNpcList[sOwnerH]->m_sType == NpcType::esg)) {
 						iTotalESG++;
 					}
 				}
@@ -38322,7 +38341,7 @@ int ITEMSPREAD_FIEXD_COORD [25][2] = {
 	{ 2, -2}, //25
 };
 
-bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY, int iItemSpreadType, int iSpreadRange, ItemId *iItemIDs, POINT *BasePos, int *iNumItem) {
+bool CGame::bGetMultipleItemNamesWhenDeleteNpc(NpcType sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY, int iItemSpreadType, int iSpreadRange, ItemId *iItemIDs, POINT *BasePos, int *iNumItem) {
 	int iProb = 100;
 	float fProb;
 	float fProbA;
@@ -38340,7 +38359,7 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 		fProbC = fProbC;
 		iItemID = ItemId::none;
 		switch (sNpcType) {
-			case 69: // Wyvern
+			case NpcType::devlin: // Wyvern
 				switch (iDice(1, 4)) {
 					case 1: if (iDice(1, 8000) == 1) iItemID = ItemId::kloness_blade;
 						break; // Kloness Blade
@@ -38369,7 +38388,7 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 				}
 				break;
 				break;
-			case 73: // Fire-Wyvern
+			case NpcType::fire_wyvern: // Fire-Wyvern
 				switch (iDice(1, 5)) {
 					case 1: if (iDice(1, (45 * fProbA)) == 3) iItemID = ItemId::dark_executor;
 						break; // DarkExecutor
@@ -38405,7 +38424,7 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 					}
 				}
 				break;
-			case 81: // Abaddon
+			case NpcType::abaddon: // Abaddon
 				switch (iDice(1, 7)) {
 					case 1: if (iDice(1, (4 * fProbA)) == 1) iItemID = ItemId::the_devastator;
 						break; // The_Devastator
@@ -38447,6 +38466,7 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability,
 					}
 				}
 				break;
+			default: break;
 		} // switch
 		if (iItemID == ItemId::none) {
 			switch (iDice(1, 19)) {
@@ -38532,10 +38552,11 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 	std::memset(cItemName, 0, sizeof(cItemName));
 	switch (m_pNpcList[iNpcH]->m_sType) {
 			// NPC not dropping Gold
-		case 21: // Guard
-		case 34: // Dummy
-		case 64: // Crop
+		case NpcType::guard: // Guard
+		case NpcType::dummy: // Dummy
+		case NpcType::crops: // Crop
 			return;
+		default: break;
 	}
 	// 6500 default; the lower the greater the Weapon/Armor/Wand Drop
 	if (iDice(1, 10000) >= m_iPrimaryDropRate) {
@@ -38649,7 +38670,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					case 9:
 						SYSTEMTIME SysTime;
 						GetLocalTime(&SysTime);
-						if (((short) SysTime.wMonth == 12) && (m_pNpcList[iNpcH]->m_sType == 61 || m_pNpcList[iNpcH]->m_sType == 55)) {
+						if (((short) SysTime.wMonth == 12) && (m_pNpcList[iNpcH]->m_sType == NpcType::rudolph || m_pNpcList[iNpcH]->m_sType == NpcType::rabbit)) {
 							switch (iDice(1, 4)) {
 								case 1: iItemID = ItemId::red_candy;
 									break; // Red Candy
@@ -38673,67 +38694,68 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				// Valuable Drop Calculation: (35/100) * (40/100) * (10/100) = 1.4%
 				// Define iGenLevel using Npc.cfg#
 				switch (m_pNpcList[iNpcH]->m_sType) {
-					case 10: // Slime
-					case 16: // Giant-Ant
-					case 22: // Amphis
-					case 55: // Rabbit
-					case 56: //	Cat
+					case NpcType::slime: // Slime
+					case NpcType::giant_ant: // Giant-Ant
+					case NpcType::amphis: // Amphis
+					case NpcType::rabbit: // Rabbit
+					case NpcType::cat: //	Cat
 						iGenLevel = 1;
 						break;
-					case 11: // Skeleton
-					case 14: // Orc, Orc-Mage
-					case 17: // Scorpion
-					case 18: // Zombie
+					case NpcType::skeleton: // Skeleton
+					case NpcType::orc: // Orc, Orc-Mage
+					case NpcType::scorpion: // Scorpion
+					case NpcType::zombie: // Zombie
 						iGenLevel = 2;
 						break;
-					case 12: // Stone-Golem
-					case 23: // Clay-Golem
+					case NpcType::stone_golem: // Stone-Golem
+					case NpcType::clay_golem: // Clay-Golem
 						iGenLevel = 3;
 						break;
-					case 27: // Hellbound
-					case 61: // Rudolph
+					case NpcType::hellbound: // Hellbound
+					case NpcType::rudolph: // Rudolph
 						iGenLevel = 4;
 						break;
-					case 72: // Claw-Turtle
-					case 76: // Giant-Plant
-					case 74: // Giant-Crayfish
-					case 13: // Cyclops
-					case 28: // Troll
-					case 53: // Beholder
-					case 60: // Cannibal-Plant
-					case 62: // DireBoar
+					case NpcType::claw_turtle: // Claw-Turtle
+					case NpcType::giant_plant: // Giant-Plant
+					case NpcType::giant_crayfish: // Giant-Crayfish
+					case NpcType::cyclops: // Cyclops
+					case NpcType::troll: // Troll
+					case NpcType::beholder: // Beholder
+					case NpcType::cannibal_plant: // Cannibal-Plant
+					case NpcType::dire_boar: // DireBoar
 						iGenLevel = 5;
 						break;
-					case 29: // Orge
-					case 33: // WereWolf
-					case 48: // Stalker
-					case 54: // Dark-Elf
-					case 65: // Ice-Golem
-					case 78: // Minotaurus
+					case NpcType::orge: // Orge
+					case NpcType::were_wolf: // WereWolf
+					case NpcType::stalker: // Stalker
+					case NpcType::dark_elf: // Dark-Elf
+					case NpcType::ice_golem: // Ice-Golem
+					case NpcType::minotaurs: // Minotaurus
 						iGenLevel = 6;
 						break;
-					case 70: // Balrogs
-					case 71: // Centaurus
-					case 30: // Liche
-					case 63: // Frost
-					case 79: // Nizie
-					case 59: // Ettin
-					case 75: // Lizards
+					case NpcType::barlog: // Balrogs
+					case NpcType::centaurus: // Centaurus
+					case NpcType::liche: // Liche
+					case NpcType::frost: // Frost
+					case NpcType::nizie: // Nizie
+					case NpcType::ettin: // Ettin
+					case NpcType::giant_lizard: // Lizards
 						iGenLevel = 7;
 						break;
-					case 31: // Demon
-					case 32: // Unicorn
-					case 49: // Hellclaw
-					case 50: // Tigerworm
-					case 52: // Gagoyle
+					case NpcType::demon: // Demon
+					case NpcType::unicorn: // Unicorn
+					case NpcType::hellclaw: // Hellclaw
+					case NpcType::tigerworm: // Tigerworm
+					case NpcType::gagoyle: // Gagoyle
 						iGenLevel = 8;
 						break;
-					case 58: // MountainGiant
+					case NpcType::mountain_giant: // MountainGiant
 						iGenLevel = 9;
 						break;
-					case 77: // MasterMage-Orc
+					case NpcType::master_mage_orc: // MasterMage-Orc
 						iGenLevel = 10;
 						break;
+					default: break;
 				}
 				if (iGenLevel == 0) return;
 				// Weapon Drop:
@@ -43324,7 +43346,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					iAP_L += 4;
 				}
 				// +++ Damage a demons con demon slayer...
-				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::demon_slayer) && (m_pNpcList[sTargetH]->m_sType == 31)) {
+				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::demon_slayer) && (m_pNpcList[sTargetH]->m_sType == NpcType::demon)) {
 					iAP_L += 5;
 				}
 				if ((m_pClientList[sAttackerH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::kloness_blade) || // KlonessBlade
@@ -43492,18 +43514,19 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 			iTargetDefenseRatio = m_pNpcList[sTargetH]->m_iDefenseRatio;
 			if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
 				switch (m_pNpcList[sTargetH]->m_sType) {
-					case 40:
-					case 41:
+					case NpcType::esg:
+					case NpcType::gmg:
 						if ((m_pClientList[sAttackerH]->m_cSide == 0) || (m_pNpcList[sTargetH]->m_cSide == m_pClientList[sAttackerH]->m_cSide)) return 0;
 						break;
+					default: break;
 				}
 				if ((wWeaponType == 25) && (m_pNpcList[sTargetH]->m_cActionLimit == 5) && (m_pNpcList[sTargetH]->m_iBuildCount > 0)) {
 					if ((m_pClientList[sAttackerH]->m_iCrusadeDuty != 2) && (m_pClientList[sAttackerH]->m_iAdminUserLevel == 0)) break;
 					switch (m_pNpcList[sTargetH]->m_sType) {
-						case 36:
-						case 37:
-						case 38:
-						case 39:
+						case NpcType::agt:
+						case NpcType::cgt:
+						case NpcType::ms:
+						case NpcType::dt:
 							// administrators instantly build crusade structures
 							if (m_pClientList[sAttackerH]->m_iAdminUserLevel > 0) {
 								m_pNpcList[sTargetH]->m_sAppr2 = 0;
@@ -43514,18 +43537,19 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 									m_pNpcList[sTargetH]->m_sAppr2 = 0;
 									SendEventToNearClient_TypeA(sTargetH, DEF_OWNERTYPE_NPC, MSGID_EVENT_MOTION, DEF_OBJECTNULLACTION, 0, 0, 0);
 									switch (m_pNpcList[sTargetH]->m_sType) {
-										case 36:
+										case NpcType::agt:
 											iWarContribution = 700;
 											break;
-										case 37: 
+										case NpcType::cgt: 
 											iWarContribution = 700;
 											break;
-										case 38: 
+										case NpcType::ms: 
 											iWarContribution = 500;
 											break;
-										case 39: 
+										case NpcType::dt: 
 											iWarContribution = 500;
 											break;
+										default: break;
 									}
 									m_pClientList[sAttackerH]->m_iWarContribution += iWarContribution;
 									if (m_pClientList[sAttackerH]->m_iWarContribution > DEF_MAXWARCONTRIBUTION)
@@ -43544,6 +43568,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 									break;
 							}
 							break;
+						default: break;
 					}
 					m_pNpcList[sTargetH]->m_iBuildCount--;
 					if (m_pNpcList[sTargetH]->m_iBuildCount <= 0) {
@@ -43557,7 +43582,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					if (cFarmingSkill < 20) return 0;
 					if (m_pClientList[sAttackerH]->m_iLevel < 20) return 0;
 					switch (m_pNpcList[sTargetH]->m_sType) {
-						case 64:
+						case NpcType::crops:
 							switch (m_pNpcList[sTargetH]->m_iBuildCount) {
 								case 1:
 									m_pNpcList[sTargetH]->m_sAppr2 = 3;
@@ -43581,6 +43606,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 									break;
 							}
 							break;
+						default: break;
 					}
 					m_pNpcList[sTargetH]->m_iBuildCount--;
 					if (m_pNpcList[sTargetH]->m_iBuildCount <= 0) {
@@ -43664,8 +43690,11 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 		switch (cProtect) {
 			case 1:
 				switch (m_pNpcList[sAttackerH]->m_sType) {
-					case 54:
-						if ((abs(sTgtX - m_pNpcList[sAttackerH]->m_sX) >= 1) || (abs(sTgtY - m_pNpcList[sAttackerH]->m_sY) >= 1)) return 0;
+					case NpcType::dark_elf:
+						if ((abs(sTgtX - m_pNpcList[sAttackerH]->m_sX) >= 1) || (abs(sTgtY - m_pNpcList[sAttackerH]->m_sY) >= 1)) {
+							return 0;
+						}
+					default: break;
 				}
 				break;
 			case 3: iTargetDefenseRatio += 40;
@@ -44074,20 +44103,20 @@ CAE_SKIPDAMAGEMOVE:
 				if (m_bIsCrusadeMode == true) {
 					if (cAttackerSide == m_pNpcList[sTargetH]->m_cSide) {
 						switch (m_pNpcList[sTargetH]->m_sType) {
-							case 40:
-							case 41:
-							case 43:
-							case 44:
-							case 45:
-							case 46:
-							case 47:
-							case 51:
+							case NpcType::esg:
+							case NpcType::gmg:
+							case NpcType::lwb:
+							case NpcType::ghk:
+							case NpcType::ghkabs:
+							case NpcType::tk:
+							case NpcType::bg:
+							case NpcType::cp:
 								return 0;
 							default: break;
 						}
 					} else {
 						switch (m_pNpcList[sTargetH]->m_sType) {
-							case 41:
+							case NpcType::gmg:
 								if (cAttackerSide != 0) {
 									m_pNpcList[sTargetH]->m_iV1 += iAP_L;
 									if (m_pNpcList[sTargetH]->m_iV1 > 500) {
@@ -44099,6 +44128,7 @@ CAE_SKIPDAMAGEMOVE:
 									}
 								}
 								break;
+							default: break;
 						}
 					}
 				}
@@ -44117,7 +44147,7 @@ CAE_SKIPDAMAGEMOVE:
 					dTmp2 = dTmp1 - dTmp3;
 					iDamage = (int) dTmp2;
 					if (iDamage < 0) iDamage = 1;
-					else if ((m_pNpcList[sTargetH]->m_sType == 31) && (cAttackerType == 1) && (m_pClientList[sAttackerH] != 0) && (m_pClientList[sAttackerH]->m_iSpecialAbilityType == 7))
+					else if ((m_pNpcList[sTargetH]->m_sType == NpcType::demon) && (cAttackerType == 1) && (m_pClientList[sAttackerH] != 0) && (m_pClientList[sAttackerH]->m_iSpecialAbilityType == 7))
 						iDamage += iDice(3, 2);
 				}
 				if ((cAttackerSA == 2) && (m_pNpcList[sTargetH]->m_cMagicEffectStatus[ DEF_MAGICTYPE_PROTECT ] != 0)) {
@@ -44156,12 +44186,12 @@ CAE_SKIPDAMAGEMOVE:
 					bKilled = true;
 					iKilledDice = m_pNpcList[sTargetH]->m_iHitDice;
 				} else {
-					if ((m_pNpcList[sTargetH]->m_sType != 21) && (m_pNpcList[sTargetH]->m_sType != 55) && (m_pNpcList[sTargetH]->m_sType != 56)
+					if ((m_pNpcList[sTargetH]->m_sType != NpcType::guard) && (m_pNpcList[sTargetH]->m_sType != NpcType::rabbit) && (m_pNpcList[sTargetH]->m_sType != NpcType::cat)
 							  && (m_pNpcList[sTargetH]->m_cSide == cAttackerSide)) goto CAE_SKIPCOUNTERATTACK;
 					if (m_pNpcList[sTargetH]->m_cActionLimit != 0) goto CAE_SKIPCOUNTERATTACK;
 					if (m_pNpcList[sTargetH]->m_bIsPermAttackMode == true) goto CAE_SKIPCOUNTERATTACK;
 					if ((m_pNpcList[sTargetH]->m_bIsSummoned == true) && (m_pNpcList[sTargetH]->m_iSummonControlMode == 1)) goto CAE_SKIPCOUNTERATTACK;
-					if (m_pNpcList[sTargetH]->m_sType == 51) goto CAE_SKIPCOUNTERATTACK;
+					if (m_pNpcList[sTargetH]->m_sType == NpcType::cp) goto CAE_SKIPCOUNTERATTACK;
 					if (iDice(1, 3) == 2) {
 						if (m_pNpcList[sTargetH]->m_cBehavior == DEF_BEHAVIOR_ATTACK) {
 							tX = tY = 0;
@@ -44307,8 +44337,8 @@ CAE_SKIPDAMAGEMOVE2:
 						if (m_bIsCrusadeMode == true) iExp = iExp / 3;
 						if (m_pClientList[sAttackerH]->m_iLevel > 100) {
 							switch (m_pNpcList[sTargetH]->m_sType) {
-								case 55:
-								case 56:
+								case NpcType::rabbit:
+								case NpcType::cat:
 									iExp = 0;
 									break;
 								default: break;
@@ -44412,7 +44442,7 @@ bool CGame::_bNpcBehavior_ManaCollector(int iNpcH) {
 						}
 						break;
 					case DEF_OWNERTYPE_NPC:
-						if ((m_pNpcList[sOwnerH]->m_sType == 42) && (m_pNpcList[sOwnerH]->m_iV1 > 0)) {
+						if ((m_pNpcList[sOwnerH]->m_sType == NpcType::mana_stone) && (m_pNpcList[sOwnerH]->m_iV1 > 0)) {
 							if (m_pNpcList[sOwnerH]->m_iV1 >= 3) {
 								m_iCollectedMana[m_pNpcList[iNpcH]->m_cSide] += 3;
 								m_pNpcList[sOwnerH]->m_iV1 -= 3;
@@ -44726,10 +44756,10 @@ void CGame::NpcBehavior_Dead(int iNpcH) {
 	}
 	return true;
 } // _bDecodeNpcItemConfigFileContents()*/
-bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
+bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType) {
 	int iResult;
 	switch (sNpcType) {
-		case 49: // Hellclaw
+		case NpcType::hellclaw: // Hellclaw
 			iResult = iDice(1, 20000);
 			if ((iResult >= 1) && (iResult <= 4999)) {
 				if (iDice(1, 2) == 1)
@@ -44751,7 +44781,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 			else if ((iResult > 19996) && (iResult <= 19999)) iItemID = ItemId::sword_of_ice_elemental; // SwordofIceElemental
 			else if ((iResult > 19999) && (iResult <= 20000)) iItemID = ItemId::ringof_grand_mage; // RingofGrandMage
 			return true;
-		case 50: // Tigerworm
+		case NpcType::tigerworm: // Tigerworm
 			iResult = iDice(1, 10000);
 			if ((iResult >= 1) && (iResult <= 4999)) {
 				if (iDice(1, 2) == 1)
@@ -44777,63 +44807,63 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 	}
 	if (iDice(1, 45) == 13) {
 		switch (sNpcType) {
-			case 11: if (iDice(1, 550) != 11) return false;
+			case NpcType::skeleton: if (iDice(1, 550) != 11) return false;
 				break; // Skeleton   2 * 100
-			case 12: if (iDice(1, 400) != 11) return false;
+			case NpcType::stone_golem: if (iDice(1, 400) != 11) return false;
 				break; // Stone-Golem 2 * 100
-			case 13: if (iDice(1, 100) != 11) return false;
+			case NpcType::cyclops: if (iDice(1, 100) != 11) return false;
 				break; // Cyclops  6 * 100
-			case 14: if (iDice(1, 700) != 11) return false;
+			case NpcType::orc: if (iDice(1, 700) != 11) return false;
 				break; // Orc 4 * 100
-			case 17: if (iDice(1, 600) != 11) return false;
+			case NpcType::scorpion: if (iDice(1, 600) != 11) return false;
 				break; // Scorpoin 5 * 100
-			case 18: if (iDice(1, 850) != 11) return false;
+			case NpcType::zombie: if (iDice(1, 850) != 11) return false;
 				break; // Zombie 1 * 100
-			case 22: if (iDice(1, 600) != 11) return false;
+			case NpcType::amphis: if (iDice(1, 600) != 11) return false;
 				break; // Amphis 5 * 100
-			case 23: if (iDice(1, 400) != 11) return false;
+			case NpcType::clay_golem: if (iDice(1, 400) != 11) return false;
 				break; // Clay-Golem 2 * 100
-			case 27: if (iDice(1, 100) != 11) return false;
+			case NpcType::hellbound: if (iDice(1, 100) != 11) return false;
 				break; // Hellhound 7 * 100
-			case 28: if (iDice(1, 100) != 11) return false;
+			case NpcType::troll: if (iDice(1, 100) != 11) return false;
 				break; // Troll 5 * 100
-			case 29: if (iDice(1, 150) != 11) return false;
+			case NpcType::orge: if (iDice(1, 150) != 11) return false;
 				break; // Orge  7 * 100
-			case 30: if (iDice(1, 120) != 11) return false;
+			case NpcType::liche: if (iDice(1, 120) != 11) return false;
 				break; // Liche 1 * 100
-			case 31: break; // Demon 5 * 100
-			case 32: if (iDice(1, 200) != 11) return false;
+			case NpcType::demon: break; // Demon 5 * 100
+			case NpcType::unicorn: if (iDice(1, 200) != 11) return false;
 				break; // Unicorn 5 * 100
-			case 33: if (iDice(1, 300) != 11) return false;
+			case NpcType::were_wolf: if (iDice(1, 300) != 11) return false;
 				break; // WereWolf 7 * 100
-			case 48: if (iDice(1, 100) != 11) return false;
+			case NpcType::stalker: if (iDice(1, 100) != 11) return false;
 				break; // Stalker
-			case 52: if (iDice(1, 300) != 11) return false;
+			case NpcType::gagoyle: if (iDice(1, 300) != 11) return false;
 				break; // Gagoyle
-			case 53: if (iDice(1, 500) != 11) return false;
+			case NpcType::beholder: if (iDice(1, 500) != 11) return false;
 				break; // Beholder
-			case 54: if (iDice(1, 200) != 11) return false;
+			case NpcType::dark_elf: if (iDice(1, 200) != 11) return false;
 				break; // Dark-Elf
-			case 57: if (iDice(1, 400) != 11) return false;
+			case NpcType::giant_frog: if (iDice(1, 400) != 11) return false;
 				break; // Giant-Frog
-			case 63: if (iDice(1, 300) != 11) return false;
+			case NpcType::frost: if (iDice(1, 300) != 11) return false;
 				break; // Frost
-			case 79: if (iDice(1, 200) != 11) return false;
+			case NpcType::nizie: if (iDice(1, 200) != 11) return false;
 				break; // Nizie
-			case 70: if (iDice(1, 200) != 11) return false;
+			case NpcType::barlog: if (iDice(1, 200) != 11) return false;
 				break; // Barlog
-			case 71: if (iDice(1, 200) != 11) return false;
+			case NpcType::centaurus: if (iDice(1, 200) != 11) return false;
 				break; // Centaurus
 			default: return false;
 		}
 	} else return false;
 	//http://www.helbreath.com/down/d_patch_v2.htm
 	switch (sNpcType) {
-		case 11: // Skeleton
-		case 17: // Scorpoin
-		case 14: // Orc
-		case 28: // Troll
-		case 57: // Giant-Frog
+		case NpcType::skeleton: // Skeleton
+		case NpcType::scorpion: // Scorpoin
+		case NpcType::orc: // Orc
+		case NpcType::troll: // Troll
+		case NpcType::giant_frog: // Giant-Frog
 			switch (iDice(1, 7)) {
 				case 1: iItemID = ItemId::lucky_gold_ring;
 					break; // LuckyGoldRing
@@ -44851,9 +44881,9 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // RingofMage
 			}
 			break;
-		case 13: // Cyclops
-		case 27: // Hellhound
-		case 29: // Orge
+		case NpcType::cyclops: // Cyclops
+		case NpcType::hellbound: // Hellhound
+		case NpcType::orge: // Orge
 			switch (iDice(1, 7)) {
 				case 1: iItemID = ItemId::magic_necklace_df10;
 					break; // MagicNecklace(DF+10)
@@ -44871,8 +44901,8 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // KnecklaceOfFirePro
 			}
 			break;
-		case 18: // Zombie
-		case 22: // Amphis
+		case NpcType::zombie: // Zombie
+		case NpcType::amphis: // Amphis
 			switch (iDice(1, 4)) {
 				case 1: if (iDice(1, 75) == 13) iItemID = ItemId::sword_of_medusa;
 					break; // SwordofMedusa
@@ -44884,7 +44914,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // KnecklaceOfSufferent
 			}
 			break;
-		case 12: // Stone-Golem
+		case NpcType::stone_golem: // Stone-Golem
 			switch (iDice(1, 5)) {
 				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
 					break; // MerienShield
@@ -44898,7 +44928,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // KnecklaceOfStoneGolem
 			}
 			break;
-		case 23: // Clay-Golem
+		case NpcType::clay_golem: // Clay-Golem
 			switch (iDice(1, 4)) {
 				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
 					break; // MerienShield
@@ -44910,7 +44940,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // KnecklaceOfAirEle
 			}
 			break;
-		case 32: // Unicorn
+		case NpcType::unicorn: // Unicorn
 			switch (iDice(1, 4)) {
 				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
 					break; // MerienShield
@@ -44924,8 +44954,8 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // Lighting Blade
 			}
 			break;
-		case 33: // WereWolf
-		case 48: // Stalker
+		case NpcType::were_wolf: // WereWolf
+		case NpcType::stalker: // Stalker
 			switch (iDice(1, 2)) {
 				case 1: if (iDice(1, 30) == 3) iItemID = ItemId::flameberge_plus_3_llf;
 					break; // Flameberge+3(LLF)
@@ -44933,7 +44963,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // GoldenAxe(LLF)
 			}
 			break;
-		case 30: // Liche
+		case NpcType::liche: // Liche
 			switch (iDice(1, 8)) {
 				case 1: if (iDice(1, 10) == 3) iItemID = ItemId::ice_storm_manual;
 					break; // IceStormManual
@@ -44953,7 +44983,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // RingOfArcmage
 			}
 			break;
-		case 31: // Demon
+		case NpcType::demon: // Demon
 			switch (iDice(1, 8)) {
 				case 1: if (iDice(1, 30) == 3) iItemID = ItemId::bloody_shock_w_manual;
 					break; // BloodyShockW.Manual
@@ -44973,7 +45003,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // DemonSlayer
 			}
 			break;
-		case 52: // Gagoyle
+		case NpcType::gagoyle: // Gagoyle
 			switch (iDice(1, 11)) {
 				case 1: if (iDice(1, 30) == 3) iItemID = ItemId::bloody_shock_w_manual;
 					break; // BloodyShockW.Manual
@@ -45001,30 +45031,31 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType) {
 					break; // The_Devastator
 			}
 			break;
-		case 53: // Beholder
+		case NpcType::beholder: // Beholder
 			if (iDice(1, 20) == 11) iItemID = ItemId::necklace_of_beholder;
 			break; // KnecklaceOfBeholder
 			break;
-		case 54: // Dark-Elf
+		case NpcType::dark_elf: // Dark-Elf
 			if (iDice(1, 20) == 11) iItemID = ItemId::dark_elf_bow;
 			break; // DarkElfBow
 			break;
-		case 63: // Frost
+		case NpcType::frost: // Frost
 			if (iDice(1, 40) == 11) iItemID = ItemId::storm_bringer;
 			break; // StormBringer
 			break;
-		case 79: // Nizie
+		case NpcType::nizie: // Nizie
 			if (iDice(1, 20) == 11) iItemID = ItemId::storm_bringer;
 			break; // StormBringer
 			break;
-		case 70: // Barlog
+		case NpcType::barlog: // Barlog
 			if (iDice(1, 40) == 11) iItemID = ItemId::the_devastator;
 			break; // The_Devastator
 			break;
-		case 71: // Centaurus
+		case NpcType::centaurus: // Centaurus
 			if (iDice(1, 20) == 11) iItemID = ItemId::lighting_blade;
 			break; // Lighting Blade
 			break;
+		default: break;
 	}
 	if (iItemID == ItemId::none)
 		return false;
@@ -45598,7 +45629,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 					if (strcmp(m_pMapList[x]->m_cName, "BtField") == 0) {
 						for (i = 0; i < MAX_HELDENIANTOWER; i++) {
 							iNamingValue = m_pMapList[x]->iGetEmptyNamingValue();
-							if ((m_pMapList[x]->m_stHeldenianTower[i].sTypeID < 1) || (m_pMapList[x]->m_stHeldenianTower[i].sTypeID > DEF_MAXNPCTYPES)) break;
+							if ((m_pMapList[x]->m_stHeldenianTower[i].sTypeID < NpcType::xb) || (int(m_pMapList[x]->m_stHeldenianTower[i].sTypeID) > DEF_MAXNPCTYPES)) break;
 							if (iNamingValue != -1) {
 								dX = m_pMapList[x]->m_stHeldenianTower[i].dX;
 								dY = m_pMapList[x]->m_stHeldenianTower[i].dY;
@@ -45641,7 +45672,7 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 								cSide = m_sLastHeldenianWinner;
 								for (z = 0; z < DEF_MAXNPCTYPES; z++) {
 									if (m_pNpcConfigList[z] == 0) break;
-									if (m_pNpcConfigList[z]->m_sType == 91) {
+									if (m_pNpcConfigList[z]->m_sType == NpcType::gate) {
 										std::memset(cTmp, 0, sizeof(cTmp));
 										strcpy(cTmp, m_pNpcConfigList[z]->m_cNpcName);
 									}
@@ -46789,7 +46820,6 @@ RCPH_LOOPBREAK:
 		}
 	}
 }
-//dkset by diuude and update by drawjer
 
 void CGame::GetDkSet(int iClientH) {
 	CItem * pItem;

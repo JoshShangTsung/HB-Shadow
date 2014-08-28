@@ -26,7 +26,7 @@ public:
 	char m_cSide;
 
 	int m_iType;
-	int m_iTargetType;
+	NpcType m_iTargetType;
 	int m_iMaxCount;
 
 	int m_iFrom;

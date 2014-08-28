@@ -386,7 +386,7 @@ public:
 	void AgingMapSectorInfo();
 	void UpdateMapSectorInfo();
 	//bool bGetItemNameWhenDeleteNpc(char * pItemName, short sNpcType);
-	bool bGetItemNameWhenDeleteNpc(ItemId & iItemID, short sNpcType);
+	bool bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType);
 	int iGetItemWeight(class CItem * pItem, int iCount);
 	void CancelQuestHandler(int iClientH);
 	void ActivateSpecialAbilityHandler(int iClientH);
@@ -402,7 +402,7 @@ public:
 	void Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, short sTargetH, char cTargetType, short sAtkX, short sAtkY, short sV1, short sV2, short sV3, bool bExp, int iAttr);
 	void _TamingHandler(int iClientH, int iSkillNum, char cMapIndex, int dX, int dY);
 	void RequestCheckAccountPasswordHandler(char * pData, uint32_t dwMsgSize);
-	int _iTalkToNpcResult_Guard(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
+	int _iTalkToNpcResult_Guard(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, NpcType * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	void SetIceFlag(short sOwnerH, char cOwnerType, bool bStatus);
 	void _bDecodeNoticementFileContents(char * pData, uint32_t dwMsgSize);
 	void RequestNoticementHandler(int iClientH, char * pData);
@@ -709,7 +709,7 @@ public:
 	void ArmorLifeDecrement(int iAttackerH, int iTargetH, char cOwnerType, int iValue);
 
 	// MultiDrops
-	bool bGetMultipleItemNamesWhenDeleteNpc(short sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY, int iItemSpreadType, int iSpreadRange, ItemId *iItemIDs, POINT *BasePos, int *iNumItem);
+	bool bGetMultipleItemNamesWhenDeleteNpc(NpcType sNpcType, int iProbability, int iMin, int iMax, short sBaseX, short sBaseY, int iItemSpreadType, int iSpreadRange, ItemId *iItemIDs, POINT *BasePos, int *iNumItem);
 
 	// Majestic Code By Diuuude
 	int m_iMajesticPointsPerLevel;
@@ -907,7 +907,7 @@ public:
 	} m_stMeteorStrikeResult;
 
 	struct {
-		char cType;
+		NpcType cType;
 		char cSide;
 		short sX;
 		short sY;
@@ -1071,8 +1071,8 @@ public:
 	bool bReadBallSystemConfigFile(const char * cFn);
 
 private:
-	int __iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
-	int _iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, int * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
+	int __iSearchForQuest(int iClientH, int iWho, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, NpcType * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
+	int _iTalkToNpcResult_Cityhall(int iClientH, int * pQuestType, int * pMode, int * pRewardType, int * pRewardAmount, int * pContribution, char * pTargetName, NpcType * pTargetType, int * pTargetCount, int * pX, int * pY, int * pRange);
 	void _ClearExchangeStatus(int iToH);
 	int _iGetItemSpaceLeft(int iClientH);
 

@@ -20,6 +20,98 @@
 #define DEF_BEHAVIOR_FLEE			3
 #define DEF_BEHAVIOR_DEAD			4
 
+enum class NpcType {
+	none = 0,
+	xb = 1,
+	xw = 2,
+	xy = 3,
+	yb = 4,
+	yw = 5,
+	yy = 6,
+	slime = 10,
+	skeleton = 11,
+	stone_golem = 12,
+	cyclops = 13,
+	orc = 14,
+	shop_keeper_w = 15,
+	giant_ant = 16,
+	scorpion = 17,
+	zombie = 18,
+	gandlf = 19,
+	howard = 20,
+	guard = 21,
+	amphis = 22,
+	clay_golem = 23,
+	tom = 24,
+	william = 25,
+	kennedy = 26,
+	hellbound = 27,
+	troll = 28,
+	orge = 29,
+	liche = 30,
+	demon = 31,
+	unicorn = 32,
+	were_wolf = 33,
+	dummy = 34,
+	energy_sphere = 35,
+	agt = 36,
+	cgt = 37,
+	ms = 38,
+	dt = 39,
+	esg = 40,
+	gmg = 41,
+	mana_stone = 42,
+	lwb = 43,
+	ghk = 44,
+	ghkabs = 45,
+	tk = 46,
+	bg = 47,
+	stalker = 48,
+	hellclaw = 49,
+	tigerworm = 50,
+	cp = 51,
+	gagoyle = 52,
+	beholder = 53,
+	dark_elf = 54,
+	rabbit = 55,
+	cat = 56,
+	giant_frog = 57,
+	mountain_giant = 58,
+	ettin = 59,
+	cannibal_plant = 60,
+	rudolph = 61,
+	dire_boar = 62,
+	frost = 63,
+	crops = 64,
+	ice_golem = 65,
+	wyvern = 66,
+	mc_gaffin = 67,
+	perry = 68,
+	devlin = 69,
+	barlog = 70,
+	centaurus = 71,
+	claw_turtle = 72,
+	fire_wyvern = 73,
+	giant_crayfish = 74,
+	giant_lizard = 75,
+	giant_plant = 76,
+	master_mage_orc = 77,
+	minotaurs = 78,
+	nizie = 79,
+	tentocle = 80,
+	abaddon = 81,
+	sor = 82,
+	atk = 83,
+	elf = 84,
+	dsk = 85,
+	hbt = 86,
+	ct = 87,
+	bar = 88,
+	agc = 89,
+	gail = 90,
+	gate = 91
+};
+
 class CNpc {
 public:
 
@@ -51,8 +143,8 @@ public:
 	char m_cAction = 0;
 	char m_cTurn = 0;
 
-	short m_sType = 0;
-	short m_sOriginalType = 0;
+	NpcType m_sType = NpcType::none;
+	NpcType m_sOriginalType = NpcType::none;
 	short m_sAppr2 = 0;
 	int m_iStatus = 0;
 

@@ -7,6 +7,7 @@
 #include "GuildsMan.h"
 #include "Magic.h"
 #include "GlobalDef.h"
+#include "Npc.h"
 
 #define DEF_CLIENTSOCKETBLOCKLIMIT	15
 
@@ -332,7 +333,7 @@ public:
 	bool m_bInRecallImpossibleMap = false;
 
 	struct {
-		char cType = 0;
+		NpcType cType = NpcType::none;
 		char cSide = 0;
 		short sX = 0;
 		short sY = 0;

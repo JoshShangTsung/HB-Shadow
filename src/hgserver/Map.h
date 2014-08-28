@@ -52,7 +52,7 @@ public:
 	bool bGetIsFarm(short tX, short tY);
 	void RestoreStrikePoints();
 	bool bRemoveCrusadeStructureInfo(short sX, short sY);
-	bool bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide);
+	bool bAddCrusadeStructureInfo(NpcType cType, short sX, short sY, char cSide);
 	int iGetAttribute(int dX, int dY, int iBitMask);
 	void _SetupNoAttackArea();
 	void ClearTempSectorInfo();
@@ -219,7 +219,7 @@ public:
 	} m_stHeldenianGateDoor[DEF_MAXHELDENIANDOOR];
 
 	struct {
-		short sTypeID=0;
+		NpcType sTypeID=NpcType::none;
 		short dX=0;
 		short dY=0;
 		char cSide=0;
@@ -245,7 +245,7 @@ public:
 	int m_iTotalAgriculture = 0;
 
 	struct {
-		char cType = 0;
+		NpcType cType = NpcType::none;
 		char cSide = 0;
 		short sX = 0;
 		short sY = 0;

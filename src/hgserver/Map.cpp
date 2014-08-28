@@ -127,7 +127,7 @@ CMap::CMap(class CGame * pGame)
 	}
 
 	for (i = 0; i < DEF_MAXHELDENIANTOWER; i++) {
-		m_stHeldenianTower[i].sTypeID = 0;
+		m_stHeldenianTower[i].sTypeID = NpcType::none;
 		m_stHeldenianTower[i].dX = 0;
 		m_stHeldenianTower[i].dY = 0;
 		m_stHeldenianTower[i].cSide = 0;
@@ -144,7 +144,7 @@ CMap::CMap(class CGame * pGame)
 	m_bIsDisabled = false;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-		m_stCrusadeStructureInfo[i].cType = 0;
+		m_stCrusadeStructureInfo[i].cType = NpcType::none;
 		m_stCrusadeStructureInfo[i].cSide = 0;
 		m_stCrusadeStructureInfo[i].sX = 0;
 		m_stCrusadeStructureInfo[i].sY = 0;
@@ -737,11 +737,11 @@ int CMap::iGetAttribute(int dX, int dY, int iBitMask) {
 	return (pTile->m_iAttribute & iBitMask);
 }
 
-bool CMap::bAddCrusadeStructureInfo(char cType, short sX, short sY, char cSide) {
+bool CMap::bAddCrusadeStructureInfo(NpcType cType, short sX, short sY, char cSide) {
 	register int i;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++)
-		if (m_stCrusadeStructureInfo[i].cType == 0) {
+		if (m_stCrusadeStructureInfo[i].cType == NpcType::none) {
 			m_stCrusadeStructureInfo[i].cType = cType;
 			m_stCrusadeStructureInfo[i].cSide = cSide;
 			m_stCrusadeStructureInfo[i].sX = sX;
@@ -785,7 +785,7 @@ bool CMap::bRemoveCrusadeStructureInfo(short sX, short sY) {
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++)
 		if ((m_stCrusadeStructureInfo[i].sX == sX) && (m_stCrusadeStructureInfo[i].sY == sY)) {
-			m_stCrusadeStructureInfo[i].cType = 0;
+			m_stCrusadeStructureInfo[i].cType = NpcType::none;
 			m_stCrusadeStructureInfo[i].cSide = 0;
 			m_stCrusadeStructureInfo[i].sX = 0;
 			m_stCrusadeStructureInfo[i].sY = 0;
@@ -798,13 +798,13 @@ RCSI_REARRANGE:
 	;
 
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES - 1; i++)
-		if ((m_stCrusadeStructureInfo[i].cType == 0) && (m_stCrusadeStructureInfo[i + 1].cType != 0)) {
+		if ((m_stCrusadeStructureInfo[i].cType == NpcType::none) && (m_stCrusadeStructureInfo[i + 1].cType != NpcType::none)) {
 			m_stCrusadeStructureInfo[i].cType = m_stCrusadeStructureInfo[i + 1].cType;
 			m_stCrusadeStructureInfo[i].cSide = m_stCrusadeStructureInfo[i + 1].cSide;
 			m_stCrusadeStructureInfo[i].sX = m_stCrusadeStructureInfo[i + 1].sX;
 			m_stCrusadeStructureInfo[i].sY = m_stCrusadeStructureInfo[i + 1].sY;
 
-			m_stCrusadeStructureInfo[i + 1].cType = 0;
+			m_stCrusadeStructureInfo[i + 1].cType = NpcType::none;
 			m_stCrusadeStructureInfo[i + 1].cSide = 0;
 			m_stCrusadeStructureInfo[i + 1].sX = 0;
 			m_stCrusadeStructureInfo[i + 1].sY = 0;
