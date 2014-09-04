@@ -46,7 +46,7 @@
 class CMap {
 public:
 	CMap(class CGame * pGame);
-	virtual ~CMap();
+	~CMap();
 	void ClearBigOwner(short sOwnerH, char cOwnerType, short pX, short pY, char cArea);
 	bool bCheckFlySpaceAvailable(short sX, char sY, char cDir, short sOwner);
 	bool bGetIsFarm(short tX, short tY);
@@ -82,7 +82,8 @@ public:
 	bool bRemoveCropsTotalSum();
 	bool bAddCropsTotalSum();
 	void SetBigOwner(short sOwner, char cOwnerClass, short sX, short sY, char cArea);
-
+	class CTile *getTile(short x, short y);
+	bool outOfBounds(int hb, int vb, int x, int y);
 	class CTile * m_pTile=0;
 	class CGame * m_pGame=0;
 	char m_cName[11]{};

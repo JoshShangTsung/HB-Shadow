@@ -217,7 +217,7 @@ bool CGame::bAccept(XSocket * pXSock) {
 					  m_pClientList[i]->m_dwTime = m_pClientList[i]->m_dwHungerTime = m_pClientList[i]->m_dwExpStockTime =
 					  m_pClientList[i]->m_dwRecentAttackTime = m_pClientList[i]->m_dwAutoExpTime = m_pClientList[i]->m_dwSpeedHackCheckTime = timeGetTime();
 			pXSock->bAccept(m_pClientList[i]->m_pXSock, WM_ONCLIENTSOCKETEVENT + i);
-			std::memset(m_pClientList[i]->m_cIPaddress, 0, sizeof(m_pClientList[i]->m_cIPaddress));
+			std::memset(m_pClientList[i]->m_cIPaddress, 0, sizeof (m_pClientList[i]->m_cIPaddress));
 			m_pClientList[i]->m_pXSock->iGetPeerAddress(m_pClientList[i]->m_cIPaddress);
 			wsprintf(G_cTxt, "<%d> Client Connected: (%s)", i, m_pClientList[i]->m_cIPaddress);
 			PutLogList(G_cTxt);
@@ -356,7 +356,7 @@ bool CGame::bInit() {
 	m_bIsSkillAvailable = false;
 	m_bIsQuestAvailable = false;
 	m_bIsPortionAvailable = false;
-	std::memset(m_cServerName, 0, sizeof(m_cServerName));
+	std::memset(m_cServerName, 0, sizeof (m_cServerName));
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
 		m_pClientList[i] = 0;
 	for (i = 0; i < DEF_MAXMAPS; i++)
@@ -396,16 +396,16 @@ bool CGame::bInit() {
 	for (i = 0; i < DEF_MAXBUILDITEMS; i++)
 		m_pBuildItemList[i] = 0;
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++) {
-		std::memset(m_stCrusadeStructures[i].cMapName, 0, sizeof(m_stCrusadeStructures[i].cMapName));
+		std::memset(m_stCrusadeStructures[i].cMapName, 0, sizeof (m_stCrusadeStructures[i].cMapName));
 		m_stCrusadeStructures[i].cType = 0;
 		m_stCrusadeStructures[i].dX = 0;
 		m_stCrusadeStructures[i].dY = 0;
 	}
 	for (i = 0; i < DEF_MAXADMINS; i++) {
-		std::memset(m_stAdminList[i].m_cGMName, 0, sizeof(m_stAdminList[i].m_cGMName));
+		std::memset(m_stAdminList[i].m_cGMName, 0, sizeof (m_stAdminList[i].m_cGMName));
 	}
 	for (i = 0; i < DEF_MAXBANNED; i++) {
-		std::memset(m_stBannedList[i].m_cBannedIPaddress, 0, sizeof(m_stBannedList[i].m_cBannedIPaddress));
+		std::memset(m_stBannedList[i].m_cBannedIPaddress, 0, sizeof (m_stBannedList[i].m_cBannedIPaddress));
 	}
 	for (i = 0; i < DEF_MAXGUILDS; i++)
 		m_pGuildTeleportLoc[i].m_iV1 = 0;
@@ -548,7 +548,7 @@ bool CGame::bInit() {
 	m_iHeldenianElvineDead = 0;
 	m_bIsHeldenianReady = false; // new
 	m_sLastHeldenianWinner = 0; // new
-	std::memset(m_cHeldenianMapName, 0, sizeof(m_cHeldenianMapName)); // new
+	std::memset(m_cHeldenianMapName, 0, sizeof (m_cHeldenianMapName)); // new
 	//50Cent - Capture The Flag
 	m_sFlagCountWin = 0;
 	m_bIsCTFMode = false;
@@ -583,7 +583,7 @@ void CGame::DisplayInfo(HDC hdc) {
 	iLine = 0;
 	for (i = 0; i < DEF_MAXMAPS; i++)
 		if (m_pMapList[i] != 0) {
-			std::memset(G_cTxt, 0, sizeof(G_cTxt));
+			std::memset(G_cTxt, 0, sizeof (G_cTxt));
 			wsprintf(G_cTxt, "Map(%s)    Object(%d)    P(%d, %d)    N(%d, %d)    A(%d, %d)    E(%d, %d)    M(%d, %d)",
 					  m_pMapList[i]->m_cName, m_pMapList[i]->m_iTotalActiveObject, m_pMapList[i]->m_iMaxPx * 20 + 10, m_pMapList[i]->m_iMaxPy * 20 + 10,
 					  m_pMapList[i]->m_iMaxNx * 20 + 10, m_pMapList[i]->m_iMaxNy * 20 + 10, m_pMapList[i]->m_iMaxAx * 20 + 10, m_pMapList[i]->m_iMaxAy * 20 + 10,
@@ -706,17 +706,17 @@ void CGame::ClientMotionHandler(int iClientH, char * pData) {
 			iRet = iClientMotion_Magic_Handler(iClientH, sX, sY, cDir);
 			//client hp recorded here ONLY if its less than
 			if (iRet == 1) {
-				if (m_pClientList[iClientH]->m_bMagicPauseTime == false) {
-					m_pClientList[iClientH]->m_bMagicPauseTime = true;
-					iTemp = 10;
-					SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMAGIC, dX, iTemp, 0);
-					m_pClientList[iClientH]->m_iSpellCount++;
-					bCheckClientMagicFrequency(iClientH, dwClientTime);
-				} else if (m_pClientList[iClientH]->m_bMagicPauseTime == true) {
+				//if (!m_pClientList[iClientH]->m_bMagicPauseTime) {
+				//	m_pClientList[iClientH]->m_bMagicPauseTime = true;
+				iTemp = 10;
+				SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTMAGIC, dX, iTemp, 0);
+				m_pClientList[iClientH]->m_iSpellCount++;
+				bCheckClientMagicFrequency(iClientH, dwClientTime);
+				/*} else {
 					wsprintf(G_cTxt, "Cast Delay Hack: (%s) Player: (%s) - player casting too fast.", m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName);
 					PutHackLogFileList(G_cTxt);
 					DeleteClient(iClientH, true, true);
-				}
+				}*/
 			} else if (iRet == 2) SendObjectMotionRejectMsg(iClientH);
 			break;
 		default:
@@ -1003,35 +1003,35 @@ void CGame::RequestInitPlayerHandler(int iClientH, char * pData, char cKey) {
 	bool bIsObserverMode;
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == true) return;
-	std::memset(cCharName, 0, sizeof(cCharName));
-	std::memset(cAccountName, 0, sizeof(cAccountName));
-	std::memset(cAccountPassword, 0, sizeof(cAccountPassword));
-	std::memset(m_pClientList[iClientH]->m_cCharName, 0, sizeof(m_pClientList[iClientH]->m_cCharName));
-	std::memset(m_pClientList[iClientH]->m_cAccountName, 0, sizeof(m_pClientList[iClientH]->m_cAccountName));
-	std::memset(m_pClientList[iClientH]->m_cAccountPassword, 0, sizeof(m_pClientList[iClientH]->m_cAccountPassword));
+	std::memset(cCharName, 0, sizeof (cCharName));
+	std::memset(cAccountName, 0, sizeof (cAccountName));
+	std::memset(cAccountPassword, 0, sizeof (cAccountPassword));
+	std::memset(m_pClientList[iClientH]->m_cCharName, 0, sizeof (m_pClientList[iClientH]->m_cCharName));
+	std::memset(m_pClientList[iClientH]->m_cAccountName, 0, sizeof (m_pClientList[iClientH]->m_cAccountName));
+	std::memset(m_pClientList[iClientH]->m_cAccountPassword, 0, sizeof (m_pClientList[iClientH]->m_cAccountPassword));
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	memcpy(cCharName, cp, 10);
 	cp += 10;
-	std::memset(cTxt, 0, sizeof(cTxt)); // v1.4
+	std::memset(cTxt, 0, sizeof (cTxt)); // v1.4
 	memcpy(cTxt, cCharName, 10);
 	m_Misc.bDecode(cKey, cTxt);
-	std::memset(cCharName, 0, sizeof(cCharName));
+	std::memset(cCharName, 0, sizeof (cCharName));
 	memcpy(cCharName, cTxt, 10);
 	//testcode
 	if (strlen(cTxt) == 0) PutLogList("RIPH - cTxt: Char 0!");
 	memcpy(cAccountName, cp, 10);
 	cp += 10;
-	std::memset(cTxt, 0, sizeof(cTxt)); // v1.4
+	std::memset(cTxt, 0, sizeof (cTxt)); // v1.4
 	memcpy(cTxt, cAccountName, 10);
 	m_Misc.bDecode(cKey, cTxt);
-	std::memset(cAccountName, 0, sizeof(cAccountName));
+	std::memset(cAccountName, 0, sizeof (cAccountName));
 	memcpy(cAccountName, cTxt, 10);
 	memcpy(cAccountPassword, cp, 10);
 	cp += 10;
-	std::memset(cTxt, 0, sizeof(cTxt)); // v1.4
+	std::memset(cTxt, 0, sizeof (cTxt)); // v1.4
 	memcpy(cTxt, cAccountPassword, 10);
 	m_Misc.bDecode(cKey, cTxt);
-	std::memset(cAccountPassword, 0, sizeof(cAccountPassword));
+	std::memset(cAccountPassword, 0, sizeof (cAccountPassword));
 	memcpy(cAccountPassword, cTxt, 10);
 	bIsObserverMode = (bool) * cp;
 	cp++;
@@ -1086,12 +1086,12 @@ void CGame::RequestInitDataHandler(int iClientH, char * pData, char cKey) {
 	pBuffer = new char [DEF_MSGBUFFERSIZE + 1];
 	ZeroMemory(pBuffer, DEF_MSGBUFFERSIZE + 1);
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	std::memset(cPlayerName, 0, sizeof(cPlayerName));
+	std::memset(cPlayerName, 0, sizeof (cPlayerName));
 	memcpy(cPlayerName, cp, 10);
-	std::memset(cTxt, 0, sizeof(cTxt)); // v1.4
+	std::memset(cTxt, 0, sizeof (cTxt)); // v1.4
 	memcpy(cTxt, cPlayerName, 10);
 	m_Misc.bDecode(cKey, cTxt);
-	std::memset(cPlayerName, 0, sizeof(cPlayerName));
+	std::memset(cPlayerName, 0, sizeof (cPlayerName));
 	memcpy(cPlayerName, cTxt, 10);
 	if (memcmp(m_pClientList[iClientH]->m_cCharName, cPlayerName, 10) != 0) {
 		DeleteClient(iClientH, false, true);
@@ -1910,14 +1910,14 @@ void CGame::DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogo
 			m_pClientList[iClientH]->m_sX = -1;
 			m_pClientList[iClientH]->m_sY = -1;
 			strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);
-			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 			if (m_pClientList[iClientH]->m_cSide == 0) {
 				strcpy(m_pClientList[iClientH]->m_cMapName, "default");
 			} else {
 				if (memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0) {
 					if (m_bIsCrusadeMode == true) {
 						if (m_pClientList[iClientH]->m_iDeadPenaltyTime > 0) {
-							std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+							std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
 							strcpy(m_pClientList[iClientH]->m_cLockedMapName, "aresden");
 							m_pClientList[iClientH]->m_iLockedMapTime = 60 * 5;
 							m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10;
@@ -1935,7 +1935,7 @@ void CGame::DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogo
 				} else {
 					if (m_bIsCrusadeMode == true) {
 						if (m_pClientList[iClientH]->m_iDeadPenaltyTime > 0) {
-							std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+							std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
 							strcpy(m_pClientList[iClientH]->m_cLockedMapName, "elvine");
 							m_pClientList[iClientH]->m_iLockedMapTime = 60 * 5;
 							m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10;
@@ -1953,16 +1953,16 @@ void CGame::DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogo
 				}
 			}
 		} else if (bForceCloseConn == true) {
-			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 			memcpy(m_pClientList[iClientH]->m_cMapName, "bisle", 5);
 			m_pClientList[iClientH]->m_sX = -1;
 			m_pClientList[iClientH]->m_sY = -1;
-			std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+			std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
 			strcpy(m_pClientList[iClientH]->m_cLockedMapName, "bisle");
 			m_pClientList[iClientH]->m_iLockedMapTime = 10 * 60;
 		}
 		if (m_pClientList[iClientH]->m_bIsObserverMode == true) {
-			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 			if (m_pClientList[iClientH]->m_cSide == 0) {
 				switch (iDice(1, 2)) {
 					case 1:
@@ -1979,7 +1979,7 @@ void CGame::DeleteClient(int iClientH, bool bSave, bool bNotify, bool bCountLogo
 			m_pClientList[iClientH]->m_sY = -1;
 		}
 		if (memcmp(m_pClientList[iClientH]->m_cMapName, "fight", 5) == 0) {
-			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+			std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 			if (m_pClientList[iClientH]->m_cSide == 0) {
 				switch (iDice(1, 2)) {
 					case 1:
@@ -2046,9 +2046,9 @@ void CGame::SendEventToNearClient_TypeA(short sOwnerH, char cOwnerType, uint32_t
 	int iTemp3;
 	int iTemp;
 	int iTemp2;
-	std::memset(cData_All, 0, sizeof(cData_All));
-	std::memset(cData_Srt, 0, sizeof(cData_Srt));
-	std::memset(cData_Srt_Av, 0, sizeof(cData_Srt_Av));
+	std::memset(cData_All, 0, sizeof (cData_All));
+	std::memset(cData_Srt, 0, sizeof (cData_Srt));
+	std::memset(cData_Srt_Av, 0, sizeof (cData_Srt_Av));
 	ipStatus = (int *) &iDumm;
 	cKey = (rand() % 255) + 1;
 	dwp = (uint32_t *) (cData_All + DEF_INDEX4_MSGID);
@@ -2822,7 +2822,7 @@ void CGame::CheckClientResponseTime() {
 				m_pClientList[i]->m_iLockedMapTime -= 3;
 				if (m_pClientList[i]->m_iLockedMapTime < 0) {
 					m_pClientList[i]->m_iLockedMapTime = 0;
-					std::memset(m_pClientList[i]->m_cLockedMapName, 0, sizeof(m_pClientList[i]->m_cLockedMapName));
+					std::memset(m_pClientList[i]->m_cLockedMapName, 0, sizeof (m_pClientList[i]->m_cLockedMapName));
 					strcpy(m_pClientList[i]->m_cLockedMapName, "NONE");
 				}
 				m_pClientList[i]->m_iDeadPenaltyTime -= 3;
@@ -3056,13 +3056,13 @@ bool CGame::bSendMsgToLS(uint32_t dwMsg, int iClientH, bool bFlag, char* pData) 
 	}
 	 */
 	// v1.41
-	std::memset(G_cData50000, 0, sizeof(G_cData50000));
-	std::memset(cCharName, 0, sizeof(cCharName));
-	std::memset(cAccountName, 0, sizeof(cAccountName));
-	std::memset(cAccountPassword, 0, sizeof(cAccountPassword));
-	std::memset(cAddress, 0, sizeof(cAddress));
-	std::memset(cGuildName, 0, sizeof(cGuildName));
-	std::memset(cGuildLoc, 0, sizeof(cGuildLoc));
+	std::memset(G_cData50000, 0, sizeof (G_cData50000));
+	std::memset(cCharName, 0, sizeof (cCharName));
+	std::memset(cAccountName, 0, sizeof (cAccountName));
+	std::memset(cAccountPassword, 0, sizeof (cAccountPassword));
+	std::memset(cAddress, 0, sizeof (cAddress));
+	std::memset(cGuildName, 0, sizeof (cGuildName));
+	std::memset(cGuildLoc, 0, sizeof (cGuildLoc));
 	switch (dwMsg) {
 			// New 07/05/2004
 		case MSGID_GAMEMASTERLOG:
@@ -3141,7 +3141,7 @@ bool CGame::bSendMsgToLS(uint32_t dwMsg, int iClientH, bool bFlag, char* pData) 
 			cp += 10;
 			memcpy(cp, m_cServerName, 10);
 			cp += 10;
-			std::memset(cTxt, 0, sizeof(cTxt));
+			std::memset(cTxt, 0, sizeof (cTxt));
 			m_pClientList[iClientH]->m_pXSock->iGetPeerAddress(cTxt);
 			memcpy(cp, cTxt, 16);
 			cp += 16;
@@ -3208,7 +3208,7 @@ bool CGame::bSendMsgToLS(uint32_t dwMsg, int iClientH, bool bFlag, char* pData) 
 			cp += 10;
 			memcpy((char *) cp, cAccountPassword, 10);
 			cp += 10;
-			std::memset(cTemp, 0, sizeof(cTemp));
+			std::memset(cTemp, 0, sizeof (cTemp));
 			iRet = m_pClientList[iClientH]->m_pXSock->iGetPeerAddress(cTemp);
 			memcpy((char *) cp, cTemp, 15);
 			cp += 15;
@@ -3404,7 +3404,7 @@ void CGame::ResponsePlayerDataHandler(char * pData, uint32_t dwSize) {
 	uint16_t * wp;
 	char * cp, cCharName[11], cTxt[120];
 	int i;
-	std::memset(cCharName, 0, sizeof(cCharName));
+	std::memset(cCharName, 0, sizeof (cCharName));
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	memcpy(cCharName, cp, 10);
 	cp += 10;
@@ -3443,7 +3443,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, uint32_t dwSize) {
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == true) return;
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	std::memset(cName, 0, sizeof(cName));
+	std::memset(cName, 0, sizeof (cName));
 	memcpy(cName, cp, 10);
 	cp += 10;
 	//m_pClientList[iClientH]->m_cAccountStatus = *cp;
@@ -3507,7 +3507,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, uint32_t dwSize) {
 	CheckSpecialEvent(iClientH);
 	bCheckMagicInt(iClientH);
 	if ((cGuildStatus == 0) && (memcmp(m_pClientList[iClientH]->m_cGuildName, "NONE", 4) != 0)) {
-		std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof(m_pClientList[iClientH]->m_cGuildName));
+		std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof (m_pClientList[iClientH]->m_cGuildName));
 		strcpy(m_pClientList[iClientH]->m_cGuildName, "NONE");
 		m_pClientList[iClientH]->m_iGuildRank = -1;
 		m_pClientList[iClientH]->m_iGuildGUID = -1;
@@ -3523,7 +3523,7 @@ void CGame::InitPlayerData(int iClientH, char * pData, uint32_t dwSize) {
 		PutLogList(cTxt);
 		return;
 	}
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = MSGID_RESPONSE_INITPLAYER;
 	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -3597,7 +3597,7 @@ bool CGame::bReadProgramConfigFile(const char * cFn) {
 			if (cReadMode != 0) {
 				switch (cReadMode) {
 					case 1:
-						std::memset(m_cServerName, 0, sizeof(m_cServerName));
+						std::memset(m_cServerName, 0, sizeof (m_cServerName));
 						if (strlen(token) > 10) {
 							wsprintf(cTxt, "(!!!) Game server name(%s) must within 10 chars!", token);
 							PutLogList(cTxt);
@@ -3609,7 +3609,7 @@ bool CGame::bReadProgramConfigFile(const char * cFn) {
 						cReadMode = 0;
 						break;
 					case 2:
-						std::memset(m_cGameServerAddr, 0, sizeof(m_cGameServerAddr));
+						std::memset(m_cGameServerAddr, 0, sizeof (m_cGameServerAddr));
 						char ServerAddr[50];
 						::gethostname(ServerAddr, 50);
 						struct hostent *pHostEnt;
@@ -3630,7 +3630,7 @@ bool CGame::bReadProgramConfigFile(const char * cFn) {
 						cReadMode = 0;
 						break;
 					case 3:
-						std::memset(m_cLogServerAddr, 0, sizeof(m_cLogServerAddr));
+						std::memset(m_cLogServerAddr, 0, sizeof (m_cLogServerAddr));
 						if (bLogDNS == true) { //bLogDNS by Snaipperi
 							PutLogList(cTxt);
 							char *cAddress = token;
@@ -3683,7 +3683,7 @@ bool CGame::bReadProgramConfigFile(const char * cFn) {
 						cReadMode = 0;
 						break;
 					case 8:
-						std::memset(m_cGameServerAddrInternal, 0, sizeof(m_cGameServerAddrInternal));
+						std::memset(m_cGameServerAddrInternal, 0, sizeof (m_cGameServerAddrInternal));
 						if (strlen(token) > 15) {
 							wsprintf(cTxt, "(!!!) Internal (LAN) Game server address(%s) must within 15 chars!", token);
 							PutLogList(cTxt);
@@ -3695,7 +3695,7 @@ bool CGame::bReadProgramConfigFile(const char * cFn) {
 						cReadMode = 0;
 						break;
 					case 9:
-						std::memset(m_cGameServerAddrExternal, 0, sizeof(m_cGameServerAddrExternal));
+						std::memset(m_cGameServerAddrExternal, 0, sizeof (m_cGameServerAddrExternal));
 						if (strlen(token) > 15) {
 							wsprintf(cTxt, "(!!!) External (Internet) Game server address(%s) must within 15 chars!", token);
 							PutLogList(cTxt);
@@ -3707,7 +3707,7 @@ bool CGame::bReadProgramConfigFile(const char * cFn) {
 						cReadMode = 0;
 						break;
 					case 10:
-						std::memset(m_cGameServerAddr, 0, sizeof(m_cGameServerAddr));
+						std::memset(m_cGameServerAddr, 0, sizeof (m_cGameServerAddr));
 						if (strlen(token) > 15) {
 							wsprintf(cTxt, "(!!!) Game server address(%s) must within 15 chars!", token);
 							PutLogList(cTxt);
@@ -3963,7 +3963,7 @@ bool CGame::bReadSettingsConfigFile(const char * cFn) {
 						cReadMode = 0;
 						break;
 					case 19:
-						std::memset(m_cSecurityNumber, 0, sizeof(m_cSecurityNumber));
+						std::memset(m_cSecurityNumber, 0, sizeof (m_cSecurityNumber));
 						len = strlen(token);
 						if (len > 10) len = 10;
 						memcpy(m_cSecurityNumber, token, len);
@@ -4056,7 +4056,7 @@ bool CGame::bReadCrusadeStructureConfigFile(const char * cFn) {
 								cReadModeB = 2;
 								break;
 							case 2:
-								std::memset(m_stCrusadeStructures[iIndex].cMapName, 0, sizeof(m_stCrusadeStructures[iIndex].cMapName));
+								std::memset(m_stCrusadeStructures[iIndex].cMapName, 0, sizeof (m_stCrusadeStructures[iIndex].cMapName));
 								memcpy(m_stCrusadeStructures[iIndex].cMapName, token, strlen(token));
 								cReadModeB = 3;
 								break;
@@ -4157,9 +4157,9 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 		if (cReadModeA != 0) {
 			switch (cReadModeA) {
 				case 1:
-					std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+					std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 					strcpy(m_pClientList[iClientH]->m_cMapName, token);
-					std::memset(cTmpName, 0, sizeof(cTmpName));
+					std::memset(cTmpName, 0, sizeof (cTmpName));
 					strcpy(cTmpName, token);
 					for (i = 0; i < DEF_MAXMAPS; i++)
 						if ((m_pMapList[i] != 0) && (memcmp(m_pMapList[i]->m_cName, cTmpName, 10) == 0)) {
@@ -4521,7 +4521,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 					cReadModeA = 0;
 					break;
 				case 12:
-					std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof(m_pClientList[iClientH]->m_cGuildName));
+					std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof (m_pClientList[iClientH]->m_cGuildName));
 					strcpy(m_pClientList[iClientH]->m_cGuildName, token);
 					cReadModeA = 0;
 					break;
@@ -4879,7 +4879,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 					}
 					break;
 				case 29:
-					std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof(m_pClientList[iClientH]->m_cLocation));
+					std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof (m_pClientList[iClientH]->m_cLocation));
 					strcpy(m_pClientList[iClientH]->m_cLocation, token);
 					if (memcmp(m_pClientList[iClientH]->m_cLocation + 3, "hunter", 6) == 0)
 						m_pClientList[iClientH]->m_bIsPlayerCivil = true;
@@ -5031,7 +5031,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 					break;
 				case 42:
 					if (token != 0) {
-						std::memset(m_pClientList[iClientH]->m_cProfile, 0, sizeof(m_pClientList[iClientH]->m_cProfile));
+						std::memset(m_pClientList[iClientH]->m_cProfile, 0, sizeof (m_pClientList[iClientH]->m_cProfile));
 						strcpy(m_pClientList[iClientH]->m_cProfile, token);
 					}
 					cReadModeA = 0;
@@ -5419,7 +5419,7 @@ bool CGame::_bDecodePlayerDatafileContents(int iClientH, char * pData, uint32_t 
 						delete pStrTok;
 						return false;
 					}
-					std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+					std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
 					strcpy(m_pClientList[iClientH]->m_cLockedMapName, token);
 					cReadModeA = 0;
 					break;
@@ -5790,7 +5790,7 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 	strcat(pData, "\n");
 	strcat(pData, "character-guild-GUID = ");
 	if (m_pClientList[iClientH]->m_iGuildRank != -1) {
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "%d", m_pClientList[iClientH]->m_iGuildGUID);
 		strcat(pData, cTxt);
 	} else strcat(pData, "-1");
@@ -6162,21 +6162,21 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 	strcat(pData, "\n");
 	strcat(pData, "skill-mastery     = ");
 	for (i = 0; i < 60; i++) {
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "%d ", m_pClientList[iClientH]->m_cSkillMastery[i]);
 		strcat(pData, cTxt);
 	}
 	strcat(pData, "\n");
 	strcat(pData, "skill-SSN     = ");
 	for (i = 0; i < 60; i++) {
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "%d ", m_pClientList[iClientH]->m_iSkillSSN[i]);
 		strcat(pData, cTxt);
 	}
 	strcat(pData, "\n");
 	strcat(pData, "[ITEM-EQUIP-STATUS]\n\n");
 	strcat(pData, "item-equip-status = ");
-	std::memset(cTxt, 0, sizeof(cTxt));
+	std::memset(cTxt, 0, sizeof (cTxt));
 	strcpy(cTxt, "00000000000000000000000000000000000000000000000000");
 	int iEP = 0;
 	for (i = 0; i < DEF_MAXITEMS; i++)
@@ -6191,14 +6191,14 @@ int CGame::_iComposePlayerDataFileContents(int iClientH, char * pData) {
 	strcat(pData, "\n");
 	strcat(pData, "item-position-x = ");
 	for (i = 0; i < DEF_MAXITEMS; i++) {
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "%d ", m_pClientList[iClientH]->m_ItemPosList[i].x);
 		strcat(pData, cTxt);
 	}
 	strcat(pData, "\n");
 	strcat(pData, "item-position-y = ");
 	for (i = 0; i < DEF_MAXITEMS; i++) {
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "%d ", m_pClientList[iClientH]->m_ItemPosList[i].y);
 		strcat(pData, cTxt);
 	}
@@ -6251,7 +6251,7 @@ bool CGame::_bDecodeItemConfigFileContents(char * pData, uint32_t dwMsgSize) {
 							break;
 						case 2:
 							// m_cName
-							std::memset(m_pItemConfigList[iItemConfigListIndex]->m_cName, 0, sizeof(m_pItemConfigList[iItemConfigListIndex]->m_cName));
+							std::memset(m_pItemConfigList[iItemConfigListIndex]->m_cName, 0, sizeof (m_pItemConfigList[iItemConfigListIndex]->m_cName));
 							memcpy(m_pItemConfigList[iItemConfigListIndex]->m_cName, token, strlen(token));
 							cReadModeB = 3;
 							break;
@@ -6559,12 +6559,12 @@ DICFC_STOPDECODING:
 bool CGame::_bInitItemAttr(CItem * pItem, const char * pItemName) {
 	int i;
 	char cTmpName[21];
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pItemName);
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
 		if (m_pItemConfigList[i] != 0) {
 			if (memcmp(cTmpName, m_pItemConfigList[i]->m_cName, 20) == 0) {
-				std::memset(pItem->m_cName, 0, sizeof(pItem->m_cName));
+				std::memset(pItem->m_cName, 0, sizeof (pItem->m_cName));
 				strcpy(pItem->m_cName, m_pItemConfigList[i]->m_cName);
 				pItem->m_cItemType = m_pItemConfigList[i]->m_cItemType;
 				pItem->m_cEquipPos = m_pItemConfigList[i]->m_cEquipPos;
@@ -6619,7 +6619,7 @@ bool CGame::bSetNpcFollowMode(char * pName, char * pFollowName, char cFollowOwne
 	int iMapIndex;
 	int iFollowIndex;
 	char cTmpName[11], cFollowSide;
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	iMapIndex = -1;
 	iFollowIndex = -1;
 	for (i = 1; i < DEF_MAXNPCS; i++)
@@ -6675,7 +6675,7 @@ int CGame::bCreateNewNpc(const char * pNpcName, char * pName, const char * pMapN
 	if (strlen(pName) == 0) return false;
 	if (strlen(pNpcName) == 0) return false;
 	GetLocalTime(&SysTime);
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pMapName);
 	iMapIndex = -1;
 	for (i = 0; i < DEF_MAXMAPS; i++)
@@ -6883,8 +6883,6 @@ GET_VALIDLOC_SUCCESS:
 			if (bFirmBerserk == true) {
 				m_pNpcList[i]->m_cMagicEffectStatus[DEF_MAGICTYPE_BERSERK] = 1;
 				m_pNpcList[i]->m_iStatus = m_pNpcList[i]->m_iStatus | 0x20;
-				//iExpRoll = iDice(m_pNpcList[i]->m_iExpDiceMin, m_pNpcList[i]->m_iExpDiceMax);
-				//iExpRoll *= 2;
 			}
 			if (cChangeSide != -1) m_pNpcList[i]->m_cSide = cChangeSide;
 			m_pNpcList[i]->m_cBravery = (rand() % 3) + m_pNpcList[i]->m_iMinBravery;
@@ -6986,7 +6984,7 @@ void CGame::NpcProcess() {
 			}
 			if ((m_pNpcList[i] != 0) && (m_pNpcList[i]->m_iHP != 0) && (m_pNpcList[i]->m_bIsSummoned == true)) {
 				switch (m_pNpcList[i]->m_sType) {
-					case NpcType::orge:
+					case NpcType::ogre:
 						if ((dwTime - m_pNpcList[i]->m_dwSummonedTime) > 1000 * 90)
 							NpcKilledHandler(0, 0, i, 0);
 						break;
@@ -7036,7 +7034,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			// Chat Logs of only players
 		case 1:
 			if (m_pClientList[iClientH]->m_iAdminUserLevel == 0) {
-				std::memset(cTemp, 0, sizeof(cTemp));
+				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
 				wsprintf(cTemp, "Loc(%s) IP(%s) PC(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
@@ -7045,7 +7043,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			// Chat Logs of only GM
 		case 2:
 			if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) {
-				std::memset(cTemp, 0, sizeof(cTemp));
+				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
 				wsprintf(cTemp, "Loc(%s) IP(%s) GM(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
@@ -7054,12 +7052,12 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			// Chat logs of all
 		case 3:
 			if (m_pClientList[iClientH]->m_iAdminUserLevel > 0) {
-				std::memset(cTemp, 0, sizeof(cTemp));
+				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
 				wsprintf(cTemp, "Loc(%s) IP(%s) GM(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 			} else {
-				std::memset(cTemp, 0, sizeof(cTemp));
+				std::memset(cTemp, 0, sizeof (cTemp));
 				pData[dwMsgSize - 1] = 0;
 				wsprintf(cTemp, "Loc(%s) IP(%s) PC(%s):\"%s\"", m_pClientList[iClientH]->m_cMapName, m_pClientList[iClientH]->m_cIPaddress, m_pClientList[iClientH]->m_cCharName, cp);
 				bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
@@ -7152,7 +7150,7 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			if (m_pClientList[iClientH]->m_iHP <= 0) cSendMode = 0;
 			break;
 		case '/':
-			std::memset(cBuffer, 0, sizeof(cBuffer));
+			std::memset(cBuffer, 0, sizeof (cBuffer));
 			memcpy(cBuffer, cp, dwMsgSize - 21);
 			cp = (char *) (cBuffer);
 			// New 19/05/2004
@@ -7662,25 +7660,25 @@ void CGame::ChatMsgHandler(int iClientH, char * pData, uint32_t dwMsgSize) {
 			switch (m_iLogChatOption) {
 				case 1:
 					if (m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_iAdminUserLevel == 0) {
-						std::memset(cTemp, 0, sizeof(cTemp));
+						std::memset(cTemp, 0, sizeof (cTemp));
 						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto Player(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;
 				case 2:
 					if (m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
-						std::memset(cTemp, 0, sizeof(cTemp));
+						std::memset(cTemp, 0, sizeof (cTemp));
 						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
 					break;
 				case 3:
 					if (m_pClientList[m_pClientList[iClientH]->m_iWhisperPlayerIndex]->m_iAdminUserLevel > 0) {
-						std::memset(cTemp, 0, sizeof(cTemp));
+						std::memset(cTemp, 0, sizeof (cTemp));
 						wsprintf(cTemp, "GM Whisper   (%s):\"%s\"\tto GM(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					} else {
-						std::memset(cTemp, 0, sizeof(cTemp));
+						std::memset(cTemp, 0, sizeof (cTemp));
 						wsprintf(cTemp, "Player Whisper   (%s):\"%s\"\tto Player(%s)", m_pClientList[iClientH]->m_cCharName, pData + 21, m_pClientList[iClientH]->m_cWhisperPlayerName);
 						bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cTemp);
 					}
@@ -7705,7 +7703,7 @@ void CGame::ChatMsgHandlerGSM(int iMsgType, int iV1, char * pName, char * pData,
 	uint16_t * wp;
 	short * sp;
 	char * cp, cTemp[256];
-	std::memset(cTemp, 0, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof (cTemp));
 	dwp = (uint32_t *) cTemp;
 	*dwp = MSGID_COMMAND_CHATMSG;
 	wp = (uint16_t *) (cTemp + DEF_INDEX2_MSGTYPE);
@@ -8190,7 +8188,7 @@ void CGame::TargetSearch(int iNpcH, short * pTarget, char * pTargetType) {
 							m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->ClearOwner(5, sOwner, DEF_OWNERTYPE_PLAYER, ix, iy);
 						} else {
 							if (m_pClientList[sOwner]->m_iAdminUserLevel > 0) goto SKIP_SEARCH;
-							if (m_pClientList[sOwner]->m_cSide == 0) goto SKIP_SEARCH;
+							//if (m_pClientList[sOwner]->m_cSide == 0) goto SKIP_SEARCH;
 							dX = m_pClientList[sOwner]->m_sX;
 							dY = m_pClientList[sOwner]->m_sY;
 							cTargetSide = m_pClientList[sOwner]->m_cSide;
@@ -10239,7 +10237,7 @@ void CGame::SendEventToNearClient_TypeB(uint32_t dwMsgID, uint16_t wMsgType, cha
 	uint16_t * wp;
 	short * sp;
 	bool bFlag;
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = dwMsgID;
 	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -10346,7 +10344,7 @@ void CGame::ResponseCreateNewGuildHandler(char * pData, uint32_t /*dwMsgSize*/) 
 	uint32_t * dwp;
 	char * cp, cCharName[11], cData[100], cTxt[120];
 	int iRet;
-	std::memset(cCharName, 0, sizeof(cCharName));
+	std::memset(cCharName, 0, sizeof (cCharName));
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	memcpy(cCharName, cp, 10);
 	cp += 10;
@@ -10363,7 +10361,7 @@ void CGame::ResponseCreateNewGuildHandler(char * pData, uint32_t /*dwMsgSize*/) 
 					break;
 				case DEF_LOGRESMSGTYPE_REJECT:
 					wResult = DEF_MSGTYPE_REJECT;
-					std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof(m_pClientList[i]->m_cGuildName));
+					std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof (m_pClientList[i]->m_cGuildName));
 					memcpy(m_pClientList[i]->m_cGuildName, "NONE", 4);
 					m_pClientList[i]->m_iGuildRank = -1;
 					m_pClientList[i]->m_iGuildGUID = -1;
@@ -10403,7 +10401,7 @@ void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, uint32_t /*
 	cp += 10;
 	cp += 10;
 	cp += 10;
-	std::memset(cGuildName, 0, sizeof(cGuildName));
+	std::memset(cGuildName, 0, sizeof (cGuildName));
 	memcpy(cGuildName, cp, 20);
 	cp += 20;
 	if (m_pClientList[iClientH]->m_iGuildRank != -1) {
@@ -10413,7 +10411,7 @@ void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, uint32_t /*
 		if ((m_pClientList[iClientH]->m_iLevel < 20) || (m_pClientList[iClientH]->m_iCharisma < 20) ||
 				  (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) ||
 				  (memcmp(m_pClientList[iClientH]->m_cLocation, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName, 10) != 0)) { // v1.4
-			std::memset(cData, 0, sizeof(cData));
+			std::memset(cData, 0, sizeof (cData));
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_RESPONSE_CREATENEWGUILD;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -10428,9 +10426,9 @@ void CGame::RequestCreateNewGuildHandler(int iClientH, char * pData, uint32_t /*
 					return;
 			}
 		} else {
-			std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof(m_pClientList[iClientH]->m_cGuildName));
+			std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof (m_pClientList[iClientH]->m_cGuildName));
 			strcpy(m_pClientList[iClientH]->m_cGuildName, cGuildName);
-			std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof(m_pClientList[iClientH]->m_cLocation));
+			std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof (m_pClientList[iClientH]->m_cLocation));
 			strcpy(m_pClientList[iClientH]->m_cLocation, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName);
 			GetLocalTime(&SysTime);
 			m_pClientList[iClientH]->m_iGuildGUID = (int) (SysTime.wYear + SysTime.wMonth + SysTime.wDay + SysTime.wHour + SysTime.wMinute + timeGetTime());
@@ -10443,7 +10441,7 @@ void CGame::RequestDisbandGuildHandler(int iClientH, char * pData, uint32_t /*dw
 	char * cp, cGuildName[21], cTxt[120];
 	if (m_bIsCrusadeMode == true) return;
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	std::memset(cGuildName, 0, sizeof(cGuildName));
+	std::memset(cGuildName, 0, sizeof (cGuildName));
 	cp += 10;
 	cp += 10;
 	cp += 10;
@@ -10463,7 +10461,7 @@ void CGame::ResponseDisbandGuildHandler(char * pData, uint32_t /*dwMsgSize*/) {
 	uint32_t * dwp;
 	char * cp, cCharName[11], cData[100], cTxt[120];
 	int iRet;
-	std::memset(cCharName, 0, sizeof(cCharName));
+	std::memset(cCharName, 0, sizeof (cCharName));
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	memcpy(cCharName, cp, 10);
 	cp += 10;
@@ -10476,7 +10474,7 @@ void CGame::ResponseDisbandGuildHandler(char * pData, uint32_t /*dwMsgSize*/) {
 					wsprintf(cTxt, "(!) Disband guild(%s) success! : character(%s)", m_pClientList[i]->m_cGuildName, m_pClientList[i]->m_cCharName);
 					PutLogList(cTxt);
 					SendGuildMsg(i, DEF_NOTIFY_GUILDDISBANDED, 0, 0, 0);
-					std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof(m_pClientList[i]->m_cGuildName));
+					std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof (m_pClientList[i]->m_cGuildName));
 					memcpy(m_pClientList[i]->m_cGuildName, "NONE", 4);
 					m_pClientList[i]->m_iGuildRank = -1;
 					m_pClientList[i]->m_iGuildGUID = -1;
@@ -10539,8 +10537,8 @@ void CGame::RequestPurchaseItemHandler(int iClientH, char * pItemName, int iNum)
 			} else return;
 		}
 	}
-	std::memset(cData, 0, sizeof(cData));
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cData, 0, sizeof (cData));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	// New 18/05/2004
 	if (m_pClientList[iClientH]->m_pIsProcessingAllowed == false) return;
 	if (memcmp(pItemName, "10Arrows", 8) == 0) {
@@ -10723,7 +10721,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 		PutLogList("GiveItemHandler - Not matching Item name");
 		return;
 	}
-	std::memset(cCharName, 0, sizeof(cCharName));
+	std::memset(cCharName, 0, sizeof (cCharName));
 	if (((m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == ItemType::consume) ||
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == ItemType::arrow)) &&
 			  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_dwCount > (uint32_t) iAmount)) {
@@ -11010,7 +11008,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 							DeleteClient(sOwnerH, true, true);
 							break;
 					}
-					std::memset(cCharName, 0, sizeof(cCharName));
+					std::memset(cCharName, 0, sizeof (cCharName));
 				}
 			} else {
 				memcpy(cCharName, m_pNpcList[sOwnerH]->m_cNpcName, 20);
@@ -11031,7 +11029,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 					if ((m_bIsCrusadeMode == false) && (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sIDnum == ItemId::guild_secession_ticket)) {
 						if ((m_pClientList[iClientH]->m_iGuildRank != 0) && (m_pClientList[iClientH]->m_iGuildRank != -1)) {
 							SendNotifyMsg(iClientH, iClientH, DEF_COMMONTYPE_DISMISSGUILDAPPROVE, 0, 0, 0, 0);
-							std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof(m_pClientList[iClientH]->m_cGuildName));
+							std::memset(m_pClientList[iClientH]->m_cGuildName, 0, sizeof (m_pClientList[iClientH]->m_cGuildName));
 							memcpy(m_pClientList[iClientH]->m_cGuildName, "NONE", 4);
 							m_pClientList[iClientH]->m_iGuildRank = -1;
 							m_pClientList[iClientH]->m_iGuildGUID = -1;
@@ -11051,7 +11049,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 								  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
 								  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpriteFrame,
 								  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemColor); // v1.4 color
-						std::memset(cCharName, 0, sizeof(cCharName));
+						std::memset(cCharName, 0, sizeof (cCharName));
 					}
 				} else {
 					m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->bSetItem(m_pClientList[iClientH]->m_sX,
@@ -11063,7 +11061,7 @@ void CGame::GiveItemHandler(int iClientH, short sItemIndex, int iAmount, short d
 							  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
 							  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSpriteFrame,
 							  m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemColor); // v1.4 color
-					std::memset(cCharName, 0, sizeof(cCharName));
+					std::memset(cCharName, 0, sizeof (cCharName));
 				}
 			}
 			SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIVEITEMFIN_ERASEITEM, sItemIndex, iAmount, 0, cCharName);
@@ -11086,7 +11084,7 @@ void CGame::SendNotifyMsg(int iFromH, int iToH, uint16_t wMsgType, uint32_t sV1,
 	short * sp;
 	int * ip, iRet, i;
 	if (m_pClientList[iToH] == 0) return;
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = MSGID_NOTIFY;
 	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -12298,10 +12296,10 @@ void CGame::JoinGuildApproveHandler(int iClientH, char * pName) {
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != 0) && (memcmp(m_pClientList[i]->m_cCharName, pName, 10) == 0)) {
 			if (memcmp(m_pClientList[i]->m_cLocation, m_pClientList[iClientH]->m_cLocation, 10) != 0) return;
-			std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof(m_pClientList[i]->m_cGuildName));
+			std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof (m_pClientList[i]->m_cGuildName));
 			strcpy(m_pClientList[i]->m_cGuildName, m_pClientList[iClientH]->m_cGuildName);
 			m_pClientList[i]->m_iGuildGUID = m_pClientList[iClientH]->m_iGuildGUID;
-			std::memset(m_pClientList[i]->m_cLocation, 0, sizeof(m_pClientList[i]->m_cLocation));
+			std::memset(m_pClientList[i]->m_cLocation, 0, sizeof (m_pClientList[i]->m_cLocation));
 			strcpy(m_pClientList[i]->m_cLocation, m_pClientList[iClientH]->m_cLocation);
 			m_pClientList[i]->m_iGuildRank = DEF_GUILDSTARTRANK;
 			SendNotifyMsg(iClientH, i, DEF_COMMONTYPE_JOINGUILDAPPROVE, 0, 0, 0, 0);
@@ -12332,7 +12330,7 @@ void CGame::DismissGuildApproveHandler(int iClientH, char * pName) {
 			bSendMsgToLS(MSGID_REQUEST_UPDATEGUILDINFO_DELGUILDSMAN, i);
 			//_bItemLog(DEF_ITEMLOG_BANGUILD,i,(char *)0,0) ;
 			SendGuildMsg(i, DEF_NOTIFY_DISMISSGUILDSMAN, 0, 0, 0);
-			std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof(m_pClientList[i]->m_cGuildName));
+			std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof (m_pClientList[i]->m_cGuildName));
 			strcpy(m_pClientList[i]->m_cGuildName, "NONE");
 			m_pClientList[i]->m_iGuildRank = -1;
 			m_pClientList[i]->m_iGuildGUID = -1;
@@ -12357,7 +12355,7 @@ uint32_t CGame::dwGetItemCount(int iClientH, const char * pName) {
 	int i;
 	char cTmpName[21];
 	if (m_pClientList[iClientH] == 0) return 0;
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pName);
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if ((m_pClientList[iClientH]->m_pItemList[i] != 0) && (memcmp(m_pClientList[iClientH]->m_pItemList[i]->m_cName, cTmpName, 20) == 0)) {
@@ -12371,7 +12369,7 @@ int CGame::SetItemCount(int iClientH, const char * pItemName, uint32_t dwCount) 
 	char cTmpName[21];
 	uint16_t wWeight;
 	if (m_pClientList[iClientH] == 0) return -1;
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pItemName);
 	for (i = 0; i < DEF_MAXITEMS; i++)
 		if ((m_pClientList[iClientH]->m_pItemList[i] != 0) && (memcmp(m_pClientList[iClientH]->m_pItemList[i]->m_cName, cTmpName, 20) == 0)) {
@@ -12423,7 +12421,7 @@ void CGame::ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType
 		_ClearExchangeStatus(iClientH);
 	}
 	RemoveFromTarget(iClientH, DEF_OWNERTYPE_PLAYER);
-	std::memset(cAttackerName, 0, sizeof(cAttackerName));
+	std::memset(cAttackerName, 0, sizeof (cAttackerName));
 	switch (cAttackerType) {
 		case DEF_OWNERTYPE_PLAYER_INDIRECT:
 		case DEF_OWNERTYPE_PLAYER:
@@ -12584,7 +12582,7 @@ void CGame::ClientKilledHandler(int iClientH, int iAttackerH, char cAttackerType
 	//---- Date: November 07 2005                                  ----
 	//---- By: Daxation                                            ----
 	//---- Notes: Add char cEKMsg[1000]                            ----
-	std::memset(cEKMsg, 0, sizeof(cEKMsg));
+	std::memset(cEKMsg, 0, sizeof (cEKMsg));
 	//Multiple EK Messages
 	//Note - Remove section '01' and replace with alternative code for a single message
 	//Alternative code: wsprintf(cEKMsg, "%s killed %s", cAttackerName, m_pClientList[iClientH]->m_cCharName);
@@ -12786,7 +12784,7 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 								delete pStrTok;
 								return false;
 							}
-							std::memset(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName, 0, sizeof(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName));
+							std::memset(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName, 0, sizeof (m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName));
 							memcpy(m_pNpcConfigList[iNpcConfigListIndex]->m_cNpcName, token, strlen(token));
 							cReadModeB = 2;
 							break;
@@ -12846,47 +12844,14 @@ bool CGame::_bDecodeNpcConfigFileContents(char * pData, uint32_t dwMsgSize) {
 							cReadModeB = 7;
 							break;
 						case 7:
-							// m_iExpDiceMin
+							// m_iExpDice
 							if (_bGetIsStringIsNumber(token) == false) {
 								PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
 								delete pContents;
 								delete pStrTok;
 								return false;
 							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMin = atoi(token);
-							cReadModeB = 8;
-							break;
-						case 8:
-							// m_iExpDiceMax
-							if (_bGetIsStringIsNumber(token) == false) {
-								PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
-								delete pContents;
-								delete pStrTok;
-								return false;
-							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDiceMax = atoi(token);
-							cReadModeB = 9;
-							break;
-						case 9:
-							// m_iGoldDiceMin
-							if (_bGetIsStringIsNumber(token) == false) {
-								PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
-								delete pContents;
-								delete pStrTok;
-								return false;
-							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMin = atoi(token);
-							cReadModeB = 10;
-							break;
-						case 10:
-							// m_iGoldDiceMax
-							if (_bGetIsStringIsNumber(token) == false) {
-								PutLogList("(!!!) CRITICAL ERROR! NPC configuration file error - Wrong Data format.");
-								delete pContents;
-								delete pStrTok;
-								return false;
-							}
-							m_pNpcConfigList[iNpcConfigListIndex]->m_iGoldDiceMax = atoi(token);
+							m_pNpcConfigList[iNpcConfigListIndex]->m_iExpDice = atoi(token);
 							cReadModeB = 11;
 							break;
 						case 11:
@@ -13120,23 +13085,20 @@ bool CGame::_bInitNpcAttr(CNpc * pNpc, const char * pNpcName, short sClass, char
 	double dV1;
 	double dV2;
 	double dV3;
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pNpcName);
 	for (i = 0; i < DEF_MAXNPCTYPES; i++)
 		if (m_pNpcConfigList[i] != 0) {
 			if (memcmp(cTmpName, m_pNpcConfigList[i]->m_cNpcName, 20) == 0) {
-				std::memset(pNpc->m_cNpcName, 0, sizeof(pNpc->m_cNpcName));
+				std::memset(pNpc->m_cNpcName, 0, sizeof (pNpc->m_cNpcName));
 				memcpy(pNpc->m_cNpcName, m_pNpcConfigList[i]->m_cNpcName, 20);
 				pNpc->m_sType = m_pNpcConfigList[i]->m_sType;
 				if (m_pNpcConfigList[i]->m_iHitDice <= 5)
 					pNpc->m_iHP = abs(iDice(m_pNpcConfigList[i]->m_iHitDice, 4) + m_pNpcConfigList[i]->m_iHitDice);
 				else pNpc->m_iHP = abs((m_pNpcConfigList[i]->m_iHitDice * 4) + m_pNpcConfigList[i]->m_iHitDice + iDice(1, m_pNpcConfigList[i]->m_iHitDice));
 				if (pNpc->m_iHP == 0) pNpc->m_iHP = 1;
-				pNpc->m_iExpDiceMin = m_pNpcConfigList[i]->m_iExpDiceMin;
-				pNpc->m_iExpDiceMax = m_pNpcConfigList[i]->m_iExpDiceMax; //can change exp rate here
-				pNpc->m_iGoldDiceMin = m_pNpcConfigList[i]->m_iGoldDiceMin; //gold rate
-				pNpc->m_iGoldDiceMax = m_pNpcConfigList[i]->m_iGoldDiceMax; //gold rate
-				pNpc->m_iExp = (iDice(1, (m_pNpcConfigList[i]->m_iExpDiceMax - m_pNpcConfigList[i]->m_iExpDiceMin)) + m_pNpcConfigList[i]->m_iExpDiceMin);
+				pNpc->m_iExpDice = m_pNpcConfigList[i]->m_iExpDice;
+				pNpc->m_iExp = iDice(m_pNpcConfigList[i]->m_iExpDice, 4) + m_pNpcConfigList[i]->m_iExpDice;
 				pNpc->m_iHitDice = m_pNpcConfigList[i]->m_iHitDice;
 				pNpc->m_iDefenseRatio = m_pNpcConfigList[i]->m_iDefenseRatio;
 				pNpc->m_iHitRatio = m_pNpcConfigList[i]->m_iHitRatio;
@@ -13393,7 +13355,7 @@ void CGame::SendGuildMsg(int iClientH, uint16_t wNotifyMsgType, short /*sV1*/, s
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
 		if ((m_pClientList[i] != 0) &&
 				  (memcmp(m_pClientList[i]->m_cGuildName, m_pClientList[iClientH]->m_cGuildName, 20) == 0)) {
-			std::memset(cData, 0, sizeof(cData));
+			std::memset(cData, 0, sizeof (cData));
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -13405,7 +13367,7 @@ void CGame::SendGuildMsg(int iClientH, uint16_t wNotifyMsgType, short /*sV1*/, s
 					memcpy(cp, m_pClientList[iClientH]->m_cGuildName, 20);
 					cp += 20;
 					iRet = m_pClientList[i]->m_pXSock->iSendMsg(cData, 26);
-					std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof(m_pClientList[i]->m_cGuildName));
+					std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof (m_pClientList[i]->m_cGuildName));
 					strcpy(m_pClientList[i]->m_cGuildName, "NONE");
 					m_pClientList[i]->m_iGuildRank = -1;
 					m_pClientList[i]->m_iGuildGUID = -1;
@@ -13439,8 +13401,8 @@ void CGame::SendGuildMsg(int iClientH, uint16_t wNotifyMsgType, short /*sV1*/, s
 
 void CGame::GuildNotifyHandler(char * pData, uint32_t /*dwMsgSize*/) {
 	char * cp, cCharName[11], cGuildName[21];
-	std::memset(cCharName, 0, sizeof(cCharName));
-	std::memset(cGuildName, 0, sizeof(cGuildName));
+	std::memset(cCharName, 0, sizeof (cCharName));
+	std::memset(cGuildName, 0, sizeof (cGuildName));
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	memcpy(cCharName, cp, 10);
 	cp += 10;
@@ -14839,11 +14801,11 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 					iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
 					if (iNamingValue == -1) {
 					} else {
-						std::memset(cName, 0, sizeof(cName));
+						std::memset(cName, 0, sizeof (cName));
 						wsprintf(cName, "XX%d", iNamingValue);
 						cName[0] = '_';
 						cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-						std::memset(cNpcName, 0, sizeof(cNpcName));
+						std::memset(cNpcName, 0, sizeof (cNpcName));
 						switch (iV1) {
 							case 0:
 								iResult = iDice(1, m_pClientList[iClientH]->m_cSkillMastery[4] / 10);
@@ -14904,7 +14866,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 						if (bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, NpcMoveType::random, &dX, &dY, cNpcWaypoint, 0, 0, m_pClientList[iClientH]->m_cSide, false, true) == false) {
 							m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
 						} else {
-							std::memset(cName_Master, 0, sizeof(cName_Master));
+							std::memset(cName_Master, 0, sizeof (cName_Master));
 							switch (cOwnerType) {
 								case DEF_OWNERTYPE_PLAYER:
 									memcpy(cName_Master, m_pClientList[sOwnerH]->m_cCharName, 10);
@@ -15070,7 +15032,7 @@ void CGame::PlayerMagicHandler(int iClientH, int dX, int dY, short sType, bool b
 								SendNotifyMsg(0, sOwnerH, DEF_NOTIFY_MAGICEFFECTON, DEF_MAGICTYPE_PROTECT, m_pMagicConfigList[sType]->m_sValue4, 0, 0);
 							break; // end case DEF_MAGICTYPE_PROTECT:*/
 			case DEF_MAGICTYPE_SCAN:
-				std::memset(cScanMessage, 0, sizeof(cScanMessage));
+				std::memset(cScanMessage, 0, sizeof (cScanMessage));
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, dX, dY);
 				if (bCheckResistingMagicSuccess(m_pClientList[iClientH]->m_cDir, sOwnerH, cOwnerType, iResult) == false) {
 					switch (cOwnerType) {
@@ -15992,7 +15954,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 	SendEventToNearClient_TypeA(iClientH, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 	sX = m_pClientList[iClientH]->m_sX;
 	sY = m_pClientList[iClientH]->m_sY;
-	std::memset(cDestMapName, 0, sizeof(cDestMapName));
+	std::memset(cDestMapName, 0, sizeof (cDestMapName));
 	bRet = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->bSearchTeleportDest(sX, sY, cDestMapName, &iDestX, &iDestY, &cDir);
 	// Crusade
 	if ((strcmp(m_pClientList[iClientH]->m_cLockedMapName, "NONE") != 0) && (m_pClientList[iClientH]->m_iLockedMapTime > 0)) {
@@ -16003,7 +15965,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 			iDestX = -1;
 			iDestY = -1;
 			bIsLockedMapNotify = true;
-			std::memset(cDestMapName, 0, sizeof(cDestMapName));
+			std::memset(cDestMapName, 0, sizeof (cDestMapName));
 			strcpy(cDestMapName, m_pClientList[iClientH]->m_cLockedMapName);
 		}
 	}
@@ -16015,7 +15977,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 					m_pClientList[iClientH]->m_sY = iDestY;
 					m_pClientList[iClientH]->m_cDir = cDir;
 					m_pClientList[iClientH]->m_cMapIndex = i;
-					std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+					std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 					memcpy(m_pClientList[iClientH]->m_cMapName, m_pMapList[i]->m_cName, 10);
 					goto RTH_NEXTSTEP;
 				}
@@ -16023,7 +15985,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 		m_pClientList[iClientH]->m_sX = iDestX;
 		m_pClientList[iClientH]->m_sY = iDestY;
 		m_pClientList[iClientH]->m_cDir = cDir;
-		std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+		std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 		memcpy(m_pClientList[iClientH]->m_cMapName, cDestMapName, 10);
 		// New 18/05/2004
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
@@ -16037,7 +15999,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 		switch (pData[0]) {
 			case '0':
 				// Forced Recall.
-				std::memset(cTempMapName, 0, sizeof(cTempMapName));
+				std::memset(cTempMapName, 0, sizeof (cTempMapName));
 				if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) {
 					strcpy(cTempMapName, "default");
 				} else if (memcmp(m_pClientList[iClientH]->m_cLocation, "arehunter", 9) == 0) {
@@ -16048,7 +16010,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 				// Crusade
 				if ((strcmp(m_pClientList[iClientH]->m_cLockedMapName, "NONE") != 0) && (m_pClientList[iClientH]->m_iLockedMapTime > 0)) {
 					bIsLockedMapNotify = true;
-					std::memset(cTempMapName, 0, sizeof(cTempMapName));
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
 					strcpy(cTempMapName, m_pClientList[iClientH]->m_cLockedMapName);
 				}
 				for (i = 0; i < DEF_MAXMAPS; i++)
@@ -16056,14 +16018,14 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 						if (memcmp(m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
 							GetMapInitialPoint(i, &m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY, m_pClientList[iClientH]->m_cLocation);
 							m_pClientList[iClientH]->m_cMapIndex = i;
-							std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+							std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 							memcpy(m_pClientList[iClientH]->m_cMapName, cTempMapName, 10);
 							goto RTH_NEXTSTEP;
 						}
 					}
 				m_pClientList[iClientH]->m_sX = -1;
 				m_pClientList[iClientH]->m_sY = -1;
-				std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+				std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 				memcpy(m_pClientList[iClientH]->m_cMapName, cTempMapName, 10);
 				// New 18/05/2004
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
@@ -16075,7 +16037,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 				return;
 			case '1':
 				// if (memcmp(m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, "resurr", 6) == 0) return;
-				std::memset(cTempMapName, 0, sizeof(cTempMapName));
+				std::memset(cTempMapName, 0, sizeof (cTempMapName));
 				if (memcmp(m_pClientList[iClientH]->m_cLocation, "NONE", 4) == 0) {
 					strcpy(cTempMapName, "default");
 				} else {
@@ -16092,7 +16054,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 				// Crusade
 				if ((strcmp(m_pClientList[iClientH]->m_cLockedMapName, "NONE") != 0) && (m_pClientList[iClientH]->m_iLockedMapTime > 0)) {
 					bIsLockedMapNotify = true;
-					std::memset(cTempMapName, 0, sizeof(cTempMapName));
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
 					strcpy(cTempMapName, m_pClientList[iClientH]->m_cLockedMapName);
 				}
 				for (i = 0; i < DEF_MAXMAPS; i++)
@@ -16100,14 +16062,14 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 						if (memcmp(m_pMapList[i]->m_cName, cTempMapName, 10) == 0) {
 							GetMapInitialPoint(i, &m_pClientList[iClientH]->m_sX, &m_pClientList[iClientH]->m_sY, m_pClientList[iClientH]->m_cLocation);
 							m_pClientList[iClientH]->m_cMapIndex = i;
-							std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+							std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 							memcpy(m_pClientList[iClientH]->m_cMapName, m_pMapList[i]->m_cName, 10);
 							goto RTH_NEXTSTEP;
 						}
 					}
 				m_pClientList[iClientH]->m_sX = -1;
 				m_pClientList[iClientH]->m_sY = -1;
-				std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+				std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 				memcpy(m_pClientList[iClientH]->m_cMapName, cTempMapName, 10);
 				// New 18/05/2004
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
@@ -16123,17 +16085,17 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 					dX = -1;
 					dY = -1;
 					bIsLockedMapNotify = true;
-					std::memset(cTempMapName, 0, sizeof(cTempMapName));
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
 					strcpy(cTempMapName, m_pClientList[iClientH]->m_cLockedMapName);
 				} else {
-					std::memset(cTempMapName, 0, sizeof(cTempMapName));
+					std::memset(cTempMapName, 0, sizeof (cTempMapName));
 					strcpy(cTempMapName, cMapName);
 				}
 				cMapIndex = iGetMapIndex(cTempMapName);
 				if (cMapIndex == -1) {
 					m_pClientList[iClientH]->m_sX = dX;
 					m_pClientList[iClientH]->m_sY = dY;
-					std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+					std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 					memcpy(m_pClientList[iClientH]->m_cMapName, cTempMapName, 10);
 					// New 18/05/2004
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_MAGICEFFECTOFF, DEF_MAGICTYPE_CONFUSE,
@@ -16147,7 +16109,7 @@ void CGame::RequestTeleportHandler(int iClientH, const char * pData, const char 
 				m_pClientList[iClientH]->m_sX = dX;
 				m_pClientList[iClientH]->m_sY = dY;
 				m_pClientList[iClientH]->m_cMapIndex = cMapIndex;
-				std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+				std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 				memcpy(m_pClientList[iClientH]->m_cMapName, m_pMapList[cMapIndex]->m_cName, 10);
 				break;
 		}
@@ -16477,7 +16439,7 @@ bool CGame::_bDecodeMagicConfigFileContents(char * pData, uint32_t dwMsgSize) {
 							cReadModeB = 2;
 							break;
 						case 2:
-							std::memset(m_pMagicConfigList[iMagicConfigListIndex]->m_cName, 0, sizeof(m_pMagicConfigList[iMagicConfigListIndex]->m_cName));
+							std::memset(m_pMagicConfigList[iMagicConfigListIndex]->m_cName, 0, sizeof (m_pMagicConfigList[iMagicConfigListIndex]->m_cName));
 							memcpy(m_pMagicConfigList[iMagicConfigListIndex]->m_cName, token, strlen(token));
 							cReadModeB = 3;
 							break;
@@ -16749,7 +16711,7 @@ bool CGame::_bDecodeSkillConfigFileContents(char * pData, uint32_t dwMsgSize) {
 							cReadModeB = 2;
 							break;
 						case 2:
-							std::memset(m_pSkillConfigList[iSkillConfigListIndex]->m_cName, 0, sizeof(m_pSkillConfigList[iSkillConfigListIndex]->m_cName));
+							std::memset(m_pSkillConfigList[iSkillConfigListIndex]->m_cName, 0, sizeof (m_pSkillConfigList[iSkillConfigListIndex]->m_cName));
 							memcpy(m_pSkillConfigList[iSkillConfigListIndex]->m_cName, token, strlen(token));
 							cReadModeB = 3;
 							break;
@@ -16864,8 +16826,8 @@ void CGame::RequestStudyMagicHandler(int iClientH, char * pName, bool bIsPurchas
 	int iTempInt;
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-	std::memset(cData, 0, sizeof(cData));
-	std::memset(cMagicName, 0, sizeof(cMagicName));
+	std::memset(cData, 0, sizeof (cData));
+	std::memset(cMagicName, 0, sizeof (cMagicName));
 	memcpy(cMagicName, pName, 30);
 	iRet = _iGetMagicNumber(cMagicName, &iReqInt, &iCost);
 	if (iRet == -1) {
@@ -16933,7 +16895,7 @@ void CGame::RequestStudyMagicHandler(int iClientH, char * pName, bool bIsPurchas
 int CGame::_iGetMagicNumber(char * pMagicName, int * pReqInt, int * pCost) {
 	int i;
 	char cTmpName[31];
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pMagicName);
 	for (i = 0; i < DEF_MAXMAGICTYPE; i++)
 		if (m_pMagicConfigList[i] != 0) {
@@ -17043,7 +17005,7 @@ void CGame::TrainSkillResponse(bool bSuccess, int iClientH, int iSkillNum, int i
 int CGame::_iGetSkillNumber(char * pSkillName) {
 	int i;
 	char cTmpName[21];
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pSkillName);
 	for (i = 1; i < DEF_MAXSKILLTYPE; i++)
 		if (m_pSkillConfigList[i] != 0) {
@@ -17127,7 +17089,7 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 		m_pMapList[iMapIndex]->m_bIsFightZone = true;
 	if (memcmp(m_pMapList[iMapIndex]->m_cName, "icebound", 8) == 0)
 		m_pMapList[iMapIndex]->m_bIsSnowEnabled = true;
-	std::memset(cFn, 0, sizeof(cFn));
+	std::memset(cFn, 0, sizeof (cFn));
 	strcat(cFn, "mapdata\\");
 	strcat(cFn, m_pMapList[iMapIndex]->m_cName);
 	strcat(cFn, ".txt");
@@ -17260,7 +17222,7 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 				case 3:
 					switch (cReadModeB) {
 						case 1:
-							std::memset(cNpcName, 0, sizeof(cNpcName));
+							std::memset(cNpcName, 0, sizeof (cNpcName));
 							strcpy(cNpcName, token);
 							cReadModeB = 2;
 							break;
@@ -17292,7 +17254,7 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 							iNamingValue = m_pMapList[iMapIndex]->iGetEmptyNamingValue();
 							if (iNamingValue == -1) {
 							} else {
-								std::memset(cName, 0, sizeof(cName));
+								std::memset(cName, 0, sizeof (cName));
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = cNamePrefix;
 								cName[1] = iMapIndex + 65;
@@ -17546,7 +17508,7 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 					}
 					break;
 				case 8:
-					std::memset(m_pMapList[iMapIndex]->m_cLocationName, 0, sizeof(m_pMapList[iMapIndex]->m_cLocationName));
+					std::memset(m_pMapList[iMapIndex]->m_cLocationName, 0, sizeof (m_pMapList[iMapIndex]->m_cLocationName));
 					memcpy(m_pMapList[iMapIndex]->m_cLocationName, token, 10);
 					cReadModeA = 0;
 					cReadModeB = 0;
@@ -18160,7 +18122,7 @@ bool CGame::__bReadMapInfo(int iMapIndex) {
 							cReadModeB = 15;
 							break;
 						case 15:
-							std::memset(m_pMapList[iMapIndex]->m_stStrikePoint[iIndex].cRelatedMapName, 0, sizeof(m_pMapList[iMapIndex]->m_stStrikePoint[iIndex].cRelatedMapName));
+							std::memset(m_pMapList[iMapIndex]->m_stStrikePoint[iIndex].cRelatedMapName, 0, sizeof (m_pMapList[iMapIndex]->m_stStrikePoint[iIndex].cRelatedMapName));
 							strcpy(m_pMapList[iMapIndex]->m_stStrikePoint[iIndex].cRelatedMapName, token);
 							m_pMapList[iMapIndex]->m_iTotalStrikePoints++;
 							cReadModeA = 0;
@@ -19093,7 +19055,7 @@ void CGame::FightzoneReserveHandler(int iClientH, char * pData, uint32_t /*dwMsg
 		m_pClientList[iClientH]->m_iFightZoneTicketNumber = 50;
 		iResult = 1;
 	}
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = MSGID_RESPONSE_FIGHTZONE_RESERVE;
 	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -19135,7 +19097,7 @@ void CGame::RequestCivilRightHandler(int iClientH, char */*pData*/) {
 	else wResult = 1;
 	//if (m_pClientList[iClientH]->m_iLevel < 19) wResult = 0;
 	if (wResult == 1) {
-		std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof(m_pClientList[iClientH]->m_cLocation));
+		std::memset(m_pClientList[iClientH]->m_cLocation, 0, sizeof (m_pClientList[iClientH]->m_cLocation));
 		strcpy(m_pClientList[iClientH]->m_cLocation, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cLocationName);
 	}
 	if (memcmp(m_pClientList[iClientH]->m_cLocation, "are", 3) == 0)
@@ -19176,7 +19138,7 @@ void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 	cBankItemIndex = *cp;
 	if ((cBankItemIndex < 0) || (cBankItemIndex >= DEF_MAXBANKITEMS)) return;
 	if (m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex] == 0) {
-		std::memset(cMsg, 0, sizeof(cMsg));
+		std::memset(cMsg, 0, sizeof (cMsg));
 		dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 		*dwp = MSGID_RESPONSE_RETRIEVEITEM;
 		wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
@@ -19194,7 +19156,7 @@ void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 		// v1.432
 		iItemWeight = iGetItemWeight(m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex], m_pClientList[iClientH]->m_pItemInBankList[cBankItemIndex]->m_dwCount);
 		if ((iItemWeight + m_pClientList[iClientH]->m_iCurWeightLoad) > _iCalcMaxLoad(iClientH)) {
-			std::memset(cMsg, 0, sizeof(cMsg));
+			std::memset(cMsg, 0, sizeof (cMsg));
 			dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
@@ -19226,7 +19188,7 @@ void CGame::RequestRetrieveItemHandler(int iClientH, char *pData) {
 							m_pClientList[iClientH]->m_pItemInBankList[j + 1] = 0;
 						}
 					}
-					std::memset(cMsg, 0, sizeof(cMsg));
+					std::memset(cMsg, 0, sizeof (cMsg));
 					dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 					*dwp = MSGID_RESPONSE_RETRIEVEITEM;
 					wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
@@ -19267,7 +19229,7 @@ RRIH_NOQUANTITY:
 							m_pClientList[iClientH]->m_pItemInBankList[j + 1] = 0;
 						}
 					}
-					std::memset(cMsg, 0, sizeof(cMsg));
+					std::memset(cMsg, 0, sizeof (cMsg));
 					dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 					*dwp = MSGID_RESPONSE_RETRIEVEITEM;
 					wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
@@ -19290,7 +19252,7 @@ RRIH_NOQUANTITY:
 					}
 					return;
 				}
-			std::memset(cMsg, 0, sizeof(cMsg));
+			std::memset(cMsg, 0, sizeof (cMsg));
 			dwp = (uint32_t *) (cMsg + DEF_INDEX4_MSGID);
 			*dwp = MSGID_RESPONSE_RETRIEVEITEM;
 			wp = (uint16_t *) (cMsg + DEF_INDEX2_MSGTYPE);
@@ -19417,7 +19379,7 @@ void CGame::ApplyPKpenalty(short sAttackerH, short sVictumH) {
 				  (strcmp(m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_cName, "huntzone2") == 0) ||
 				  (strcmp(m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_cName, "areuni") == 0) ||
 				  (strcmp(m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_cName, "arefarm") == 0)) {
-			std::memset(m_pClientList[sAttackerH]->m_cLockedMapName, 0, sizeof(m_pClientList[sAttackerH]->m_cLockedMapName));
+			std::memset(m_pClientList[sAttackerH]->m_cLockedMapName, 0, sizeof (m_pClientList[sAttackerH]->m_cLockedMapName));
 			strcpy(m_pClientList[sAttackerH]->m_cLockedMapName, "arejail");
 			m_pClientList[sAttackerH]->m_iLockedMapTime = 5 * 2;
 			RequestTeleportHandler(sAttackerH, "2   ", "arejail", -1, -1);
@@ -19433,7 +19395,7 @@ void CGame::ApplyPKpenalty(short sAttackerH, short sVictumH) {
 				  (strcmp(m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_cName, "huntzone1") == 0) ||
 				  (strcmp(m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_cName, "elvuni") == 0) ||
 				  (strcmp(m_pMapList[m_pClientList[sAttackerH]->m_cMapIndex]->m_cName, "elvfarm") == 0)) {
-			std::memset(m_pClientList[sAttackerH]->m_cLockedMapName, 0, sizeof(m_pClientList[sAttackerH]->m_cLockedMapName));
+			std::memset(m_pClientList[sAttackerH]->m_cLockedMapName, 0, sizeof (m_pClientList[sAttackerH]->m_cLockedMapName));
 			strcpy(m_pClientList[sAttackerH]->m_cLockedMapName, "elvjail");
 			m_pClientList[sAttackerH]->m_iLockedMapTime = 5 * 2;
 			RequestTeleportHandler(sAttackerH, "2   ", "elvjail", -1, -1);
@@ -19486,22 +19448,8 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 	if (m_pClientList[iAttackerH]->m_iLevel >= m_iPlayerMaxLevel) {
 		// if the
 		if (iGetExpLevel(m_pClientList[iClientH]->m_iExp) >= iEK_Level) {
-			if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)
-					  && (m_bEnemyKillMode == false)) {
-				//Happy Hour para vos
-				if (m_bHappyHour == true) {
-					m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-				} else {
-					m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-				}
-			}
-			if (m_bEnemyKillMode == true) {
-				//Happy Hour para vos
-				if (m_bHappyHour == true) {
-					m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-				} else {
-					m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-				}
+			if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)) {
+				m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
 			}
 		}
 		m_pClientList[iAttackerH]->m_iRewardGold += iDice(1, (iGetExpLevel(m_pClientList[iClientH]->m_iExp)));
@@ -19515,7 +19463,7 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 	if (m_pClientList[iAttackerH]->m_iPKCount != 0) {
 	} else {
 		if (m_pClientList[iClientH]->m_iGuildRank == -1) {
-			iRewardExp = (iDice(3, (3 * iGetExpLevel(m_pClientList[iClientH]->m_iExp))) + iGetExpLevel(m_pClientList[iClientH]->m_iExp)) / 3;
+			iRewardExp = (iDice(1, (2 * iGetExpLevel(m_pClientList[iClientH]->m_iExp))) + iGetExpLevel(m_pClientList[iClientH]->m_iExp));
 			if (m_bIsCrusadeMode == true) {
 				m_pClientList[iAttackerH]->m_iExp += (iRewardExp / 3)*4;
 				m_pClientList[iAttackerH]->m_iWarContribution += (iRewardExp - (iRewardExp / 3))*12;
@@ -19554,22 +19502,8 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 			} else {
 				m_pClientList[iAttackerH]->m_iExp += iRewardExp;
 				if (iGetExpLevel(m_pClientList[iClientH]->m_iExp) >= iEK_Level) {
-					if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)
-							  && (m_bEnemyKillMode == false)) {
-						//Happy Hour para vos
-						if (m_bHappyHour == true) {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-						} else {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-						}
-					}
-					if (m_bEnemyKillMode == true) {
-						//Happy Hour para vos
-						if (m_bHappyHour == true) {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-						} else {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-						}
+					if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)) {
+						m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
 					}
 				}
 				m_pClientList[iAttackerH]->m_iRewardGold += iDice(1, (iGetExpLevel(m_pClientList[iClientH]->m_iExp)));
@@ -19579,7 +19513,7 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 					m_pClientList[iAttackerH]->m_iRewardGold = 0;
 			}
 		} else {
-			iRewardExp = (iDice(3, (3 * iGetExpLevel(m_pClientList[iClientH]->m_iExp))) + iGetExpLevel(m_pClientList[iClientH]->m_iExp)) / 3;
+			iRewardExp = (iDice(1, (3 * iGetExpLevel(m_pClientList[iClientH]->m_iExp))) + iGetExpLevel(m_pClientList[iClientH]->m_iExp));
 			if (m_bIsCrusadeMode == true) {
 				m_pClientList[iAttackerH]->m_iExp += (iRewardExp / 3)*4;
 				m_pClientList[iAttackerH]->m_iWarContribution += (iRewardExp - (iRewardExp / 3))*12;
@@ -19593,22 +19527,8 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 				PutLogList(G_cTxt);
 				SendNotifyMsg(0, iAttackerH, DEF_NOTIFY_CONSTRUCTIONPOINT, m_pClientList[iAttackerH]->m_iConstructionPoint, m_pClientList[iAttackerH]->m_iWarContribution, 0, 0);
 				if (iGetExpLevel(m_pClientList[iClientH]->m_iExp) >= iEK_Level) {
-					if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)
-							  && (m_bEnemyKillMode == false)) {
-						//Happy Hour para vos
-						if (m_bHappyHour == true) {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-						} else {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-						}
-					}
-					if (m_bEnemyKillMode == true) {
-						//Happy Hour para vos
-						if (m_bHappyHour == true) {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-						} else {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-						}
+					if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)) {
+						m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
 					}
 				}
 				m_pClientList[iAttackerH]->m_iRewardGold += iDice(1, (iGetExpLevel(m_pClientList[iClientH]->m_iExp)));
@@ -19619,22 +19539,8 @@ void CGame::EnemyKillRewardHandler(int iAttackerH, int iClientH) {
 			} else {
 				m_pClientList[iAttackerH]->m_iExp += iRewardExp;
 				if (iGetExpLevel(m_pClientList[iClientH]->m_iExp) >= iEK_Level) {
-					if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)
-							  && (m_bEnemyKillMode == false)) {
-						//Happy Hour para vos
-						if (m_bHappyHour == true) {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-						} else {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-						}
-					}
-					if (m_bEnemyKillMode == true) {
-						//Happy Hour para vos
-						if (m_bHappyHour == true) {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust * 2;
-						} else {
-							m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
-						}
+					if ((memcmp(m_pClientList[iClientH]->m_cLocation, m_pClientList[iClientH]->m_cMapName, 10) != 0)) {
+						m_pClientList[iAttackerH]->m_iEnemyKillCount += m_iEnemyKillAdjust;
 					}
 				}
 				m_pClientList[iAttackerH]->m_iRewardGold += iDice(1, (iGetExpLevel(m_pClientList[iClientH]->m_iExp)));
@@ -19725,7 +19631,7 @@ PID_DROP:
 	;
 	for (i = 1; i <= iTotal; i++) {
 		iRemainItem = 0;
-		std::memset(cItemIndexList, 0, sizeof(cItemIndexList));
+		std::memset(cItemIndexList, 0, sizeof (cItemIndexList));
 		for (j = 0; j < DEF_MAXITEMS; j++)
 			if (m_pClientList[iClientH]->m_pItemList[j] != 0) {
 				cItemIndexList[iRemainItem] = j;
@@ -19766,7 +19672,7 @@ void CGame::GetRewardMoneyHandler(int iClientH) {
 	iWeightLeft = iWeightLeft / 2;
 	if (iWeightLeft <= 0) return;
 	pItem = new CItem;
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	wsprintf(cItemName, "Gold");
 	_bInitItemAttr(pItem, cItemName);
 	//pItem->m_dwCount = m_pClientList[iClientH]->m_iRewardGold;
@@ -20231,7 +20137,6 @@ void CGame::MobGenerator() {
 	int x;
 	int j;
 	int iNamingValue;
-	int iResult;
 	int iTotalMob;
 	char cNpcName[21], cName_Master[11], cName_Slave[11], cWaypoint[11];
 	char cSA;
@@ -20247,6 +20152,71 @@ void CGame::MobGenerator() {
 	bool bIsSpecialEvent;
 	if (m_bOnExitProcess == true) return;
 	for (i = 0; i < DEF_MAXMAPS; i++) {
+
+		enum class ResultType {
+			slime = 1,
+			giant_ant = 2,
+			orc = 3,
+			zombie = 4,
+			skeleton = 5,
+			orc_mage = 6,
+			scorpion = 7,
+			stone_golem = 8,
+			cyclops = 9,
+			amphis = 10,
+			clay_golem = 11,
+			troll = 12,
+			ogre = 13,
+			hellhound = 14,
+			liche = 15,
+			demon = 16,
+			unicorn = 17,
+			werewolf = 18,
+			yb_aresden = 19,
+			yb_elvine = 20,
+			gagoyle = 21,
+			beholder = 22,
+			dark_elf = 23,
+			rabbit = 24,
+			cat = 25,
+			giant_frog = 26,
+			mountain_giant = 27,
+			ettin = 28,
+			cannibal_plant = 29,
+			rudolph = 30,
+			ice_golem = 31,
+			dire_boar = 32,
+			frost = 33,
+			stalker = 34,
+			hellclaw = 35,
+			wyvern = 36,
+			fire_wyvern = 37,
+			balrog = 38,
+			tentocle = 39,
+			centaurus = 40,
+			giant_lizard = 41,
+			minotaur = 42,
+			//tentocle=43,
+			claw_turtle = 44,
+			giant_crayfish = 45,
+			giant_plant = 46,
+			master_mage_orc = 47,
+			nizie = 48,
+			tigerworm = 49,
+			//giant_plant=50,
+			abaddon = 51,
+			yw_aresden = 52,
+			yw_elvine = 53,
+			yy_aresden = 54,
+			yy_elvine = 55,
+			xb_aresden = 56,
+			xb_elvine = 57,
+			xw_aresden = 58,
+			xw_elvine = 59,
+			xy_aresden = 60,
+			xy_elvine = 61
+		};
+		ResultType result;
 		// Random Mob Generator
 		/*
 		iResultNum = 0;
@@ -20282,81 +20252,82 @@ void CGame::MobGenerator() {
 			iNamingValue = m_pMapList[i]->iGetEmptyNamingValue();
 			if (iNamingValue != -1) {
 				// Master Mob????????.
-				std::memset(cName_Master, 0, sizeof(cName_Master));
+				std::memset(cName_Master, 0, sizeof (cName_Master));
 				wsprintf(cName_Master, "XX%d", iNamingValue);
 				cName_Master[0] = '_';
 				cName_Master[1] = i + 65;
-				std::memset(cNpcName, 0, sizeof(cNpcName));
+				std::memset(cNpcName, 0, sizeof (cNpcName));
 				bFirmBerserk = false;
-				iResult = iDice(1, 100);
+				int iResult = iDice(1, 100);
+
 				switch (m_pMapList[i]->m_cRandomMobGeneratorLevel) {
 					case 1: // arefarm, elvfarm, aresden, elvine
 						if ((iResult >= 1) && (iResult < 20)) {
-							iResult = 1; // Slime
+							result = ResultType::slime; // Slime
 						} else if ((iResult >= 20) && (iResult < 40)) {
-							iResult = 2; // Giant-Ant
+							result = ResultType::giant_ant; // Giant-Ant
 						} else if ((iResult >= 40) && (iResult < 85)) {
-							iResult = 24; // Rabbit
+							result = ResultType::rabbit; // Rabbit
 						} else if ((iResult >= 85) && (iResult < 95)) {
-							iResult = 25; // Cat
+							result = ResultType::cat; // Cat
 						} else if ((iResult >= 95) && (iResult <= 100)) {
-							iResult = 3; // Orc
+							result = ResultType::orc; // Orc
 						}
 						iMapLevel = 1;
 						break;
 					case 2:
 						if ((iResult >= 1) && (iResult < 40)) {
-							iResult = 1;
+							result = ResultType::slime;
 						} else if ((iResult >= 40) && (iResult < 80)) {
-							iResult = 2;
-						} else iResult = 10;
+							result = ResultType::giant_ant;
+						} else result = ResultType::amphis;
 						iMapLevel = 1;
 						break;
 					case 3: // v1.4334 ????????? ????
 						if ((iResult >= 1) && (iResult < 20)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 3;
+								case 1: result = ResultType::orc;
 									break;
-								case 2: iResult = 4;
+								case 2: result = ResultType::zombie;
 									break;
 							}
 						} else if ((iResult >= 20) && (iResult < 25)) {
-							iResult = 30;
+							result = ResultType::rudolph;
 						} else if ((iResult >= 25) && (iResult < 50)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 5;
+								case 1: result = ResultType::skeleton;
 									break;
-								case 2: iResult = 6;
+								case 2: result = ResultType::orc_mage;
 									break;
-								case 3: iResult = 7;
+								case 3: result = ResultType::scorpion;
 									break;
 							}
 						} else if ((iResult >= 50) && (iResult < 75)) {
 							switch (iDice(1, 7)) {
 								case 1:
-								case 2: iResult = 8;
+								case 2: result = ResultType::stone_golem;
 									break;
-								case 3: iResult = 11;
+								case 3: result = ResultType::clay_golem;
 									break;
-								case 4: iResult = 12;
+								case 4: result = ResultType::troll;
 									break;
-								case 5: iResult = 18;
+								case 5: result = ResultType::werewolf;
 									break;
-								case 6: iResult = 26;
+								case 6: result = ResultType::giant_frog;
 									break;
-								case 7: iResult = 28;
+								case 7: result = ResultType::ettin;
 									break;
 							}
 						} else if ((iResult >= 75) && (iResult <= 100)) {
 							switch (iDice(1, 5)) {
 								case 1:
-								case 2: iResult = 9;
+								case 2: result = ResultType::cyclops;
 									break;
-								case 3: iResult = 13;
+								case 3: result = ResultType::ogre;
 									break;
-								case 4: iResult = 14;
+								case 4: result = ResultType::hellhound;
 									break;
-								case 5: iResult = 27;
+								case 5: result = ResultType::mountain_giant;
 									break;
 							}
 						}
@@ -20365,23 +20336,23 @@ void CGame::MobGenerator() {
 					case 4:
 						if ((iResult >= 1) && (iResult < 50)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 2;
+								case 1: result = ResultType::giant_ant;
 									break;
-								case 2: iResult = 10;
+								case 2: result = ResultType::amphis;
 									break;
 							}
 						} else if ((iResult >= 50) && (iResult < 80)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 8;
+								case 1: result = ResultType::stone_golem;
 									break;
-								case 2: iResult = 11;
+								case 2: result = ResultType::clay_golem;
 									break;
 							}
 						} else if ((iResult >= 80) && (iResult <= 100)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 14;
+								case 1: result = ResultType::hellhound;
 									break;
-								case 2: iResult = 9;
+								case 2: result = ResultType::cyclops;
 									break;
 							}
 						}
@@ -20394,38 +20365,38 @@ void CGame::MobGenerator() {
 								case 2:
 								case 3:
 								case 4:
-								case 5: iResult = 2;
+								case 5: result = ResultType::giant_ant;
 									break;
 							}
 						} else if ((iResult >= 30) && (iResult < 60)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 3;
+								case 1: result = ResultType::orc;
 									break;
-								case 2: iResult = 4;
+								case 2: result = ResultType::zombie;
 									break;
 							}
 						} else if ((iResult >= 60) && (iResult < 80)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 5;
+								case 1: result = ResultType::skeleton;
 									break;
-								case 2: iResult = 7;
+								case 2: result = ResultType::scorpion;
 									break;
 							}
 						} else if ((iResult >= 80) && (iResult < 95)) {
 							switch (iDice(1, 3)) {
 								case 1:
-								case 2: iResult = 8;
+								case 2: result = ResultType::stone_golem;
 									break;
-								case 3: iResult = 11;
+								case 3: result = ResultType::clay_golem;
 									break;
 							}
 						} else if ((iResult >= 95) && (iResult <= 100)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 11;
+								case 1: result = ResultType::clay_golem;
 									break;
-								case 2: iResult = 14;
+								case 2: result = ResultType::hellhound;
 									break;
-								case 3: iResult = 9;
+								case 3: result = ResultType::cyclops;
 									break;
 							}
 						}
@@ -20434,44 +20405,44 @@ void CGame::MobGenerator() {
 					case 6: // huntzone3, huntzone4
 						if ((iResult >= 1) && (iResult < 60)) {
 							switch (iDice(1, 4)) {
-								case 1: iResult = 5;
+								case 1: result = ResultType::skeleton;
 									break; // Skeleton
-								case 2: iResult = 6;
+								case 2: result = ResultType::orc_mage;
 									break; // Orc-Mage
-								case 3: iResult = 12;
+								case 3: result = ResultType::troll;
 									break; // Cyclops
-								case 4: iResult = 11;
+								case 4: result = ResultType::clay_golem;
 									break; // Troll
 							}
 						} else if ((iResult >= 60) && (iResult < 90)) {
 							switch (iDice(1, 5)) {
 								case 1:
-								case 2: iResult = 8;
+								case 2: result = ResultType::stone_golem;
 									break; // Stone-Golem
-								case 3: iResult = 11;
+								case 3: result = ResultType::clay_golem;
 									break; // Troll
-								case 4: iResult = 12;
+								case 4: result = ResultType::troll;
 									break; // Cyclops
-								case 5: iResult = 43;
+								case 5: result = ResultType::tentocle;
 									break; // Tentocle
 							}
 						} else if ((iResult >= 90) && (iResult <= 100)) {
 							switch (iDice(1, 9)) {
-								case 1: iResult = 26;
+								case 1: result = ResultType::giant_frog;
 									break;
-								case 2: iResult = 9;
+								case 2: result = ResultType::cyclops;
 									break;
-								case 3: iResult = 13;
+								case 3: result = ResultType::ogre;
 									break;
-								case 4: iResult = 14;
+								case 4: result = ResultType::hellhound;
 									break;
-								case 5: iResult = 18;
+								case 5: result = ResultType::werewolf;
 									break;
-								case 6: iResult = 28;
+								case 6: result = ResultType::ettin;
 									break;
-								case 7: iResult = 27;
+								case 7: result = ResultType::mountain_giant;
 									break;
-								case 8: iResult = 29;
+								case 8: result = ResultType::cannibal_plant;
 									break;
 							}
 						}
@@ -20480,40 +20451,40 @@ void CGame::MobGenerator() {
 					case 7: // areuni, elvuni
 						if ((iResult >= 1) && (iResult < 50)) {
 							switch (iDice(1, 5)) {
-								case 1: iResult = 3;
+								case 1: result = ResultType::orc;
 									break; // Orc
-								case 2: iResult = 6;
+								case 2: result = ResultType::orc_mage;
 									break; // Orc-Mage
-								case 3: iResult = 10;
+								case 3: result = ResultType::amphis;
 									break; // Amphis
-								case 4: iResult = 3;
+								case 4: result = ResultType::orc;
 									break; // Orc
-								case 5: iResult = 50;
+								case 5: result = ResultType::giant_plant;
 									break; // Giant-Tree
 							}
 						} else if ((iResult >= 50) && (iResult < 60)) {
-							iResult = 29; // Rudolph
+							result = ResultType::cannibal_plant; // Rudolph
 						} else if ((iResult >= 60) && (iResult < 85)) {
 							switch (iDice(1, 4)) {
-								case 1: iResult = 50;
+								case 1: result = ResultType::giant_plant;
 									break; // Giant-Tree
 								case 2:
-								case 3: iResult = 6;
+								case 3: result = ResultType::orc_mage;
 									break; // Orc-Mage
-								case 4: iResult = 12;
+								case 4: result = ResultType::troll;
 									break; // Troll
 							}
 						} else if ((iResult >= 85) && (iResult <= 100)) {
 							switch (iDice(1, 4)) {
-								case 1: iResult = 12;
+								case 1: result = ResultType::troll;
 									break; // Troll
 								case 2:
 								case 3:
 									if (iDice(1, 100) < 3)
-										iResult = 17; // Unicorn
-									else iResult = 12; // Troll
+										result = ResultType::unicorn; // Unicorn
+									else result = ResultType::troll; // Troll
 									break;
-								case 4: iResult = 29;
+								case 4: result = ResultType::cannibal_plant;
 									break; // Cannibal-Plant
 							}
 						}
@@ -20522,20 +20493,20 @@ void CGame::MobGenerator() {
 					case 8:
 						if ((iResult >= 1) && (iResult < 70)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 4;
+								case 1: result = ResultType::zombie;
 									break;
-								case 2: iResult = 5;
+								case 2: result = ResultType::skeleton;
 									break;
 							}
 						} else if ((iResult >= 70) && (iResult < 95)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 8;
+								case 1: result = ResultType::stone_golem;
 									break;
-								case 2: iResult = 11;
+								case 2: result = ResultType::clay_golem;
 									break;
 							}
 						} else if ((iResult >= 95) && (iResult <= 100)) {
-							iResult = 14;
+							result = ResultType::hellhound;
 							break;
 						}
 						iMapLevel = 4;
@@ -20543,30 +20514,30 @@ void CGame::MobGenerator() {
 					case 9:
 						if ((iResult >= 1) && (iResult < 70)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 4;
+								case 1: result = ResultType::zombie;
 									break;
-								case 2: iResult = 5;
+								case 2: result = ResultType::skeleton;
 									break;
 							}
 						} else if ((iResult >= 70) && (iResult < 95)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 8;
+								case 1: result = ResultType::stone_golem;
 									break;
-								case 2: iResult = 9;
+								case 2: result = ResultType::cyclops;
 									break;
-								case 3: iResult = 13;
+								case 3: result = ResultType::ogre;
 									break;
 							}
 						} else if ((iResult >= 95) && (iResult <= 100)) {
 							switch (iDice(1, 6)) {
 								case 1:
 								case 2:
-								case 3: iResult = 9;
+								case 3: result = ResultType::cyclops;
 									break;
 								case 4:
-								case 5: iResult = 14;
+								case 5: result = ResultType::hellhound;
 									break;
-								case 6: iResult = 15;
+								case 6: result = ResultType::liche;
 									break;
 							}
 						}
@@ -20576,27 +20547,27 @@ void CGame::MobGenerator() {
 					case 10:
 						if ((iResult >= 1) && (iResult < 70)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 9;
+								case 1: result = ResultType::cyclops;
 									break;
-								case 2: iResult = 5;
+								case 2: result = ResultType::skeleton;
 									break;
-								case 3: iResult = 8;
+								case 3: result = ResultType::stone_golem;
 									break;
 							}
 						} else if ((iResult >= 70) && (iResult < 95)) {
 							switch (iDice(1, 3)) {
 								case 1:
-								case 2: iResult = 13;
+								case 2: result = ResultType::ogre;
 									break;
-								case 3: iResult = 14;
+								case 3: result = ResultType::hellhound;
 									break;
 							}
 						} else if ((iResult >= 95) && (iResult <= 100)) {
 							switch (iDice(1, 3)) {
 								case 1:
-								case 2: iResult = 14;
+								case 2: result = ResultType::hellhound;
 									break;
-								case 3: iResult = 15;
+								case 3: result = ResultType::liche;
 									break;
 							}
 						}
@@ -20611,38 +20582,38 @@ void CGame::MobGenerator() {
 								case 2:
 								case 3:
 								case 4:
-								case 5: iResult = 2;
+								case 5: result = ResultType::giant_ant;
 									break;
 							}
 						} else if ((iResult >= 30) && (iResult < 60)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 3;
+								case 1: result = ResultType::orc;
 									break;
-								case 2: iResult = 4;
+								case 2: result = ResultType::zombie;
 									break;
 							}
 						} else if ((iResult >= 60) && (iResult < 80)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 5;
+								case 1: result = ResultType::skeleton;
 									break;
-								case 2: iResult = 7;
+								case 2: result = ResultType::scorpion;
 									break;
 							}
 						} else if ((iResult >= 80) && (iResult < 95)) {
 							switch (iDice(1, 3)) {
 								case 1:
-								case 2: iResult = 10;
+								case 2: result = ResultType::amphis;
 									break;
-								case 3: iResult = 11;
+								case 3: result = ResultType::clay_golem;
 									break;
 							}
 						} else if ((iResult >= 95) && (iResult <= 100)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 11;
+								case 1: result = ResultType::clay_golem;
 									break;
-								case 2: iResult = 7;
+								case 2: result = ResultType::scorpion;
 									break;
-								case 3: iResult = 8;
+								case 3: result = ResultType::stone_golem;
 									break;
 							}
 						}
@@ -20651,27 +20622,27 @@ void CGame::MobGenerator() {
 					case 12:
 						if ((iResult >= 1) && (iResult < 50)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 1;
+								case 1: result = ResultType::slime;
 									break;
-								case 2: iResult = 2;
+								case 2: result = ResultType::giant_ant;
 									break;
-								case 3: iResult = 10;
+								case 3: result = ResultType::amphis;
 									break;
 							}
 						} else if ((iResult >= 50) && (iResult < 85)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 5;
+								case 1: result = ResultType::skeleton;
 									break;
-								case 2: iResult = 4;
+								case 2: result = ResultType::zombie;
 									break;
 							}
 						} else if ((iResult >= 85) && (iResult <= 100)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 8;
+								case 1: result = ResultType::stone_golem;
 									break;
-								case 2: iResult = 11;
+								case 2: result = ResultType::clay_golem;
 									break;
-								case 3: iResult = 26;
+								case 3: result = ResultType::giant_frog;
 									break;
 							}
 						}
@@ -20679,88 +20650,88 @@ void CGame::MobGenerator() {
 						break;
 					case 13:
 						if ((iResult >= 1) && (iResult < 15)) {
-							iResult = 4;
+							result = ResultType::zombie;
 							bFirmBerserk = true;
 							iTotalMob = 4 - (iDice(1, 2) - 1);
 							break;
 						} else if ((iResult >= 15) && (iResult < 40)) {
-							iResult = 14;
+							result = ResultType::hellhound;
 							bFirmBerserk = true;
 							iTotalMob = 4 - (iDice(1, 2) - 1);
 							break;
 						} else if ((iResult >= 40) && (iResult < 60)) {
-							iResult = 9;
+							result = ResultType::cyclops;
 							bFirmBerserk = true;
 							iTotalMob = 4 - (iDice(1, 2) - 1);
 							break;
 						} else if ((iResult >= 60) && (iResult < 75)) {
-							iResult = 13;
+							result = ResultType::ogre;
 							bFirmBerserk = true;
 							iTotalMob = 4 - (iDice(1, 2) - 1);
 							break;
 						} else if ((iResult >= 75) && (iResult < 95)) {
-							iResult = 23;
+							result = ResultType::dark_elf;
 						} else if ((iResult >= 95) && (iResult <= 100)) {
-							iResult = 22;
+							result = ResultType::beholder;
 						}
 						iMapLevel = 5;
 						break;
 					case 14: // icebound
 						if ((iResult >= 1) && (iResult < 30)) {
-							iResult = 23; // Dark-Elf
+							result = ResultType::dark_elf; // Dark-Elf
 						} else if ((iResult >= 30) && (iResult < 50)) {
-							iResult = 31; // Ice-Golem
+							result = ResultType::ice_golem; // Ice-Golem
 						} else if ((iResult >= 50) && (iResult < 70)) {
-							iResult = 22; // Beholder
+							result = ResultType::beholder; // Beholder
 							bFirmBerserk = true;
 							iTotalMob = 4 - (iDice(1, 2) - 1);
 						} else if ((iResult >= 70) && (iResult < 90)) {
-							iResult = 32; // DireBoar
+							result = ResultType::dire_boar; // DireBoar
 						} else if ((iResult >= 90) && (iResult <= 100)) {
-							iResult = 33; // Frost
+							result = ResultType::frost; // Frost
 						}
 						iMapLevel = 5;
 						break;
 					case 15:
 						if ((iResult >= 1) && (iResult < 35)) {
-							iResult = 23;
+							result = ResultType::dark_elf;
 							bFirmBerserk = true;
 						} else if ((iResult >= 35) && (iResult < 50)) {
-							iResult = 22;
+							result = ResultType::beholder;
 							bFirmBerserk = true;
 						} else if ((iResult >= 50) && (iResult < 80)) {
-							iResult = 15;
+							result = ResultType::liche;
 						} else if ((iResult >= 80) && (iResult <= 100)) {
-							iResult = 21;
+							result = ResultType::gagoyle;
 						}
 						iMapLevel = 4;
 						break;
 					case 16: // 2ndmiddle, huntzone1, huntzone2,
 						if ((iResult >= 1) && (iResult < 40)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 7;
+								case 1: result = ResultType::scorpion;
 									break; // Scorpion
-								case 2: iResult = 2;
+								case 2: result = ResultType::giant_ant;
 									break; // Giant-Ant
-								case 3: iResult = 10;
+								case 3: result = ResultType::amphis;
 									break; // Amphis
 							}
 						} else if ((iResult >= 40) && (iResult < 50)) {
-							iResult = 30; // Rudolph
+							result = ResultType::rudolph; // Rudolph
 						} else if ((iResult >= 50) && (iResult < 85)) {
 							switch (iDice(1, 2)) {
-								case 1: iResult = 5;
+								case 1: result = ResultType::skeleton;
 									break; // Skeleton
-								case 2: iResult = 4;
+								case 2: result = ResultType::zombie;
 									break; // Zombie
 							}
 						} else if ((iResult >= 85) && (iResult <= 100)) {
 							switch (iDice(1, 3)) {
-								case 1: iResult = 8;
+								case 1: result = ResultType::stone_golem;
 									break; // Stone-Golem
-								case 2: iResult = 11;
+								case 2: result = ResultType::clay_golem;
 									break; // Clay-Golem
-								case 3: iResult = 7;
+								case 3: result = ResultType::scorpion;
 									break; // Scorpion
 							}
 						}
@@ -20769,103 +20740,103 @@ void CGame::MobGenerator() {
 					case 17:
 						if ((iResult >= 1) && (iResult < 30)) {
 							switch (iDice(1, 4)) {
-								case 1: iResult = 22;
+								case 1: result = ResultType::beholder;
 									break; // Giant-Frog
-								case 2: iResult = 8;
+								case 2: result = ResultType::stone_golem;
 									break; // Stone-Golem
-								case 3: iResult = 24;
+								case 3: result = ResultType::rabbit;
 									break; // Rabbit
-								case 4: iResult = 5;
+								case 4: result = ResultType::skeleton;
 									break;
 							}
 						} else if ((iResult >= 30) && (iResult < 40)) {
-							iResult = 30;
+							result = ResultType::rudolph;
 						} else if ((iResult >= 40) && (iResult < 70)) {
-							iResult = 32;
+							result = ResultType::dire_boar;
 						} else if ((iResult >= 70) && (iResult < 90)) {
-							iResult = 31;
+							result = ResultType::ice_golem;
 							if (iDice(1, 5) == 1) {
 								bFirmBerserk = true;
 							}
 						} else if ((iResult >= 90) && (iResult <= 100)) {
-							iResult = 33;
+							result = ResultType::frost;
 						}
 						iMapLevel = 1;
 						break;
 					case 18: // druncncity
 						if ((iResult >= 1) && (iResult < 2)) {
-							iResult = 39; // Tentocle
+							result = ResultType::tentocle; // Tentocle
 						} else if ((iResult >= 2) && (iResult < 12)) {
-							iResult = 44; // ClawTurtle
+							result = ResultType::claw_turtle; // ClawTurtle
 						} else if ((iResult >= 12) && (iResult < 50)) {
-							iResult = 48; // Nizie
+							result = ResultType::nizie; // Nizie
 						} else if ((iResult >= 50) && (iResult < 80)) {
-							iResult = 45; // Giant-Crayfish
+							result = ResultType::giant_crayfish; // Giant-Crayfish
 						} else if ((iResult >= 80) && (iResult < 90)) {
-							iResult = 34; // Stalker
+							result = ResultType::stalker; // Stalker
 						} else if ((iResult >= 90) && (iResult <= 100)) {
-							iResult = 26; // Giant-Frog
+							result = ResultType::giant_frog; // Giant-Frog
 						}
 						iMapLevel = 4;
 						break;
 					case 19:
 						if ((iResult >= 1) && (iResult < 15)) {
-							iResult = 44;
+							result = ResultType::claw_turtle;
 						} else if ((iResult >= 15) && (iResult < 25)) {
-							iResult = 46;
+							result = ResultType::giant_plant;
 						} else if ((iResult >= 25) && (iResult < 35)) {
-							iResult = 21;
+							result = ResultType::gagoyle;
 						} else if ((iResult >= 35) && (iResult < 60)) {
-							iResult = 43;
+							result = ResultType::tentocle;
 						} else if ((iResult >= 60) && (iResult < 85)) {
-							iResult = 23;
+							result = ResultType::dark_elf;
 						} else if ((iResult >= 85) && (iResult <= 100)) {
-							iResult = 22;
+							result = ResultType::beholder;
 						}
 						iMapLevel = 4;
 						break;
 					case 20:
 						if ((iResult >= 1) && (iResult < 2)) {
-							iResult = 41;
+							result = ResultType::giant_lizard;
 						} else if ((iResult >= 2) && (iResult < 3)) {
-							iResult = 40;
+							result = ResultType::centaurus;
 						} else if ((iResult >= 3) && (iResult < 8)) {
-							iResult = 53;
+							result = ResultType::yw_elvine;
 						} else if ((iResult >= 8) && (iResult < 9)) {
-							iResult = 39;
+							result = ResultType::tentocle;
 						} else if ((iResult >= 9) && (iResult < 20)) {
-							iResult = 21;
+							result = ResultType::gagoyle;
 						} else if ((iResult >= 20) && (iResult < 35)) {
-							iResult = 16;
+							result = ResultType::demon;
 						} else if ((iResult >= 35) && (iResult < 45)) {
-							iResult = 44;
+							result = ResultType::claw_turtle;
 						} else if ((iResult >= 45) && (iResult < 55)) {
-							iResult = 45;
+							result = ResultType::giant_crayfish;
 						} else if ((iResult >= 55) && (iResult < 75)) {
-							iResult = 28;
+							result = ResultType::ettin;
 						} else if ((iResult >= 75) && (iResult < 95)) {
-							iResult = 43;
+							result = ResultType::tentocle;
 						} else if ((iResult >= 95) && (iResult < 100)) {
-							iResult = 22;
+							result = ResultType::beholder;
 						}
 						iMapLevel = 4;
 						break;
 					case 21:
 						if ((iResult >= 1) && (iResult < 94)) {
-							iResult = 17; // Unicorn
+							result = ResultType::unicorn; // Unicorn
 							bFirmBerserk = true;
 						} else if ((iResult >= 94) && (iResult < 95)) {
-							iResult = 36; // Wyvern
+							result = ResultType::wyvern; // Wyvern
 						} else if ((iResult >= 95) && (iResult < 96)) {
-							iResult = 37; // Fire-Wyvern
+							result = ResultType::fire_wyvern; // Fire-Wyvern
 						} else if ((iResult >= 96) && (iResult < 97)) {
-							iResult = 47; // MasterMage-Orc
+							result = ResultType::master_mage_orc; // MasterMage-Orc
 						} else if ((iResult >= 97) && (iResult < 98)) {
-							iResult = 35; // Hellclaw
+							result = ResultType::hellclaw; // Hellclaw
 						} else if ((iResult >= 98) && (iResult < 99)) {
-							iResult = 49; // Tigerworm
+							result = ResultType::tigerworm; // Tigerworm
 						} else if ((iResult >= 99) && (iResult <= 100)) {
-							iResult = 51; // Abaddon
+							result = ResultType::abaddon; // Abaddon
 						}
 						iMapLevel = 4;
 						break;
@@ -20885,35 +20856,35 @@ void CGame::MobGenerator() {
 								if (m_bIsCrusadeMode == true) {
 									if (strcmp(m_pMapList[i]->m_cName, "aresden") == 0)
 										switch (iDice(1, 6)) {
-											case 1: iResult = 20;
+											case 1: result = ResultType::yb_elvine;
 												break;
-											case 2: iResult = 53;
+											case 2: result = ResultType::yw_elvine;
 												break;
-											case 3: iResult = 55;
+											case 3: result = ResultType::yy_elvine;
 												break;
-											case 4: iResult = 57;
+											case 4: result = ResultType::xb_elvine;
 												break;
-											case 5: iResult = 59;
+											case 5: result = ResultType::xw_elvine;
 												break;
-											case 6: iResult = 61;
+											case 6: result = ResultType::xy_elvine;
 												break;
 										} else if (strcmp(m_pMapList[i]->m_cName, "elvine") == 0)
 										switch (iDice(1, 6)) {
-											case 1: iResult = 19;
+											case 1: result = ResultType::yb_aresden;
 												break;
-											case 2: iResult = 52;
+											case 2: result = ResultType::yw_aresden;
 												break;
-											case 3: iResult = 54;
+											case 3: result = ResultType::yy_aresden;
 												break;
-											case 4: iResult = 56;
+											case 4: result = ResultType::xb_aresden;
 												break;
-											case 5: iResult = 58;
+											case 5: result = ResultType::xw_aresden;
 												break;
-											case 6: iResult = 60;
+											case 6: result = ResultType::xy_aresden;
 												break;
 										}
 								}
-								wsprintf(G_cTxt, "(!) Mob-Event Map(%s)[%d (%d,%d)]", m_pMapList[i]->m_cName, iResult, pX, pY);
+								wsprintf(G_cTxt, "(!) Mob-Event Map(%s)[%d (%d,%d)]", m_pMapList[i]->m_cName, (int)result, pX, pY);
 							}
 							break;
 						case 2:
@@ -20924,322 +20895,323 @@ void CGame::MobGenerator() {
 										  (memcmp(m_pMapList[i]->m_cLocationName, "elvfarm", 7) == 0) ||
 										  (memcmp(m_pMapList[i]->m_cLocationName, "elvine", 6) == 0)) {
 									if (iDice(1, 30) == 5)
-										iResult = 16;
-									else iResult = 5;
-								} else iResult = 16;
-							} else iResult = 17;
+										result = ResultType::demon;
+									else result = ResultType::skeleton;
+								} else result = ResultType::demon;
+							} else result = ResultType::unicorn;
 							m_bIsSpecialEventTime = false;
 							break;
 					}
 				}
-				std::memset(cNpcName, 0, sizeof(cNpcName));
+				std::memset(cNpcName, 0, sizeof (cNpcName));
 				//Random Monster Spawns
-				switch (iResult) {
-					case 1: strcpy(cNpcName, "Slime");
+
+				switch (result) {
+					case ResultType::slime: strcpy(cNpcName, "Slime");
 						iNpcID = 10;
 						iProbSA = 5;
 						iKindSA = 1;
 						break;
-					case 2: strcpy(cNpcName, "Giant-Ant");
+					case ResultType::giant_ant: strcpy(cNpcName, "Giant-Ant");
 						iNpcID = 16;
 						iProbSA = 10;
 						iKindSA = 2;
 						break;
-					case 3: strcpy(cNpcName, "Orc");
+					case ResultType::orc: strcpy(cNpcName, "Orc");
 						iNpcID = 14;
 						iProbSA = 15;
 						iKindSA = 1;
 						break;
-					case 4: strcpy(cNpcName, "Zombie");
+					case ResultType::zombie: strcpy(cNpcName, "Zombie");
 						iNpcID = 18;
 						iProbSA = 15;
 						iKindSA = 3;
 						break;
-					case 5: strcpy(cNpcName, "Skeleton");
+					case ResultType::skeleton: strcpy(cNpcName, "Skeleton");
 						iNpcID = 11;
 						iProbSA = 35;
 						iKindSA = 8;
 						break;
-					case 6: strcpy(cNpcName, "Orc-Mage");
+					case ResultType::orc_mage: strcpy(cNpcName, "Orc-Mage");
 						iNpcID = 14;
 						iProbSA = 30;
 						iKindSA = 7;
 						break;
-					case 7: strcpy(cNpcName, "Scorpion");
+					case ResultType::scorpion: strcpy(cNpcName, "Scorpion");
 						iNpcID = 17;
 						iProbSA = 15;
 						iKindSA = 3;
 						break;
-					case 8: strcpy(cNpcName, "Stone-Golem");
+					case ResultType::stone_golem: strcpy(cNpcName, "Stone-Golem");
 						iNpcID = 12;
 						iProbSA = 25;
 						iKindSA = 5;
 						break;
-					case 9: strcpy(cNpcName, "Cyclops");
+					case ResultType::cyclops: strcpy(cNpcName, "Cyclops");
 						iNpcID = 13;
 						iProbSA = 35;
 						iKindSA = 8;
 						break;
-					case 10: strcpy(cNpcName, "Amphis");
+					case ResultType::amphis: strcpy(cNpcName, "Amphis");
 						iNpcID = 22;
 						iProbSA = 20;
 						iKindSA = 3;
 						break;
-					case 11: strcpy(cNpcName, "Clay-Golem");
+					case ResultType::clay_golem: strcpy(cNpcName, "Clay-Golem");
 						iNpcID = 23;
 						iProbSA = 20;
 						iKindSA = 5;
 						break;
-					case 12: strcpy(cNpcName, "Troll");
+					case ResultType::troll: strcpy(cNpcName, "Troll");
 						iNpcID = 28;
 						iProbSA = 25;
 						iKindSA = 3;
 						break;
-					case 13: strcpy(cNpcName, "Orge");
+					case ResultType::ogre: strcpy(cNpcName, "Orge");
 						iNpcID = 29;
 						iProbSA = 25;
 						iKindSA = 1;
 						break;
-					case 14: strcpy(cNpcName, "Hellbound");
+					case ResultType::hellhound: strcpy(cNpcName, "Hellbound");
 						iNpcID = 27;
 						iProbSA = 25;
 						iKindSA = 8;
 						break;
-					case 15: strcpy(cNpcName, "Liche");
+					case ResultType::liche: strcpy(cNpcName, "Liche");
 						iNpcID = 30;
 						iProbSA = 30;
 						iKindSA = 8;
 						break;
-					case 16: strcpy(cNpcName, "Demon");
+					case ResultType::demon: strcpy(cNpcName, "Demon");
 						iNpcID = 31;
 						iProbSA = 20;
 						iKindSA = 8;
 						break;
-					case 17: strcpy(cNpcName, "Unicorn");
+					case ResultType::unicorn: strcpy(cNpcName, "Unicorn");
 						iNpcID = 32;
 						iProbSA = 35;
 						iKindSA = 7;
 						break;
-					case 18: strcpy(cNpcName, "WereWolf");
+					case ResultType::werewolf: strcpy(cNpcName, "WereWolf");
 						iNpcID = 33;
 						iProbSA = 25;
 						iKindSA = 1;
 						break;
-					case 19: strcpy(cNpcName, "YB-Aresden");
+					case ResultType::yb_aresden: strcpy(cNpcName, "YB-Aresden");
 						iNpcID = -1;
 						iProbSA = 15;
 						iKindSA = 1;
 						break;
-					case 20: strcpy(cNpcName, "YB-Elvine");
+					case ResultType::yb_elvine: strcpy(cNpcName, "YB-Elvine");
 						iNpcID = -1;
 						iProbSA = 15;
 						iKindSA = 1;
 						break;
-					case 21: strcpy(cNpcName, "Gagoyle");
+					case ResultType::gagoyle: strcpy(cNpcName, "Gagoyle");
 						iNpcID = 52;
 						iProbSA = 20;
 						iKindSA = 8;
 						break;
-					case 22: strcpy(cNpcName, "Beholder");
+					case ResultType::beholder: strcpy(cNpcName, "Beholder");
 						iNpcID = 53;
 						iProbSA = 20;
 						iKindSA = 5;
 						break;
-					case 23: strcpy(cNpcName, "Dark-Elf");
+					case ResultType::dark_elf: strcpy(cNpcName, "Dark-Elf");
 						iNpcID = 54;
 						iProbSA = 20;
 						iKindSA = 3;
 						break;
-					case 24: strcpy(cNpcName, "Rabbit");
+					case ResultType::rabbit: strcpy(cNpcName, "Rabbit");
 						iNpcID = -1;
 						iProbSA = 5;
 						iKindSA = 1;
 						break;
-					case 25: strcpy(cNpcName, "Cat");
+					case ResultType::cat: strcpy(cNpcName, "Cat");
 						iNpcID = -1;
 						iProbSA = 10;
 						iKindSA = 2;
 						break;
-					case 26: strcpy(cNpcName, "Giant-Frog");
+					case ResultType::giant_frog: strcpy(cNpcName, "Giant-Frog");
 						iNpcID = 57;
 						iProbSA = 10;
 						iKindSA = 2;
 						break;
-					case 27: strcpy(cNpcName, "Mountain-Giant");
+					case ResultType::mountain_giant: strcpy(cNpcName, "Mountain-Giant");
 						iNpcID = 58;
 						iProbSA = 25;
 						iKindSA = 1;
 						break;
-					case 28: strcpy(cNpcName, "Ettin");
+					case ResultType::ettin: strcpy(cNpcName, "Ettin");
 						iNpcID = 59;
 						iProbSA = 20;
 						iKindSA = 8;
 						break;
-					case 29: strcpy(cNpcName, "Cannibal-Plant");
+					case ResultType::cannibal_plant: strcpy(cNpcName, "Cannibal-Plant");
 						iNpcID = 60;
 						iProbSA = 20;
 						iKindSA = 5;
 						break;
-					case 30: strcpy(cNpcName, "Rudolph");
+					case ResultType::rudolph: strcpy(cNpcName, "Rudolph");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 5;
 						break;
-					case 31: strcpy(cNpcName, "Ice-Golem");
+					case ResultType::ice_golem: strcpy(cNpcName, "Ice-Golem");
 						iNpcID = 65;
 						iProbSA = 35;
 						iKindSA = 8;
 						break;
-					case 32: strcpy(cNpcName, "DireBoar");
+					case ResultType::dire_boar: strcpy(cNpcName, "DireBoar");
 						iNpcID = 62;
 						iProbSA = 20;
 						iKindSA = 5;
 						break;
-					case 33: strcpy(cNpcName, "Frost");
+					case ResultType::frost: strcpy(cNpcName, "Frost");
 						iNpcID = 63;
 						iProbSA = 30;
 						iKindSA = 8;
 						break;
-					case 34: strcpy(cNpcName, "Stalker");
+					case ResultType::stalker: strcpy(cNpcName, "Stalker");
 						iNpcID = 48;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 35: strcpy(cNpcName, "Hellclaw");
+					case ResultType::hellclaw: strcpy(cNpcName, "Hellclaw");
 						iNpcID = 49;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 36: strcpy(cNpcName, "Wyvern");
+					case ResultType::wyvern: strcpy(cNpcName, "Wyvern");
 						iNpcID = 66;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 37: strcpy(cNpcName, "Fire-Wyvern");
+					case ResultType::fire_wyvern: strcpy(cNpcName, "Fire-Wyvern");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 38: strcpy(cNpcName, "Barlog");
+					case ResultType::balrog: strcpy(cNpcName, "Barlog");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 39: strcpy(cNpcName, "Tentocle");
+					case ResultType::tentocle: strcpy(cNpcName, "Tentocle");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 40: strcpy(cNpcName, "Centaurus");
+					case ResultType::centaurus: strcpy(cNpcName, "Centaurus");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 41: strcpy(cNpcName, "Giant-Lizard");
+					case ResultType::giant_lizard: strcpy(cNpcName, "Giant-Lizard");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 42: strcpy(cNpcName, "Minotaurs");
+					case ResultType::minotaur: strcpy(cNpcName, "Minotaurs");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 43: strcpy(cNpcName, "Tentocle");
+						/*case ResultType::tentocle: strcpy(cNpcName, "Tentocle");
+							iNpcID = -1;
+							iProbSA = 20;
+							iKindSA = 1;
+							break;*/
+					case ResultType::claw_turtle: strcpy(cNpcName, "Claw-Turtle");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 44: strcpy(cNpcName, "Claw-Turtle");
+					case ResultType::giant_crayfish: strcpy(cNpcName, "Giant-Crayfish");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 45: strcpy(cNpcName, "Giant-Crayfish");
+					case ResultType::giant_plant: strcpy(cNpcName, "Giant-Plant");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 46: strcpy(cNpcName, "Giant-Plant");
+					case ResultType::master_mage_orc: strcpy(cNpcName, "MasterMage-Orc");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 47: strcpy(cNpcName, "MasterMage-Orc");
+					case ResultType::nizie: strcpy(cNpcName, "Nizie");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 48: strcpy(cNpcName, "Nizie");
-						iNpcID = -1;
-						iProbSA = 20;
-						iKindSA = 1;
-						break;
-					case 49: strcpy(cNpcName, "Tigerworm");
+					case ResultType::tigerworm: strcpy(cNpcName, "Tigerworm");
 						iNpcID = 50;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 50: strcpy(cNpcName, "Giant-Plant");
+						/*case ResultType::giant_plant: strcpy(cNpcName, "Giant-Plant");
+							iNpcID = -1;
+							iProbSA = 20;
+							iKindSA = 1;
+							break;*/
+					case ResultType::abaddon: strcpy(cNpcName, "Abaddon");
 						iNpcID = -1;
 						iProbSA = 20;
 						iKindSA = 1;
 						break;
-					case 51: strcpy(cNpcName, "Abaddon");
-						iNpcID = -1;
-						iProbSA = 20;
-						iKindSA = 1;
-						break;
-					case 52: strcpy(cNpcName, "YW-Aresden");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 53: strcpy(cNpcName, "YW-Elvine");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 54: strcpy(cNpcName, "YY-Aresden");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 55: strcpy(cNpcName, "YY-Elvine");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 56: strcpy(cNpcName, "XB-Aresden");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 57: strcpy(cNpcName, "XB-Elvine");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 58: strcpy(cNpcName, "XW-Aresden");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 59: strcpy(cNpcName, "XW-Elvine");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 60: strcpy(cNpcName, "XY-Aresden");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
-					case 61: strcpy(cNpcName, "XY-Elvine");
-						iNpcID = -1;
-						iProbSA = 15;
-						iKindSA = 1;
-						break;
+						/*case ResultType::yw_aresden: strcpy(cNpcName, "YW-Aresden");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::yw_elvine: strcpy(cNpcName, "YW-Elvine");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::yy_aresden: strcpy(cNpcName, "YY-Aresden");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::yy_elvine: strcpy(cNpcName, "YY-Elvine");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::xb_aresden: strcpy(cNpcName, "XB-Aresden");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::xb_elvine: strcpy(cNpcName, "XB-Elvine");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::xw_aresden: strcpy(cNpcName, "XW-Aresden");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::xw_elvine: strcpy(cNpcName, "XW-Elvine");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::xy_aresden: strcpy(cNpcName, "XY-Aresden");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;
+						case ResultType::xy_elvine: strcpy(cNpcName, "XY-Elvine");
+							iNpcID = -1;
+							iProbSA = 15;
+							iKindSA = 1;
+							break;*/
 					default: strcpy(cNpcName, "Orc");
 						iNpcID = 14;
 						iProbSA = 15;
@@ -21255,153 +21227,151 @@ void CGame::MobGenerator() {
 				} else {
 				}
 			}
-			switch (iResult) {
-				case 1: iTotalMob = iDice(1, 5) - 1;
+			switch (result) {
+				case ResultType::slime: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 2: iTotalMob = iDice(1, 5) - 1;
+				case ResultType::giant_ant: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 3: iTotalMob = iDice(1, 5) - 1;
+				case ResultType::orc: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 4: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::zombie: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 5: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::skeleton: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 6: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::orc_mage: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 7: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::scorpion: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 8: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::stone_golem: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 9: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::cyclops: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 10: iTotalMob = iDice(1, 5) - 1;
+				case ResultType::amphis: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 11: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::clay_golem: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 12: iTotalMob = iDice(1, 5) - 1;
+				case ResultType::troll: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 13: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::ogre: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 14: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::hellhound: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 15: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::liche: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 16: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::demon: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 17: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::unicorn: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 18: iTotalMob = iDice(1, 5) - 1;
+				case ResultType::werewolf: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 19: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::yb_aresden: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 20: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::yb_elvine: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 21: iTotalMob = iDice(1, 5) - 1;
+				case ResultType::gagoyle: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 22: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::beholder: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 23: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::dark_elf: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 24: iTotalMob = iDice(1, 4) - 1;
+				case ResultType::rabbit: iTotalMob = iDice(1, 4) - 1;
 					break;
-				case 25: iTotalMob = iDice(1, 2) - 1;
+				case ResultType::cat: iTotalMob = iDice(1, 2) - 1;
 					break;
-				case 26: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::giant_frog: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 27: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::mountain_giant: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 28: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::ettin: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 29: iTotalMob = iDice(1, 5) - 1;
+				case ResultType::cannibal_plant: iTotalMob = iDice(1, 5) - 1;
 					break;
-				case 30: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::rudolph: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 31: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::ice_golem: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 32: iTotalMob = 1;
+				case ResultType::dire_boar: iTotalMob = 1;
 					break;
-				case 33: iTotalMob = 1;
+				case ResultType::frost: iTotalMob = 1;
 					break;
-				case 34: iTotalMob = 1;
+				case ResultType::stalker: iTotalMob = 1;
 					break;
-				case 35: iTotalMob = 1;
+				case ResultType::hellclaw: iTotalMob = 1;
 					break;
-				case 36: iTotalMob = 1;
+				case ResultType::wyvern: iTotalMob = 1;
 					break;
-				case 37: iTotalMob = 1;
+				case ResultType::fire_wyvern: iTotalMob = 1;
 					break;
-				case 38: iTotalMob = 1;
+				case ResultType::balrog: iTotalMob = 1;
 					break;
-				case 39: iTotalMob = 1;
+				case ResultType::tentocle: iTotalMob = 1;
 					break;
-				case 40: iTotalMob = 1;
+				case ResultType::centaurus: iTotalMob = 1;
 					break;
-				case 41: iTotalMob = 1;
+				case ResultType::giant_lizard: iTotalMob = 1;
 					break;
-				case 42: iTotalMob = iDice(1, 3) - 1;
+				case ResultType::minotaur: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 43: iTotalMob = 1;
+				case ResultType::claw_turtle: iTotalMob = iDice(1, 3) - 1;
 					break;
-				case 44: iTotalMob = iDice(1, 3) - 1;
-					break;
-				case 45: iTotalMob = 1;
+				case ResultType::giant_crayfish: iTotalMob = 1;
 					break;
 				default: iTotalMob = 0;
 					break;
 			}
 			if (bMaster == false) iTotalMob = 0;
 			if (iTotalMob > 2) {
-				switch (iResult) {
-					case 1: // Slime
-					case 2: // Giant-Ant
-					case 3: // Orc
-					case 4: // Zombie
-					case 5: // Skeleton
-					case 6: // Orc-Mage
-					case 7: // Scorpion
-					case 8: // Stone-Golem
-					case 9: // Cyclops
-					case 10: // Amphis
-					case 11: // Clay-Golem
-					case 12: // Troll
-					case 13: // Orge
-					case 14: // Hellbound
-					case 15: // Liche
-					case 16: // Demon
-					case 17: // Unicorn
-					case 18: // WereWolf
-					case 19:
-					case 20:
-					case 21:
-					case 22:
-					case 23:
-					case 24:
-					case 25:
-					case 26:
-					case 27:
-					case 28:
-					case 29:
-					case 30:
-					case 31:
-					case 32:
+				switch (result) {
+					case ResultType::slime:
+					case ResultType::giant_ant:
+					case ResultType::orc:
+					case ResultType::zombie:
+					case ResultType::skeleton:
+					case ResultType::orc_mage:
+					case ResultType::scorpion:
+					case ResultType::stone_golem:
+					case ResultType::cyclops:
+					case ResultType::amphis:
+					case ResultType::clay_golem:
+					case ResultType::troll:
+					case ResultType::ogre:
+					case ResultType::hellhound:
+					case ResultType::liche:
+					case ResultType::demon:
+					case ResultType::unicorn:
+					case ResultType::werewolf:
+					case ResultType::yb_aresden:
+					case ResultType::yb_elvine:
+					case ResultType::gagoyle:
+					case ResultType::beholder:
+					case ResultType::dark_elf:
+					case ResultType::rabbit:
+					case ResultType::cat:
+					case ResultType::giant_frog:
+					case ResultType::mountain_giant:
+					case ResultType::ettin:
+					case ResultType::cannibal_plant:
+					case ResultType::rudolph:
+					case ResultType::ice_golem:
+					case ResultType::dire_boar:
 						if (iDice(1, 5) == 1) iTotalMob = 0; // 75% ???????? ???.
 						break;
-					case 33:
-					case 34:
-					case 35:
-					case 36:
-					case 37:
-					case 38:
-					case 39:
-					case 40:
-					case 41:
-					case 42:
-					case 44:
-					case 45:
-					case 46:
-					case 47:
-					case 48:
-					case 49:
+					case ResultType::frost:
+					case ResultType::stalker:
+					case ResultType::hellclaw:
+					case ResultType::wyvern:
+					case ResultType::fire_wyvern:
+					case ResultType::balrog:
+					case ResultType::tentocle:
+					case ResultType::centaurus:
+					case ResultType::giant_lizard:
+					case ResultType::minotaur:
+					case ResultType::claw_turtle:
+					case ResultType::giant_crayfish:
+					case ResultType::giant_plant:
+					case ResultType::master_mage_orc:
+					case ResultType::nizie:
+					case ResultType::tigerworm:
 						if (iDice(1, 5) != 1) iTotalMob = 0; // 75% ???????????????
 						break;
 				}
@@ -21409,8 +21379,18 @@ void CGame::MobGenerator() {
 			if (bIsSpecialEvent == true) {
 				switch (m_cSpecialEventType) {
 					case 1:
-						if ((iResult != 35) && (iResult != 36) && (iResult != 37) && (iResult != 49)
-								  && (iResult != 51) && (iResult != 15) && (iResult != 16) && (iResult != 21)) iTotalMob = 12;
+						switch (result) {
+							case ResultType::hellclaw:
+							case ResultType::wyvern:
+							case ResultType::fire_wyvern:
+							case ResultType::tigerworm:
+							case ResultType::abaddon:
+							case ResultType::liche:
+							case ResultType::demon:
+							case ResultType::gagoyle:
+								break;
+							default: iTotalMob = 12;
+						}
 						for (x = 1; x < DEF_MAXCLIENTS; x++)
 							if ((iNpcID != -1) && (m_pClientList[x] != 0) && (m_pClientList[x]->m_bIsInitComplete == true) &&
 									  m_pClientList[x]->m_cMapIndex == i) {
@@ -21431,7 +21411,7 @@ void CGame::MobGenerator() {
 			for (j = 0; j < iTotalMob; j++) {
 				iNamingValue = m_pMapList[i]->iGetEmptyNamingValue();
 				if (iNamingValue != -1) {
-					std::memset(cName_Slave, 0, sizeof(cName_Slave));
+					std::memset(cName_Slave, 0, sizeof (cName_Slave));
 					wsprintf(cName_Slave, "XX%d", iNamingValue);
 					cName_Slave[0] = 95; // original '_';
 					cName_Slave[1] = i + 65;
@@ -21453,7 +21433,7 @@ void CGame::MobGenerator() {
 						  (m_pMapList[i]->m_stSpotMobGenerator[j].iMaxMobs > m_pMapList[i]->m_stSpotMobGenerator[j].iCurMobs)) {
 					iNamingValue = m_pMapList[i]->iGetEmptyNamingValue();
 					if (iNamingValue != -1) {
-						std::memset(cNpcName, 0, sizeof(cNpcName));
+						std::memset(cNpcName, 0, sizeof (cNpcName));
 						switch (m_pMapList[i]->m_stSpotMobGenerator[j].iMobType) {
 								// spot-mob-generator
 							case 10: strcpy(cNpcName, "Slime");
@@ -21722,7 +21702,7 @@ void CGame::MobGenerator() {
 						 */
 						bFirmBerserk = false;
 						if ((iMapLevel == 5) && (iDice(1, 3) == 1)) bFirmBerserk = true;
-						std::memset(cName_Master, 0, sizeof(cName_Master));
+						std::memset(cName_Master, 0, sizeof (cName_Master));
 						wsprintf(cName_Master, "XX%d", iNamingValue);
 						cName_Master[0] = 95; // original '_';
 						cName_Master[1] = i + 65;
@@ -21834,7 +21814,7 @@ void CGame::DeleteNpc(int iNpcH) {
 	iNumItem = 0;
 	SendEventToNearClient_TypeA(iNpcH, DEF_OWNERTYPE_NPC, MSGID_EVENT_LOG, DEF_MSGTYPE_REJECT, 0, 0, 0);
 	m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->ClearOwner(11, iNpcH, DEF_OWNERTYPE_NPC, m_pNpcList[iNpcH]->m_sX, m_pNpcList[iNpcH]->m_sY);
-	std::memset(cTmp, 0, sizeof(cTmp));
+	std::memset(cTmp, 0, sizeof (cTmp));
 	strcpy(cTmp, (char *) (m_pNpcList[iNpcH]->m_cName + 2));
 	iNamingValue = atoi(cTmp);
 	m_pMapList[m_pNpcList[iNpcH]->m_cMapIndex]->SetNamingValueEmpty(iNamingValue);
@@ -21864,225 +21844,188 @@ void CGame::DeleteNpc(int iNpcH) {
 	bRemoveFromDelayEventList(iNpcH, DEF_OWNERTYPE_NPC, 0);
 	if ((m_pNpcList[iNpcH]->m_bIsSummoned == false) && (m_pNpcList[iNpcH]->m_bIsUnsummoned == false)) {
 		pItem = new CItem;
-		std::memset(cItemName, 0, sizeof(cItemName));
+		std::memset(cItemName, 0, sizeof (cItemName));
 		switch (m_pNpcList[iNpcH]->m_sType) {
 			case NpcType::slime: // Slime
-				if (iDice(1, 25) == 1) iItemID = ItemId::slime_jelly;
+				if (iDice(1, 16) == 1) iItemID = ItemId::slime_jelly; // 1/16
 				break; // SlimeJelly
-				break;
-			case NpcType::skeleton: // Skeleton
+			case NpcType::giant_ant: //Giant-Ant
 				switch (iDice(1, 2)) {
-					case 1:if (iDice(1, 20) == 1) iItemID = ItemId::skeleton_bones;
-						break; // SkeletonBones
-					case 2: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
+					case 1: if (iDice(1, 9) == 1) iItemID = ItemId::ant_leg; // 1/18
+						break; // AntLeg
+					case 2: if (iDice(1, 10) == 1) iItemID = ItemId::ant_feeler; // 1/20
+						break; // AntFeeler
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
-			case NpcType::stone_golem: // Stone-Golem
-				switch (iDice(1, 2)) {
-					case 1: if (iDice(1, 30) == 1) iItemID = ItemId::stone_golem_piece;
-						break; // StoneGolemPiece
-					case 2: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
+			case NpcType::amphis: //Amphis
+				switch (iDice(1, 4)) {
+					case 1: if (iDice(1, 5) == 1) iItemID = ItemId::snake_meat; // 1/20
+						break; // SnakeMeat
+					case 2: if (iDice(1, 6) == 1) iItemID = ItemId::snake_skin; // 1/24
+						break; // SnakeSkin
+					case 3: if (iDice(1, 6) == 1) iItemID = ItemId::snake_teeth; // 1/24
+						break; // SnakeTeeth
+					case 4: if (iDice(1, 7) == 1) iItemID = ItemId::snake_tongue; // 1/28
+						break; // SnakeTongue
 				}
-				break;
-			case NpcType::cyclops: // Cyclops
-				switch (iDice(1, 6)) {
-					case 1: if (iDice(1, 36) == 1) iItemID = ItemId::cyclops_eye;
-						break; // CyclopsEye
-					case 2: if (iDice(1, 40) == 1) iItemID = ItemId::cyclops_hand_edge;
-						break; // CyclopsHandEdge
-					case 3: if (iDice(1, 30) == 1) iItemID = ItemId::cyclops_heart;
-						break; // CyclopsHeart
-					case 4: if (iDice(1, 22) == 1) iItemID = ItemId::cyclops_meat;
-						break; // CyclopsMeat
-					case 5: if (iDice(1, 40) == 1) iItemID = ItemId::cyclops_leather;
-						break; // CyclopsLeather
-					case 6: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
-				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::orc: // Orc, Orc-Mage
-				switch (iDice(1, 4)) {
-					case 1: if (iDice(1, 11) == 1) iItemID = ItemId::orc_meat;
-						break; // OrcMeat
-					case 2: if (iDice(1, 20) == 1) iItemID = ItemId::orc_leather;
-						break; // OrcLeather
-					case 3: if (iDice(1, 21) == 1) iItemID = ItemId::orc_teeth;
-						break; // OrcTeeth
-					case 4: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
-				}
-				break;
-			case NpcType::giant_ant: //Giant-Ant
 				switch (iDice(1, 3)) {
-					case 1: if (iDice(1, 9) == 1) iItemID = ItemId::ant_leg;
-						break; // AntLeg
-					case 2: if (iDice(1, 10) == 1) iItemID = ItemId::ant_feeler;
-						break; // AntFeeler
-					case 3: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
+					case 1: if (iDice(1, 7) == 1) iItemID = ItemId::orc_meat; // 1/21
+						break; // OrcMeat
+					case 2: if (iDice(1, 10) == 1) iItemID = ItemId::orc_leather; // 1/30
+						break; // OrcLeather
+					case 3: if (iDice(1, 11) == 1) iItemID = ItemId::orc_teeth; // 1/33
+						break; // OrcTeeth
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::scorpion: //Scorpion
-				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 50) == 1) iItemID = ItemId::scorpion_pincers;
+				switch (iDice(1, 4)) {
+					case 1: if (iDice(1, 7) == 1) iItemID = ItemId::scorpion_pincers; // 1/28
 						break; // ScorpionPincers
-					case 2: if (iDice(1, 20) == 1) iItemID = ItemId::scorpion_meat;
+					case 2: if (iDice(1, 7) == 1) iItemID = ItemId::scorpion_meat; // 1/28
 						break; // ScorpionMeat
-					case 3: if (iDice(1, 50) == 1) iItemID = ItemId::scorpion_sting;
+					case 3: if (iDice(1, 9) == 1) iItemID = ItemId::scorpion_sting; // 1/36
 						break; // ScorpionSting
-					case 4: if (iDice(1, 40) == 1) iItemID = ItemId::scorpion_skin;
+					case 4: if (iDice(1, 8) == 1) iItemID = ItemId::scorpion_skin; // 1/32
 						break; // ScorpionSkin
-					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::zombie: //Zombie
 				bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
-				break;
-			case NpcType::amphis: //Amphis
-				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 15) == 1) iItemID = ItemId::snake_meat;
-						break; // SnakeMeat
-					case 2: if (iDice(1, 16) == 1) iItemID = ItemId::snake_skin;
-						break; // SnakeSkin
-					case 3: if (iDice(1, 16) == 1) iItemID = ItemId::snake_teeth;
-						break; // SnakeTeeth
-					case 4: if (iDice(1, 17) == 1) iItemID = ItemId::snake_tongue;
-						break; // SnakeTongue
-					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
-				}
+			case NpcType::skeleton: // Skeleton
+				if (iDice(1, 20) == 1) iItemID = ItemId::skeleton_bones; // 1/20
+				else bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::clay_golem: //Clay-Golem
-				switch (iDice(1, 2)) {
-					case 1: if (iDice(1, 30) == 1) iItemID = ItemId::lumpof_clay;
-						break; // LumpofClay
-					case 2: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
-				}
+				if (iDice(1, 30) == 1) iItemID = ItemId::lumpof_clay; // 1/30
+				else bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
-			case NpcType::hellbound: //Hellbound
-				switch (iDice(1, 7)) {
-					case 1: if (iDice(1, 40) == 1) iItemID = ItemId::helbound_heart;
+			case NpcType::stone_golem: // Stone-Golem
+				if (iDice(1, 30) == 1) iItemID = ItemId::stone_golem_piece; // 1/30
+				else bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
+				break;
+			case NpcType::hellhound: //Hellbound
+				switch (iDice(1, 6)) {
+					case 1: if (iDice(1, 10) == 1) iItemID = ItemId::helbound_heart; // 1/60
 						break; // HelboundHeart
-					case 2: if (iDice(1, 38) == 1) iItemID = ItemId::helbound_leather;
+					case 2: if (iDice(1, 8) == 1) iItemID = ItemId::helbound_leather; // 1/48
 						break; // HelboundLeather
-					case 3: if (iDice(1, 38) == 1) iItemID = ItemId::helbound_tail;
+					case 3: if (iDice(1, 8) == 1) iItemID = ItemId::helbound_tail; // 1/48
 						break; // HelboundTail
-					case 4: if (iDice(1, 36) == 1) iItemID = ItemId::helbound_teeth;
+					case 4: if (iDice(1, 6) == 1) iItemID = ItemId::helbound_teeth; // 1/36
 						break; // HelboundTeeth
-					case 5: if (iDice(1, 36) == 1) iItemID = ItemId::helbound_claw;
+					case 5: if (iDice(1, 6) == 1) iItemID = ItemId::helbound_claw; // 1/36
 						break; // HelboundClaw
-					case 6: if (iDice(1, 50) == 1) iItemID = ItemId::helbound_tongue;
+					case 6: if (iDice(1, 10) == 1) iItemID = ItemId::helbound_tongue; // 1/60
 						break; // HelboundTongue
-					case 7: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
+				break;
+			case NpcType::cyclops: // Cyclops
+				switch (iDice(1, 5)) {
+					case 1: if (iDice(1, 16) == 1) iItemID = ItemId::cyclops_eye; // 1/80
+						break; // CyclopsEye
+					case 2: if (iDice(1, 20) == 1) iItemID = ItemId::cyclops_hand_edge; // 1/100
+						break; // CyclopsHandEdge
+					case 3: if (iDice(1, 20) == 1) iItemID = ItemId::cyclops_heart; // 1/100
+						break; // CyclopsHeart
+					case 4: if (iDice(1, 12) == 1) iItemID = ItemId::cyclops_meat; // 1/60
+						break; // CyclopsMeat
+					case 5: if (iDice(1, 18) == 1) iItemID = ItemId::cyclops_leather; // 1/90
+						break; // CyclopsLeather
+				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::troll: //Troll
-				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 35) == 1) iItemID = ItemId::troll_heart;
+				switch (iDice(1, 4)) {
+					case 1: if (iDice(1, 15) == 1) iItemID = ItemId::troll_heart; // 1/60
 						break; // TrollHeart
-					case 2: if (iDice(1, 23) == 1) iItemID = ItemId::troll_meat;
+					case 2: if (iDice(1, 13) == 1) iItemID = ItemId::troll_meat; // 1/52
 						break; // TrollMeat
-					case 3: if (iDice(1, 25) == 1) iItemID = ItemId::troll_leather;
+					case 3: if (iDice(1, 15) == 1) iItemID = ItemId::troll_leather; // 1/60
 						break; // TrollLeather
-					case 4: if (iDice(1, 27) == 1) iItemID = ItemId::troll_claw;
+					case 4: if (iDice(1, 17) == 1) iItemID = ItemId::troll_claw; // 1/68
 						break; // TrollClaw
-					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
-			case NpcType::orge: //Orge
-				switch (iDice(1, 7)) {
-					case 1: if (iDice(1, 20) == 1) iItemID = ItemId::ogre_hair;
+			case NpcType::ogre: //Orge
+				switch (iDice(1, 6)) {
+					case 1: if (iDice(1, 20) == 1) iItemID = ItemId::ogre_hair; // 1/120
 						break; // OgreHair
-					case 2: if (iDice(1, 22) == 1) iItemID = ItemId::ogre_heart;
+					case 2: if (iDice(1, 22) == 1) iItemID = ItemId::ogre_heart; // 1/132
 						break; // OgreHeart
-					case 3: if (iDice(1, 25) == 1) iItemID = ItemId::ogre_meat;
+					case 3: if (iDice(1, 15) == 1) iItemID = ItemId::ogre_meat; // 1/90
 						break; // OgreMeat
-					case 4: if (iDice(1, 25) == 1) iItemID = ItemId::ogre_leather;
+					case 4: if (iDice(1, 15) == 1) iItemID = ItemId::ogre_leather; // 1/90
 						break; // OgreLeather
-					case 5: if (iDice(1, 28) == 1) iItemID = ItemId::ogre_teeth;
+					case 5: if (iDice(1, 18) == 1) iItemID = ItemId::ogre_teeth; // 1/108
 						break; // OgreTeeth
-					case 6: if (iDice(1, 28) == 1) iItemID = ItemId::ogre_claw;
+					case 6: if (iDice(1, 18) == 1) iItemID = ItemId::ogre_claw; // 1/108
 						break; // OgreClaw
-					case 7: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::liche: //Liche
 				bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
-				break;
 			case NpcType::demon: //Demon
-				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 400) == 123) iItemID = ItemId::demon_heart;
+				switch (iDice(1, 4)) {
+					case 1: if (iDice(1, 400) == 1) iItemID = ItemId::demon_heart; // 1/1600
 						break; // DemonHeart
-					case 2: if (iDice(1, 1000) == 123) iItemID = ItemId::demon_meat;
+					case 2: if (iDice(1, 100) == 1) iItemID = ItemId::demon_meat; // 1/400
 						break; // DemonMeat
-					case 3: if (iDice(1, 200) == 123) iItemID = ItemId::demon_leather;
+					case 3: if (iDice(1, 200) == 1) iItemID = ItemId::demon_leather; // 1/800
 						break; // DemonLeather
-					case 4: if (iDice(1, 300) == 123) iItemID = ItemId::demon_eye;
+					case 4: if (iDice(1, 300) == 1) iItemID = ItemId::demon_eye; // 1/1200
 						break; // DemonEye
-					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::unicorn: //Unicorn
-				switch (iDice(1, 5)) {
-					case 1: if (iDice(1, 3000) == 396) iItemID = ItemId::unicorn_heart;
+				switch (iDice(1, 4)) {
+					case 1: if (iDice(1, 2000) == 1) iItemID = ItemId::unicorn_heart; // 1/8000
 						break; // UnicornHeart
-					case 2: if (iDice(1, 500) == 3) iItemID = ItemId::unicorn_horn;
+					case 2: if (iDice(1, 500) == 1) iItemID = ItemId::unicorn_horn; // 1/2000
 						break; // UnicornHorn
-					case 3: if (iDice(1, 100) == 3) iItemID = ItemId::unicorn_meat;
+					case 3: if (iDice(1, 100) == 1) iItemID = ItemId::unicorn_meat; // 1/400
 						break; // UnicornMeat
-					case 4: if (iDice(1, 200) == 3) iItemID = ItemId::unicorn_leather;
+					case 4: if (iDice(1, 200) == 1) iItemID = ItemId::unicorn_leather; // 1/800
 						break; // UnicornLeather
-					case 5: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
 			case NpcType::were_wolf: //WereWolf
-				switch (iDice(1, 8)) {
-					case 1: if (iDice(1, 30) == 3) iItemID = ItemId::werewolf_tail;
+				switch (iDice(1, 7)) {
+					case 1: if (iDice(1, 17) == 3) iItemID = ItemId::werewolf_tail; // 1/119
 						break; // WerewolfTail
-					case 2: if (iDice(1, 28) == 3) iItemID = ItemId::werewolf_heart;
+					case 2: if (iDice(1, 19) == 3) iItemID = ItemId::werewolf_heart; // 1/133
 						break; // WerewolfHeart
-					case 3: if (iDice(1, 25) == 3) iItemID = ItemId::werewolf_meat;
+					case 3: if (iDice(1, 13) == 3) iItemID = ItemId::werewolf_meat; // 1/91
 						break; // WerewolfMeat
-					case 4: if (iDice(1, 35) == 3) iItemID = ItemId::werewolf_leather;
+					case 4: if (iDice(1, 13) == 3) iItemID = ItemId::werewolf_leather; // 1/91
 						break; // WerewolfLeather
-					case 5: if (iDice(1, 28) == 3) iItemID = ItemId::werewolf_teeth;
+					case 5: if (iDice(1, 15) == 3) iItemID = ItemId::werewolf_teeth; // 1/105
 						break; // WerewolfTeeth
-					case 6: if (iDice(1, 28) == 3) iItemID = ItemId::werewolf_claw;
+					case 6: if (iDice(1, 15) == 3) iItemID = ItemId::werewolf_claw; // 1/105
 						break; // WerewolfClaw
-					case 7: if (iDice(1, 38) == 3) iItemID = ItemId::werewolf_nail;
+					case 7: if (iDice(1, 16) == 3) iItemID = ItemId::werewolf_nail; // 1/112
 						break; // WerewolfNail
-					case 8: bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
-						break;
-					default: break;
 				}
+				if (iItemID == ItemId::none) bGetItemNameWhenDeleteNpc(iItemID, m_pNpcList[iNpcH]->m_sType);
 				break;
+
+				/////////////
 			case NpcType::stalker: //Stalker
 			case NpcType::hellclaw: //Hellclaw
 			case NpcType::tigerworm: //Tigerworm
+
 			case NpcType::gagoyle: //Gagoyle
 			case NpcType::beholder: //Beholder
 			case NpcType::dark_elf: //Dark-Elf
@@ -22169,6 +22112,17 @@ void CGame::DeleteNpc(int iNpcH) {
 				}
 			}
 		} else {
+			if (iItemID == ItemId::none) {
+				switch (m_pNpcList[iNpcH]->m_sType) {
+					case NpcType::liche:
+					case NpcType::demon:
+					case NpcType::unicorn:
+						iItemID = ItemId::gold;
+						dwCount = (iDice(1, m_pNpcList[iNpcH]->m_iExpDice * 4) + m_pNpcList[iNpcH]->m_iExpDice);
+						dwCount = dwCount - (dwCount / 3);
+						break;
+				}
+			}
 			if (_bInitItemAttr(pItem, iItemID) == false) {
 				delete pItem;
 				pItem = 0;
@@ -22184,7 +22138,7 @@ void CGame::DeleteNpc(int iNpcH) {
 				_bItemLog(DEF_ITEMLOG_NEWGENDROP, 0, m_pNpcList[iNpcH]->m_cNpcName, pItem);
 			}
 		}
-		if (iDice(1, 100000) < 10) {
+		if (iDice(1, 10000) == 1) {
 			pItem2 = new CItem;
 			switch (iDice(1, 4)) {
 				case 1: iSlateID = ItemId::ancient_tablet_lu;
@@ -22228,7 +22182,7 @@ void CGame::RequestFullObjectData(int iClientH, char *pData) {
 	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
 	wp = (uint16_t *) (pData + DEF_INDEX2_MSGTYPE);
 	wObjectID = *wp;
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = MSGID_EVENT_MOTION;
 	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -22442,7 +22396,7 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 	short sTmpAppr1;
 	char cSlateType[20];
 	dwTime = timeGetTime();
-	std::memset(cSlateType, 0, sizeof(cSlateType));
+	std::memset(cSlateType, 0, sizeof (cSlateType));
 	//testcode
 	//wsprintf(G_cTxt, "%d", sDestItemID);
 	//PutLogList(G_cTxt);
@@ -22673,7 +22627,7 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 										  (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sTouchEffectValue3 <= SysTime.wHour)) {
 								} else {
 									char cDestMapName[11];
-									std::memset(cDestMapName, 0, sizeof(cDestMapName));
+									std::memset(cDestMapName, 0, sizeof (cDestMapName));
 									wsprintf(cDestMapName, "fightzone%d", m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sItemEffectValue2 - 10);
 									if (memcmp(m_pClientList[iClientH]->m_cMapName, cDestMapName, 10) != 0) {
 										//v1.42
@@ -22826,7 +22780,7 @@ void CGame::UseItemHandler(int iClientH, short sItemIndex, short dX, short dY, s
 						break;
 				}
 				break;
-			
+
 			default: break;
 		}
 	} else if (m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cItemType == ItemType::use_skill) {
@@ -23853,7 +23807,7 @@ void CGame::Effect_Damage_Spot_DamageMove(short sAttackerH, char cAttackerType, 
 			m_pClientList[sTargetH]->m_iHP -= iDamage;
 			if (m_pClientList[sAttackerH] != 0) {
 				if (m_pClientList[sAttackerH]->iDmgShowon == 1) {
-					std::memset(cDamageMod, 0, sizeof(cDamageMod));
+					std::memset(cDamageMod, 0, sizeof (cDamageMod));
 					wsprintf(cDamageMod, "You did [%d] Damage to Character [%s] Remaining Life [%d]", iDamage, m_pClientList[sTargetH]->m_cCharName, m_pClientList[sTargetH]->m_iHP);
 					SendNotifyMsg(0, sAttackerH, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cDamageMod);
 				}
@@ -23960,7 +23914,7 @@ EDSD_SKIPDAMAGEMOVE:
 			m_pNpcList[sTargetH]->m_iHP -= iDamage;
 			if (m_pClientList[sAttackerH] != 0) {
 				if (m_pClientList[sAttackerH]->iDmgShowon == 1) {
-					std::memset(cDamageMod, 0, sizeof(cDamageMod));
+					std::memset(cDamageMod, 0, sizeof (cDamageMod));
 					wsprintf(cDamageMod, "You did [%d] Damage to Npc [%s] Remaining Life [%d]", iDamage, m_pNpcList[sTargetH]->m_cNpcName, m_pNpcList[sTargetH]->m_iHP);
 					SendNotifyMsg(0, sAttackerH, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cDamageMod);
 				}
@@ -25300,7 +25254,7 @@ int CGame::iCalculateUseSkillItemEffect(int iOwnerH, char cOwnerType, char cOwne
 			_TamingHandler(iOwnerH, iSkillNum, cMapIndex, dX, dY);
 			break;
 		case DEF_SKILLEFFECTTYPE_GET:
-			std::memset(cItemName, 0, sizeof(cItemName));
+			std::memset(cItemName, 0, sizeof (cItemName));
 			switch (m_pSkillConfigList[iSkillNum]->m_sValue1) {
 				case 1:
 					wsprintf(cItemName, "Meat");
@@ -25430,7 +25384,7 @@ void CGame::ReqSellItemHandler(int iClientH, char cItemID, char cSellToWhom, int
 	if (m_pClientList[iClientH]->m_pItemList[cItemID]->m_dwCount < (uint32_t) iNum) return;
 	iCalcTotalWeight(iClientH);
 	m_pGold = new CItem;
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	wsprintf(cItemName, "Gold");
 	_bInitItemAttr(m_pGold, cItemName);
 	// v1.42
@@ -25776,7 +25730,7 @@ void CGame::ReqSellItemConfirmHandler(int iClientH, char cItemID, int iNum, char
 	}
 	if (iPrice <= 0) return;
 	pItemGold = new CItem;
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	wsprintf(cItemName, "Gold");
 	_bInitItemAttr(pItemGold, cItemName);
 	pItemGold->m_dwCount = iPrice;
@@ -26015,9 +25969,9 @@ void CGame::CheckAndNotifyPlayerConnection(int iClientH, char * pMsg, uint32_t d
 	uint16_t * wp;
 	if (m_pClientList[iClientH] == 0) return;
 	if (dwSize <= 0) return;
-	std::memset(cPlayerLocation, 0, sizeof(cPlayerLocation));
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cPlayerLocation, 0, sizeof (cPlayerLocation));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pMsg, dwSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -26056,15 +26010,15 @@ void CGame::ToggleWhisperPlayer(int iClientH, char * pMsg, uint32_t dwMsgSize) {
 	int i;
 	if (m_pClientList[iClientH] == 0) return;
 	if (dwMsgSize <= 0) return;
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pMsg, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token == 0) {
 		m_pClientList[iClientH]->m_iWhisperPlayerIndex = -1;
-		std::memset(m_pClientList[iClientH]->m_cWhisperPlayerName, 0, sizeof(m_pClientList[iClientH]->m_cWhisperPlayerName));
+		std::memset(m_pClientList[iClientH]->m_cWhisperPlayerName, 0, sizeof (m_pClientList[iClientH]->m_cWhisperPlayerName));
 		// Whisper mode enabled
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_WHISPERMODEOFF, 0, 0, 0, cName);
 	} else {
@@ -26081,7 +26035,7 @@ void CGame::ToggleWhisperPlayer(int iClientH, char * pMsg, uint32_t dwMsgSize) {
 					return;
 				}
 				m_pClientList[iClientH]->m_iWhisperPlayerIndex = i;
-				std::memset(m_pClientList[iClientH]->m_cWhisperPlayerName, 0, sizeof(m_pClientList[iClientH]->m_cWhisperPlayerName));
+				std::memset(m_pClientList[iClientH]->m_cWhisperPlayerName, 0, sizeof (m_pClientList[iClientH]->m_cWhisperPlayerName));
 				strcpy(m_pClientList[iClientH]->m_cWhisperPlayerName, cName);
 				break;
 			}
@@ -26101,12 +26055,12 @@ void CGame::SetPlayerProfile(int iClientH, char * pMsg, uint32_t dwMsgSize) {
 	int i;
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize - 7) <= 0) return;
-	std::memset(cTemp, 0, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof (cTemp));
 	memcpy(cTemp, (pMsg + 7), dwMsgSize - 7);
 	for (i = 0; i < 256; i++)
 		if (cTemp[i] == ' ') cTemp[i] = '_';
 	cTemp[255] = 0;
-	std::memset(m_pClientList[iClientH]->m_cProfile, 0, sizeof(m_pClientList[iClientH]->m_cProfile));
+	std::memset(m_pClientList[iClientH]->m_cProfile, 0, sizeof (m_pClientList[iClientH]->m_cProfile));
 	strcpy(m_pClientList[iClientH]->m_cProfile, cTemp);
 }
 
@@ -26117,8 +26071,8 @@ void CGame::GetPlayerProfile(int iClientH, char * pMsg, uint32_t dwMsgSize) {
 	int i;
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pMsg, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -26129,7 +26083,7 @@ void CGame::GetPlayerProfile(int iClientH, char * pMsg, uint32_t dwMsgSize) {
 		else memcpy(cName, token, strlen(token));
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != 0) && (memcmp(m_pClientList[i]->m_cCharName, cName, 10) == 0)) {
-				std::memset(cBuff2, 0, sizeof(cBuff2));
+				std::memset(cBuff2, 0, sizeof (cBuff2));
 				wsprintf(cBuff2, "%s Profile: %s", cName, m_pClientList[i]->m_cProfile);
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_PLAYERPROFILE, 0, 0, 0, cBuff2);
 				delete pStrTok;
@@ -26638,8 +26592,8 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, bool bNotify) {
 								break;
 							case 7: m_pClientList[iClientH]->m_iAddMR += (int) dwSWEValue * 7;
 								break;
-						 //case 8: m_pClientList[iClientH]->m_iDamageAbsorption_Armor[m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos] += (int)dwSWEValue*3; break;
-						
+								//case 8: m_pClientList[iClientH]->m_iDamageAbsorption_Armor[m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cEquipPos] += (int)dwSWEValue*3; break;
+
 							case 8: m_pClientList[iClientH]->m_iAddAbsPD += (int) dwSWEValue * 3;
 								break;
 							case 9: m_pClientList[iClientH]->m_iAddAbsMD += (int) dwSWEValue * 3;
@@ -26788,7 +26742,7 @@ void CGame::CalcTotalItemEffect(int iClientH, int iEquipItemID, bool bNotify) {
 						m_pClientList[iClientH]->m_cAttackDiceRange_L = 0;
 						m_pClientList[iClientH]->m_cAttackBonus_L = 0;
 					} else {
-						
+
 						/*
 						int iArrowIndex = m_pClientList[iClientH]->m_cArrowIndex;
 						m_pClientList[iClientH]->m_cAttackDiceThrow_SM = m_pClientList[iClientH]->m_pItemList[iArrowIndex]->m_sItemEffectValue1;
@@ -26978,7 +26932,7 @@ bool CGame::bAnalyzeCriminalAction(int iClientH, short dX, short dY, bool bIsChe
 	if ((cOwnerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sOwnerH] != 0)) {
 		if (_bGetIsPlayerHostile(iClientH, sOwnerH) != true) {
 			if (bIsCheck == true) return true;
-			std::memset(cNpcName, 0, sizeof(cNpcName));
+			std::memset(cNpcName, 0, sizeof (cNpcName));
 			if (strcmp(m_pClientList[iClientH]->m_cMapName, "aresden") == 0)
 				strcpy(cNpcName, "Guard-Aresden");
 			else if (strcmp(m_pClientList[iClientH]->m_cMapName, "elvine") == 0)
@@ -26988,8 +26942,8 @@ bool CGame::bAnalyzeCriminalAction(int iClientH, short dX, short dY, bool bIsChe
 			iNamingValue = m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->iGetEmptyNamingValue();
 			if (iNamingValue == -1) {
 			} else {
-				std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
-				std::memset(cName, 0, sizeof(cName));
+				std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
+				std::memset(cName, 0, sizeof (cName));
 				wsprintf(cName, "XX%d", iNamingValue);
 				cName[0] = '_';
 				cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
@@ -27148,8 +27102,8 @@ void CGame::ShutUpPlayer(int iClientH, char * pMsg, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pMsg, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -27195,8 +27149,8 @@ void CGame::SetPlayerReputation(int iClientH, char * pMsg, char cValue, uint32_t
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_CANNOTRATING, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pMsg, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -27296,7 +27250,7 @@ void CGame::NoticeHandler() {
 			iMsgIndex = iDice(1, m_iTotalNoticeMsg) - 1;
 		} while (iMsgIndex == m_iPrevSendNoticeMsg);
 		m_iPrevSendNoticeMsg = iMsgIndex;
-		std::memset(cBuffer, 0, sizeof(cBuffer));
+		std::memset(cBuffer, 0, sizeof (cBuffer));
 		if (m_pNoticeMsgList[iMsgIndex] != 0) {
 			m_pNoticeMsgList[iMsgIndex]->Get(&cTemp, cBuffer, &dwSize, &iTemp, &cKey);
 		}
@@ -27310,7 +27264,7 @@ void CGame::NoticeHandler() {
 void CGame::ResponseSavePlayerDataReplyHandler(char * pData, uint32_t /*dwMsgSize*/) {
 	char * cp, cCharName[11];
 	int i;
-	std::memset(cCharName, 0, sizeof(cCharName));
+	std::memset(cCharName, 0, sizeof (cCharName));
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	memcpy(cCharName, cp, 10);
 	for (i = 0; i < DEF_MAXCLIENTS; i++)
@@ -27384,11 +27338,11 @@ void CGame::AdminOrder_CallGuard(int iClientH, char * pData, uint32_t dwMsgSize)
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cNpcName, 0, sizeof(cNpcName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -27442,19 +27396,19 @@ void CGame::AdminOrder_Kill(int iClientH, char * pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cNpcName, 0, sizeof(cNpcName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, token);
 	} else {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, "null");
 	}
 	token = pStrTok->pGet();
@@ -27507,19 +27461,19 @@ void CGame::AdminOrder_Revive(int iClientH, char * pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cNpcName, 0, sizeof(cNpcName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, token);
 	} else {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, "null");
 	}
 	token = pStrTok->pGet();
@@ -27575,13 +27529,13 @@ void CGame::AdminOrder_SummonDemon(int iClientH) {
 	iNamingValue = m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->iGetEmptyNamingValue();
 	if (iNamingValue == -1) {
 	} else {
-		std::memset(cNpcName, 0, sizeof(cNpcName));
+		std::memset(cNpcName, 0, sizeof (cNpcName));
 		strcpy(cNpcName, "Demon");
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		wsprintf(cName, "XX%d", iNamingValue);
 		cName[0] = '_';
 		cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-		std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
+		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) m_pClientList[iClientH]->m_sX;
 		tY = (int) m_pClientList[iClientH]->m_sY;
 		if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9),
@@ -27609,13 +27563,13 @@ void CGame::AdminOrder_SummonDeath(int iClientH) {
 	iNamingValue = m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->iGetEmptyNamingValue();
 	if (iNamingValue == -1) {
 	} else {
-		std::memset(cNpcName, 0, sizeof(cNpcName));
+		std::memset(cNpcName, 0, sizeof (cNpcName));
 		strcpy(cNpcName, "Wyvern");
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		wsprintf(cName, "XX%d", iNamingValue);
 		cName[0] = '_';
 		cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-		std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
+		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) m_pClientList[iClientH]->m_sX;
 		tY = (int) m_pClientList[iClientH]->m_sY;
 		if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9),
@@ -27640,7 +27594,7 @@ void CGame::AdminOrder_ReserveFightzone(int iClientH, char * pData, uint32_t dwM
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -27688,8 +27642,8 @@ void CGame::AdminOrder_CloseConn(int iClientH, char * pData, uint32_t dwMsgSize)
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -27726,8 +27680,8 @@ void CGame::UserCommand_BanGuildsman(int iClientH, char * pData, uint32_t dwMsgS
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_NOGUILDMASTERLEVEL, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -27745,7 +27699,7 @@ void CGame::UserCommand_BanGuildsman(int iClientH, char * pData, uint32_t dwMsgS
 				}
 				bSendMsgToLS(MSGID_REQUEST_UPDATEGUILDINFO_DELGUILDSMAN, i);
 				SendGuildMsg(i, DEF_NOTIFY_DISMISSGUILDSMAN, 0, 0, 0);
-				std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof(m_pClientList[i]->m_cGuildName));
+				std::memset(m_pClientList[i]->m_cGuildName, 0, sizeof (m_pClientList[i]->m_cGuildName));
 				strcpy(m_pClientList[i]->m_cGuildName, "NONE");
 				m_pClientList[i]->m_iGuildRank = -1;
 				m_pClientList[i]->m_iGuildGUID = -1;
@@ -27904,7 +27858,7 @@ void CGame::AdminOrder_CreateFish(int iClientH, char * pData, uint32_t dwMsgSize
 		return;
 	}
 	tX = tY = iType = 0;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -27948,13 +27902,13 @@ void CGame::AdminOrder_Teleport(int iClientH, char * pData, uint32_t dwMsgSize) 
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cMapName, 0, sizeof(cMapName));
+		std::memset(cMapName, 0, sizeof (cMapName));
 		strcpy(cMapName, token);
 	}
 	token = pStrTok->pGet();
@@ -28111,7 +28065,7 @@ void CGame::FishGenerator() {
 			tY = m_pMapList[i]->m_FishPointList[iP].y + (iDice(1, 3) - 2);
 			pItem = new CItem;
 			if (pItem == 0) break;
-			std::memset(cItemName, 0, sizeof(cItemName));
+			std::memset(cItemName, 0, sizeof (cItemName));
 			switch (iDice(1, 9)) {
 				case 1: strcpy(cItemName, "RedCarp");
 					sDifficulty = iDice(1, 10) + 20;
@@ -28460,7 +28414,7 @@ int CGame::iGetMapIndex(char * pMapName) {
 	int i;
 	int iMapIndex;
 	char cTmpName[256];
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pMapName);
 	iMapIndex = -1;
 	for (i = 0; i < DEF_MAXMAPS; i++)
@@ -28511,17 +28465,17 @@ void CGame::AdminOrder_CheckIP(int iClientH, char *pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cIP, 0, sizeof(cIP));
+		std::memset(cIP, 0, sizeof (cIP));
 		strcpy(cIP, token);
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != 0) && (memcmp(m_pClientList[i]->m_cIPaddress, cIP, strlen(cIP)) == 0)) {
-				std::memset(cInfoString, 0, sizeof(cInfoString));
+				std::memset(cInfoString, 0, sizeof (cInfoString));
 				wsprintf(cInfoString, "Name(%s/%s) Loc(%s: %d %d) Level(%d:%d) Init(%d) IP(%s)",
 						  m_pClientList[i]->m_cAccountName, m_pClientList[i]->m_cCharName, m_pClientList[i]->m_cMapName,
 						  m_pClientList[i]->m_sX, m_pClientList[i]->m_sY,
@@ -28591,7 +28545,7 @@ void CGame::AdminOrder_Polymorph(int iClientH, char *pData, uint32_t dwMsgSize) 
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -28778,7 +28732,7 @@ void CGame::AdminOrder_SetInvi(int iClientH, char *pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -28809,7 +28763,7 @@ void CGame::AdminOrder_SetZerk(int iClientH, char *pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -28834,7 +28788,7 @@ void CGame::AdminOrder_SetFreeze(int iClientH, char *pData, uint32_t dwMsgSize) 
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -29018,14 +28972,14 @@ RCPH_LOOPBREAK:
 	}
 	PutLogList(cTxt1);
 	 */
-	std::memset(cPortionName, 0, sizeof(cPortionName));
+	std::memset(cPortionName, 0, sizeof (cPortionName));
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++)
 		if (m_pPortionConfigList[i] != 0) {
 			bFlag = false;
 			for (j = 0; j < 6; j++)
 				if (m_pPortionConfigList[i]->m_sArray[j] != sItemArray[j]) bFlag = true;
 			if (bFlag == false) {
-				std::memset(cPortionName, 0, sizeof(cPortionName));
+				std::memset(cPortionName, 0, sizeof (cPortionName));
 				memcpy(cPortionName, m_pPortionConfigList[i]->m_cName, 20);
 				iSkillLimit = m_pPortionConfigList[i]->m_iSkillLimit;
 				iDifficulty = m_pPortionConfigList[i]->m_iDifficulty;
@@ -29064,7 +29018,7 @@ RCPH_LOOPBREAK:
 		m_pClientList[iClientH]->m_iExpStock += iDice(1, (iDifficulty / 3));
 		if ((_bInitItemAttr(pItem, cPortionName) == true)) {
 			if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
-				std::memset(cData, 0, sizeof(cData));
+				std::memset(cData, 0, sizeof (cData));
 				dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 				*dwp = MSGID_NOTIFY;
 				wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -29187,7 +29141,7 @@ bool CGame::_bDecodePortionConfigFileContents(char *pData, uint32_t dwMsgSize) {
 							cReadModeB = 2;
 							break;
 						case 2: // Potion's name
-							std::memset(m_pPortionConfigList[iPortionConfigListIndex]->m_cName, 0, sizeof(m_pPortionConfigList[iPortionConfigListIndex]->m_cName));
+							std::memset(m_pPortionConfigList[iPortionConfigListIndex]->m_cName, 0, sizeof (m_pPortionConfigList[iPortionConfigListIndex]->m_cName));
 							memcpy(m_pPortionConfigList[iPortionConfigListIndex]->m_cName, token, strlen(token));
 							cReadModeB = 3;
 							break;
@@ -29263,7 +29217,7 @@ bool CGame::_bDecodePortionConfigFileContents(char *pData, uint32_t dwMsgSize) {
 							cReadModeB = 2;
 							break;
 						case 2:
-							std::memset(m_pCraftingConfigList[iCraftingConfigListIndex]->m_cName, 0, sizeof(m_pCraftingConfigList[iCraftingConfigListIndex]->m_cName));
+							std::memset(m_pCraftingConfigList[iCraftingConfigListIndex]->m_cName, 0, sizeof (m_pCraftingConfigList[iCraftingConfigListIndex]->m_cName));
 							memcpy(m_pCraftingConfigList[iCraftingConfigListIndex]->m_cName, token, strlen(token));
 							cReadModeB = 3;
 							break;
@@ -29359,8 +29313,8 @@ void CGame::LocalSavePlayerData(int iClientH) {
 	GetLocalTime(&SysTime);
 	ZeroMemory(cCharDir, sizeof (cDir));
 	wsprintf(cCharDir, "Character_%d_%d_%d_%d", SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute);
-	std::memset(cDir, 0, sizeof(cDir));
-	std::memset(cFn, 0, sizeof(cFn));
+	std::memset(cDir, 0, sizeof (cDir));
+	std::memset(cFn, 0, sizeof (cFn));
 	strcat(cFn, cCharDir);
 	strcat(cFn, "\\");
 	strcat(cFn, "\\");
@@ -29732,7 +29686,7 @@ void CGame::NpcTalkHandler(int iClientH, int iWho) {
 	NpcType iTargetType;
 	int iTargetCount;
 	iQuestNum = 0;
-	std::memset(cTargetName, 0, sizeof(cTargetName));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
 	if (m_pClientList[iClientH] == 0) return;
 	switch (iWho) {
 		case 1: break;
@@ -29749,7 +29703,7 @@ void CGame::NpcTalkHandler(int iClientH, int iWho) {
 			if (iQuestNum >= 1000) return;
 			break;
 	}
-	std::memset(cRewardName, 0, sizeof(cRewardName));
+	std::memset(cRewardName, 0, sizeof (cRewardName));
 	if (iQuestNum > 0) {
 		if (iRewardType > 1) {
 			strcpy(cRewardName, m_pItemConfigList[iRewardType]->m_cName);
@@ -29809,13 +29763,13 @@ void CGame::AdminOrder_GetNpcStatus(int iClientH, char * pData, uint32_t dwMsgSi
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cNpcName, 0, sizeof(cNpcName));
+		std::memset(cNpcName, 0, sizeof (cNpcName));
 		strcpy(cNpcName, token);
 	}
 	for (i = 0; i < DEF_MAXNPCS; i++)
@@ -29970,7 +29924,8 @@ bool CGame::__bSetOccupyFlag(char cMapIndex, int dX, int dY, int iSide, int iEKN
 	int iy;
 	int iDynamicObjectIndex;
 	int iIndex;
-	CTile * pTile;;
+	CTile * pTile;
+	;
 	if (m_pMapList[cMapIndex] == 0) return false;
 	if (((m_bIsHeldenianMode == false) || (m_bIsHeldenianMode != m_cHeldenianModeType)) && (m_bHeldenianInitiated == 1)) return false;
 	if ((m_cHeldenianModeType == 1) && (m_iBTFieldMapIndex == -1)) return false;
@@ -30125,7 +30080,7 @@ void CGame::GetOccupyFlagHandler(int iClientH) {
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_iEnemyKillCount < 3) return;
 	if (m_pClientList[iClientH]->m_cSide == 0) return;
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	switch (m_pClientList[iClientH]->m_cSide) {
 		case 1: strcpy(cItemName, "AresdenFlag");
 			break;
@@ -30242,7 +30197,7 @@ void CGame::GetFightzoneTicketHandler(int iClientH) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_FIGHTZONERESERVE, -1, 0, 0, 0);
 		return;
 	}
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	if (m_pClientList[iClientH]->m_iFightzoneNumber == 1)
 		strcpy(cItemName, "ArenaTicket");
 	else wsprintf(cItemName, "ArenaTicket(%d)", m_pClientList[iClientH]->m_iFightzoneNumber);
@@ -30264,7 +30219,7 @@ void CGame::GetFightzoneTicketHandler(int iClientH) {
 		wsprintf(G_cTxt, "(*) Get FIGHTZONETICKET : Char(%s) TICKENUMBER (%d)(%d)(%d)", m_pClientList[iClientH]->m_cCharName, pItem->m_sTouchEffectValue1, pItem->m_sTouchEffectValue2, pItem->m_sTouchEffectValue3);
 		PutLogFileList(G_cTxt);
 		PutLogList(G_cTxt);
-		std::memset(cData, 0, sizeof(cData));
+		std::memset(cData, 0, sizeof (cData));
 		dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 		*dwp = MSGID_NOTIFY;
 		wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -30546,7 +30501,7 @@ void CGame::GetHeroMantleHandler(int iClientH, ItemId iItemID, char * /*pString*
 			return;
 			break;
 	}
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	memcpy(cItemName, m_pItemConfigList[(int) iItemID]->m_cName, 20);
 	// ReqPurchaseItemHandler
 	iNum = 1;
@@ -30698,7 +30653,7 @@ void CGame::_BWM_Command_Shutup(char *pData) {
 	char * cp, cName[11];
 	int i;
 	cp = (char *) (pData + 16);
-	std::memset(cName, 0, sizeof(cName));
+	std::memset(cName, 0, sizeof (cName));
 	memcpy(cName, cp, 10);
 	for (i = 1; i < DEF_MAXCLIENTS; i++)
 		if (m_pClientList[i] != 0) {
@@ -30745,18 +30700,18 @@ void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, sho
 			} else {
 				m_pClientList[iClientH]->m_bIsExchangeMode = true;
 				m_pClientList[iClientH]->m_iExchangeH = sOwnerH;
-				std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof(m_pClientList[iClientH]->m_cExchangeName));
+				std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof (m_pClientList[iClientH]->m_cExchangeName));
 				strcpy(m_pClientList[iClientH]->m_cExchangeName, m_pClientList[sOwnerH]->m_cCharName);
 				//Clear items in the list
 				m_pClientList[iClientH]->iExchangeCount = 0;
 				m_pClientList[sOwnerH]->iExchangeCount = 0;
 				for (int i = 0; i < 4; i++) {
 					//Clear the trader
-					std::memset(m_pClientList[iClientH]->m_cExchangeItemName[i], 0, sizeof(m_pClientList[iClientH]->m_cExchangeItemName[i]));
+					std::memset(m_pClientList[iClientH]->m_cExchangeItemName[i], 0, sizeof (m_pClientList[iClientH]->m_cExchangeItemName[i]));
 					m_pClientList[iClientH]->m_cExchangeItemIndex[i] = -1;
 					m_pClientList[iClientH]->m_iExchangeItemAmount[i] = 0;
 					//Clear the guy we're trading with
-					std::memset(m_pClientList[sOwnerH]->m_cExchangeItemName[i], 0, sizeof(m_pClientList[sOwnerH]->m_cExchangeItemName[i]));
+					std::memset(m_pClientList[sOwnerH]->m_cExchangeItemName[i], 0, sizeof (m_pClientList[sOwnerH]->m_cExchangeItemName[i]));
 					m_pClientList[sOwnerH]->m_cExchangeItemIndex[i] = -1;
 					m_pClientList[sOwnerH]->m_iExchangeItemAmount[i] = 0;
 				}
@@ -30766,7 +30721,7 @@ void CGame::ExchangeItemHandler(int iClientH, short sItemIndex, int iAmount, sho
 				memcpy(m_pClientList[iClientH]->m_cExchangeItemName[m_pClientList[iClientH]->iExchangeCount], m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_cName, 20);
 				m_pClientList[sOwnerH]->m_bIsExchangeMode = true;
 				m_pClientList[sOwnerH]->m_iExchangeH = iClientH;
-				std::memset(m_pClientList[sOwnerH]->m_cExchangeName, 0, sizeof(m_pClientList[sOwnerH]->m_cExchangeName));
+				std::memset(m_pClientList[sOwnerH]->m_cExchangeName, 0, sizeof (m_pClientList[sOwnerH]->m_cExchangeName));
 				strcpy(m_pClientList[sOwnerH]->m_cExchangeName, m_pClientList[iClientH]->m_cCharName);
 				m_pClientList[iClientH]->iExchangeCount++;
 				SendNotifyMsg(iClientH, iClientH, DEF_NOTIFY_OPENEXCHANGEWINDOW, sItemIndex + 1000, m_pClientList[iClientH]->m_pItemList[sItemIndex]->m_sSprite,
@@ -30989,12 +30944,12 @@ void CGame::ConfirmExchangeItem(int iClientH) {
 					}
 					m_pClientList[iClientH]->m_bIsExchangeMode = false;
 					m_pClientList[iClientH]->m_bIsExchangeConfirm = false;
-					std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof(m_pClientList[iClientH]->m_cExchangeName));
+					std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof (m_pClientList[iClientH]->m_cExchangeName));
 					m_pClientList[iClientH]->m_iExchangeH = 0;
 					m_pClientList[iClientH]->iExchangeCount = 0;
 					m_pClientList[iExH]->m_bIsExchangeMode = false;
 					m_pClientList[iExH]->m_bIsExchangeConfirm = false;
-					std::memset(m_pClientList[iExH]->m_cExchangeName, 0, sizeof(m_pClientList[iExH]->m_cExchangeName));
+					std::memset(m_pClientList[iExH]->m_cExchangeName, 0, sizeof (m_pClientList[iExH]->m_cExchangeName));
 					m_pClientList[iExH]->m_iExchangeH = 0;
 					m_pClientList[iExH]->iExchangeCount = 0;
 					for (int i = 0; i < 4; i++) {
@@ -31030,7 +30985,7 @@ bool CGame::bAddItem(int iClientH, CItem * pItem, char /*cMode*/) {
 	uint16_t * wp;
 	short * sp;
 	int iEraseReq;
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
 		dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 		*dwp = MSGID_NOTIFY;
@@ -31472,7 +31427,7 @@ bool CGame::_bDecodeQuestConfigFileContents(char * pData, uint32_t dwMsgSize) {
 							cReadModeB = 22;
 							break;
 						case 22:
-							std::memset(m_pQuestConfigList[iQuestConfigListIndex]->m_cTargetName, 0, sizeof(m_pQuestConfigList[iQuestConfigListIndex]->m_cTargetName));
+							std::memset(m_pQuestConfigList[iQuestConfigListIndex]->m_cTargetName, 0, sizeof (m_pQuestConfigList[iQuestConfigListIndex]->m_cTargetName));
 							strcpy(m_pQuestConfigList[iQuestConfigListIndex]->m_cTargetName, token);
 							cReadModeB = 23;
 							break;
@@ -31645,7 +31600,7 @@ void CGame::_SendQuestContents(int iClientH) {
 		iX = m_pQuestConfigList[iIndex]->m_sX;
 		iY = m_pQuestConfigList[iIndex]->m_sY;
 		iRange = m_pQuestConfigList[iIndex]->m_iRange;
-		std::memset(cTargetName, 0, sizeof(cTargetName));
+		std::memset(cTargetName, 0, sizeof (cTargetName));
 		memcpy(cTargetName, m_pQuestConfigList[iIndex]->m_cTargetName, 20);
 		iQuestCompleted = (int) m_pClientList[iClientH]->m_bIsQuestCompleted;
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_QUESTCONTENTS, iWho, iQuestType, iContribution, 0,
@@ -31679,7 +31634,7 @@ void CGame::_CheckQuestEnvironment(int iClientH) {
 	switch (m_pQuestConfigList[iIndex]->m_iType) {
 		case DEF_QUESTTYPE_MONSTERHUNT:
 		case DEF_QUESTTYPE_GOPLACE:
-			std::memset(cTargetName, 0, sizeof(cTargetName));
+			std::memset(cTargetName, 0, sizeof (cTargetName));
 			memcpy(cTargetName, m_pQuestConfigList[iIndex]->m_cTargetName, 20);
 			if (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, cTargetName, 10) == 0)
 				m_pClientList[iClientH]->m_bQuestMatchFlag_Loc = true;
@@ -32072,7 +32027,7 @@ bool CGame::_bDecodeBuildItemConfigFileContents(char *pData, uint32_t dwMsgSize)
 				case 1:
 					switch (cReadModeB) {
 						case 1:
-							std::memset(m_pBuildItemList[iIndex]->m_cName, 0, sizeof(m_pBuildItemList[iIndex]->m_cName));
+							std::memset(m_pBuildItemList[iIndex]->m_cName, 0, sizeof (m_pBuildItemList[iIndex]->m_cName));
 							memcpy(m_pBuildItemList[iIndex]->m_cName, token, strlen(token));
 							cReadModeB = 2;
 							break;
@@ -32374,12 +32329,12 @@ void CGame::BuildItemHandler(int iClientH, char *pData) {
 	if (m_pClientList[iClientH] == 0) return;
 	m_pClientList[iClientH]->m_iSkillMsgRecvCount++;
 	cp = (char *) (pData + 11);
-	std::memset(cName, 0, sizeof(cName));
+	std::memset(cName, 0, sizeof (cName));
 	memcpy(cName, cp, 20);
 	cp += 20;
 	//testcode
 	//PutLogList(cName);
-	std::memset(cElementItemID, 0, sizeof(cElementItemID));
+	std::memset(cElementItemID, 0, sizeof (cElementItemID));
 	cElementItemID[0] = *cp;
 	cp++;
 	cElementItemID[1] = *cp;
@@ -32828,7 +32783,7 @@ void CGame::AdminOrder_SetAttackMode(int iClientH, char *pData, uint32_t dwMsgSi
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -33007,7 +32962,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -33016,7 +32971,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, uint32_t dwMsgSize) {
 		delete pStrTok;
 		return;
 	}
-	std::memset(cNpcName, 0, sizeof(cNpcName));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
 	strcpy(cNpcName, token);
 	token = pStrTok->pGet();
 	if (token != 0)
@@ -33031,7 +32986,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, uint32_t dwMsgSize) {
 	PutLogList(G_cTxt);
 	iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
 	if (iNamingValue != -1) {
-		std::memset(cName_Master, 0, sizeof(cName_Master));
+		std::memset(cName_Master, 0, sizeof (cName_Master));
 		wsprintf(cName_Master, "XX%d", iNamingValue);
 		cName_Master[0] = '_';
 		cName_Master[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
@@ -33042,7 +32997,7 @@ void CGame::AdminOrder_Summon(int iClientH, char *pData, uint32_t dwMsgSize) {
 	for (j = 0; j < (iNum - 1); j++) {
 		iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
 		if (iNamingValue != -1) {
-			std::memset(cName_Slave, 0, sizeof(cName_Slave));
+			std::memset(cName_Slave, 0, sizeof (cName_Slave));
 			wsprintf(cName_Slave, "XX%d", iNamingValue);
 			cName_Slave[0] = '_';
 			cName_Slave[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
@@ -33070,7 +33025,7 @@ void CGame::AdminOrder_SummonAll(int iClientH, char *pData, uint32_t dwMsgSize) 
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -33108,8 +33063,8 @@ void CGame::AdminOrder_SummonPlayer(int iClientH, char *pData, uint32_t dwMsgSiz
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
-	std::memset(cName, 0, sizeof(cName));
+	std::memset(cBuff, 0, sizeof (cBuff));
+	std::memset(cName, 0, sizeof (cName));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -33151,7 +33106,7 @@ void CGame::CheckSpecialEvent(int iClientH) {
 			m_pClientList[iClientH]->m_iSpecialEventID = 0;
 			return;
 		}
-		std::memset(cItemName, 0, sizeof(cItemName));
+		std::memset(cItemName, 0, sizeof (cItemName));
 		strcpy(cItemName, "MemorialRing");
 		pItem = new CItem;
 		if (_bInitItemAttr(pItem, cItemName) == false) {
@@ -33368,7 +33323,7 @@ void CGame::RequestNoticementHandler(int iClientH, char * pData) {
 		m_pClientList[iClientH]->m_pXSock->iSendMsg(cp, m_dwNoticementDataSize + 2 + DEF_INDEX2_MSGTYPE + 2);
 		delete cp;
 	} else {
-		std::memset(cData, 0, sizeof(cData));
+		std::memset(cData, 0, sizeof (cData));
 		dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 		*dwp = MSGID_RESPONSE_NOTICEMENT;
 		wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -33396,8 +33351,8 @@ void CGame::RequestCheckAccountPasswordHandler(char *pData, uint32_t /*dwMsgSize
 	int * ip, i, iLevel;
 	char * cp, cAccountName[11], cAccountPassword[11];
 	cp = (char *) (pData + 6);
-	std::memset(cAccountName, 0, sizeof(cAccountName));
-	std::memset(cAccountPassword, 0, sizeof(cAccountPassword));
+	std::memset(cAccountName, 0, sizeof (cAccountName));
+	std::memset(cAccountPassword, 0, sizeof (cAccountPassword));
 	memcpy(cAccountName, cp, 10);
 	cp += 10;
 	memcpy(cAccountPassword, cp, 10);
@@ -33461,9 +33416,9 @@ void CGame::_TamingHandler(int iClientH, int iSkillNum, char cMapIndex, int dX, 
 							case NpcType::troll: iTamingLevel = 7;
 								break;
 							case NpcType::cyclops:
-							case NpcType::hellbound: iTamingLevel = 8;
+							case NpcType::hellhound: iTamingLevel = 8;
 								break;
-							case NpcType::orge: iTamingLevel = 9;
+							case NpcType::ogre: iTamingLevel = 9;
 								break;
 							case NpcType::were_wolf: iTamingLevel = 9;
 								break;
@@ -33585,14 +33540,14 @@ void CGame::RequestRestartHandler(int iClientH) {
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsKilled == true) {
 		strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);
-		std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof(m_pClientList[iClientH]->m_cMapName));
+		std::memset(m_pClientList[iClientH]->m_cMapName, 0, sizeof (m_pClientList[iClientH]->m_cMapName));
 		if (strcmp(m_pClientList[iClientH]->m_cLocation, "NONE") == 0) {
 			strcpy(m_pClientList[iClientH]->m_cMapName, "default");
 		} else {
 			if (strcmp(m_pClientList[iClientH]->m_cLocation, "aresden") == 0) {
 				if (m_bIsCrusadeMode == true) {
 					if (m_pClientList[iClientH]->m_iDeadPenaltyTime > 0) {
-						std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+						std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
 						strcpy(m_pClientList[iClientH]->m_cLockedMapName, "aresden");
 						m_pClientList[iClientH]->m_iLockedMapTime = 60 * 5;
 						m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10; // v2.04
@@ -33612,7 +33567,7 @@ void CGame::RequestRestartHandler(int iClientH) {
 			} else {
 				if (m_bIsCrusadeMode == true) {
 					if (m_pClientList[iClientH]->m_iDeadPenaltyTime > 0) {
-						std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof(m_pClientList[iClientH]->m_cLockedMapName));
+						std::memset(m_pClientList[iClientH]->m_cLockedMapName, 0, sizeof (m_pClientList[iClientH]->m_cLockedMapName));
 						strcpy(m_pClientList[iClientH]->m_cLockedMapName, "elvine");
 						m_pClientList[iClientH]->m_iLockedMapTime = 60 * 5;
 						m_pClientList[iClientH]->m_iDeadPenaltyTime = 60 * 10; // v2.04
@@ -33633,7 +33588,7 @@ void CGame::RequestRestartHandler(int iClientH) {
 		m_pClientList[iClientH]->m_bIsKilled = false;
 		m_pClientList[iClientH]->m_iHP = (3 * m_pClientList[iClientH]->m_iVit) + (2 * m_pClientList[iClientH]->m_iLevel) + (m_pClientList[iClientH]->m_iStr / 2);
 		m_pClientList[iClientH]->m_iHungerStatus = 100;
-		std::memset(cTmpMap, 0, sizeof(cTmpMap));
+		std::memset(cTmpMap, 0, sizeof (cTmpMap));
 		strcpy(cTmpMap, m_pClientList[iClientH]->m_cMapName);
 		RequestTeleportHandler(iClientH, "2   ", cTmpMap, -1, -1);
 	}
@@ -33645,7 +33600,7 @@ void CGame::AdminOrder_EnableAdminCommand(int iClientH, char *pData, uint32_t dw
 	CStrTok * pStrTok;
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -33694,7 +33649,7 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize)
 	// DISABLED: if (memcmp(m_pClientList[iClientH]->m_cIPaddress, "192.168.1.", 12) != 0) return;
 	// check if the client has typed "/enableadmincreateitem"
 	//if (m_pClientList[iClientH]->m_bIsAdminCreateItemEnabled == false) return;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -33702,24 +33657,24 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize)
 	// if the token is something it is an item name
 	if (token != 0) {
 		if (strlen(token) > 21) return;
-		std::memset(cItemName, 0, sizeof(cItemName));
+		std::memset(cItemName, 0, sizeof (cItemName));
 		strcpy(cItemName, token);
 	} // close if (token != 0) {
 	// if the 2nd token is true it is the item attribute
-	std::memset(cAttribute, 0, sizeof(cAttribute));
+	std::memset(cAttribute, 0, sizeof (cAttribute));
 	token = pStrTok->pGet();
 	if (token != 0) {
 		if (strlen(token) > 256) return;
-		std::memset(cAttribute, 0, sizeof(cAttribute));
+		std::memset(cAttribute, 0, sizeof (cAttribute));
 		strcpy(cAttribute, token);
 	} // close if (token != 0) {
 	// if the 3rd token is true it is the item value
-	std::memset(cValue, 0, sizeof(cValue));
+	std::memset(cValue, 0, sizeof (cValue));
 	iValue = 0;
 	token = pStrTok->pGet();
 	if (token != 0) {
 		if (strlen(token) > 256) return;
-		std::memset(cValue, 0, sizeof(cValue));
+		std::memset(cValue, 0, sizeof (cValue));
 		strcpy(cValue, token);
 		iValue = atoi(cValue);
 	} // close if (token != 0) {
@@ -33803,12 +33758,12 @@ void CGame::AdminOrder_CreateItem(int iClientH, char *pData, uint32_t dwMsgSize)
 			pItem->m_sTouchEffectType = DEF_ITET_ID;
 			pItem->m_sTouchEffectValue1 = iDice(1, 100000);
 			pItem->m_sTouchEffectValue2 = iDice(1, 100000);
-			std::memset(cTemp, 0, sizeof(cTemp));
+			std::memset(cTemp, 0, sizeof (cTemp));
 			wsprintf(cTemp, "%d%2d", (short) SysTime.wMonth, (short) SysTime.wDay);
 			pItem->m_sTouchEffectValue3 = atoi(cTemp);
 			break;
 	}
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
 		dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 		*dwp = MSGID_NOTIFY;
@@ -33988,7 +33943,7 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 			if ((m_pClientList[iClientH]->m_iPartyID != 0) || (m_pClientList[iClientH]->m_iPartyStatus != DEF_PARTYSTATUS_NULL)) {
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTY, 7, 0, 0, 0);
 				m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-				std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+				std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 				m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 				//testcode
 				PutLogList("Join Party Reject (1)");
@@ -34013,15 +33968,15 @@ void CGame::JoinPartyHandler(int iClientH, int iV1, char *pMemberName) {
 						wsprintf(G_cTxt, "Party join reject(2) ClientH:%d ID:%d JoinName:%d", i, m_pClientList[i]->m_iPartyID, m_pClientList[i]->m_cReqJoinPartyName);
 						PutLogList(G_cTxt);
 						m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-						std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+						std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 						m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 					} else {
 						m_pClientList[i]->m_iReqJoinPartyClientH = iClientH;
-						std::memset(m_pClientList[i]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[i]->m_cReqJoinPartyName));
+						std::memset(m_pClientList[i]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[i]->m_cReqJoinPartyName));
 						strcpy(m_pClientList[i]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName);
 						SendNotifyMsg(0, i, DEF_NOTIFY_QUERY_JOINPARTY, 0, 0, 0, m_pClientList[iClientH]->m_cCharName);
 						m_pClientList[iClientH]->m_iReqJoinPartyClientH = i;
-						std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+						std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 						strcpy(m_pClientList[iClientH]->m_cReqJoinPartyName, m_pClientList[i]->m_cCharName);
 						m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_PROCESSING;
 					}
@@ -34156,11 +34111,11 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 		cSA = 0;
 		pX = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereCreationList[iCIndex].sX;
 		pY = m_pMapList[m_iMiddlelandMapIndex]->m_stEnergySphereCreationList[iCIndex].sY;
-		std::memset(cWaypoint, 0, sizeof(cWaypoint));
+		std::memset(cWaypoint, 0, sizeof (cWaypoint));
 		iNamingValue = m_pMapList[m_iMiddlelandMapIndex]->iGetEmptyNamingValue();
 		if (iNamingValue != -1) {
 			//
-			std::memset(cName_Internal, 0, sizeof(cName_Internal));
+			std::memset(cName_Internal, 0, sizeof (cName_Internal));
 			wsprintf(cName_Internal, "XX%d", iNamingValue);
 			cName_Internal[0] = '_';
 			cName_Internal[1] = m_iMiddlelandMapIndex + 65;
@@ -34187,11 +34142,11 @@ void CGame::EnergySphereProcessor(bool bIsAdminCreate, int iClientH) {
 		cSA = 0;
 		pX = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stEnergySphereCreationList[iCIndex].sX;
 		pY = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_stEnergySphereCreationList[iCIndex].sY;
-		std::memset(cWaypoint, 0, sizeof(cWaypoint));
+		std::memset(cWaypoint, 0, sizeof (cWaypoint));
 		iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
 		if (iNamingValue != -1) {
 			//
-			std::memset(cName_Internal, 0, sizeof(cName_Internal));
+			std::memset(cName_Internal, 0, sizeof (cName_Internal));
 			wsprintf(cName_Internal, "XX%d", iNamingValue);
 			cName_Internal[0] = '_';
 			cName_Internal[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
@@ -34358,7 +34313,7 @@ bool CGame::__bSetConstructionKit(int /*iMapIndex*/, int dX, int dY, int iType, 
 				m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->GetOwner(&sOwnerH, &cOwnerType, ix, iy);
 				if ((sOwnerH != 0) && (cOwnerType == DEF_OWNERTYPE_NPC) && (m_pNpcList[sOwnerH]->m_cActionLimit == 5)) return false;
 			}
-		std::memset(cNpcName, 0, sizeof(cNpcName));
+		std::memset(cNpcName, 0, sizeof (cNpcName));
 		if (m_pClientList[iClientH]->m_cSide == 1) {
 			switch (iType) {
 				case 1: strcpy(cNpcName, "AGT-Aresden");
@@ -34382,11 +34337,11 @@ bool CGame::__bSetConstructionKit(int /*iMapIndex*/, int dX, int dY, int iType, 
 					break;
 			}
 		} else return false;
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		wsprintf(cName, "XX%d", iNamingValue);
 		cName[0] = '_';
 		cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-		std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
+		std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 		tX = (int) dX;
 		tY = (int) dY;
 		if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9), NpcMoveType::random, &tX, &tY, cNpcWaypoint, 0, 0, -1, false, false) == false) {
@@ -34457,7 +34412,7 @@ void CGame::SaveOccupyFlagData() {
 	char * pData;
 	int iSize;
 	FILE * pFile;
-	PutLogList("(!) Middleland OccupyFlag data saved.");
+	//PutLogList("(!) Middleland OccupyFlag data saved.");
 	pData = new char[1000000 + 1];
 	if (pData == 0) return;
 	ZeroMemory(pData, 1000000);
@@ -34477,9 +34432,9 @@ void CGame::CreateCrusadeStructures() {
 	int tY;
 	int iNamingValue;
 	char cName[6], cNpcName[21], cNpcWayPoint[11];
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cNpcName, 0, sizeof(cNpcName));
-	std::memset(cNpcWayPoint, 0, sizeof(cNpcWayPoint));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
+	std::memset(cNpcWayPoint, 0, sizeof (cNpcWayPoint));
 	for (i = 0; i < DEF_MAXCRUSADESTRUCTURES; i++)
 		if (m_stCrusadeStructures[i].cType != 0) {
 			for (z = 0; z < DEF_MAXMAPS; z++)
@@ -34553,7 +34508,7 @@ void CGame::RequestSetGuildConstructLocHandler(int iClientH, int dX, int dY, int
 			} else {
 				m_pGuildTeleportLoc[i].m_sDestX2 = dX;
 				m_pGuildTeleportLoc[i].m_sDestY2 = dY;
-				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName2));
+				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName2));
 				strcpy(m_pGuildTeleportLoc[i].m_cDestMapName2, pMapName);
 				m_pGuildTeleportLoc[i].m_dwTime2 = dwTime;
 				return;
@@ -34566,7 +34521,7 @@ void CGame::RequestSetGuildConstructLocHandler(int iClientH, int dX, int dY, int
 			m_pGuildTeleportLoc[i].m_iV1 = iGuildGUID;
 			m_pGuildTeleportLoc[i].m_sDestX2 = dX;
 			m_pGuildTeleportLoc[i].m_sDestY2 = dY;
-			std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName2));
+			std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName2));
 			strcpy(m_pGuildTeleportLoc[i].m_cDestMapName2, pMapName);
 			m_pGuildTeleportLoc[i].m_dwTime2 = dwTime;
 			return;
@@ -34582,7 +34537,7 @@ void CGame::RequestSetGuildConstructLocHandler(int iClientH, int dX, int dY, int
 	m_pGuildTeleportLoc[i].m_iV1 = iGuildGUID;
 	m_pGuildTeleportLoc[i].m_sDestX2 = dX;
 	m_pGuildTeleportLoc[i].m_sDestY2 = dY;
-	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName2));
+	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName2));
 	strcpy(m_pGuildTeleportLoc[i].m_cDestMapName, pMapName);
 	m_pGuildTeleportLoc[i].m_dwTime2 = dwTime;
 }
@@ -34601,9 +34556,9 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, short cTyp
 	uint32_t dwTime = timeGetTime();
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_bIsInitComplete == false) return;
-	std::memset(cNpcWayPoint, 0, sizeof(cNpcWayPoint));
-	std::memset(cNpcName, 0, sizeof(cNpcName));
-	std::memset(cMapName, 0, sizeof(cMapName));
+	std::memset(cNpcWayPoint, 0, sizeof (cNpcWayPoint));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
+	std::memset(cMapName, 0, sizeof (cMapName));
 	if (cType < 0) return;
 	if (cType >= DEF_MAXNPCTYPES) return;
 	if (cNum > 10) return;
@@ -34614,7 +34569,7 @@ void CGame::RequestSummonWarUnitHandler(int iClientH, int dX, int dY, short cTyp
 		iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
 		if (iNamingValue == -1) {
 		} else {
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			wsprintf(cName, "XX%d", iNamingValue);
 			cName[0] = '_';
 			cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
@@ -34885,7 +34840,7 @@ void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
 			for (i = 0; i < DEF_MAXGUILDS; i++)
 				if ((m_pGuildTeleportLoc[i].m_iV1 != 0) && (m_pGuildTeleportLoc[i].m_iV1 == m_pClientList[iClientH]->m_iGuildGUID)) {
 					SendNotifyMsg(0, iClientH, DEF_NOTIFY_TCLOC, m_pGuildTeleportLoc[i].m_sDestX, m_pGuildTeleportLoc[i].m_sDestY, 0, m_pGuildTeleportLoc[i].m_cDestMapName, m_pGuildTeleportLoc[i].m_sDestX2, m_pGuildTeleportLoc[i].m_sDestY2, 0, 0, 0, 0, m_pGuildTeleportLoc[i].m_cDestMapName2);
-					std::memset(m_pClientList[iClientH]->m_cConstructMapName, 0, sizeof(m_pClientList[iClientH]->m_cConstructMapName));
+					std::memset(m_pClientList[iClientH]->m_cConstructMapName, 0, sizeof (m_pClientList[iClientH]->m_cConstructMapName));
 					memcpy(m_pClientList[iClientH]->m_cConstructMapName, m_pGuildTeleportLoc[i].m_cDestMapName2, 10);
 					m_pClientList[iClientH]->m_iConstructLocX = m_pGuildTeleportLoc[i].m_sDestX2;
 					m_pClientList[iClientH]->m_iConstructLocY = m_pGuildTeleportLoc[i].m_sDestY2;
@@ -34900,7 +34855,7 @@ void CGame::MapStatusHandler(int iClientH, int iMode, char * pMapName) {
 				m_pClientList[iClientH]->m_stCrusadeStructureInfo[i].sY = 0;
 			}
 			m_pClientList[iClientH]->m_iCSIsendPoint = 0;
-			std::memset(m_pClientList[iClientH]->m_cSendingMapName, 0, sizeof(m_pClientList[iClientH]->m_cSendingMapName));
+			std::memset(m_pClientList[iClientH]->m_cSendingMapName, 0, sizeof (m_pClientList[iClientH]->m_cSendingMapName));
 			if (strcmp(pMapName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName) == 0) {
 				for (i = 0; i < m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_iTotalCrusadeStructures; i++) {
 					if (m_pClientList[iClientH]->m_iCrusadeDuty == 3) {
@@ -34945,7 +34900,7 @@ void CGame::_SendMapStatus(int iClientH) {
 	int iDataSize;
 	char *cp, cData[DEF_MAXCRUSADESTRUCTURES * 6];
 	short * sp;
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	cp = (char *) (cData);
 	memcpy(cp, m_pClientList[iClientH]->m_cSendingMapName, 10);
 	cp += 10;
@@ -35094,7 +35049,7 @@ void CGame::GSM_SetGuildConstructLoc(int iGuildGUID, int dX, int dY, char * pMap
 			} else {
 				m_pGuildTeleportLoc[i].m_sDestX2 = dX;
 				m_pGuildTeleportLoc[i].m_sDestY2 = dY;
-				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName2));
+				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName2));
 				strcpy(m_pGuildTeleportLoc[i].m_cDestMapName2, pMapName);
 				m_pGuildTeleportLoc[i].m_dwTime2 = dwTime;
 				return;
@@ -35123,7 +35078,7 @@ void CGame::GSM_SetGuildConstructLoc(int iGuildGUID, int dX, int dY, char * pMap
 	m_pGuildTeleportLoc[i].m_iV1 = iGuildGUID;
 	m_pGuildTeleportLoc[i].m_sDestX2 = dX;
 	m_pGuildTeleportLoc[i].m_sDestY2 = dY;
-	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName2));
+	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName2, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName2));
 	strcpy(m_pGuildTeleportLoc[i].m_cDestMapName2, pMapName);
 	m_pGuildTeleportLoc[i].m_dwTime2 = dwTime;
 }
@@ -35206,7 +35161,7 @@ void CGame::_CreateCrusadeGUID(uint32_t dwCrusadeGUID, int iWinnerSide) {
 	char * cp, cTxt[256], cFn[256], cTemp[1024];
 	FILE * pFile;
 	_mkdir("GameData");
-	std::memset(cFn, 0, sizeof(cFn));
+	std::memset(cFn, 0, sizeof (cFn));
 	strcat(cFn, "GameData");
 	strcat(cFn, "\\");
 	strcat(cFn, "\\");
@@ -35216,11 +35171,11 @@ void CGame::_CreateCrusadeGUID(uint32_t dwCrusadeGUID, int iWinnerSide) {
 		wsprintf(cTxt, "(!) Cannot create CrusadeGUID(%d) file", dwCrusadeGUID);
 		PutLogList(cTxt);
 	} else {
-		std::memset(cTemp, 0, sizeof(cTemp));
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTemp, 0, sizeof (cTemp));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "CrusadeGUID = %d\n", dwCrusadeGUID);
 		strcat(cTemp, cTxt);
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "winner-side = %d\n", iWinnerSide);
 		strcat(cTemp, cTxt);
 		cp = (char *) cTemp;
@@ -35380,7 +35335,7 @@ void CGame::AdminOrder_SummonStorm(int iClientH, char* pData, uint32_t dwMsgSize
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -35581,7 +35536,7 @@ void CGame::AdminOrder_Weather(int iClientH, char * pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -35648,7 +35603,7 @@ void CGame::AdminOrder_SetStatus(int iClientH, char *pData, uint32_t dwMsgSize) 
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -35986,9 +35941,9 @@ bool CGame::_bItemLog(int iAction, int iGiveH, int iRecvH, CItem * pItem, bool /
 		bSendMsgToLS(MSGID_GAMEITEMLOG, iGiveH, 0, G_cTxt);
 		return true;
 	}
-	std::memset(cTxt, 0, sizeof(cTxt));
-	std::memset(cTemp1, 0, sizeof(cTemp1));
-	std::memset(cTemp2, 0, sizeof(cTemp2));
+	std::memset(cTxt, 0, sizeof (cTxt));
+	std::memset(cTemp1, 0, sizeof (cTemp1));
+	std::memset(cTemp2, 0, sizeof (cTemp2));
 	switch (iAction) {
 		case DEF_ITEMLOG_EXCHANGE:
 			if (m_pClientList[iRecvH]->m_cCharName == 0) return false;
@@ -36067,8 +36022,8 @@ bool CGame::_bItemLog(int iAction, int iClientH, char * cName, CItem * pItem) {
 		if (m_pClientList[iClientH] == 0) return false;
 	}
 	char cTxt[200], cTemp1[120];
-	std::memset(cTxt, 0, sizeof(cTxt));
-	std::memset(cTemp1, 0, sizeof(cTemp1));
+	std::memset(cTxt, 0, sizeof (cTxt));
+	std::memset(cTemp1, 0, sizeof (cTemp1));
 	if (m_pClientList[iClientH] != 0) m_pClientList[iClientH]->m_pXSock->iGetPeerAddress(cTemp1);
 	switch (iAction) {
 		case DEF_ITEMLOG_NEWGENDROP:
@@ -36116,7 +36071,7 @@ bool CGame::_bCheckGoodItem(CItem * pItem) {
 	switch (pItem->m_sIDnum) {
 		case ItemId::magic_wand_mshield:
 		case ItemId::flameberge_plus_3_llf:
-		case ItemId::magic_wand_m_s30_llf:
+		case ItemId::magic_wand_ms30_llf:
 		case ItemId::golden_axe_llf:
 		case ItemId::magic_necklace_rm10:
 		case ItemId::magic_necklace_dm1:
@@ -36877,8 +36832,8 @@ void CGame::AdminOrder_GoTo(int iClientH, char* pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cPlayerName, 0, sizeof(cPlayerName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cPlayerName, 0, sizeof (cPlayerName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -36903,7 +36858,7 @@ void CGame::AdminOrder_GoTo(int iClientH, char* pData, uint32_t dwMsgSize) {
 								  m_pClientList[i]->m_cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
 					}
 					bSendMsgToLS(MSGID_GAMEMASTERLOG, iClientH, false, cBuff);
-					std::memset(cMapName, 0, sizeof(cMapName));
+					std::memset(cMapName, 0, sizeof (cMapName));
 					strcpy(cMapName, m_pClientList[i]->m_cMapName);
 					RequestTeleportHandler(iClientH, "2   ", cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
 				}
@@ -36939,7 +36894,7 @@ void CGame::AdminOrder_SetForceRecallTime(int iClientH, char *pData, uint32_t dw
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -37040,7 +36995,7 @@ void CGame::RemoveCrusadeRecallTime(void) {
 
 bool CGame::_bCrusadeLog(int iAction, int iClientH, int iData, const char * cName) {
 	char cTxt[200];
-	std::memset(cTxt, 0, sizeof(cTxt));
+	std::memset(cTxt, 0, sizeof (cTxt));
 	switch (iAction) {
 		case DEF_CRUSADELOG_ENDCRUSADE:
 			if (cName == 0) return false;
@@ -37090,7 +37045,7 @@ bool CGame::_bInitItemAttr(CItem * pItem, ItemId iItemID) {
 	for (i = 0; i < DEF_MAXITEMTYPES; i++)
 		if (m_pItemConfigList[i] != 0) {
 			if (m_pItemConfigList[i]->m_sIDnum == iItemID) {
-				std::memset(pItem->m_cName, 0, sizeof(pItem->m_cName));
+				std::memset(pItem->m_cName, 0, sizeof (pItem->m_cName));
 				strcpy(pItem->m_cName, m_pItemConfigList[i]->m_cName);
 				pItem->m_cItemType = m_pItemConfigList[i]->m_cItemType;
 				pItem->m_cEquipPos = m_pItemConfigList[i]->m_cEquipPos;
@@ -37219,7 +37174,7 @@ void CGame::ReqCreateSlateHandler(int iClientH, char* pData) {
 	}
 	// Notify client
 	SendNotifyMsg(0, iClientH, DEF_NOTIFY_SLATE_CREATESUCCESS, iSlateType, 0, 0, 0);
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	// Create slates
 	if (_bInitItemAttr(pItem, ItemId::ancient_tablet) == false) {
 		delete pItem;
@@ -37233,7 +37188,7 @@ void CGame::ReqCreateSlateHandler(int iClientH, char* pData) {
 		pItem->m_sItemSpecEffectValue2 = iSlateType;
 		pItem->m_cItemColor = cSlateColour;
 		if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
-			std::memset(cData, 0, sizeof(cData));
+			std::memset(cData, 0, sizeof (cData));
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -37341,8 +37296,8 @@ void CGame::SetSlateFlag(int iClientH, short sType, bool bFlag) {
 void CGame::SetPlayingStatus(int iClientH) {
 	char cMapName[11], cLocation[11];
 	if (m_pClientList[iClientH] == 0) return;
-	std::memset(cMapName, 0, sizeof(cMapName));
-	std::memset(cLocation, 0, sizeof(cLocation));
+	std::memset(cMapName, 0, sizeof (cMapName));
+	std::memset(cLocation, 0, sizeof (cLocation));
 	strcpy(cLocation, m_pClientList[iClientH]->m_cLocation);
 	strcpy(cMapName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex]->m_cName);
 	m_pClientList[iClientH]->m_cSide = 0;
@@ -37391,7 +37346,7 @@ void CGame::ForceChangePlayMode(int iClientH, bool bNotify) {
 
 void CGame::ShowVersion(int iClientH) {
 	char cVerMessage[256];
-	std::memset(cVerMessage, 0, sizeof(cVerMessage));
+	std::memset(cVerMessage, 0, sizeof (cVerMessage));
 	wsprintf(cVerMessage, "Helbreath Sources %s.%s - www.xtremehb.com", DEF_UPPERVERSION, DEF_LOWERVERSION);
 	ShowClientMsg(iClientH, cVerMessage);
 }
@@ -37410,9 +37365,9 @@ void CGame::GSM_RequestShutupPlayer(char * /*pGMName*/, uint16_t /*wReqServerID*
 
 bool CGame::_bPKLog(int iAction, int iAttackerH, int iVictumH, char * pNPC) {
 	char cTxt[1024], cTemp1[120], cTemp2[120];
-	std::memset(cTxt, 0, sizeof(cTxt));
-	std::memset(cTemp1, 0, sizeof(cTemp1));
-	std::memset(cTemp2, 0, sizeof(cTemp2));
+	std::memset(cTxt, 0, sizeof (cTxt));
+	std::memset(cTemp1, 0, sizeof (cTemp1));
+	std::memset(cTemp2, 0, sizeof (cTemp2));
 	if (m_pClientList[iVictumH] == 0) return false;
 	switch (iAction) {
 		case DEF_PKLOG_REDUCECRIMINAL:
@@ -37616,7 +37571,7 @@ void CGame::CrusadeWarStarter() {
 
 void CGame::OnTimer(char /*cType*/) {
 	char cAdvert[1000]; //holds the text for the "advert"
-	std::memset(cAdvert, 0, sizeof(cAdvert));
+	std::memset(cAdvert, 0, sizeof (cAdvert));
 	uint32_t dwTime;
 	dwTime = timeGetTime();
 	//if ((dwTime - m_dwGameTime1) > 200) {
@@ -37940,7 +37895,7 @@ void CGame::RequestGuildTeleportHandler(int iClientH) {
 	if ((m_pClientList[iClientH]->m_cMapIndex == m_iMiddlelandMapIndex) && m_iMiddlelandMapIndex != -1) return;
 	for (i = 0; i < DEF_MAXGUILDS; i++)
 		if (m_pGuildTeleportLoc[i].m_iV1 == m_pClientList[iClientH]->m_iGuildGUID) {
-			std::memset(cMapName, 0, sizeof(cMapName));
+			std::memset(cMapName, 0, sizeof (cMapName));
 			strcpy(cMapName, m_pGuildTeleportLoc[i].m_cDestMapName);
 			wsprintf(G_cTxt, "ReqGuildTeleport: %d %d %d %s", m_pClientList[iClientH]->m_iGuildGUID, m_pGuildTeleportLoc[i].m_sDestX, m_pGuildTeleportLoc[i].m_sDestY, cMapName);
 			PutLogList(G_cTxt);
@@ -37971,7 +37926,7 @@ void CGame::GSM_SetGuildTeleportLoc(int iGuildGUID, int dX, int dY, char * pMapN
 			} else {
 				m_pGuildTeleportLoc[i].m_sDestX = dX;
 				m_pGuildTeleportLoc[i].m_sDestY = dY;
-				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName));
+				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName));
 				strcpy(m_pGuildTeleportLoc[i].m_cDestMapName, pMapName);
 				m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 				return;
@@ -37984,7 +37939,7 @@ void CGame::GSM_SetGuildTeleportLoc(int iGuildGUID, int dX, int dY, char * pMapN
 			m_pGuildTeleportLoc[i].m_iV1 = iGuildGUID;
 			m_pGuildTeleportLoc[i].m_sDestX = dX;
 			m_pGuildTeleportLoc[i].m_sDestY = dY;
-			std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName));
+			std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName));
 			strcpy(m_pGuildTeleportLoc[i].m_cDestMapName, pMapName);
 			m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 			return;
@@ -38000,7 +37955,7 @@ void CGame::GSM_SetGuildTeleportLoc(int iGuildGUID, int dX, int dY, char * pMapN
 	m_pGuildTeleportLoc[i].m_iV1 = iGuildGUID;
 	m_pGuildTeleportLoc[i].m_sDestX = dX;
 	m_pGuildTeleportLoc[i].m_sDestY = dY;
-	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName));
+	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName));
 	strcpy(m_pGuildTeleportLoc[i].m_cDestMapName, pMapName);
 	m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 }
@@ -38037,7 +37992,7 @@ void CGame::RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int 
 			} else {
 				m_pGuildTeleportLoc[i].m_sDestX = dX;
 				m_pGuildTeleportLoc[i].m_sDestY = dY;
-				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName));
+				std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName));
 				strcpy(m_pGuildTeleportLoc[i].m_cDestMapName, pMapName);
 				m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 				return;
@@ -38050,7 +38005,7 @@ void CGame::RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int 
 			m_pGuildTeleportLoc[i].m_iV1 = iGuildGUID;
 			m_pGuildTeleportLoc[i].m_sDestX = dX;
 			m_pGuildTeleportLoc[i].m_sDestY = dY;
-			std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName));
+			std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName));
 			strcpy(m_pGuildTeleportLoc[i].m_cDestMapName, pMapName);
 			m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 			return;
@@ -38066,7 +38021,7 @@ void CGame::RequestSetGuildTeleportLocHandler(int iClientH, int dX, int dY, int 
 	m_pGuildTeleportLoc[i].m_iV1 = iGuildGUID;
 	m_pGuildTeleportLoc[i].m_sDestX = dX;
 	m_pGuildTeleportLoc[i].m_sDestY = dY;
-	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof(m_pGuildTeleportLoc[i].m_cDestMapName));
+	std::memset(m_pGuildTeleportLoc[i].m_cDestMapName, 0, sizeof (m_pGuildTeleportLoc[i].m_cDestMapName));
 	strcpy(m_pGuildTeleportLoc[i].m_cDestMapName, pMapName);
 	m_pGuildTeleportLoc[i].m_dwTime = dwTime;
 }
@@ -38177,7 +38132,7 @@ void CGame::_ClearExchangeStatus(int iClientH) {
 	m_pClientList[iClientH]->m_iExchangeH = 0;
 	m_pClientList[iClientH]->m_bIsExchangeMode = false;
 	m_pClientList[iClientH]->m_bIsExchangeConfirm = false;
-	std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof(m_pClientList[iClientH]->m_cExchangeName));
+	std::memset(m_pClientList[iClientH]->m_cExchangeName, 0, sizeof (m_pClientList[iClientH]->m_cExchangeName));
 }
 
 void CGame::SetForceRecallTime(int iClientH) {
@@ -38237,7 +38192,7 @@ void CGame::SetForceRecallTime(int iClientH) {
 	}
 	// T I M E - L E F T - F O R C E - R E C A L L - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	char cMsg[120];
-	std::memset(cMsg, 0, sizeof(cMsg));
+	std::memset(cMsg, 0, sizeof (cMsg));
 	if (m_pClientList[iClientH]->m_iTimeLeft_ForceRecall >= 60) {
 		int minutes = (m_pClientList[iClientH]->m_iTimeLeft_ForceRecall / 60);
 		wsprintf(cMsg, "Time left force recall %d Min", minutes);
@@ -38313,7 +38268,7 @@ void CGame::CheckForceRecallTime(int iClientH) {
 	m_pClientList[iClientH]->m_bIsWarLocation = true;
 	// T I M E - L E F T - F O R C E - R E C A L L - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	char cMsg[120];
-	std::memset(cMsg, 0, sizeof(cMsg));
+	std::memset(cMsg, 0, sizeof (cMsg));
 	if (m_pClientList[iClientH]->m_iTimeLeft_ForceRecall >= 60) {
 		int minutes = (m_pClientList[iClientH]->m_iTimeLeft_ForceRecall / 60);
 		wsprintf(cMsg, "Time left force recall %d Min", minutes);
@@ -38436,24 +38391,24 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(NpcType sNpcType, int iProbabilit
 				}
 				break;
 			case NpcType::abaddon: // Abaddon
-				switch (iDice(1, 7)) {
+				switch (iDice(1, 4)) {
 					case 1: if (iDice(1, (4 * fProbA)) == 1) iItemID = ItemId::the_devastator;
 						break; // The_Devastator
 					case 2: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::kloness_axe;
 						break; // Kloness Axe
 					case 3: if (iDice(1, (1 * fProbA)) == 1) iItemID = ItemId::necklace_of_xelima;
 						break; // NecklaceOfXelima
-					case 4: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::resur_wand_ms30;
-						break; // ResurWand(MS.30)
-					case 5: if (iDice(1, (1 * fProbA)) == 1) iItemID = ItemId::ringofthe_abaddon;
+					case 4: if (iDice(1, (1 * fProbA)) == 1) iItemID = ItemId::ringofthe_abaddon;
 						break; // RingoftheAbaddon
-					case 6: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::berserk_wand_ms30;
-						break; // BerserkWand(MS.30)
-					case 7: if (iDice(1, (3 * fProbA)) == 1) iItemID = ItemId::abaddon_wand_ms40;
-						break; // AbaddonWand(MS.40)
+						//					case 5: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::resur_wand_ms30;
+						//						break; // ResurWand(MS.30)
+						//					case 6: if (iDice(1, (2 * fProbA)) == 1) iItemID = ItemId::berserk_wand_ms30;
+						//						break; // BerserkWand(MS.30)
+						//					case 7: if (iDice(1, (3 * fProbA)) == 1) iItemID = ItemId::abaddon_wand_ms40;
+						//						break; // AbaddonWand(MS.40)
 				}
 				if (iItemID == ItemId::none) {
-					switch (iDice(1, 10)) {
+					switch (iDice(1, 9)) {
 						case 1: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::giant_battle_hammer;
 							break; // GBattleHammer
 						case 2: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::blood_axe;
@@ -38470,10 +38425,10 @@ bool CGame::bGetMultipleItemNamesWhenDeleteNpc(NpcType sNpcType, int iProbabilit
 							break; // KnecklaceOfEfreet
 						case 8: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::knecklace_of_fire_pro;
 							break; // KnecklaceOfFirePro
-						case 9: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::sotg_manual;
-							break; // Strike of the Ghosts Manual
-						case 10: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::magic_wand_mshield;
+						case 9: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::magic_wand_mshield;
 							break; // MagicWand(M.Shield)
+							//						case 10: if (iDice(1, (4 * fProbB)) == 3) iItemID = ItemId::sotg_manual;
+							//							break; // Strike of the Ghosts Manual
 					}
 				}
 				break;
@@ -38560,7 +38515,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 	if (m_pNpcList[iNpcH] == 0) return;
 	if ((cAttackerType != DEF_OWNERTYPE_PLAYER) || (m_pNpcList[iNpcH]->m_bIsSummoned == true)) return;
 	if (m_pNpcList[iNpcH]->m_bIsUnsummoned == true) return;
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	switch (m_pNpcList[iNpcH]->m_sType) {
 			// NPC not dropping Gold
 		case NpcType::guard: // Guard
@@ -38573,7 +38528,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 	if (iDice(1, 10000) >= m_iPrimaryDropRate) {
 		// 35% Drop 60% of that is gold
 		// 35% Chance of drop (35/100)
-		if (iDice(1, 10000) <= 4000) {
+		if (iDice(1, 10000) <= 6000) {
 			iItemID = ItemId::gold; // Gold: (35/100) * (60/100) = 21%
 			// If a non-existing itemID is given create no item
 			pItem = new CItem;
@@ -38581,7 +38536,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 				delete pItem;
 				return;
 			}
-			pItem->m_dwCount = (uint32_t) (iDice(1, (m_pNpcList[iNpcH]->m_iGoldDiceMax - m_pNpcList[iNpcH]->m_iGoldDiceMin)) + m_pNpcList[iNpcH]->m_iGoldDiceMin);
+			pItem->m_dwCount = (DWORD) (iDice(1, m_pNpcList[iNpcH]->m_iExpDice * 2)); //(uint32_t) (iDice(1, (m_pNpcList[iNpcH]->m_iGoldDiceMax - m_pNpcList[iNpcH]->m_iGoldDiceMin)) + m_pNpcList[iNpcH]->m_iGoldDiceMin);
 			// v1.42 Gold
 			if ((cAttackerType == DEF_OWNERTYPE_PLAYER) && (m_pClientList[sAttackerH]->m_iAddGold != 0)) {
 				dTmp1 = (double) m_pClientList[sAttackerH]->m_iAddGold;
@@ -38592,11 +38547,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		} else {
 			// 9000 default; the lower the greater the Weapon/Armor/Wand Drop
 			// 35% Drop 40% of that is an Item
-			dTmp1 = m_pClientList[sAttackerH]->m_iRating*m_cRepDropModifier;
-			if (dTmp1 > 3000) dTmp1 = 3000;
-			if (dTmp1 < -3000) dTmp1 = -3000;
-			dTmp2 = (m_iSecondaryDropRate - (dTmp1));
-			if (iDice(1, 10000) <= dTmp2) {
+			if (iDice(1, 10000) <= m_iSecondaryDropRate) {
 				// 40% Drop 90% of that is a standard drop
 				// Standard Drop Calculation: (35/100) * (40/100) * (90/100) = 12.6%
 				iResult = iDice(1, 13000);
@@ -38722,7 +38673,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					case NpcType::clay_golem: // Clay-Golem
 						iGenLevel = 3;
 						break;
-					case NpcType::hellbound: // Hellbound
+					case NpcType::hellhound: // Hellbound
 					case NpcType::rudolph: // Rudolph
 						iGenLevel = 4;
 						break;
@@ -38736,7 +38687,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 					case NpcType::dire_boar: // DireBoar
 						iGenLevel = 5;
 						break;
-					case NpcType::orge: // Orge
+					case NpcType::ogre: // Orge
 					case NpcType::were_wolf: // WereWolf
 					case NpcType::stalker: // Stalker
 					case NpcType::dark_elf: // Dark-Elf
@@ -39536,7 +39487,7 @@ void CGame::NpcDeadItemGenerator(int iNpcH, short sAttackerH, char cAttackerType
 		SYSTEMTIME SysTime;
 		char cTemp[256];
 		GetLocalTime(&SysTime);
-		std::memset(cTemp, 0, sizeof(cTemp));
+		std::memset(cTemp, 0, sizeof (cTemp));
 		wsprintf(cTemp, "%d%2d", (short) SysTime.wMonth, (short) SysTime.wDay);
 		pItem->m_sTouchEffectValue3 = atoi(cTemp);
 		m_pMapList[ m_pNpcList[iNpcH]->m_cMapIndex ]->bSetItem(m_pNpcList[iNpcH]->m_sX,
@@ -39986,7 +39937,7 @@ void CGame::AdminOrder_Time(int iClientH, char * pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -40020,25 +39971,25 @@ void CGame::AdminOrder_CheckRep(int iClientH, char *pData, uint32_t dwMsgSize) {
 	char * token, cName[11], cTargetName[11], cRepMessage[256], cTemp[256], seps[] = "= \t\n", cBuff[256];
 	int i;
 	if (m_pClientList[iClientH] == 0) return;
-	std::memset(cTemp, 0, sizeof(cTemp));
-	std::memset(cRepMessage, 0, sizeof(cRepMessage));
+	std::memset(cTemp, 0, sizeof (cTemp));
+	std::memset(cRepMessage, 0, sizeof (cRepMessage));
 	if (m_pClientList[iClientH]->m_iAdminUserLevel < 6) {
 		wsprintf(cRepMessage, "You have %d reputation points.", m_pClientList[iClientH]->m_iRating);
 		//ShowClientMsg(iClientH, cRepMessage);
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cRepMessage);
 	} else {
 		if ((dwMsgSize) <= 0) return;
-		std::memset(cTargetName, 0, sizeof(cTargetName));
-		std::memset(cBuff, 0, sizeof(cBuff));
+		std::memset(cTargetName, 0, sizeof (cTargetName));
+		std::memset(cBuff, 0, sizeof (cBuff));
 		memcpy(cBuff, pData, dwMsgSize);
 		pStrTok = new CStrTok(cBuff, seps);
 		token = pStrTok->pGet();
 		token = pStrTok->pGet();
 		if (token != 0) {
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			strcpy(cName, token);
 		} else {
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			strcpy(cName, "null");
 		}
 		token = pStrTok->pGet();
@@ -40070,9 +40021,9 @@ void CGame::AdminOrder_Pushplayer(int iClientH, char * pData, uint32_t dwMsgSize
 	int dY;
 	int i;
 	bool bFlag;
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	dX = dY = -1;
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
@@ -40080,21 +40031,21 @@ void CGame::AdminOrder_Pushplayer(int iClientH, char * pData, uint32_t dwMsgSize
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, token);
 	} else {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, "null");
 	}
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cMapName, 0, sizeof(cMapName));
+		std::memset(cMapName, 0, sizeof (cMapName));
 		strcpy(cMapName, token);
 	}
 	token = pStrTok->pGet();
@@ -40347,7 +40298,7 @@ LSPMI_LOOPBREAK:
 bool CGame::_bRegisterMap(char * pName) {
 	int i;
 	char cTmpName[11], cTxt[120];
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, pName);
 	for (i = 0; i < DEF_MAXMAPS; i++)
 		if ((m_pMapList[i] != 0) && (memcmp(m_pMapList[i]->m_cName, cTmpName, 10) == 0)) {
@@ -40400,17 +40351,17 @@ void CGame::AdminOrder_CheckStats(int iClientH, char *pData, uint32_t dwMsgSize)
 		return;
 	}
 	if ((dwMsgSize) <= 0) return;
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, token);
 	} else {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, "null");
 	}
 	token = pStrTok->pGet();
@@ -40422,7 +40373,7 @@ void CGame::AdminOrder_CheckStats(int iClientH, char *pData, uint32_t dwMsgSize)
 		for (i = 1; i < DEF_MAXCLIENTS; i++)
 			if ((m_pClientList[i] != 0) && (memcmp(m_pClientList[i]->m_cCharName, cTargetName, 10) == 0)) {
 				// m_iStr, m_iInt, m_iVit, m_iDex, m_iMag, m_iCharisma
-				std::memset(cStatMessage, 0, sizeof(cStatMessage));
+				std::memset(cStatMessage, 0, sizeof (cStatMessage));
 				wsprintf(cStatMessage, "Str:%d Dex:%d Vit:%d Int:%d Mag:%d Chr:%d", m_pClientList[i]->m_iStr, m_pClientList[i]->m_iDex, m_pClientList[i]->m_iVit, m_pClientList[i]->m_iInt, m_pClientList[i]->m_iMag, m_pClientList[i]->m_iCharisma);
 				ShowClientMsg(iClientH, cStatMessage);
 			}
@@ -40517,7 +40468,7 @@ bool CGame::bReadAdminListConfigFile(const char *pFn) {
 						}
 						len = strlen(token);
 						if (len > 10) len = 10;
-						std::memset(m_stAdminList[iIndex].m_cGMName, 0, sizeof(m_stAdminList[iIndex].m_cGMName));
+						std::memset(m_stAdminList[iIndex].m_cGMName, 0, sizeof (m_stAdminList[iIndex].m_cGMName));
 						memcpy(m_stAdminList[iIndex].m_cGMName, token, strlen(token));
 						iIndex++;
 						cReadModeA = 0;
@@ -40572,7 +40523,7 @@ bool CGame::bReadBannedListConfigFile(const char *pFn) {
 						}
 						len = strlen(token);
 						if (len > 20) len = 20;
-						std::memset(m_stBannedList[iIndex].m_cBannedIPaddress, 0, sizeof(m_stBannedList[iIndex].m_cBannedIPaddress));
+						std::memset(m_stBannedList[iIndex].m_cBannedIPaddress, 0, sizeof (m_stBannedList[iIndex].m_cBannedIPaddress));
 						memcpy(m_stBannedList[iIndex].m_cBannedIPaddress, token, strlen(token));
 						iIndex++;
 						cReadModeA = 0;
@@ -40611,13 +40562,13 @@ void CGame::AdminOrder_CleanMap(int iClientH, char * pData, uint32_t dwMsgSize) 
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cMapName, 0, sizeof(cMapName));
+		std::memset(cMapName, 0, sizeof (cMapName));
 		strcpy(cMapName, token);
 		for (i = 0; i < DEF_MAXMAPS; i++) //Enum all maps
 			if (m_pMapList[i] != 0) { //Is allocated map
@@ -40647,7 +40598,7 @@ void CGame::AdminOrder_CleanMap(int iClientH, char * pData, uint32_t dwMsgSize) 
 					if (memcmp(m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, cMapName, len) != 0) return;
 					dX = m_pClientList[i]->m_sX;
 					dY = m_pClientList[i]->m_sY;
-					std::memset(cMapName, 0, sizeof(cMapName));
+					std::memset(cMapName, 0, sizeof (cMapName));
 					strcpy(cMapName, m_pClientList[i]->m_cMapName);
 					RequestTeleportHandler(i, "2   ", cMapName, dX, dY);
 				}
@@ -40663,7 +40614,7 @@ void CGame::ShowClientMsg(int iClientH, const char* pMsg) {
 	uint32_t * dwp, dwMsgSize;
 	uint16_t * wp;
 	short * sp;
-	std::memset(cTemp, 0, sizeof(cTemp));
+	std::memset(cTemp, 0, sizeof (cTemp));
 	dwp = (uint32_t *) cTemp;
 	*dwp = MSGID_COMMAND_CHATMSG;
 	wp = (uint16_t *) (cTemp + DEF_INDEX2_MSGTYPE);
@@ -40706,8 +40657,8 @@ void CGame::Command_YellowBall(int iClientH, char* pData, uint32_t dwMsgSize) {
 			}
 		}
 	if (iSoX > 0) {
-		std::memset(cPlayerName, 0, sizeof(cPlayerName));
-		std::memset(cBuff, 0, sizeof(cBuff));
+		std::memset(cPlayerName, 0, sizeof (cPlayerName));
+		std::memset(cBuff, 0, sizeof (cBuff));
 		memcpy(cBuff, pData, dwMsgSize);
 		pStrTok = new CStrTok(cBuff, seps);
 		token = pStrTok->pGet();
@@ -40725,7 +40676,7 @@ void CGame::Command_YellowBall(int iClientH, char* pData, uint32_t dwMsgSize) {
 			if (m_pClientList[i] != 0) {
 				if (memcmp(cPlayerName, m_pClientList[i]->m_cCharName, 10) == 0) {
 					if ((m_pClientList[iClientH]->m_cLocation) != (m_pClientList[i]->m_cLocation)) return;
-					std::memset(cMapName, 0, sizeof(cMapName));
+					std::memset(cMapName, 0, sizeof (cMapName));
 					strcpy(cMapName, m_pClientList[i]->m_cMapName);
 					wsprintf(G_cTxt, "(%s) Player: (%s) - YellowBall MapName(%s)(%d %d)", m_pClientList[i]->m_cIPaddress, m_pClientList[i]->m_cCharName, m_pClientList[i]->m_cMapName, m_pClientList[i]->m_sX, m_pClientList[i]->m_sY);
 					PutItemLogFileList(G_cTxt);
@@ -40770,7 +40721,7 @@ void CGame::Command_RedBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize*
 		iNamingValue = m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->iGetEmptyNamingValue();
 		if (iNamingValue == -1) {
 		} else {
-			std::memset(cNpcName, 0, sizeof(cNpcName));
+			std::memset(cNpcName, 0, sizeof (cNpcName));
 			switch (iDice(1, 5)) {
 				case 1: strcpy(cNpcName, "Wyvern");
 					iNpcID = 66;
@@ -40788,11 +40739,11 @@ void CGame::Command_RedBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize*
 					iNpcID = 52;
 					break;
 			}
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			wsprintf(cName, "XX%d", iNamingValue);
 			cName[0] = '_';
 			cName[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
-			std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
+			std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
 			tX = (int) m_pClientList[iClientH]->m_sX;
 			tY = (int) m_pClientList[iClientH]->m_sY;
 			if (bCreateNewNpc(cNpcName, cName, m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->m_cName, 0, (rand() % 9),
@@ -40845,7 +40796,7 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 		iNamingValue = m_pMapList[ m_pClientList[iClientH]->m_cMapIndex ]->iGetEmptyNamingValue();
 		if (iNamingValue == -1) {
 		} else {
-			std::memset(cNpcName, 0, sizeof(cNpcName));
+			std::memset(cNpcName, 0, sizeof (cNpcName));
 			switch (iDice(1, 38)) {
 				case 1: strcpy(cNpcName, "Slime");
 					iNpcID = 10;
@@ -40972,7 +40923,7 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 			PutLogList(G_cTxt);
 			iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
 			if (iNamingValue != -1) {
-				std::memset(cName_Master, 0, sizeof(cName_Master));
+				std::memset(cName_Master, 0, sizeof (cName_Master));
 				wsprintf(cName_Master, "XX%d", iNamingValue);
 				cName_Master[0] = '_';
 				cName_Master[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
@@ -40984,7 +40935,7 @@ void CGame::Command_BlueBall(int iClientH, char */*pData*/, uint32_t /*dwMsgSize
 				iNamingValue = m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->iGetEmptyNamingValue();
 				if (iNamingValue != -1) {
 					// Slave Mob
-					std::memset(cName_Slave, 0, sizeof(cName_Slave));
+					std::memset(cName_Slave, 0, sizeof (cName_Slave));
 					wsprintf(cName_Slave, "XX%d", iNamingValue);
 					cName_Slave[0] = '_';
 					cName_Slave[1] = m_pClientList[iClientH]->m_cMapIndex + 65;
@@ -41174,7 +41125,7 @@ void CGame::_CreateApocalypseGUID(uint32_t dwApocalypseGUID) {
 	char *cp, cTxt[256], cFn[256], cTemp[1024];
 	FILE *pFile;
 	_mkdir("GameData");
-	std::memset(cFn, 0, sizeof(cFn));
+	std::memset(cFn, 0, sizeof (cFn));
 	strcat(cFn, "GameData");
 	strcat(cFn, "\\");
 	strcat(cFn, "\\");
@@ -41184,8 +41135,8 @@ void CGame::_CreateApocalypseGUID(uint32_t dwApocalypseGUID) {
 		wsprintf(cTxt, "(!) Cannot create ApocalypseGUID(%d) file", dwApocalypseGUID);
 		PutLogList(cTxt);
 	} else {
-		std::memset(cTemp, 0, sizeof(cTemp));
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTemp, 0, sizeof (cTemp));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "ApocalypseGUID = %d\n", dwApocalypseGUID);
 		strcat(cTemp, cTxt);
 		cp = (char *) cTemp;
@@ -41225,7 +41176,7 @@ void CGame::PartyOperationResultHandler(char *pData) {
 			wp = (uint16_t *) cp;
 			iClientH = (int) *wp;
 			cp += 2;
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			memcpy(cName, cp, 10);
 			cp += 10;
 			wp = (uint16_t *) cp;
@@ -41243,7 +41194,7 @@ void CGame::PartyOperationResultHandler(char *pData) {
 			wp = (uint16_t *) cp;
 			iClientH = *wp;
 			cp += 2;
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			memcpy(cName, cp, 10);
 			cp += 10;
 			if ((iClientH < 0) && (iClientH > DEF_MAXCLIENTS)) return;
@@ -41272,7 +41223,7 @@ PORH_LOOPBREAK1:
 			wp = (uint16_t *) cp;
 			iClientH = (int) *wp;
 			cp += 2;
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			memcpy(cName, cp, 10);
 			cp += 10;
 			wp = (uint16_t *) cp;
@@ -41284,7 +41235,7 @@ PORH_LOOPBREAK1:
 			wp = (uint16_t *) cp;
 			iClientH = (int) *wp;
 			cp += 2;
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			memcpy(cName, cp, 10);
 			cp += 10;
 			wp = (uint16_t *) cp;
@@ -41298,7 +41249,7 @@ PORH_LOOPBREAK1:
 			wp = (uint16_t *) cp;
 			iClientH = (int) *wp;
 			cp += 2;
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			memcpy(cName, cp, 10);
 			cp += 10;
 			wp = (uint16_t *) cp;
@@ -41338,7 +41289,7 @@ PORC_LOOPBREAK1:
 			;
 			if ((m_pClientList[iClientH]->m_iReqJoinPartyClientH != 0) && (strlen(m_pClientList[iClientH]->m_cReqJoinPartyName) != 0)) {
 				m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-				std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+				std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 			}
 			break;
 	}
@@ -41355,7 +41306,7 @@ void CGame::PartyOperationResult_Join(int iClientH, char *pName, int iResult, in
 			m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 			SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTY, 4, 0, 0, pName);
 			m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-			std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+			std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 			break;
 		case 1:
 			if (m_pClientList[iClientH]->m_iPartyStatus != DEF_PARTYSTATUS_PROCESSING) return;
@@ -41364,7 +41315,7 @@ void CGame::PartyOperationResult_Join(int iClientH, char *pName, int iResult, in
 			m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_CONFIRM;
 			SendNotifyMsg(0, iClientH, DEF_NOTIFY_PARTY, 4, 1, 0, pName);
 			m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-			std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+			std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 			for (i = 0; i < DEF_MAXPARTYMEMBERS; i++)
 				if (m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i] == 0) {
 					m_stPartyInfo[m_pClientList[iClientH]->m_iPartyID].iIndex[i] = iClientH;
@@ -41480,13 +41431,13 @@ void CGame::RequestJoinPartyHandler(int iClientH, char *pData, uint32_t dwMsgSiz
 	if (m_pClientList[iClientH]->m_iPartyStatus != DEF_PARTYSTATUS_NULL) return;
 	if (m_pClientList[iClientH]->m_iAdminUserLevel > 0 && m_pClientList[iClientH]->m_iAdminUserLevel < 3) return; // v2.23 22/04/06 15:24 AdminSecurity
 	if ((dwMsgSize) <= 0) return;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, token);
 	} else {
 		delete pStrTok;
@@ -41552,9 +41503,9 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult) {
 			m_pClientList[iH]->m_iPartyID = 0;
 			m_pClientList[iH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 			m_pClientList[iH]->m_iReqJoinPartyClientH = 0;
-			std::memset(m_pClientList[iH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iH]->m_cReqJoinPartyName));
+			std::memset(m_pClientList[iH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iH]->m_cReqJoinPartyName));
 			m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-			std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+			std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 			break;
 		case 1:
 			if ((m_pClientList[iClientH]->m_iPartyStatus == DEF_PARTYSTATUS_CONFIRM) && (m_pClientList[iClientH]->m_iPartyID != 0)) {
@@ -41599,12 +41550,12 @@ void CGame::RequestAcceptJoinPartyHandler(int iClientH, int iResult) {
 				if ((m_pClientList[iH] != 0) && (m_pClientList[iH]->m_iReqJoinPartyClientH == iClientH) &&
 						  (strcmp(m_pClientList[iH]->m_cReqJoinPartyName, m_pClientList[iClientH]->m_cCharName) == 0)) {
 					m_pClientList[iH]->m_iReqJoinPartyClientH = 0;
-					std::memset(m_pClientList[iH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iH]->m_cReqJoinPartyName));
+					std::memset(m_pClientList[iH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iH]->m_cReqJoinPartyName));
 				}
 				m_pClientList[iClientH]->m_iPartyID = 0;
 				m_pClientList[iClientH]->m_iPartyStatus = DEF_PARTYSTATUS_NULL;
 				m_pClientList[iClientH]->m_iReqJoinPartyClientH = 0;
-				std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof(m_pClientList[iClientH]->m_cReqJoinPartyName));
+				std::memset(m_pClientList[iClientH]->m_cReqJoinPartyName, 0, sizeof (m_pClientList[iClientH]->m_cReqJoinPartyName));
 			}
 			break;
 	}
@@ -41758,9 +41709,9 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 				case ItemId::sang_ah_giant_sword: // SangAhGiantSword
 				case ItemId::dark_knight_giant_sword: // DarkKnightGiantSword
 				case ItemId::black_knight_temple: // BlackKnightTemple
-				case ItemId::black_knight_hammer://BlackKnightHammer
-				case ItemId::black_knight_b_hammer://BlackKnightBHammer
-				case ItemId::black_knight_bar_hammer://BlackKnightBarHammer
+					//				case ItemId::black_knight_hammer://BlackKnightHammer
+					//				case ItemId::black_knight_b_hammer://BlackKnightBHammer
+					//				case ItemId::black_knight_bar_hammer://BlackKnightBarHammer
 					if (m_pClientList[iClientH]->m_iGizonItemUpgradeLeft <= 0) {
 						SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMUPGRADEFAIL, 3, 0, 0, 0);
 						return;
@@ -41801,7 +41752,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, 
+						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
@@ -41894,88 +41845,89 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
 						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
 					}//50Cent - New DKHammer Upgrade
-					else if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_hammer))) { // BlackKnightHammer
-						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
-						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
-						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
-						m_pClientList[iClientH]->m_pItemList[iItemIndex] = 0;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new CItem;
-						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
-						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_knight_b_hammer) == false) { // BlackKnightBHammer
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
-							return;
-						}
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
-						iValue += 2;
-						if (iValue > 15) iValue = 15;
-						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
-						dwTemp = dwTemp & 0x0FFFFFFF;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
-						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
-						break;
-					} else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_b_hammer)) { // BlackKnightBHammer
-						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
-						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
-						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
-						m_pClientList[iClientH]->m_pItemList[iItemIndex] = 0;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new CItem;
-						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
-						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
-						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_knight_bar_hammer) == false) { // BlackKnightBarHammer
-							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
-							return;
-						}
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
-						iValue += 2;
-						if (iValue > 15) iValue = 15;
-						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
-						dwTemp = dwTemp & 0x0FFFFFFF;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
-						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
-					} else if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_bar_hammer)) { // BlackKnightBarHammer
-						iValue += 2;
-						if (iValue > 15) iValue = 15;
-						if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;
-						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
-						dwTemp = dwTemp & 0x0FFFFFFF;
-						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
-								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
-						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
-					} else {
+						//					else if ((iValue == 0) && ((m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_hammer))) { // BlackKnightHammer
+						//						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
+						//						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
+						//						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex] = 0;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new CItem;
+						//						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
+						//						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
+						//						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_knight_b_hammer) == false) { // BlackKnightBHammer
+						//							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
+						//							return;
+						//						}
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
+						//						iValue += 2;
+						//						if (iValue > 15) iValue = 15;
+						//						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
+						//						dwTemp = dwTemp & 0x0FFFFFFF;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
+						//						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						//								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
+						//						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
+						//						break;
+						//					} else if ((iValue >= 6) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_b_hammer)) { // BlackKnightBHammer
+						//						iItemX = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x;
+						//						iItemY = m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y;
+						//						delete m_pClientList[iClientH]->m_pItemList[iItemIndex];
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex] = 0;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex] = new CItem;
+						//						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].x = iItemX;
+						//						m_pClientList[iClientH]->m_ItemPosList[iItemIndex].y = iItemY;
+						//						if (_bInitItemAttr(m_pClientList[iClientH]->m_pItemList[iItemIndex], ItemId::black_knight_bar_hammer) == false) { // BlackKnightBarHammer
+						//							SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
+						//							return;
+						//						}
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectType = DEF_ITET_UNIQUE_OWNER;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue1 = m_pClientList[iClientH]->m_sCharIDnum1;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
+						//						iValue += 2;
+						//						if (iValue > 15) iValue = 15;
+						//						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
+						//						dwTemp = dwTemp & 0x0FFFFFFF;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
+						//						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						//								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
+						//						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
+						//					} else if ((iValue >= 12) && (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum == ItemId::black_knight_bar_hammer)) { // BlackKnightBarHammer
+						//						iValue += 2;
+						//						if (iValue > 15) iValue = 15;
+						//						if (iValue == 15) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor = 9;
+						//						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
+						//						dwTemp = dwTemp & 0x0FFFFFFF;
+						//						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
+						//						SendNotifyMsg(0, iClientH, DEF_NOTIFY_ITEMATTRIBUTECHANGE, iItemIndex, m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute, 0, 0);
+						//						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
+						//								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemColor,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sItemSpecEffectValue2,
+						//								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute);
+						//						_bItemLog(DEF_ITEMLOG_UPGRADESUCCESS, iClientH, (int) - 1, m_pClientList[iClientH]->m_pItemList[iItemIndex]);
+						//					} 
+					else {
 						iValue += 2;
 						if (iValue > 15) iValue = 15;
 						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
@@ -42264,7 +42216,7 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 			return;
 		case 8:
 			switch (m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sIDnum) {
-				case ItemId::magic_wand_m_s30_llf: // MagicWand(MS30-LLF)
+				case ItemId::magic_wand_ms30_llf: // MagicWand(MS30-LLF)
 				case ItemId::dark_mage_magic_staff: // DarkMageMagicStaff
 				case ItemId::dark_mage_magic_staff_w: // DarkMageMagicStaffW
 				case ItemId::dark_mage_magic_wand: // DarkMageMagicWand
@@ -42313,9 +42265,9 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, 
+						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, 
+								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
@@ -42346,9 +42298,9 @@ void CGame::RequestItemUpgradeHandler(int iClientH, int iItemIndex) {
 						dwTemp = m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute;
 						dwTemp = dwTemp & 0x0FFFFFFF;
 						m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_dwAttribute = dwTemp | (iValue << 28);
-						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex, 
+						SendNotifyMsg(0, iClientH, DEF_NOTIFY_GIZONITEMCANGE, iItemIndex,
 								  (int) m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cItemType,
-								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan, 
+								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_wCurLifeSpan,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_cName,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSprite,
 								  m_pClientList[iClientH]->m_pItemList[iItemIndex]->m_sSpriteFrame,
@@ -42937,13 +42889,13 @@ bool CGame::bPlantSeedBag(int iMapIndex, int dX, int dY, int iItemEffectValue1, 
 				SendNotifyMsg(0, iClientH, DEF_NOTIFY_AGRICULTURENOAREA, 0, 0, 0, 0);
 				return false;
 			}
-			std::memset(cNpcName, 0, sizeof(cNpcName));
+			std::memset(cNpcName, 0, sizeof (cNpcName));
 			strcpy(cNpcName, "Crops");
-			std::memset(cName, 0, sizeof(cName));
+			std::memset(cName, 0, sizeof (cName));
 			wsprintf(cName, "XX%d", iNamingValue);
 			cName[0] = '_';
 			cName[1] = iMapIndex + 65;
-			std::memset(cNpcWaypointIndex, 0, sizeof(cNpcWaypointIndex));
+			std::memset(cNpcWaypointIndex, 0, sizeof (cNpcWaypointIndex));
 			tX = dX;
 			tY = dY;
 			bRet = bCreateNewNpc(cNpcName, cName, m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName, 0, 0, NpcMoveType::random, &tX, &tY, cNpcWaypointIndex, 0, 0, 0, false, true);
@@ -43237,7 +43189,7 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 	bKilled = false;
 	iExp = 0;
 	iPartyID = 0;
-	std::memset(cAttackerName, 0, sizeof(cAttackerName));
+	std::memset(cAttackerName, 0, sizeof (cAttackerName));
 	cAttackerSA = 0;
 	iAttackerSAvalue = 0;
 	wWeaponType = 0;
@@ -43556,13 +43508,13 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 										case NpcType::agt:
 											iWarContribution = 700;
 											break;
-										case NpcType::cgt: 
+										case NpcType::cgt:
 											iWarContribution = 700;
 											break;
-										case NpcType::ms: 
+										case NpcType::ms:
 											iWarContribution = 500;
 											break;
-										case NpcType::dt: 
+										case NpcType::dt:
 											iWarContribution = 500;
 											break;
 										default: break;
@@ -44021,15 +43973,16 @@ int CGame::iCalculateAttackEffect(short sTargetH, char cTargetType, short sAttac
 					if (m_pClientList[sAttackerH] != 0) {
 						//acidx pwns
 						if (m_pClientList[sAttackerH]->iDmgShowon == 1) {
-							std::memset(cDamageMod, 0, sizeof(cDamageMod));
+							std::memset(cDamageMod, 0, sizeof (cDamageMod));
 							wsprintf(cDamageMod, "You did [%d] Damage to Character [%s] Remaining Life [%d]", iAP_SM, m_pClientList[sTargetH]->m_cCharName, m_pClientList[sTargetH]->m_iHP);
 							SendNotifyMsg(0, sAttackerH, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cDamageMod);
 						}
 					}
 					if (m_pClientList[sTargetH]->m_iHP <= 0) {
-						if (cAttackerType == DEF_OWNERTYPE_PLAYER)
-							//		bAnalyzeCriminalAction(sAttackerH, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
-							ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iAP_SM);
+						if (cAttackerType == DEF_OWNERTYPE_PLAYER) {
+							bAnalyzeCriminalAction(sAttackerH, m_pClientList[sTargetH]->m_sX, m_pClientList[sTargetH]->m_sY);
+						}
+						ClientKilledHandler(sTargetH, sAttackerH, cAttackerType, iAP_SM);
 						bKilled = true;
 						iKilledDice = m_pClientList[sTargetH]->m_iLevel;
 					} else {
@@ -44190,7 +44143,7 @@ CAE_SKIPDAMAGEMOVE:
 						m_pNpcList[sTargetH]->m_iHP -= iDamage;
 						if (m_pClientList[sAttackerH] != 0) {
 							if (m_pClientList[sAttackerH]->iDmgShowon == 1) {
-								std::memset(cDamageMod, 0, sizeof(cDamageMod));
+								std::memset(cDamageMod, 0, sizeof (cDamageMod));
 								wsprintf(cDamageMod, "You did [%d] Damage to Npc [%s] Remaining Life [%d]", iDamage, m_pNpcList[sTargetH]->m_cNpcName, m_pNpcList[sTargetH]->m_iHP);
 								SendNotifyMsg(0, sAttackerH, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cDamageMod);
 							}
@@ -44776,13 +44729,13 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType) {
 	int iResult;
 	switch (sNpcType) {
 		case NpcType::hellclaw: // Hellclaw
-			iResult = iDice(1, 20000);
+			iResult = iDice(1, 10000);
 			if ((iResult >= 1) && (iResult <= 4999)) {
 				if (iDice(1, 2) == 1)
-					iItemID = ItemId::magic_wand_mshield; // Green Ball 651
-				else iItemID = ItemId::excaliber; // Rep Potion 965
+					iItemID = ItemId::ruby_ring; // Green Ball 651
+				else iItemID = ItemId::emerald_ring; // Rep Potion 965
 			} else if ((iResult > 5000) && (iResult <= 10000)) iItemID = ItemId::green_ball; // MagicWand(M.Shield)
-			else if ((iResult > 10000) && (iResult <= 13000)) iItemID = ItemId::rep_potion; // Excaliber
+			else if ((iResult > 10000) && (iResult <= 13000)) iItemID = ItemId::excaliber; // Excaliber
 			else if ((iResult > 13000) && (iResult <= 15000)) iItemID = ItemId::emerald_ring; // EmeraldRing
 			else if ((iResult > 15000) && (iResult <= 17500)) iItemID = ItemId::magic_necklace_rm10; // MagicNecklace(RM10)
 			else if ((iResult > 17500) && (iResult <= 18750)) iItemID = ItemId::magic_necklace_df10; // MagicNecklace(DF+10)
@@ -44802,14 +44755,14 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType) {
 			if ((iResult >= 1) && (iResult <= 4999)) {
 				if (iDice(1, 2) == 1)
 					iItemID = ItemId::sword_of_ice_elemental; // Red Ball 652
-				else iItemID = ItemId::ice_elemental_rapier; // Rep Potion 965
-			} else if ((iResult > 5000) && (iResult <= 7499)) iItemID = ItemId::rep_potion; // IceElementalRapier
+				else iItemID = ItemId::lighting_blade; // Rep Potion 965
+			} else if ((iResult > 5000) && (iResult <= 7499)) iItemID = ItemId::dark_executor; // IceElementalRapier
 			else if ((iResult > 7500) && (iResult <= 8749)) iItemID = ItemId::red_ball; // SwordofIceElemental
 			else if ((iResult > 8750) && (iResult <= 9374)) iItemID = ItemId::ringof_demonpower; // RingofDemonpower
 			else if ((iResult > 9375) && (iResult <= 9687)) iItemID = ItemId::blood_rapier; // BloodRapier
 			else if ((iResult > 9688) && (iResult <= 9843)) iItemID = ItemId::blood_sword; // BloodSword
 			else if ((iResult > 9844) && (iResult <= 9921)) iItemID = ItemId::blood_axe; // BloodAxe
-			else if ((iResult > 9922) && (iResult <= 9960)) iItemID = ItemId::magic_wand_m_s30_llf; // MagicWand(MS30-LLF)
+			else if ((iResult > 9922) && (iResult <= 9960)) iItemID = ItemId::magic_wand_ms30_llf; // MagicWand(MS30-LLF)
 			else if ((iResult > 9961) && (iResult <= 9980)) iItemID = ItemId::ringofthe_xelima; // RingoftheXelima
 			else if ((iResult > 9981) && (iResult <= 9990)) iItemID = ItemId::xelima_rapier; // XelimaRapier
 			else if ((iResult > 9991) && (iResult <= 9996)) iItemID = ItemId::xelima_blade; // XelimaBlade
@@ -44821,39 +44774,41 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType) {
 		default:
 			break;
 	}
-	if (iDice(1, 45) == 13) {
+	if (iDice(1, 50) == 13) {
 		switch (sNpcType) {
-			case NpcType::skeleton: if (iDice(1, 550) != 11) return false;
+			case NpcType::skeleton: if (iDice(1, 550) != 1) return false;
 				break; // Skeleton   2 * 100
-			case NpcType::stone_golem: if (iDice(1, 400) != 11) return false;
+			case NpcType::stone_golem: if (iDice(1, 400) != 1) return false;
 				break; // Stone-Golem 2 * 100
-			case NpcType::cyclops: if (iDice(1, 100) != 11) return false;
+			case NpcType::cyclops: if (iDice(1, 100) != 1) return false;
 				break; // Cyclops  6 * 100
-			case NpcType::orc: if (iDice(1, 700) != 11) return false;
+			case NpcType::orc: if (iDice(1, 700) != 1) return false;
 				break; // Orc 4 * 100
-			case NpcType::scorpion: if (iDice(1, 600) != 11) return false;
+			case NpcType::scorpion: if (iDice(1, 600) != 1) return false;
 				break; // Scorpoin 5 * 100
-			case NpcType::zombie: if (iDice(1, 850) != 11) return false;
+			case NpcType::zombie: if (iDice(1, 850) != 1) return false;
 				break; // Zombie 1 * 100
-			case NpcType::amphis: if (iDice(1, 600) != 11) return false;
+			case NpcType::amphis: if (iDice(1, 600) != 1) return false;
 				break; // Amphis 5 * 100
-			case NpcType::clay_golem: if (iDice(1, 400) != 11) return false;
+			case NpcType::clay_golem: if (iDice(1, 400) != 1) return false;
 				break; // Clay-Golem 2 * 100
-			case NpcType::hellbound: if (iDice(1, 100) != 11) return false;
+			case NpcType::hellhound: if (iDice(1, 100) != 1) return false;
 				break; // Hellhound 7 * 100
-			case NpcType::troll: if (iDice(1, 100) != 11) return false;
+			case NpcType::troll: if (iDice(1, 100) != 1) return false;
 				break; // Troll 5 * 100
-			case NpcType::orge: if (iDice(1, 150) != 11) return false;
+			case NpcType::ogre: if (iDice(1, 15) != 1) return false;
 				break; // Orge  7 * 100
-			case NpcType::liche: if (iDice(1, 120) != 11) return false;
+			case NpcType::liche: if (iDice(1, 10) != 1) return false;
 				break; // Liche 1 * 100
 			case NpcType::demon: break; // Demon 5 * 100
-			case NpcType::unicorn: if (iDice(1, 200) != 11) return false;
+			case NpcType::unicorn: if (iDice(1, 2) != 1) return false;
 				break; // Unicorn 5 * 100
-			case NpcType::were_wolf: if (iDice(1, 300) != 11) return false;
+			case NpcType::were_wolf: if (iDice(1, 30) != 1) return false;
 				break; // WereWolf 7 * 100
-			case NpcType::stalker: if (iDice(1, 100) != 11) return false;
+			case NpcType::stalker: if (iDice(1, 30) != 1) return false;
 				break; // Stalker
+
+
 			case NpcType::gagoyle: if (iDice(1, 300) != 11) return false;
 				break; // Gagoyle
 			case NpcType::beholder: if (iDice(1, 500) != 11) return false;
@@ -44885,7 +44840,7 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType) {
 					break; // LuckyGoldRing
 				case 2: iItemID = ItemId::sapphire_ring;
 					break; // SapphireRing
-				case 3: if (iDice(1, 15) == 3) iItemID = ItemId::emerald_ring;
+				case 3: iItemID = ItemId::emerald_ring;
 					break; // EmeraldRing
 				case 4: iItemID = ItemId::ruby_ring;
 					break; // RubyRing
@@ -44898,94 +44853,68 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType) {
 			}
 			break;
 		case NpcType::cyclops: // Cyclops
-		case NpcType::hellbound: // Hellhound
-		case NpcType::orge: // Orge
+		case NpcType::hellhound: // Hellhound
+		case NpcType::ogre: // Orge
 			switch (iDice(1, 7)) {
 				case 1: iItemID = ItemId::magic_necklace_df10;
 					break; // MagicNecklace(DF+10)
-				case 2: if (iDice(1, 20) == 13) iItemID = ItemId::magic_necklace_ms10;
+				case 2: if (iDice(1, 20) == 1) iItemID = ItemId::magic_necklace_ms10;
 					break; // MagicNecklace(MS10)
-				case 3: if (iDice(1, 10) == 13) iItemID = ItemId::magic_necklace_dm1;
+				case 3: if (iDice(1, 10) == 1) iItemID = ItemId::magic_necklace_dm1;
 					break; // MagicNecklace(DM+1)
 				case 4: iItemID = ItemId::magic_necklace_rm10;
 					break; // MagicNecklace(RM10)
-				case 5: if (iDice(1, 30) == 13) iItemID = ItemId::ringof_ogrepower;
+				case 5: if (iDice(1, 30) == 1) iItemID = ItemId::ringof_ogrepower;
 					break; // RingofOgrepower
-				case 6: if (iDice(1, 30) == 13) iItemID = ItemId::knecklace_of_light_pro;
+				case 6: if (iDice(1, 30) == 1) iItemID = ItemId::knecklace_of_light_pro;
 					break; // KnecklaceOfLightPro
-				case 7: if (iDice(1, 30) == 13) iItemID = ItemId::knecklace_of_fire_pro;
+				case 7: if (iDice(1, 30) == 1) iItemID = ItemId::knecklace_of_fire_pro;
 					break; // KnecklaceOfFirePro
 			}
 			break;
 		case NpcType::zombie: // Zombie
 		case NpcType::amphis: // Amphis
 			switch (iDice(1, 4)) {
-				case 1: if (iDice(1, 75) == 13) iItemID = ItemId::sword_of_medusa;
+				case 1: if (iDice(1, 75) == 1) iItemID = ItemId::sword_of_medusa;
 					break; // SwordofMedusa
-				case 2: if (iDice(1, 20) == 13) iItemID = ItemId::knecklace_of_poison_pro;
+				case 2: if (iDice(1, 20) == 1) iItemID = ItemId::knecklace_of_poison_pro;
 					break; // KnecklaceOfPoisonPro
-				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::knecklace_of_medusa;
+				case 3: if (iDice(1, 40) == 1) iItemID = ItemId::knecklace_of_medusa;
 					break; // KnecklaceOfMedusa
-				case 4: if (iDice(1, 30) == 13) iItemID = ItemId::knecklace_of_sufferent;
+				case 4: if (iDice(1, 30) == 1) iItemID = ItemId::knecklace_of_sufferent;
 					break; // KnecklaceOfSufferent
 			}
 			break;
 		case NpcType::stone_golem: // Stone-Golem
-			switch (iDice(1, 5)) {
-				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
-					break; // MerienShield
-				case 2: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_m;
-					break; // MerienPlateMail(M)
-				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_w;
-					break; // MerienPlateMail(W)
-				case 4: if (iDice(1, 20) == 11) iItemID = ItemId::knecklace_of_air_ele;
-					break; // KnecklaceOfAirEle
-				case 5: if (iDice(1, 20) == 11) iItemID = ItemId::necklace_of_stone_golem;
-					break; // KnecklaceOfStoneGolem
-			}
-			break;
 		case NpcType::clay_golem: // Clay-Golem
-			switch (iDice(1, 4)) {
-				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
-					break; // MerienShield
-				case 2: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_m;
-					break; // MerienPlateMail(M)
-				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_w;
-					break; // MerienPlateMail(W)
-				case 4: if (iDice(1, 20) == 11) iItemID = ItemId::knecklace_of_air_ele;
-					break; // KnecklaceOfAirEle
-			}
-			break;
 		case NpcType::unicorn: // Unicorn
 			switch (iDice(1, 4)) {
-				case 1: if (iDice(1, 40) == 13) iItemID = ItemId::merien_shield;
+				case 1: if (iDice(1, 30) == 1) iItemID = ItemId::merien_shield;
 					break; // MerienShield
-				case 2: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_m;
+				case 2: if (iDice(1, 30) == 1) iItemID = ItemId::merien_plate_mail_m;
 					break; // MerienPlateMail(M)
-				case 3: if (iDice(1, 40) == 13) iItemID = ItemId::merien_plate_mail_w;
+				case 3: if (iDice(1, 30) == 1) iItemID = ItemId::merien_plate_mail_w;
 					break; // MerienPlateMail(W)
-				case 4: if (iDice(1, 20) == 11) iItemID = ItemId::knecklace_of_air_ele;
+				case 4: if (iDice(1, 20) == 1) iItemID = ItemId::knecklace_of_air_ele;
 					break; // KnecklaceOfAirEle
-				case 5: if (iDice(1, 20) == 11) iItemID = ItemId::lighting_blade;
-					break; // Lighting Blade
 			}
 			break;
 		case NpcType::were_wolf: // WereWolf
 		case NpcType::stalker: // Stalker
 			switch (iDice(1, 2)) {
-				case 1: if (iDice(1, 30) == 3) iItemID = ItemId::flameberge_plus_3_llf;
+				case 1: if (iDice(1, 30) == 1) iItemID = ItemId::flameberge_plus_3_llf;
 					break; // Flameberge+3(LLF)
 				case 2: iItemID = ItemId::golden_axe_llf;
 					break; // GoldenAxe(LLF)
 			}
 			break;
 		case NpcType::liche: // Liche
-			switch (iDice(1, 8)) {
-				case 1: if (iDice(1, 10) == 3) iItemID = ItemId::ice_storm_manual;
+			switch (iDice(1, 7)) {
+				case 1: if (iDice(1, 5) == 1) iItemID = ItemId::ice_storm_manual;
 					break; // IceStormManual
-				case 2: if (iDice(1, 10) == 3) iItemID = ItemId::magic_wand_mshield;
+				case 2: iItemID = ItemId::magic_wand_mshield;
 					break; // MagicWand(M.Shield)
-				case 3: if (iDice(1, 30) == 3) iItemID = ItemId::magic_wand_m_s30_llf;
+				case 3: if (iDice(1, 20) == 1) iItemID = ItemId::magic_wand_ms30_llf;
 					break; // MagicWand(MS30-LLF)
 				case 4: if (iDice(1, 10) == 3) iItemID = ItemId::sword_of_ice_elemental;
 					break; // SwordofIceElemental
@@ -44993,10 +44922,8 @@ bool CGame::bGetItemNameWhenDeleteNpc(ItemId & iItemID, NpcType sNpcType) {
 					break; // KnecklaceOfIcePro
 				case 6: if (iDice(1, 15) == 3) iItemID = ItemId::knecklace_of_ice_ele;
 					break; // KnecklaceOfIceEle
-				case 7: if (iDice(1, 30) == 3) iItemID = ItemId::ringof_grand_mage;
+				case 7: if (iDice(1, 20) == 3) iItemID = ItemId::ringof_grand_mage;
 					break; // RingofGrandMage
-				case 8: if (iDice(1, 30) == 3) iItemID = ItemId::ring_of_arcmage;
-					break; // RingOfArcmage
 			}
 			break;
 		case NpcType::demon: // Demon
@@ -45153,14 +45080,7 @@ void CGame::StormBringer(int iClientH, short dX, short dY) {
 							}
 							m_pClientList[sOwner]->m_iHP -= iDamage;
 							if (m_pClientList[sOwner]->m_iHP <= 0) {
-								sAttackerWeapon = 1;
-								m_pClientList[sOwner]->m_iHP = 0;
-								m_pClientList[sOwner]->m_bIsKilled = true;
-								m_pClientList[sOwner]->m_iLastDamage = iDamage;
-								SendNotifyMsg(0, sOwner, DEF_NOTIFY_HP, 0, 0, 0, 0);
-								SendEventToNearClient_TypeA(sOwner, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDYING, iDamage, sAttackerWeapon, 0);
-								m_pMapList[m_pClientList[sOwner]->m_cMapIndex]->ClearOwner(14, sOwner, DEF_OWNERTYPE_PLAYER, m_pClientList[sOwner]->m_sX, m_pClientList[sOwner]->m_sY);
-								m_pMapList[m_pClientList[sOwner]->m_cMapIndex]->SetDeadOwner(sOwner, DEF_OWNERTYPE_PLAYER, m_pClientList[sOwner]->m_sX, m_pClientList[sOwner]->m_sY);
+								ClientKilledHandler(sOwner, 0, 0, iDamage);
 							} else {
 								SendNotifyMsg(0, sOwner, DEF_NOTIFY_HP, 0, 0, 0, 0);
 								SendEventToNearClient_TypeA(sOwner, DEF_OWNERTYPE_PLAYER, MSGID_EVENT_MOTION, DEF_OBJECTDAMAGE, iDamage, 0, 0);
@@ -45341,7 +45261,7 @@ void CGame::_CreateHeldenianGUID(uint32_t dwHeldenianGUID, int iWinnerSide) {
 	char * cp, cTxt[256], cFn[256], cTemp[1024];
 	FILE * pFile;
 	_mkdir("GameData");
-	std::memset(cFn, 0, sizeof(cFn));
+	std::memset(cFn, 0, sizeof (cFn));
 	strcat(cFn, "GameData");
 	strcat(cFn, "\\");
 	strcat(cFn, "\\");
@@ -45351,11 +45271,11 @@ void CGame::_CreateHeldenianGUID(uint32_t dwHeldenianGUID, int iWinnerSide) {
 		wsprintf(cTxt, "(!) Cannot create HeldenianGUID(%d) file", dwHeldenianGUID);
 		PutLogList(cTxt);
 	} else {
-		std::memset(cTemp, 0, sizeof(cTemp));
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTemp, 0, sizeof (cTemp));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "HeldenianGUID = %d", dwHeldenianGUID);
 		strcat(cTemp, cTxt);
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "winner-side = %d\n", iWinnerSide);
 		strcat(cTemp, cTxt);
 		cp = (char *) cTemp;
@@ -45439,20 +45359,20 @@ void CGame::RequestHeldenianTeleport(int iClientH, char * pData, uint32_t /*dwMs
 	iProcessed = 1;
 	if (m_pClientList[iClientH] == 0) return;
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, cp);
 	if (strcmp(cTmpName, "Gail") == 0) {
-		std::memset(cData, 0, sizeof(cData));
+		std::memset(cData, 0, sizeof (cData));
 		dwp = (uint32_t *) (cData);
 		*dwp = MSGID_REQUEST_GAILTELEPORT;
-		uint16_t *wResult = (uint16_t*) (cData+DEF_INDEX2_MSGTYPE);
+		uint16_t *wResult = (uint16_t*) (cData + DEF_INDEX2_MSGTYPE);
 		*wResult = DEF_MSGTYPE_CONFIRM;
 		cp = (char *) (cData + DEF_INDEX2_MSGTYPE + 2);
 		if ((m_bIsHeldenianMode == 1) &&
 				  (m_pClientList[iClientH]->m_bIsPlayerCivil != true) &&
 				  ((m_pClientList[iClientH]->m_cSide == 2 || (m_pClientList[iClientH]->m_cSide == 1)))) {
 			if (m_cHeldenianModeType == 1) {
-				std::memset(cMapName, 0, sizeof(cMapName));
+				std::memset(cMapName, 0, sizeof (cMapName));
 				memcpy(cMapName, "BtField", 10);
 				if (m_pClientList[iClientH]->m_cSide == 1) {
 					tX = 68;
@@ -45464,7 +45384,7 @@ void CGame::RequestHeldenianTeleport(int iClientH, char * pData, uint32_t /*dwMs
 					cLoc = 2;
 				}
 			} else if (m_cHeldenianModeType == 2) {
-				std::memset(cMapName, 0, sizeof(cMapName));
+				std::memset(cMapName, 0, sizeof (cMapName));
 				memcpy(cMapName, "HRampart", 10);
 				if (m_pClientList[iClientH]->m_cSide == m_sLastHeldenianWinner) {
 					tX = 81;
@@ -45520,7 +45440,7 @@ void CGame::RequestNpcSpeakTeleport(int iClientH, char * pData, uint32_t /*dwMsg
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
 	//char cV1 = (char) *cp;
 	cp += 4;
-	std::memset(cMapName, 0, sizeof(cMapName));
+	std::memset(cMapName, 0, sizeof (cMapName));
 	switch (iDice(1, 2)) {
 		case 1:
 			switch (m_pClientList[iClientH]->m_cSide) {
@@ -45653,11 +45573,11 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 								for (z = 0; z < DEF_MAXNPCTYPES; z++) {
 									if (m_pNpcConfigList[z] == 0) break;
 									if (m_pNpcConfigList[z]->m_sType == m_pMapList[x]->m_stHeldenianTower[i].sTypeID) {
-										std::memset(cTmp, 0, sizeof(cTmp));
+										std::memset(cTmp, 0, sizeof (cTmp));
 										strcpy(cTmp, m_pNpcConfigList[z]->m_cNpcName);
 									}
 								}
-								std::memset(cName, 0, sizeof(cName));
+								std::memset(cName, 0, sizeof (cName));
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = 95;
 								cName[1] = i + 65;
@@ -45689,11 +45609,11 @@ void CGame::LocalStartHeldenianMode(short sV1, short sV2, uint32_t dwHeldenianGU
 								for (z = 0; z < DEF_MAXNPCTYPES; z++) {
 									if (m_pNpcConfigList[z] == 0) break;
 									if (m_pNpcConfigList[z]->m_sType == NpcType::gate) {
-										std::memset(cTmp, 0, sizeof(cTmp));
+										std::memset(cTmp, 0, sizeof (cTmp));
 										strcpy(cTmp, m_pNpcConfigList[z]->m_cNpcName);
 									}
 								}
-								std::memset(cName, 0, sizeof(cName));
+								std::memset(cName, 0, sizeof (cName));
 								wsprintf(cName, "XX%d", iNamingValue);
 								cName[0] = 95;
 								cName[1] = i + 65;
@@ -45735,7 +45655,7 @@ void CGame::ManualStartHeldenianMode(int iClientH, char *pData, uint32_t dwMsgSi
 	if ((dwMsgSize != 0) && (pData != 0)) {
 		m_bHeldenianRunning = true;
 		GetLocalTime(&SysTime);
-		std::memset(cBuff, 0, sizeof(cBuff));
+		std::memset(cBuff, 0, sizeof (cBuff));
 		memcpy(cBuff, pData, dwMsgSize);
 		pStrTok = new CStrTok(cBuff, seps);
 		token = pStrTok->pGet();
@@ -45831,7 +45751,7 @@ void CGame::AdminOrder_GetFightzoneTicket(int iClientH) {
 		iReserveTime = m_pClientList[iClientH]->m_iReserveTime;
 		GetLocalTime(&SysTime);
 		m_pClientList[iClientH]->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 3);
-		std::memset(cTemp, 0, sizeof(cTemp));
+		std::memset(cTemp, 0, sizeof (cTemp));
 		strcpy(cTemp, (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName + 9));
 		iFightzoneN = m_pClientList[iClientH]->m_iFightzoneNumber;
 		iFightzoneTN = m_pClientList[iClientH]->m_iFightZoneTicketNumber;
@@ -45847,7 +45767,7 @@ void CGame::AdminOrder_GetFightzoneTicket(int iClientH) {
 		iReserveTime = m_pClientList[iClientH]->m_iReserveTime;
 		GetLocalTime(&SysTime);
 		m_pClientList[iClientH]->m_iReserveTime = SysTime.wMonth * 10000 + SysTime.wDay * 100 + (SysTime.wHour + 2);
-		std::memset(cTemp, 0, sizeof(cTemp));
+		std::memset(cTemp, 0, sizeof (cTemp));
 		strcpy(cTemp, (m_pMapList[m_pClientList[iClientH]->m_cMapIndex]->m_cName + 9));
 		iFightzoneN = m_pClientList[iClientH]->m_iFightzoneNumber;
 		iFightzoneTN = m_pClientList[iClientH]->m_iFightZoneTicketNumber;
@@ -46046,7 +45966,7 @@ void CGame::SendThunder(int iClient, short sX, short sY, short sV3, short sV4) {
 	uint32_t * dwp;
 	uint16_t * wp;
 	short * sp;
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 	*dwp = MSGID_EVENT_COMMON;
 	wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -46185,7 +46105,7 @@ void CGame::GetAngelHandler(int iClientH, char * pData, uint32_t /*dwMsgSize*/) 
 		return;
 	}
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, cp);
 	cp += 20;
 	ip = (int *) cp;
@@ -46223,7 +46143,7 @@ void CGame::GetAngelHandler(int iClientH, char * pData, uint32_t /*dwMsgSize*/) 
 		pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
 		pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
 		if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
-			std::memset(cData, 0, sizeof(cData));
+			std::memset(cData, 0, sizeof (cData));
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -46324,7 +46244,7 @@ void CGame::RequestHeldenianScroll(int iClientH, char * pData, uint32_t /*dwMsgS
 		return;
 	}
 	cp = (char *) (pData + DEF_INDEX2_MSGTYPE + 2);
-	std::memset(cTmpName, 0, sizeof(cTmpName));
+	std::memset(cTmpName, 0, sizeof (cTmpName));
 	strcpy(cTmpName, cp);
 	cp += 20;
 	ip = (int *) cp;
@@ -46370,7 +46290,7 @@ void CGame::RequestHeldenianScroll(int iClientH, char * pData, uint32_t /*dwMsgS
 		pItem->m_sTouchEffectValue2 = m_pClientList[iClientH]->m_sCharIDnum2;
 		pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
 		if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
-			std::memset(cData, 0, sizeof(cData));
+			std::memset(cData, 0, sizeof (cData));
 			dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 			*dwp = MSGID_NOTIFY;
 			wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -46633,7 +46553,7 @@ RCPH_LOOPBREAK:
 		++j;
 	}
 	// Search Crafting you wanna build
-	std::memset(cCraftingName, 0, sizeof(cCraftingName));
+	std::memset(cCraftingName, 0, sizeof (cCraftingName));
 	for (i = 0; i < DEF_MAXPORTIONTYPES; i++)
 		if (m_pCraftingConfigList[i] != 0) {
 			bFlag = false;
@@ -46642,7 +46562,7 @@ RCPH_LOOPBREAK:
 			}
 			if (bFlag == false) // good Crafting receipe
 			{
-				std::memset(cCraftingName, 0, sizeof(cCraftingName));
+				std::memset(cCraftingName, 0, sizeof (cCraftingName));
 				memcpy(cCraftingName, m_pCraftingConfigList[i]->m_cName, 20);
 				iRiskLevel = m_pCraftingConfigList[i]->m_iSkillLimit; // % to loose item if crafting fails
 				iDifficulty = m_pCraftingConfigList[i]->m_iDifficulty;
@@ -46741,7 +46661,7 @@ RCPH_LOOPBREAK:
 			SYSTEMTIME SysTime;
 			char cTemp[256];
 			GetLocalTime(&SysTime);
-			std::memset(cTemp, 0, sizeof(cTemp));
+			std::memset(cTemp, 0, sizeof (cTemp));
 			wsprintf(cTemp, "%d%2d", (short) SysTime.wMonth, (short) SysTime.wDay);
 			pItem->m_sTouchEffectValue3 = atoi(cTemp);
 			// SNOOPY log anything above WAREs
@@ -46753,7 +46673,7 @@ RCPH_LOOPBREAK:
 				//	PutSkillLogFileList(G_cTxt);
 			}
 			if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
-				std::memset(cData, 0, sizeof(cData));
+				std::memset(cData, 0, sizeof (cData));
 				dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 				*dwp = MSGID_NOTIFY;
 				wp = (uint16_t *) (cData + DEF_INDEX2_MSGTYPE);
@@ -46839,17 +46759,51 @@ RCPH_LOOPBREAK:
 
 void CGame::GetDkSet(int iClientH) {
 	CItem * pItem;
-	ItemId dkM[] = {ItemId::dark_knight_hauberk, ItemId::dark_knight_full_helm, ItemId::dark_knight_leggings, ItemId::dark_knight_flameberge, ItemId::dark_knight_plate_mail, ItemId::dark_mage_magic_staff, ItemId::dark_knight_shield, ItemId::none};
-	ItemId dkW[] = {ItemId::dark_knight_hauberk_w, ItemId::dark_knight_full_helm_w, ItemId::dark_knight_leggings_w, ItemId::dark_knight_plate_mail_w, ItemId::dark_mage_magic_staff, ItemId::dark_knight_flameberge, ItemId::dark_knight_shield, ItemId::none};
-	ItemId dmM[] = {ItemId::dark_mage_hauberk, ItemId::dark_mage_chain_mail, ItemId::dark_mage_leggings, ItemId::esw_manual, ItemId::dark_knight_rapier, ItemId::dark_mage_hat, ItemId::dark_knight_shield, ItemId::none};
-	ItemId dmW[] = {ItemId::dark_mage_hauberk_w, ItemId::dark_mage_chain_mail_w, ItemId::dark_mage_leggings_w, ItemId::esw_manual, ItemId::dark_knight_rapier, ItemId::dark_mage_hat_w, ItemId::dark_knight_shield, ItemId::none};
+	ItemId dkM[] = {
+		ItemId::dark_knight_hauberk,
+		ItemId::dark_knight_full_helm,
+		ItemId::dark_knight_leggings,
+		ItemId::dark_knight_plate_mail,
+		ItemId::dark_mage_magic_staff,
+		ItemId::dark_knight_rapier,
+		ItemId::dark_knight_flameberge,
+		ItemId::none
+	};
+	ItemId dkW[] = {
+		ItemId::dark_knight_hauberk_w,
+		ItemId::dark_knight_full_helm_w,
+		ItemId::dark_knight_leggings_w,
+		ItemId::dark_knight_plate_mail_w,
+		ItemId::dark_mage_magic_staff,
+		ItemId::dark_knight_rapier,
+		ItemId::dark_knight_flameberge,
+		ItemId::none
+	};
+	ItemId dmM[] = {
+		ItemId::dark_mage_hauberk,
+		ItemId::dark_mage_chain_mail,
+		ItemId::dark_mage_leggings,
+		ItemId::dark_mage_magic_staff,
+		ItemId::dark_knight_rapier,
+		ItemId::dark_knight_flameberge,
+		ItemId::none
+	};
+	ItemId dmW[] = {
+		ItemId::dark_mage_hauberk_w,
+		ItemId::dark_mage_chain_mail_w,
+		ItemId::dark_mage_leggings_w,
+		ItemId::dark_mage_magic_staff,
+		ItemId::dark_knight_rapier,
+		ItemId::dark_knight_flameberge,
+		ItemId::none
+	};
 	ItemId weapon = ItemId::none;
 	int i;
 	int iEraseReq;
 	if (m_pClientList[iClientH] == 0) return;
 	if (m_pClientList[iClientH]->m_iLevel < 200) return;
 	ItemId iItemID;
-	for (i = 0; i <= 7; i++) {
+	for (i = 0;; i++) {
 		pItem = new CItem;
 		iItemID = ItemId::none;
 		if (m_pClientList[iClientH]->m_cSex == 1) {
@@ -46865,24 +46819,6 @@ void CGame::GetDkSet(int iClientH) {
 				iItemID = dmW[i];
 			}
 		}
-		if (i == 7) {
-			if (m_pClientList[iClientH]->m_iStr > m_pClientList[iClientH]->m_iInt) {
-				if (m_pClientList[iClientH]->m_cSex == 1) {
-					weapon = ItemId::dark_knight_flameberge;
-					weapon = ItemId::black_knight_hammer;
-				} else if (m_pClientList[iClientH]->m_cSex == 2) {
-					weapon = ItemId::dark_knight_flameberge;
-					weapon = ItemId::black_knight_hammer;
-				}
-			} else {
-				if (m_pClientList[iClientH]->m_cSex == 1) {
-					weapon = ItemId::dark_mage_magic_staff;
-				} else if (m_pClientList[iClientH]->m_cSex == 2) {
-					weapon = ItemId::dark_mage_magic_staff;
-				}
-			}
-			iItemID = weapon;
-		}
 		if (iItemID != ItemId::none) //if any error occures, dont crash character
 		{
 			_bInitItemAttr(pItem, iItemID);
@@ -46892,6 +46828,8 @@ void CGame::GetDkSet(int iClientH) {
 			pItem->m_sTouchEffectValue3 = m_pClientList[iClientH]->m_sCharIDnum3;
 			_bAddClientItemList(iClientH, pItem, &iEraseReq);
 			SendItemNotifyMsg(iClientH, DEF_NOTIFY_ITEMOBTAINED, pItem, 0);
+		} else {
+			break;
 		}
 	}
 }
@@ -46910,7 +46848,7 @@ void CGame::AdminOrder_BanIP(int iClientH, char *pData, uint32_t dwMsgSize) {
 		return;
 	}
 	if (m_pClientList[iClientH]->m_bIsAdminCommandEnabled == false) return;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -46975,12 +46913,12 @@ void CGame::PlayerOrder_ShowDamage(int iClientH) {/*ShowDamage - Coded by EvilHi
 	char cDamageMod[256];
 	if (m_pClientList[iClientH]->iDmgShowon == 1) {
 		m_pClientList[iClientH]->iDmgShowon = 0;
-		std::memset(cDamageMod, 0, sizeof(cDamageMod));
+		std::memset(cDamageMod, 0, sizeof (cDamageMod));
 		wsprintf(cDamageMod, "Show Damage is now disabled");
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cDamageMod);
 	} else {
 		m_pClientList[iClientH]->iDmgShowon = 1;
-		std::memset(cDamageMod, 0, sizeof(cDamageMod));
+		std::memset(cDamageMod, 0, sizeof (cDamageMod));
 		wsprintf(cDamageMod, "Show Damage is now enabled");
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_NOTICEMSG, 0, 0, 0, cDamageMod);
 	}
@@ -47064,7 +47002,7 @@ void CGame::GetTradeEKMantleHandler(int iClientH, int iItemID, char * /*pString*
 			m_pClientList[iClientH]->m_iEnemyKillCount -= 9000;
 			break;
 	}
-	std::memset(cItemName, 0, sizeof(cItemName));
+	std::memset(cItemName, 0, sizeof (cItemName));
 	memcpy(cItemName, m_pItemConfigList[iItemID]->m_cName, 20);
 	iNum = 1;
 	for (i = 1; i <= iNum; i++) {
@@ -47162,11 +47100,11 @@ void CGame::PlayerCommandAddMaster(int iClientH, char * pData, uint32_t dwMsgSiz
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_NOGUILDMASTERLEVEL, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cNpcName, 0, sizeof(cNpcName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -47205,11 +47143,11 @@ void CGame::PlayerOrder_DeleteGuildMaster(int iClientH, char * pData, uint32_t d
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_NOGUILDMASTERLEVEL, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cName, 0, sizeof(cName));
-	std::memset(cNpcWaypoint, 0, sizeof(cNpcWaypoint));
-	std::memset(cTargetName, 0, sizeof(cTargetName));
-	std::memset(cNpcName, 0, sizeof(cNpcName));
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cName, 0, sizeof (cName));
+	std::memset(cNpcWaypoint, 0, sizeof (cNpcWaypoint));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
+	std::memset(cNpcName, 0, sizeof (cNpcName));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -47256,7 +47194,7 @@ void CGame::AdminOrder_SetCrit(int iClientH, char *pData, uint32_t dwMsgSize) {
 				  0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -47300,7 +47238,7 @@ void CGame::AdminOrder_SetEK(int iClientH, char * pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -47321,7 +47259,7 @@ void CGame::AdminOrder_SetEK(int iClientH, char * pData, uint32_t dwMsgSize) {
 			oldek = m_pClientList[i]->m_iEnemyKillCount;
 			m_pClientList[i]->m_iEnemyKillCount = atoi(cEK);
 			SendNotifyMsg(0, i, DEF_NOTIFY_ENEMYKILLS, m_pClientList[i]->m_iEnemyKillCount, 0, 0, 0);
-			std::memset(notice, 0, sizeof(notice));
+			std::memset(notice, 0, sizeof (notice));
 			wsprintf(notice, "Your EK Counts has been changed %d to %d.", oldek, atoi(cEK));
 			ShowClientMsg(iClientH, notice);
 		}
@@ -47348,7 +47286,7 @@ void CGame::AdminOrder_SetMAJ(int iClientH, char *pData, uint32_t dwMsgSize) {
 				  0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -47394,7 +47332,7 @@ void CGame::AdminOrder_SetPK(int iClientH, char *pData, uint32_t dwMsgSize) {
 				  0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -47437,7 +47375,7 @@ void CGame::AdminOrder_SetRep(int iClientH, char *pData, uint32_t dwMsgSize) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -47514,7 +47452,7 @@ bool CGame::bReadBallSystemConfigFile(const char * cFn) {
 								cReadModeB = 2;
 								break;
 							case 2:
-								std::memset(m_pBallItemConfigList[iIndex]->m_cName, 0, sizeof(m_pBallItemConfigList[iIndex]->m_cName));
+								std::memset(m_pBallItemConfigList[iIndex]->m_cName, 0, sizeof (m_pBallItemConfigList[iIndex]->m_cName));
 								memcpy(m_pBallItemConfigList[iIndex]->m_cName, token, strlen(token));
 								cReadModeB = 3;
 								break;
@@ -47558,13 +47496,13 @@ void CGame::RequestBallItem(int iClientH, char *pData, uint32_t dwMsgSize) {
 	uint16_t * wp;
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cWantedItemName, 0, sizeof(cWantedItemName));
+		std::memset(cWantedItemName, 0, sizeof (cWantedItemName));
 		strcpy(cWantedItemName, token);
 	}
 	sCounter = 1;
@@ -47583,7 +47521,7 @@ void CGame::RequestBallItem(int iClientH, char *pData, uint32_t dwMsgSize) {
 						delete pItem;
 						return;
 					}
-					std::memset(cData, 0, sizeof(cData));
+					std::memset(cData, 0, sizeof (cData));
 					if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) {
 						dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 						*dwp = MSGID_NOTIFY;
@@ -47664,13 +47602,13 @@ void CGame::_TradeItem(int iClientH, char *pData, uint32_t dwMsgSize) {
 	uint16_t * wp;
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) { //Centuu : Comprueba el nombre del item se?alado con el ID correspondiente.
-		std::memset(cItemName, 0, sizeof(cItemName));
+		std::memset(cItemName, 0, sizeof (cItemName));
 		strcpy(cItemName, token);
 	}
 	if (_iGetItemSpaceLeft(iClientH) == 0) { //Centuu : Dice, que si no tiene espacio en el bag, no le d? el item.
@@ -47683,21 +47621,21 @@ void CGame::_TradeItem(int iClientH, char *pData, uint32_t dwMsgSize) {
 		return;
 	}
 	switch (pItem->m_sIDnum) { //Centuu : Comprueba el ID correspondiente con el nombre del item se?alado.
-		case ItemId::armor_dye_indigo: //Armor Dyes.
-		case ItemId::armor_dye_crimson_red: //Armor Dyes.
-		case ItemId::armor_dye_gold: //Armor Dyes.
-		case ItemId::armor_dye_aqua: //Armor Dyes.
-		case ItemId::armor_dye_pink: //Armor Dyes.
-		case ItemId::armor_dye_violet: //Armor Dyes.
-		case ItemId::armor_dye_blue: //Armor Dyes.
-		case ItemId::armor_dye_khaki: //Armor Dyes
-		case ItemId::armor_dye_yellow: //Armor Dyes.
-		case ItemId::armor_dye_red: //Armor Dyes.
-		case ItemId::armor_dye_black: //Armor Dyes.
-		case ItemId::armor_dye_green: //Armor Dyes.
-			if (m_pClientList[iClientH]->m_iBallPoints < 20) return;
-			m_pClientList[iClientH]->m_iBallPoints -= 20;
-			break;
+			//		case ItemId::armor_dye_indigo: //Armor Dyes.
+			//		case ItemId::armor_dye_crimson_red: //Armor Dyes.
+			//		case ItemId::armor_dye_gold: //Armor Dyes.
+			//		case ItemId::armor_dye_aqua: //Armor Dyes.
+			//		case ItemId::armor_dye_pink: //Armor Dyes.
+			//		case ItemId::armor_dye_violet: //Armor Dyes.
+			//		case ItemId::armor_dye_blue: //Armor Dyes.
+			//		case ItemId::armor_dye_khaki: //Armor Dyes
+			//		case ItemId::armor_dye_yellow: //Armor Dyes.
+			//		case ItemId::armor_dye_red: //Armor Dyes.
+			//		case ItemId::armor_dye_black: //Armor Dyes.
+			//		case ItemId::armor_dye_green: //Armor Dyes.
+			//			if (m_pClientList[iClientH]->m_iBallPoints < 20) return;
+			//			m_pClientList[iClientH]->m_iBallPoints -= 20;
+			//			break;
 		case ItemId::merien_plate_mail_m: //Merien Plates
 		case ItemId::merien_plate_mail_w:
 			if (m_pClientList[iClientH]->m_iBallPoints < 850) return;
@@ -47734,10 +47672,10 @@ void CGame::_TradeItem(int iClientH, char *pData, uint32_t dwMsgSize) {
 			if (m_pClientList[iClientH]->m_iBallPoints < 850) return;
 			m_pClientList[iClientH]->m_iBallPoints -= 850;
 			break;
-		case ItemId::the_change_potion: //Sex Change Potion
-			if (m_pClientList[iClientH]->m_iBallPoints < 35) return;
-			m_pClientList[iClientH]->m_iBallPoints -= 35;
-			break;
+			//		case ItemId::the_change_potion: //Sex Change Potion
+			//			if (m_pClientList[iClientH]->m_iBallPoints < 35) return;
+			//			m_pClientList[iClientH]->m_iBallPoints -= 35;
+			//			break;
 			//		case ItemId::970: //Xelima Esterk
 			//		case ItemId::973: //Xelima B Hammer
 			//		case ItemId::976: //Xelima Bow
@@ -47748,7 +47686,7 @@ void CGame::_TradeItem(int iClientH, char *pData, uint32_t dwMsgSize) {
 			return;
 			break;
 	}
-	std::memset(cData, 0, sizeof(cData));
+	std::memset(cData, 0, sizeof (cData));
 	if (_bAddClientItemList(iClientH, pItem, &iEraseReq) == true) { //Centuu : Dice que obtuvo el item.
 		dwp = (uint32_t *) (cData + DEF_INDEX4_MSGID);
 		*dwp = MSGID_NOTIFY;
@@ -47854,23 +47792,23 @@ void CGame::DesbugCharacter(int iClientH, char * pData, uint32_t dwMsgSize) {
 	char cBuff[256], cName[11], cTargetName[11], cFileNamex[255], cFileName[255], cDir[63];
 	char * token;
 	char seps[] = "= \t\n";
-	std::memset(cTargetName, 0, sizeof(cTargetName));
+	std::memset(cTargetName, 0, sizeof (cTargetName));
 	if (m_pClientList[iClientH] == 0) return;
 	if ((dwMsgSize) <= 0) return;
 	if (m_pClientList[iClientH]->m_iAdminUserLevel < 2) {
 		SendNotifyMsg(0, iClientH, DEF_NOTIFY_ADMINUSERLEVELLOW, 0, 0, 0, 0);
 		return;
 	}
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
 	token = pStrTok->pGet();
 	if (token != 0) {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, token);
 	} else {
-		std::memset(cName, 0, sizeof(cName));
+		std::memset(cName, 0, sizeof (cName));
 		strcpy(cName, "null");
 	}
 	if (cName != 0) {
@@ -47878,12 +47816,12 @@ void CGame::DesbugCharacter(int iClientH, char * pData, uint32_t dwMsgSize) {
 		if (strlen(token) > 10)
 			memcpy(cTargetName, token, 10);
 		else memcpy(cTargetName, token, strlen(token));
-		std::memset(cFileName, 0, sizeof(cFileName));
-		std::memset(cDir, 0, sizeof(cDir));
+		std::memset(cFileName, 0, sizeof (cFileName));
+		std::memset(cDir, 0, sizeof (cDir));
 		wsprintf(cDir, "..\\..\\Character\\AscII%d\\%s.bak", *cTargetName, cTargetName);
 		strcat(cFileName, cDir);
-		std::memset(cFileNamex, 0, sizeof(cFileNamex));
-		std::memset(cDir, 0, sizeof(cDir));
+		std::memset(cFileNamex, 0, sizeof (cFileNamex));
+		std::memset(cDir, 0, sizeof (cDir));
 		wsprintf(cDir, "..\\..\\Character\\AscII%d\\%s.txt", *cTargetName, cTargetName);
 		strcat(cFileNamex, cDir);
 		DeleteFile(cFileNamex);
@@ -47956,7 +47894,7 @@ void CGame::ManualStartHappyHour(int iClientH, char *pData, uint32_t dwMsgSize) 
 	char cBuff[256], * token, seps[] = "= \t\n";
 	CStrTok * pStrTok;
 	int i;
-	std::memset(cBuff, 0, sizeof(cBuff));
+	std::memset(cBuff, 0, sizeof (cBuff));
 	memcpy(cBuff, pData, dwMsgSize);
 	pStrTok = new CStrTok(cBuff, seps);
 	token = pStrTok->pGet();
@@ -48112,7 +48050,7 @@ void CGame::_CreateCTFGUID(int iWinnerSide) {
 	char * cp, cTxt[256], cFn[256], cTemp[1024];
 	FILE * pFile;
 	_mkdir("GameData");
-	std::memset(cFn, 0, sizeof(cFn));
+	std::memset(cFn, 0, sizeof (cFn));
 	strcat(cFn, "GameData");
 	strcat(cFn, "\\");
 	strcat(cFn, "\\");
@@ -48121,8 +48059,8 @@ void CGame::_CreateCTFGUID(int iWinnerSide) {
 	if (pFile == 0) {
 		PutLogList("(!) Cannot create CTFGUID(%d) file");
 	} else {
-		std::memset(cTemp, 0, sizeof(cTemp));
-		std::memset(cTxt, 0, sizeof(cTxt));
+		std::memset(cTemp, 0, sizeof (cTemp));
+		std::memset(cTxt, 0, sizeof (cTxt));
 		wsprintf(cTxt, "winner-side = %d\n", iWinnerSide);
 		strcat(cTemp, cTxt);
 		cp = (char *) cTemp;

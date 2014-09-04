@@ -279,7 +279,7 @@ enum class ItemId {
 	ogre_potion = 275,
 	under_wear_potion = 276,
 	flameberge_plus_3_llf = 290,
-	magic_wand_m_s30_llf = 291,
+	magic_wand_ms30_llf = 291,
 	golden_axe_llf = 292,
 	magic_necklace_rm10 = 300,
 	magic_necklace_dm1 = 305,
@@ -661,7 +661,7 @@ enum class ItemId {
 	angelic_pandent_dex = 909,
 	angelic_pandent_int = 910,
 	angelic_pandent_mag = 911,
-	_5th_anniversary = 912,
+	/*_5th_anniversary = 912,
 	dark_mage_hat = 913,
 	dark_mage_hat_w = 914,
 	dark_knight_shield = 915,
@@ -739,7 +739,7 @@ enum class ItemId {
 	black_knight_hammer = 2000,
 	black_knight_b_hammer = 2001,
 	black_knight_bar_hammer = 2002,
-	sotg_manual = 3043,
+	sotg_manual = 3043,*/
 };
 
 enum class ItemSpecialEffect {

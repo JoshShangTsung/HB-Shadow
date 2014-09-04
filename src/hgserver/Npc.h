@@ -49,9 +49,9 @@ enum class NpcType {
 	tom = 24,
 	william = 25,
 	kennedy = 26,
-	hellbound = 27,
+	hellhound = 27,
 	troll = 28,
-	orge = 29,
+	ogre = 29,
 	liche = 30,
 	demon = 31,
 	unicorn = 32,
@@ -167,10 +167,7 @@ public:
 	int m_iHitRatio = 0; // HitRatio
 	int m_iMagicHitRatio = 0; // Ratio
 	int m_iMinBravery = 0;
-	int m_iExpDiceMin = 0;
-	int m_iExpDiceMax = 0;
-	int m_iGoldDiceMin = 0;
-	int m_iGoldDiceMax = 0;
+	int m_iExpDice = 0;
 
 	char m_cSide = 0;
 	char m_cActionLimit = 0;
